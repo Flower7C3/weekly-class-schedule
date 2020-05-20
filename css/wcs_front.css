@@ -1,0 +1,71 @@
+/**
+ * Styles for the Weekly Class Schedule 3.0 front-end.
+ */
+
+.wcs4-no-lessons {
+    margin-bottom: 20px;
+}
+
+.wcs4-schedule-grid {
+    display: grid;
+    grid-gap: 10px;
+    width: 100%;
+    overflow-y: auto;
+    overflow-x: auto;
+    padding-bottom: 40px;
+    grid-template-columns: [hours] auto [days];
+    grid-template-rows: [days] auto [lessons];
+}
+
+.wcs4-schedule-grid .wcs4-grid-weekday {
+    text-align: center;
+    margin-bottom: 10px;
+    border-bottom: 1px solid black;
+    padding: 8px;
+    grid-row: days;
+}
+
+.wcs4-schedule-grid .wcs4-grid-hour {
+    text-align: right;
+    padding: 8px;
+    grid-column: hours;
+}
+
+.wcs4-grid-lesson {
+    padding: 8px;
+    position: relative;
+}
+
+.wcs4-grid-lesson .wcs4-details-box-container {
+    /*display: none;*/
+    visibility: hidden;
+    opacity: 0;
+    transition: visibility 0s, opacity 0.2s linear;
+    position: absolute;
+    top: 0;
+    left: 0;
+    min-width: 10em;
+    padding: 8px;
+    z-index: 20;
+}
+
+.wcs4-grid-lesson:hover .wcs4-details-box-container {
+    /*display: block;*/
+    visibility: visible;
+    opacity: 1;
+}
+
+.wcs4-abs-col-4 .wcs4-details-box-container,
+.wcs4-abs-col-5 .wcs4-details-box-container,
+.wcs4-abs-col-6 .wcs4-details-box-container {
+    right: 0;
+    left: auto;
+}
+
+.wcs4-qtip {
+    cursor: help;
+}
+
+.wcs4-qtip-data {
+    display: none;
+}

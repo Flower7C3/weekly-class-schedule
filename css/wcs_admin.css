@@ -1,0 +1,118 @@
+/**
+ * WCS3 admin styles
+ */
+@media screen and (min-width: 783px) {
+    #wcs4-show-form {
+        display: none;
+    }
+}
+
+@media screen and (max-width: 782px) {
+    #wcs4-schedule-management-form-wrapper {
+        position: absolute;
+        background: rgba(255, 255, 255, 0.89);
+        width: calc(100% - 20px);
+        top: 0;
+        z-index: 33;
+        padding: 10px;
+        display: none;
+    }
+
+    #wcs4-schedule-management-form-wrapper.is-open {
+        display: block;
+    }
+}
+
+#wcs4-schedule-management-form-wrapper #wcs4-schedule-management-form .form-field input,
+#wcs4-schedule-management-form-wrapper #wcs4-schedule-management-form .form-field select {
+    width: 100%;
+}
+
+#wcs4-schedule-management-form-wrapper #wcs4-schedule-management-form .form-field textarea {
+    width: 95%;
+}
+
+@media screen and (max-width: 782px) {
+    #wcs4-schedule-management-form-wrapper #wcs4-schedule-management-form .form-field textarea {
+        width: 100%;
+    }
+}
+
+#wcs4-schedule-management-form-wrapper #wcs4-schedule-management-form .form-field.form-time-field select {
+    text-align: right;
+}
+
+.form-2-columns {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.form-2-columns .form-field {
+    flex: 1;
+}
+
+#wcs4-schedule-management-form-wrapper #wcs4-schedule-management-form .form-2-columns .form-field.form-time-field select {
+    width: 44%;
+    display: inline-block;
+}
+
+@media screen and (max-width: 782px) {
+    #wcs4-schedule-management-form-wrapper #wcs4-schedule-management-form .form-2-columns .form-field.form-time-field select {
+        width: 50%;
+        margin-right: -1px;
+    }
+}
+
+.wcs4-ajax-text {
+    margin-left: 10px;
+}
+
+#wcs4-cancel-editing-wrapper {
+    margin-bottom: 20px;
+}
+
+#wcs4-cancel-editing-wrapper a {
+    text-decoration: none;
+}
+
+/* Settings page */
+#wcs4-options-message {
+    margin-top: 15px;
+}
+
+.wcs4-description {
+    font-size: 12px;
+    color: #888;
+    margin-top: 3px;
+    font-weight: normal;
+}
+
+.wcs4-description strong {
+    color: #666;
+}
+
+.colorpicker-preview {
+    display: inline-block;
+    margin-left: 10px;
+    width: 20px;
+    -webkit-border-radius: 5px;
+    border-radius: 5px;
+    border: 1px solid #aaa;
+}
+
+.ex1-link-box {
+    background-color: #D8D8D8;
+    max-width: 500px;
+    padding: 0 14px;
+    -webkit-border-radius: 5px;
+    border-radius: 5px;
+    border-color: #aaa;
+    border-width: 1px;
+    border-style: solid;
+    -webkit-box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.4);
+    box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.4);
+}
+
+.ex1-link-box img {
+    max-width: 100%;
+}
