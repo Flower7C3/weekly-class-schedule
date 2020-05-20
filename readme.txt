@@ -1,58 +1,63 @@
 === Weekly Class Schedule ===
-Contributors: ty_pwd
-Tags: schedule, weekly, class schedule
-Requires at least: 3.0
-Tested up to: 4.3.1
-Stable tag: 3.17
-Donate link: http://pulsarwebdesign.com/weekly-class-schedule/
+Contributors: flower7c3, ty_pwd
+Tags: schedule, weekly, class schedule, subjects, teachers, students, classes, lessons
+Requires at least: 4.0
+Tested up to: 5.4
+Stable tag: 4.0
 License: GPLv2 or later
 
-Generate a weekly schedule of classes.
+Generate a weekly schedule of subjects.
 
 == Description ==
 
-Weekly Class Schedule generates a weekly schedule of classes using an ultra-simple interface.
-
-= How to transfer the data from version 2 =
-Under the "Schedule" tab you will find the "Import/Update" page. Go there and click the button.
+Weekly Class Schedule generates a weekly schedule of subjects using an ultra-simple interface.
 
 = Main Features =
-* Easily manage and update schedule entries (classes).
-* Manage and update the classes, instructors, and locations (classrooms) database.
+* Easily manage and update schedule entries (subjects).
+* Manage and update the subjects, teachers, and classrooms (classrooms) database.
 * Easy customization of schedule appearance and colors.
-* Selectable first day of week.
 * Includes "Today's Classes" widget.
-* Fully supports both 12-hour and 24-hour clocks.
 * Use simple shortcode attributes to switch between standard and list layout.
 * Use a simple templating system to customize the class details display.
-* Supports multiple classrooms/schedules.
-* Switchable "Instructor collision detection" and "Location collision detection".
-* Display class and instructor details directly on the schedule using qTip2.
-* For additional features, check out [Expansion Pack 1](http://pulsarwebdesign.com/downloads/weekly-class-schedule-expansion-pack-1) and [Expansion Pack 2](http://pulsarwebdesign.com/downloads/weekly-class-schedule-expansion-pack-2).
-
-= Weekly Class Schedule Needs Your Support =
-
-If you enjoy using this plugin and find it useful, please consider [__making a donation__](http://pulsarwebdesign.com/weekly-class-schedule/). Your donation will help encourage and support the plugin's continued development and better user support.
+* Supports multiple classrooms/schedules/teachers/students.
+* Switchable "Teacher collision detection", "Student collision detection" and "Classroom collision detection".
+* Display class and teacher details directly on the schedule using qTip2.
 
 == Installation ==
 
 1. Upload the entire `weekly-class-schedule` folder to the `/wp-content/plugins/` directory.
-1. Activate the plugin through the 'Plugins' menu in WordPress.
+2. Activate the plugin through the 'Plugins' menu in WordPress.
 
-You will find a 'Schedule' menu item as well as 'Classes', 'Instructors', and 'Locations' in your WordPress admin panel.
-
-For basic usage, check the plugin options page or have a look at the [plugin homepage](http://pulsarwebdesign.com/weekly-class-schedule).
-
-For a demonstration visit [wcs.pulsarwebdesign.com/schedule](http://wcs.pulsarwebdesign.com/schedule).
+You will find a 'Schedule' menu item as well as 'Classes', 'Teachers', 'Students', and 'Classrooms' in your WordPress admin panel.
 
 == Screenshots ==
 
 1. Schedule Management
-1. Color Customization
-1. Standard Layout
-1. List Layout
+2. Color Customization
+3. Standard Layout
+4. List Layout
 
 == Changelog ==
+
+= 4.0 =
+* Rename Classes to Subjects
+* Rename Locations to Classrooms
+* Rename Instructors to Teachers
+* Create Students
+* Allow to plan with multiple Teachers and Students
+* Remove frontend generation of normal layout
+* Update translations
+* Allow to define custom URL rewrites
+* Custom template for normal and list view
+* More tags in shortcut
+* Hide real name of private items (display initials)
+* Locale settings from Wordpress config (remove options first_day_of_week and 24_hour_mode)
+
+= 3.19 =
+* Minor improvements
+
+= 3.18 =
+* Added template links to allow the linking of a class, teacher, or classroom to the corresponding page (instead of using tooltip to display the description)
 
 = 3.17 =
 * Fixed a small file_get_contents() bug
@@ -179,8 +184,8 @@ For a demonstration visit [wcs.pulsarwebdesign.com/schedule](http://wcs.pulsarwe
 * Added timezones support 
 * Added visibility support (hide or display classes without deleting entries from the database)
 
-= 1.1.1 = 
+= 1.1.1 =
 * Tagging issue fixed
 
-= 1.1 = 
+= 1.1 =
 * Added 24 hrs support
