@@ -39,24 +39,28 @@ function wcs4_standard_options_page_callback()
                 'color_links' => 'wcs4_validate_color',
                 'subject_archive_slug' => 'wcs4_validate_html',
                 'subject_item_slug' => 'wcs4_validate_html',
+                'subject_hashed_slug' => 'wcs4_validate_yes_no',
                 'subject_schedule_layout' => 'wcs4_validate_html',
                 'subject_schedule_template_table_short' => 'wcs4_validate_html',
                 'subject_schedule_template_table_details' => 'wcs4_validate_html',
                 'subject_schedule_template_list' => 'wcs4_validate_html',
                 'teacher_archive_slug' => 'wcs4_validate_html',
                 'teacher_item_slug' => 'wcs4_validate_html',
+                'teacher_hashed_slug' => 'wcs4_validate_yes_no',
                 'teacher_schedule_layout' => 'wcs4_validate_html',
                 'teacher_schedule_template_table_short' => 'wcs4_validate_html',
                 'teacher_schedule_template_table_details' => 'wcs4_validate_html',
                 'teacher_schedule_template_list' => 'wcs4_validate_html',
                 'student_archive_slug' => 'wcs4_validate_html',
                 'student_item_slug' => 'wcs4_validate_html',
+                'student_hashed_slug' => 'wcs4_validate_yes_no',
                 'student_schedule_layout' => 'wcs4_validate_html',
                 'student_schedule_template_table_short' => 'wcs4_validate_html',
                 'student_schedule_template_table_details' => 'wcs4_validate_html',
                 'student_schedule_template_list' => 'wcs4_validate_html',
                 'classroom_archive_slug' => 'wcs4_validate_html',
                 'classroom_item_slug' => 'wcs4_validate_html',
+                'classroom_hashed_slug' => 'wcs4_validate_yes_no',
                 'classroom_schedule_layout' => 'wcs4_validate_html',
                 'classroom_schedule_template_table_short' => 'wcs4_validate_html',
                 'classroom_schedule_template_table_details' => 'wcs4_validate_html',
@@ -124,7 +128,10 @@ function wcs4_standard_options_page_callback()
                         <?php endforeach; ?>
                     </tr>
                     <tr>
-                        <th><?php _ex('Detect classroom collisions', 'options general settings', 'wcs4'); ?></th>
+                        <th>
+                            <?php _ex('Detect classroom collisions', 'options general settings', 'wcs4'); ?>
+                            <div class="wcs4-description"><?php _ex('Enabling this feature will prevent scheduling of multiple subjects at the same classroom, with same teacher or student at the same time.', 'options general settings', 'wcs4'); ?></div>
+                        </th>
                         <?php foreach (array('Subjects' => 'subject', 'Teachers' => 'teacher', 'Students' => 'student', 'Classrooms' => 'classroom') as $name => $key): ?>
                             <td data-key="<?= $key ?>" data-type="wcs4_collision">
                                 <?php if ($key !== 'subject') { ?>
@@ -134,7 +141,10 @@ function wcs4_standard_options_page_callback()
                         <?php endforeach; ?>
                     </tr>
                     <tr>
-                        <th><?php _ex('Custom archive URL', 'options general settings', 'wcs4'); ?></th>
+                        <th>
+                            <?php _ex('Custom archive URL', 'options general settings', 'wcs4'); ?>
+                            <div class="wcs4-description"><?php _ex('Empty value will disable custom archive URL.', 'options general settings', 'wcs4'); ?></div>
+                        </th>
                         <?php foreach (array('Subjects' => 'subject', 'Teachers' => 'teacher', 'Students' => 'student', 'Classrooms' => 'classroom') as $name => $key): ?>
                             <td data-key="<?= $key ?>" data-type="wcs4_archive_slug">
                                 <?php wcs4_textfield('wcs4_' . $key . '_archive_slug', $wcs4_options[$key . '_archive_slug'], 20); ?>
@@ -142,7 +152,10 @@ function wcs4_standard_options_page_callback()
                         <?php endforeach; ?>
                     </tr>
                     <tr>
-                        <th><?php _ex('Custom item URL', 'options general settings', 'wcs4'); ?></th>
+                        <th>
+                            <?php _ex('Custom item URL', 'options general settings', 'wcs4'); ?>
+                            <div class="wcs4-description"><?php _ex('Empty value will disable custom item URL.', 'options general settings', 'wcs4'); ?></div>
+                        </th>
                         <?php foreach (array('Subjects' => 'subject', 'Teachers' => 'teacher', 'Students' => 'student', 'Classrooms' => 'classroom') as $name => $key): ?>
                             <td data-key="<?= $key ?>" data-type="wcs4_item_slug">
                                 <?php wcs4_textfield('wcs4_' . $key . '_item_slug', $wcs4_options[$key . '_item_slug'], 20); ?>
@@ -150,7 +163,21 @@ function wcs4_standard_options_page_callback()
                         <?php endforeach; ?>
                     </tr>
                     <tr>
-                        <th><?php _ex('Single page schedule layout', 'options general settings', 'wcs4'); ?></th>
+                        <th>
+                            <?php _ex('Hashed item slug', 'options general settings', 'wcs4'); ?>
+                            <div class="wcs4-description"><?php _ex('Hashing slug will protect real page address.', 'options general settings', 'wcs4'); ?></div>
+                        </th>
+                        <?php foreach (array('Subjects' => 'subject', 'Teachers' => 'teacher', 'Students' => 'student', 'Classrooms' => 'classroom') as $name => $key): ?>
+                            <td data-key="<?= $key ?>" data-type="wcs4_hashed_slug">
+                                <?php wcs4_bool_checkbox('wcs4_' . $key . '_hashed_slug', $wcs4_options[$key . '_hashed_slug'], __('Yes')); ?>
+                            </td>
+                        <?php endforeach; ?>
+                    </tr>
+                    <tr>
+                        <th>
+                            <?php _ex('Single page schedule layout', 'options general settings', 'wcs4'); ?>
+                            <div class="wcs4-description"><?php _ex('How schedule should be generated on single page.', 'options general settings', 'wcs4'); ?></div>
+                        </th>
                         <?php foreach (array('Subjects' => 'subject', 'Teachers' => 'teacher', 'Students' => 'student', 'Classrooms' => 'classroom') as $name => $key): ?>
                             <td data-key="<?= $key ?>" data-type="wcs4_schedule_layout">
                                 <?php echo wcs4_generate_layout_select_list('wcs4_' . $key . '_schedule_layout', $wcs4_options[$key . '_schedule_layout']); ?>
@@ -158,7 +185,9 @@ function wcs4_standard_options_page_callback()
                         <?php endforeach; ?>
                     </tr>
                     <tr>
-                        <th><?php _ex('Class Table Short Template', 'options general settings', 'wcs4'); ?><br></th>
+                        <th>
+                            <?php _ex('Class Table Short Template', 'options general settings', 'wcs4'); ?>
+                        </th>
                         <?php foreach (array('Subjects' => 'subject', 'Teachers' => 'teacher', 'Students' => 'student', 'Classrooms' => 'classroom') as $name => $key): ?>
                             <td data-key="<?= $key ?>" data-type="wcs4_schedule_template_table_short">
                                 <textarea <?php if ('table' !== $wcs4_options[$key . '_schedule_layout']){ ?>readonly<?php } ?> name="wcs4_<?= $key ?>_schedule_template_table_short" cols="30"
@@ -167,7 +196,10 @@ function wcs4_standard_options_page_callback()
                         <?php endforeach; ?>
                     </tr>
                     <tr>
-                        <th><?php _ex('Class Table Hover Template', 'options general settings', 'wcs4'); ?></th>
+                        <th>
+                            <?php _ex('Class Table Hover Template', 'options general settings', 'wcs4'); ?>
+
+                        </th>
                         <?php foreach (array('Subjects' => 'subject', 'Teachers' => 'teacher', 'Students' => 'student', 'Classrooms' => 'classroom') as $name => $key): ?>
                             <td data-key="<?= $key ?>" data-type="wcs4_schedule_template_table_details">
                                 <textarea <?php if ('table' !== $wcs4_options[$key . '_schedule_layout']){ ?>readonly<?php } ?> name="wcs4_<?= $key ?>_schedule_template_table_details" cols="30"
@@ -176,7 +208,9 @@ function wcs4_standard_options_page_callback()
                         <?php endforeach; ?>
                     </tr>
                     <tr>
-                        <th><?php _ex('Class List Template', 'options general settings', 'wcs4'); ?></th>
+                        <th>
+                            <?php _ex('Class List Template', 'options general settings', 'wcs4'); ?>
+                        </th>
                         <?php foreach (array('Subjects' => 'subject', 'Teachers' => 'teacher', 'Students' => 'student', 'Classrooms' => 'classroom') as $name => $key): ?>
                             <td data-key="<?= $key ?>" data-type="wcs4_schedule_template_list">
                                 <textarea <?php if ('list' !== $wcs4_options[$key . '_schedule_layout']){ ?>readonly<?php } ?> name="wcs4_<?= $key ?>_schedule_template_list" cols="30"
@@ -185,13 +219,6 @@ function wcs4_standard_options_page_callback()
                         <?php endforeach; ?>
                     </tr>
                 </tbody>
-                <tfoot>
-                    <tr>
-                        <td colspan="5">
-                            <div class="wcs4-description"><?php _ex('Enabling this feature will prevent scheduling of multiple subjects at the same classroom, with same teacher or student at the same time.', 'options general settings', 'wcs4'); ?></div>
-                        </td>
-                    </tr>
-                </tfoot>
             </table>
 
             <h2><?php _ex('Appearance Settings', 'options appearance settings', 'wcs4'); ?></h2>
@@ -345,24 +372,28 @@ function wcs4_set_default_settings()
             'color_links' => '1982D1',
             'subject_archive_slug' => _x('subjects', 'config slug for archive', 'wcs4'),
             'subject_item_slug' => _x('subject', 'config slug for item', 'wcs4'),
+            'subject_hashed_slug' => 'no',
             'subject_schedule_layout' => 'table',
             'subject_schedule_template_table_short' => _x('<small>{start hour}-{end hour}</small><br>{tea}/{stu} @{class}', 'config template table short at subject schedule', 'wcs4'),
             'subject_schedule_template_table_details' => _x('<small>{start hour}-{end hour}</small><br>{teacher link} at {classroom link} for {student link} {notes}', 'config template table details at subject schedule', 'wcs4'),
             'subject_schedule_template_list' => _x('<small>{start hour}-{end hour}</small><br>{teacher link} at {classroom link} for {student link} {notes}', 'config template list at subject schedule', 'wcs4'),
             'teacher_archive_slug' => _x('teachers', 'config slug for archive', 'wcs4'),
             'teacher_item_slug' => _x('teacher', 'config slug for item', 'wcs4'),
+            'teacher_hashed_slug' => 'no',
             'teacher_schedule_layout' => 'table',
             'teacher_schedule_template_table_short' => _x('<small>{start hour}-{end hour}</small><br>{subject} @{class} ({stu})', 'config template table short at teacher schedule', 'wcs4'),
             'teacher_schedule_template_table_details' => _x('<small>{start hour}-{end hour}</small><br>{subject link} at {classroom link} for {student link} {notes}', 'config template table details at teacher schedule', 'wcs4'),
             'teacher_schedule_template_list' => _x('<small>{start hour}-{end hour}</small><br>{subject link} at {classroom link} for {student link} {notes}', 'config template list at teacher schedule', 'wcs4'),
             'student_archive_slug' => _x('students', 'config slug for archive', 'wcs4'),
             'student_item_slug' => _x('student', 'config slug for item', 'wcs4'),
+            'student_hashed_slug' => 'yes',
             'student_schedule_layout' => 'table',
             'student_schedule_template_table_short' => _x('<small>{start hour}-{end hour}</small><br>{subject} ({tea}) @{class}', 'config template table short at student schedule', 'wcs4'),
             'student_schedule_template_table_details' => _x('<small>{start hour}-{end hour}</small><br>{subject link} with {teacher link} at {classroom link}', 'config template table details at student schedule', 'wcs4'),
             'student_schedule_template_list' => _x('{subject link} with {teacher link} at {classroom link} from {start hour} to {end hour} {notes}', 'config template list at student schedule', 'wcs4'),
             'classroom_archive_slug' => _x('classrooms', 'config slug for archive', 'wcs4'),
             'classroom_item_slug' => _x('classroom', 'config slug for item', 'wcs4'),
+            'classroom_hashed_slug' => 'no',
             'classroom_schedule_layout' => 'table',
             'classroom_schedule_template_table_short' => _x('<small>{start hour}-{end hour}</small><br>{subject} ({tea}/{stu})', 'config template table short at classroom schedule', 'wcs4'),
             'classroom_schedule_template_table_details' => _x('<small>{start hour}-{end hour}</small><br>{subject link} with {teacher link} for {student link} {notes}', 'config template table details at classroom schedule', 'wcs4'),

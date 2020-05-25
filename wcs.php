@@ -241,18 +241,18 @@ add_action('init', static function () {
  * Append schedule to single page
  */
 add_filter('the_content', static function ($content) {
-    $postType = get_post_type();
-    if (is_single() && in_array($postType, WCS4_POST_TYPES_WHITELIST, true)) {
+    $post_type = get_post_type();
+    if (is_single() && in_array($post_type, WCS4_POST_TYPES_WHITELIST, true)) {
         $postId = get_the_id();
-        $postTypeKey = str_replace('wcs4_', '', $postType);
+        $post_type_key = str_replace('wcs4_', '', $post_type);
         $wcs4_settings = wcs4_load_settings();
-        $layout = $wcs4_settings[$postTypeKey . '_schedule_layout'];
+        $layout = $wcs4_settings[$post_type_key . '_schedule_layout'];
         if ('none' !== $layout && NULL !== $layout) {
-            $template_table_short = $wcs4_settings[$postTypeKey . '_schedule_template_table_short'];
-            $template_table_details = $wcs4_settings[$postTypeKey . '_schedule_template_table_details'];
-            $template_list = $wcs4_settings[$postTypeKey . '_schedule_template_list'];
+            $template_table_short = $wcs4_settings[$post_type_key . '_schedule_template_table_short'];
+            $template_table_details = $wcs4_settings[$post_type_key . '_schedule_template_table_details'];
+            $template_list = $wcs4_settings[$post_type_key . '_schedule_template_list'];
             $params = [];
-            $params[] = '' . $postTypeKey . '="#' . $postId . '"';
+            $params[] = '' . $post_type_key . '="#' . $postId . '"';
             $params[] = 'layout="' . $layout . '"';
             $params[] = 'template_table_short="' . $template_table_short . '"';
             $params[] = 'template_table_details="' . $template_table_details . '"';
@@ -371,6 +371,22 @@ add_action('admin_init', static function () {
         update_option('wcs4_version', WCS4_VERSION);
     }
 });
+
+/**
+ * Hashed post slug
+ */
+add_filter("wp_unique_post_slug", static function ($slug, $post_ID, $post_status, $post_type, $post_parent, $original_slug) {
+    if (isset($post_type) && in_array($post_type, WCS4_POST_TYPES_WHITELIST, true)) {
+        $post_type_key = str_replace('wcs4_', '', $post_type);
+        $wcs4_settings = wcs4_load_settings();
+        $hashed_slug = $wcs4_settings[$post_type_key . '_hashed_slug'];
+        if ('yes' === $hashed_slug) {
+            $post_title = get_the_title($post_ID);
+            $slug = md5($post_ID . '-' . $post_title);
+        }
+    }
+    return $slug;
+}, 10, 6);
 
 /**
  * Register activation hook

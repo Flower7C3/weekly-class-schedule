@@ -2,10 +2,10 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Weekly Class Schedule\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-05-20 14:34+0000\n"
-"PO-Revision-Date: 2020-05-20 14:36+0000\n"
+"POT-Creation-Date: 2020-05-25 12:39+0000\n"
+"PO-Revision-Date: 2020-05-25 12:39+0000\n"
 "Last-Translator: Bartłomiej Kwiatek\n"
-"Language-Team: \n"
+"Language-Team: Polski\n"
 "Language: pl_PL\n"
 "Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10 >= 2 && n%10<=4 "
 "&&(n%100<10||n%100 >= 20)? 1 : 2);\n"
@@ -597,37 +597,37 @@ msgstr "Weryfikacja nonce nie powiodła się"
 msgid "Options updated"
 msgstr "Ustawienia zaktualizowane"
 
-#: includes/wcs_settings.php:77
+#: includes/wcs_settings.php:81
 msgctxt "options"
 msgid "Weekly Class Schedule Standard Settings"
 msgstr "Konfiguracja"
 
-#: includes/wcs_settings.php:79
+#: includes/wcs_settings.php:83
 msgctxt "options general settings"
 msgid "General Settings"
 msgstr "Ustawienia główne"
 
-#: includes/wcs_settings.php:84 includes/wcs_settings.php:161
+#: includes/wcs_settings.php:88 includes/wcs_settings.php:189
 msgctxt "options general settings"
 msgid "Class Table Short Template"
 msgstr "Szablon widoku tabeli domyślny"
 
-#: includes/wcs_settings.php:87 includes/wcs_settings.php:170
+#: includes/wcs_settings.php:91 includes/wcs_settings.php:200
 msgctxt "options general settings"
 msgid "Class Table Hover Template"
 msgstr "Szablon widoku tabeli po najechaniu myszką"
 
-#: includes/wcs_settings.php:90 includes/wcs_settings.php:179
+#: includes/wcs_settings.php:94 includes/wcs_settings.php:212
 msgctxt "options general settings"
 msgid "Class List Template"
 msgstr "Szablon widoku listy"
 
-#: includes/wcs_settings.php:108
+#: includes/wcs_settings.php:112
 msgctxt "options general settings"
 msgid "Open template links in new tabs"
 msgstr "Otwórz łącza szablonów w nowych kartach"
 
-#: includes/wcs_settings.php:109
+#: includes/wcs_settings.php:113
 msgctxt "options general settings"
 msgid ""
 "Enabling this will open the template links (e.g. [subject link]) in a new "
@@ -636,32 +636,17 @@ msgstr ""
 "Włączenie tego spowoduje otwarcie linków szablonu (np. [subject link]) w "
 "nowej karcie."
 
-#: includes/wcs_settings.php:115
+#: includes/wcs_settings.php:119
 msgctxt "options general settings"
 msgid "Post Type Settings"
 msgstr "Ustawienia stron"
 
-#: includes/wcs_settings.php:127
+#: includes/wcs_settings.php:132
 msgctxt "options general settings"
 msgid "Detect classroom collisions"
 msgstr "Wykryj kolizje sali"
 
-#: includes/wcs_settings.php:137
-msgctxt "options general settings"
-msgid "Custom archive URL"
-msgstr "Własny adres URL archiwum"
-
-#: includes/wcs_settings.php:145
-msgctxt "options general settings"
-msgid "Custom item URL"
-msgstr "Własny adres URL wpisu"
-
-#: includes/wcs_settings.php:153
-msgctxt "options general settings"
-msgid "Single page schedule layout"
-msgstr "Układ pojedynczej strony"
-
-#: includes/wcs_settings.php:191
+#: includes/wcs_settings.php:133
 msgctxt "options general settings"
 msgid ""
 "Enabling this feature will prevent scheduling of multiple subjects at the "
@@ -670,27 +655,67 @@ msgstr ""
 "Włączenie tej funkcji zapobiegnie planowaniu wielu przedmiotów w tym samym "
 "miejscu, z tym samym nauczycielem lub uczniem w tym samym czasie."
 
-#: includes/wcs_settings.php:197
+#: includes/wcs_settings.php:145
+msgctxt "options general settings"
+msgid "Custom archive URL"
+msgstr "Własny adres URL archiwum"
+
+#: includes/wcs_settings.php:146
+msgctxt "options general settings"
+msgid "Empty value will disable custom archive URL."
+msgstr "Pusta wartość wyłączy niestandardowy adres URL archiwum."
+
+#: includes/wcs_settings.php:156
+msgctxt "options general settings"
+msgid "Custom item URL"
+msgstr "Własny adres URL wpisu"
+
+#: includes/wcs_settings.php:157
+msgctxt "options general settings"
+msgid "Empty value will disable custom item URL."
+msgstr "Pusta wartość wyłączy niestandardowy adres URL elementu."
+
+#: includes/wcs_settings.php:167
+msgctxt "options general settings"
+msgid "Hashed item slug"
+msgstr "Zakodowany adres wpisu"
+
+#: includes/wcs_settings.php:168
+msgctxt "options general settings"
+msgid "Hashing slug will protect real page address."
+msgstr "Hashowanie adresu chroni prawdziwy adres strony."
+
+#: includes/wcs_settings.php:178
+msgctxt "options general settings"
+msgid "Single page schedule layout"
+msgstr "Układ pojedynczej strony"
+
+#: includes/wcs_settings.php:179
+msgctxt "options general settings"
+msgid "How schedule should be generated on single page."
+msgstr "Jak należy generować harmonogram na pojedynczej stronie."
+
+#: includes/wcs_settings.php:224
 msgctxt "options appearance settings"
 msgid "Appearance Settings"
 msgstr "Ustawienia wyglądu"
 
-#: includes/wcs_settings.php:202
+#: includes/wcs_settings.php:229
 msgctxt "options appearance settings"
 msgid "Lesson base"
 msgstr "Lekcja widok podstawowy"
 
-#: includes/wcs_settings.php:203
+#: includes/wcs_settings.php:230
 msgctxt "options appearance settings"
 msgid "The default background color for lessons in the schedule."
 msgstr "Domyślny kolor tła dla lekcji w harmonogramie."
 
-#: includes/wcs_settings.php:207
+#: includes/wcs_settings.php:234
 msgctxt "options appearance settings"
 msgid "Lesson details box"
 msgstr "Pole szczegółów lekcji"
 
-#: includes/wcs_settings.php:208
+#: includes/wcs_settings.php:235
 msgctxt "options appearance settings"
 msgid ""
 "Background color of the lesson details box which appears when hovering over "
@@ -699,124 +724,124 @@ msgstr ""
 "Kolor tła pola szczegółów lekcji, które pojawia się po najechaniu kursorem "
 "na lekcję."
 
-#: includes/wcs_settings.php:212
+#: includes/wcs_settings.php:239
 msgctxt "options appearance settings"
 msgid "Text"
 msgstr "Tekst"
 
-#: includes/wcs_settings.php:213
+#: includes/wcs_settings.php:240
 msgctxt "options appearance settings"
 msgid "Text color of schedule entries/lessons."
 msgstr "Kolor tekstu pozycji harmonogramu / lekcji."
 
-#: includes/wcs_settings.php:219
+#: includes/wcs_settings.php:246
 msgctxt "options appearance settings"
 msgid "Border"
 msgstr "Obramowanie"
 
-#: includes/wcs_settings.php:220
+#: includes/wcs_settings.php:247
 msgctxt "options appearance settings"
 msgid "This color is used for all borders in the schedule output."
 msgstr ""
 "Ten kolor jest używany dla wszystkich ramek w danych wyjściowych zestawienia."
 
-#: includes/wcs_settings.php:224
+#: includes/wcs_settings.php:251
 msgctxt "options appearance settings"
 msgid "Schedule headings color"
 msgstr "Kolor tekstu nagłówków"
 
-#: includes/wcs_settings.php:225
+#: includes/wcs_settings.php:252
 msgctxt "options appearance settings"
 msgid "Text color of the schedule headings (weekdays, hours)."
 msgstr "Kolor tekstu nagłówków harmonogramu (dni tygodnia, godziny)."
 
-#: includes/wcs_settings.php:229
+#: includes/wcs_settings.php:256
 msgctxt "options appearance settings"
 msgid "Schedule headings background"
 msgstr "Kolor tło nagłówków"
 
-#: includes/wcs_settings.php:230
+#: includes/wcs_settings.php:257
 msgctxt "options appearance settings"
 msgid "Background color of the schedule headings (weekdays, hours)."
 msgstr "Kolor tła nagłówków harmonogramu (dni powszednie, godziny)."
 
-#: includes/wcs_settings.php:236
+#: includes/wcs_settings.php:263
 msgctxt "options appearance settings"
 msgid "Background"
 msgstr "Tło"
 
-#: includes/wcs_settings.php:237
+#: includes/wcs_settings.php:264
 msgctxt "options appearance settings"
 msgid "Background color for the entire schedule."
 msgstr "Kolor tła dla całego harmonogramu."
 
-#: includes/wcs_settings.php:241
+#: includes/wcs_settings.php:268
 msgctxt "options appearance settings"
 msgid "qTip background"
 msgstr "Kolor okienka qTip"
 
-#: includes/wcs_settings.php:242
+#: includes/wcs_settings.php:269
 msgctxt "options appearance settings"
 msgid "Background color of the qTip pop-up box."
 msgstr "Kolor tła wyskakującego okienka qTip."
 
-#: includes/wcs_settings.php:246
+#: includes/wcs_settings.php:273
 msgctxt "options appearance settings"
 msgid "Links"
 msgstr "Odnośniki"
 
-#: includes/wcs_settings.php:247
+#: includes/wcs_settings.php:274
 msgctxt "options appearance settings"
 msgid "The color of the links which appear in the lesson details box."
 msgstr "Kolor linków pojawiających się w polu szczegółów lekcji."
 
-#: includes/wcs_settings.php:254
+#: includes/wcs_settings.php:281
 msgctxt "options"
 msgid "Save Settings"
 msgstr "💾Zapisz ustawienia"
 
-#: includes/wcs_settings.php:283
+#: includes/wcs_settings.php:310
 msgctxt "options"
 msgid "Weekly Class Schedule Advanced Settings"
 msgstr "Ustawienia zawansowane"
 
-#: includes/wcs_settings.php:285
+#: includes/wcs_settings.php:312
 msgctxt "reset database"
 msgid "Click the link below to clear the schedule or reset the settings"
 msgstr ""
 "Kliknij poniższy link, aby wyczyścić harmonogram lub zresetować ustawienia"
 
-#: includes/wcs_settings.php:286
+#: includes/wcs_settings.php:313
 msgctxt "reset database"
 msgid "Create DB schema"
 msgstr "🆙Utwórz schemat bazy danych"
 
-#: includes/wcs_settings.php:287
+#: includes/wcs_settings.php:314
 msgctxt "reset database"
 msgid "Install example data"
 msgstr "🔡Zainstaluj dane przykładowe"
 
-#: includes/wcs_settings.php:289
+#: includes/wcs_settings.php:316
 msgctxt "reset database"
 msgid "Clear schedule"
 msgstr "🗓Wyczyść plan zajęć"
 
-#: includes/wcs_settings.php:290
+#: includes/wcs_settings.php:317
 msgctxt "reset database"
 msgid "Reset settings"
 msgstr "⚙️Zresetuj ustawienia"
 
-#: includes/wcs_settings.php:291
+#: includes/wcs_settings.php:318
 msgctxt "reset database"
 msgid "Clear everything"
 msgstr "🗑Wyczyść wszystko"
 
-#: includes/wcs_settings.php:334
+#: includes/wcs_settings.php:361
 msgctxt "config template table short"
 msgid "<small>{start hour}-{end hour}</small><br>{subject} ({tea}/{stu})"
 msgstr "<small>{start hour}-{end hour}</small><br>{subject} ({tea}/{stu})"
 
-#: includes/wcs_settings.php:335
+#: includes/wcs_settings.php:362
 msgctxt "config template table details"
 msgid ""
 "{teacher link} has {subject link} at {classroom link} from {start hour} to "
@@ -825,7 +850,7 @@ msgstr ""
 "{teacher link} prowadzi {subject link} w {classroom link} od {start hour} do "
 "{end hour} dla {student link} {notes}"
 
-#: includes/wcs_settings.php:336
+#: includes/wcs_settings.php:363
 msgctxt "config template list"
 msgid ""
 "{teacher link} has {subject link} at {classroom link} from {start hour} to "
@@ -834,22 +859,22 @@ msgstr ""
 "{teacher link} prowadzi {subject link} w {classroom link} od {start hour} do "
 "{end hour} dla {student link} {notes}"
 
-#: includes/wcs_settings.php:346
+#: includes/wcs_settings.php:373
 msgctxt "config slug for archive"
 msgid "subjects"
 msgstr "przedmioty"
 
-#: includes/wcs_settings.php:347
+#: includes/wcs_settings.php:374
 msgctxt "config slug for item"
 msgid "subject"
 msgstr "przedmiot"
 
-#: includes/wcs_settings.php:349
+#: includes/wcs_settings.php:377
 msgctxt "config template table short at subject schedule"
 msgid "<small>{start hour}-{end hour}</small><br>{tea}/{stu} @{class}"
 msgstr "<small>{start hour}-{end hour}</small><br>{tea}/{stu} @{class}"
 
-#: includes/wcs_settings.php:350
+#: includes/wcs_settings.php:378
 msgctxt "config template table details at subject schedule"
 msgid ""
 "<small>{start hour}-{end hour}</small><br>{teacher link} at {classroom link} "
@@ -858,7 +883,7 @@ msgstr ""
 "<small>{start hour}-{end hour}</small><br>{teacher link} w {classroom link} "
 "dla {student link} {notes}"
 
-#: includes/wcs_settings.php:351
+#: includes/wcs_settings.php:379
 msgctxt "config template list at subject schedule"
 msgid ""
 "<small>{start hour}-{end hour}</small><br>{teacher link} at {classroom link} "
@@ -867,22 +892,22 @@ msgstr ""
 "small>{start hour}-{end hour}</small><br>{teacher link} w {classroom link} "
 "dla {student link} {notes}"
 
-#: includes/wcs_settings.php:352
+#: includes/wcs_settings.php:380
 msgctxt "config slug for archive"
 msgid "teachers"
 msgstr "pedagodzy"
 
-#: includes/wcs_settings.php:353
+#: includes/wcs_settings.php:381
 msgctxt "config slug for item"
 msgid "teacher"
 msgstr "pedagog"
 
-#: includes/wcs_settings.php:355
+#: includes/wcs_settings.php:384
 msgctxt "config template table short at teacher schedule"
 msgid "<small>{start hour}-{end hour}</small><br>{subject} @{class} ({stu})"
 msgstr "<small>{start hour}-{end hour}</small><br>{subject} @{class} ({stu})"
 
-#: includes/wcs_settings.php:356
+#: includes/wcs_settings.php:385
 msgctxt "config template table details at teacher schedule"
 msgid ""
 "<small>{start hour}-{end hour}</small><br>{subject link} at {classroom link} "
@@ -891,7 +916,7 @@ msgstr ""
 "<small>{start hour}-{end hour}</small><br>{subject link} w {classroom link} "
 "dla {student link} {notes}"
 
-#: includes/wcs_settings.php:357
+#: includes/wcs_settings.php:386
 msgctxt "config template list at teacher schedule"
 msgid ""
 "<small>{start hour}-{end hour}</small><br>{subject link} at {classroom link} "
@@ -900,22 +925,22 @@ msgstr ""
 "<small>{start hour}-{end hour}</small><br>{subject link} w {classroom link} "
 "dla {student link} {notes}"
 
-#: includes/wcs_settings.php:358
+#: includes/wcs_settings.php:387
 msgctxt "config slug for archive"
 msgid "students"
 msgstr "uczniowie"
 
-#: includes/wcs_settings.php:359
+#: includes/wcs_settings.php:388
 msgctxt "config slug for item"
 msgid "student"
 msgstr "uczen"
 
-#: includes/wcs_settings.php:361
+#: includes/wcs_settings.php:391
 msgctxt "config template table short at student schedule"
 msgid "<small>{start hour}-{end hour}</small><br>{subject} ({tea}) @{class}"
 msgstr "<small>{start hour}-{end hour}</small><br>{subject} ({tea}) @{class}"
 
-#: includes/wcs_settings.php:362
+#: includes/wcs_settings.php:392
 msgctxt "config template table details at student schedule"
 msgid ""
 "<small>{start hour}-{end hour}</small><br>{subject link} with {teacher link} "
@@ -924,7 +949,7 @@ msgstr ""
 "<small>{start hour}-{end hour}</small><br>{subject link} z {teacher link} w "
 "{classroom link} {notes}"
 
-#: includes/wcs_settings.php:363
+#: includes/wcs_settings.php:393
 msgctxt "config template list at student schedule"
 msgid ""
 "{subject link} with {teacher link} at {classroom link} from {start hour} to "
@@ -933,22 +958,22 @@ msgstr ""
 "{subject link} z {teacher link} w {classroom link} od {start hour} do {end "
 "hour} {notes}"
 
-#: includes/wcs_settings.php:364
+#: includes/wcs_settings.php:394
 msgctxt "config slug for archive"
 msgid "classrooms"
 msgstr "sale"
 
-#: includes/wcs_settings.php:365
+#: includes/wcs_settings.php:395
 msgctxt "config slug for item"
 msgid "classroom"
 msgstr "sala"
 
-#: includes/wcs_settings.php:367
+#: includes/wcs_settings.php:398
 msgctxt "config template table short at classroom schedule"
 msgid "<small>{start hour}-{end hour}</small><br>{subject} ({tea}/{stu})"
 msgstr "<small>{start hour}-{end hour}</small><br>{subject} ({tea}/{stu})"
 
-#: includes/wcs_settings.php:368
+#: includes/wcs_settings.php:399
 msgctxt "config template table details at classroom schedule"
 msgid ""
 "<small>{start hour}-{end hour}</small><br>{subject link} with {teacher link} "
@@ -957,7 +982,7 @@ msgstr ""
 "<small>{start hour}-{end hour}</small><br>{subject link} z {teacher link} "
 "dla {student link} {notes}"
 
-#: includes/wcs_settings.php:369
+#: includes/wcs_settings.php:400
 msgctxt "config template list at classroom schedule"
 msgid ""
 "{subject link} with {teacher link} from {start hour} to {end hour} for "
