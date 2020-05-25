@@ -11,6 +11,7 @@
         wcs4_bind_schedule_submit_handler();
         wcs4_bind_schedule_delete_handler();
         wcs4_bind_schedule_edit_handler();
+        wcs4_bind_schedule_copy_handler();
         wcs4_bind_colorpickers();
         wcs4_bind_reset_settings();
     });
@@ -24,6 +25,7 @@
         });
         $('#wcs4-reset-form').click(function () {
             $('#wcs4-schedule-management-form-wrapper').removeClass('is-open');
+            remove_item_message();
         });
     };
 
@@ -74,7 +76,7 @@
 
                     // Clear notes.
                     $('#wcs4_lesson_notes').val('');
-                    exit_editing_mode();
+                    reset_to_add_mode();
                 }
 
             }).fail(function (err) {
@@ -164,85 +166,69 @@
                 // Bound, continue.
                 return true;
             }
-
             // Re-bind new elements
             $(this).click(function (e) {
                 var src_elem,
                     row_id,
                     entry;
-
                 if (typeof (e.target) != 'undefined') {
                     src_elem = e.target;
                 } else {
                     src_elem = e.srcElement;
                 }
-
                 row_id = src_elem.id.replace('edit-entry-', '');
-
                 entry = {
                     action: 'edit_schedule_entry',
                     security: WCS4_AJAX_OBJECT.ajax_nonce,
                     row_id: row_id
                 };
-
                 $('#wcs4-schedule-management-form-wrapper .spinner').addClass('is-active');
-
                 jQuery.post(WCS4_AJAX_OBJECT.ajax_url, entry, function (data) {
-                    // Get row data
-                    var entry = data.response,
-                        start_array,
-                        end_array,
-                        start_hour,
-                        start_min,
-                        end_hour,
-                        end_min,
-                        visibility;
-
-                    if (entry.hasOwnProperty('subject_id')) {
-                        // We got an entry.
-                        $('#wcs4_lesson_subject').val(entry.subject_id);
-                        $('#wcs4_lesson_teacher').val(entry.teacher_id);
-                        $('#wcs4_lesson_student').val(entry.student_id);
-                        $('#wcs4_lesson_classroom').val(entry.classroom_id);
-                        $('#wcs4_lesson_weekday').val(entry.weekday);
-
-                        // Update time fields.
-                        start_array = entry.start_hour.split(':');
-                        start_hour = start_array[0].replace(/^[0]/g, "");
-                        start_min = start_array[1].replace(/^[0]/g, "");
-
-                        end_array = entry.end_hour.split(':');
-                        end_hour = end_array[0].replace(/^[0]/g, "");
-                        end_min = end_array[1].replace(/^[0]/g, "");
-
-                        $('#wcs4_lesson_start_time_hours').val(start_hour);
-                        $('#wcs4_lesson_start_time_minutes').val(start_min);
-
-                        $('#wcs4_lesson_end_time_hours').val(end_hour);
-                        $('#wcs4_lesson_end_time_minutes').val(end_min);
-
-                        if (entry.visible == '1') {
-                            visibility = 'visible';
-                        } else {
-                            visibility = 'hidden';
-                        }
-
-                        $('#wcs4_lesson_visibility').val(visibility);
-                        $('#wcs4_lesson_notes').val(entry.notes);
-
-                        // Let's add the row id and the save button.
-                        $('#wcs4-submit-item').attr('value', WCS4_AJAX_OBJECT.save_item);
-
-                        /* ------------ Change to editing mode --------- */
-                        enter_edit_mode(row_id);
-                        /* ----------------------------------------------- */
-                    }
-
+                    enter_edit_mode(data.response);
                 }).fail(function (err) {
                     // Failed
                     console.error(err);
                     schedule_item_message(WCS4_AJAX_OBJECT.ajax_error, 'error');
+                }).always(function () {
+                    $('#wcs4-schedule-management-form-wrapper .spinner').removeClass('is-active');
+                });
+            });
+        });
+    }
 
+    /**
+     * Handles the copy button click event.
+     */
+    var wcs4_bind_schedule_copy_handler = function () {
+        $('.wcs4-copy-button').each(function () {
+            if (is_elem_unbound($(this))) {
+                // Bound, continue.
+                return true;
+            }
+            // Re-bind new elements
+            $(this).click(function (e) {
+                var src_elem,
+                    row_id,
+                    entry;
+                if (typeof (e.target) != 'undefined') {
+                    src_elem = e.target;
+                } else {
+                    src_elem = e.srcElement;
+                }
+                row_id = src_elem.id.replace('copy-entry-', '');
+                entry = {
+                    action: 'edit_schedule_entry',
+                    security: WCS4_AJAX_OBJECT.ajax_nonce,
+                    row_id: row_id
+                };
+                $('#wcs4-schedule-management-form-wrapper .spinner').addClass('is-active');
+                jQuery.post(WCS4_AJAX_OBJECT.ajax_url, entry, function (data) {
+                    // Get row data
+                    enter_copy_mode(data.response);
+                }).fail(function (err) {
+                    // Failed
+                    console.error(err);
+                    schedule_item_message(WCS4_AJAX_OBJECT.ajax_error, 'error');
                 }).always(function () {
                     $('#wcs4-schedule-management-form-wrapper .spinner').removeClass('is-active');
                 });
@@ -260,7 +246,6 @@
             security: WCS4_AJAX_OBJECT.ajax_nonce,
             day: day
         };
-
         jQuery.post(WCS4_AJAX_OBJECT.ajax_url, entry, function (data) {
             // Rebuild table
             var html = data.html,
@@ -284,6 +269,7 @@
             // Re-bind handlers
             wcs4_bind_schedule_delete_handler();
             wcs4_bind_schedule_edit_handler();
+            wcs4_bind_schedule_copy_handler();
             $('#wcs4-schedule-management-form-wrapper .spinner').removeClass('is-active');
         });
     }
@@ -291,43 +277,149 @@
     /**
      * Enter edit mode.
      */
-    var enter_edit_mode = function (row_id) {
-        var row_hidden_field,
-            cancel_button,
-            msg;
+    var enter_edit_mode = function (entry) {
+        var start_array,
+            end_array,
+            start_hour,
+            start_min,
+            end_hour,
+            end_min,
+            visibility,
+            row_hidden_field;
 
-        // Add editing mode message
-        $('#wcs4-schedule-management-form-title').text(WCS4_AJAX_OBJECT.edit_mode)
-        $('#wcs4-reset-form').hide();
-        $('#wcs4-schedule-management-form-wrapper').addClass('is-open');
+        if (entry.hasOwnProperty('subject_id')) {
+            // We got an entry.
+            $('#wcs4_lesson_subject').val(entry.subject_id);
+            $('#wcs4_lesson_teacher').val(entry.teacher_id);
+            $('#wcs4_lesson_student').val(entry.student_id);
+            $('#wcs4_lesson_classroom').val(entry.classroom_id);
+            $('#wcs4_lesson_weekday').val(entry.weekday);
 
-        // Add hidden row field
-        if ($('#wcs4-row-id').length > 0) {
-            // Field already exists, let's update.
-            $('#wcs4-row-id').attr('value', row_id);
-        } else {
-            // Field does not exist.
-            row_hidden_field = '<input type="hidden" id="wcs4-row-id" name="wcs4-row-id" value="' + row_id + '">';
-            $('#wcs4-schedule-management-form-wrapper').append(row_hidden_field);
+            // Update time fields.
+            start_array = entry.start_hour.split(':');
+            start_hour = start_array[0].replace(/^[0]/g, "");
+            start_min = start_array[1].replace(/^[0]/g, "");
+
+            end_array = entry.end_hour.split(':');
+            end_hour = end_array[0].replace(/^[0]/g, "");
+            end_min = end_array[1].replace(/^[0]/g, "");
+
+            $('#wcs4_lesson_start_time_hours').val(start_hour);
+            $('#wcs4_lesson_start_time_minutes').val(start_min);
+
+            $('#wcs4_lesson_end_time_hours').val(end_hour);
+            $('#wcs4_lesson_end_time_minutes').val(end_min);
+
+            if (entry.visible === '1') {
+                visibility = 'visible';
+            } else {
+                visibility = 'hidden';
+            }
+
+            $('#wcs4_lesson_visibility').val(visibility);
+            $('#wcs4_lesson_notes').val(entry.notes);
+
+            // Let's add the row id and the save button.
+            $('#wcs4-submit-item').attr('value', WCS4_AJAX_OBJECT.save_item);
+
+            // Add editing mode message
+            $('#wcs4-schedule-management-form-title').text(WCS4_AJAX_OBJECT.edit_mode)
+            $('#wcs4-reset-form').hide();
+            $('#wcs4-schedule-management-form-wrapper').addClass('is-open');
+
+            // Add hidden row field
+            if ($('#wcs4-row-id').length > 0) {
+                // Field already exists, let's update.
+                $('#wcs4-row-id').attr('value', entry.id);
+            } else {
+                // Field does not exist.
+                row_hidden_field = '<input type="hidden" id="wcs4-row-id" name="wcs4-row-id" value="' + entry.id + '">';
+                $('#wcs4-schedule-management-form-wrapper').append(row_hidden_field);
+            }
+
+            // Add cancel editing button
+            if ($('#wcs4-cancel-editing').length == 0) {
+                var cancel_button = '<span id="wcs4-cancel-editing-wrapper"><a href="#" id="wcs4-cancel-editing">' + WCS4_AJAX_OBJECT.cancel_editing + '</a></span>';
+                $('#wcs4-reset-form').after(cancel_button);
+                $('#wcs4-cancel-editing').click(function () {
+                    reset_to_add_mode();
+                })
+            }
         }
+    }
 
-        // Add cancel editing button
-        if ($('#wcs4-cancel-editing').length == 0) {
-            cancel_button = '<span id="wcs4-cancel-editing-wrapper"><a href="#" id="wcs4-cancel-editing">' + WCS4_AJAX_OBJECT.cancel_editing + '</a></span>';
-            $('#wcs4-reset-form').after(cancel_button);
-            $('#wcs4-cancel-editing').click(function () {
-                exit_editing_mode();
-            })
+    /**
+     * Enter copy mode.
+     */
+    var enter_copy_mode = function (entry) {
+        var start_array,
+            end_array,
+            start_hour,
+            start_min,
+            end_hour,
+            end_min,
+            visibility;
+
+        if (entry.hasOwnProperty('subject_id')) {
+            // We got an entry.
+            $('#wcs4_lesson_subject').val(entry.subject_id);
+            $('#wcs4_lesson_teacher').val(entry.teacher_id);
+            $('#wcs4_lesson_student').val(entry.student_id);
+            $('#wcs4_lesson_classroom').val(entry.classroom_id);
+            $('#wcs4_lesson_weekday').val(entry.weekday);
+
+            // Update time fields.
+            start_array = entry.start_hour.split(':');
+            start_hour = start_array[0].replace(/^[0]/g, "");
+            start_min = start_array[1].replace(/^[0]/g, "");
+
+            end_array = entry.end_hour.split(':');
+            end_hour = end_array[0].replace(/^[0]/g, "");
+            end_min = end_array[1].replace(/^[0]/g, "");
+
+            $('#wcs4_lesson_start_time_hours').val(start_hour);
+            $('#wcs4_lesson_start_time_minutes').val(start_min);
+
+            $('#wcs4_lesson_end_time_hours').val(end_hour);
+            $('#wcs4_lesson_end_time_minutes').val(end_min);
+
+            if (entry.visible === '1') {
+                visibility = 'visible';
+            } else {
+                visibility = 'hidden';
+            }
+
+            $('#wcs4_lesson_visibility').val(visibility);
+            $('#wcs4_lesson_notes').val(entry.notes);
+
+            // Let's add the row id and the save button.
+            $('#wcs4-submit-item').attr('value', WCS4_AJAX_OBJECT.add_item);
+
+            /* ------------ Change to copy mode --------- */
+            // Add copying mode message
+            $('#wcs4-schedule-management-form-title').text(WCS4_AJAX_OBJECT.copy_mode)
+            $('#wcs4-reset-form').hide();
+            $('#wcs4-schedule-management-form-wrapper').addClass('is-open');
+
+            // Add cancel copying button
+            if ($('#wcs4-cancel-copying').length == 0) {
+                var cancel_button = '<span id="wcs4-cancel-copying-wrapper"><a href="#" id="wcs4-cancel-copying">' + WCS4_AJAX_OBJECT.cancel_copying + '</a></span>';
+                $('#wcs4-reset-form').after(cancel_button);
+                $('#wcs4-cancel-copying').click(function () {
+                    reset_to_add_mode();
+                })
+            }
         }
     }
 
     /**
      * Exit edit mode.
      */
-    var exit_editing_mode = function () {
+    var reset_to_add_mode = function () {
         $('#wcs4-schedule-management-form-wrapper form')[0].reset()
         $('#wcs4-schedule-management-form-title').text(WCS4_AJAX_OBJECT.add_mode)
         $('#wcs4-row-id').remove();
+        $('#wcs4-cancel-copying-wrapper').remove();
         $('#wcs4-cancel-editing-wrapper').remove();
         $('#wcs4-submit-item').val(WCS4_AJAX_OBJECT.add_item);
         $('#wcs4-reset-form').show();

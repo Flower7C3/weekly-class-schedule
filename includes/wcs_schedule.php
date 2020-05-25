@@ -54,6 +54,11 @@ function wcs4_render_admin_day_table($day)
                                                 <?php echo __('Edit', 'wcs4'); ?>
                                             </a>
                                         </span>
+                                        <span class="copy hide-if-no-js">
+                                            <a href="#" class="wcs4-copy-button wcs4-action-button-day-<?php echo $day; ?>" id="copy-entry-<?php echo $lesson->getId(); ?>">
+                                                <?php echo __('Duplicate', 'wcs4'); ?>
+                                            </a>
+                                        </span>
                                         <span class="delete hide-if-no-js">
                                             <a href="#delete" class="wcs4-delete-button wcs4-action-button-day-<?php echo $day; ?>" id="delete-entry-<?php echo $lesson->getId(); ?>">
                                                 <?php echo __('Delete', 'wcs4'); ?>

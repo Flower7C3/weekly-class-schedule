@@ -3,7 +3,7 @@ Contributors: flower7c3, ty_pwd
 Tags: schedule, weekly, class schedule, subjects, teachers, students, classes, lessons
 Requires at least: 4.0
 Tested up to: 5.4
-Stable tag: 4.01
+Stable tag: 4.02
 License: GPLv2 or later
 
 Generate a weekly schedule of subjects.
@@ -38,6 +38,10 @@ You will find a 'Schedule' menu item as well as 'Classes', 'Teachers', 'Students
 4. List Layout
 
 == Changelog ==
+
+
+= Version 4.02 =
+* Copy lesson
 
 = 4.01 =
 * Hashed post slug
