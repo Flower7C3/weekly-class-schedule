@@ -2,10 +2,10 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Weekly Class Schedule\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-05-25 12:39+0000\n"
-"PO-Revision-Date: 2020-05-25 12:39+0000\n"
+"POT-Creation-Date: 2020-05-25 14:19+0000\n"
+"PO-Revision-Date: 2020-05-25 14:21+0000\n"
 "Last-Translator: Bartłomiej Kwiatek\n"
-"Language-Team: Polski\n"
+"Language-Team: \n"
 "Language: pl_PL\n"
 "Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10 >= 2 && n%10<=4 "
 "&&(n%100<10||n%100 >= 20)? 1 : 2);\n"
@@ -220,7 +220,7 @@ msgctxt "help title"
 msgid "Using shortcode"
 msgstr "Używanie shortcode"
 
-#: wcs.php:325 includes/wcs_admin.php:153
+#: wcs.php:325 includes/wcs_admin.php:155
 msgctxt "help title"
 msgid "Placeholders"
 msgstr "Symbole zastępcze"
@@ -238,28 +238,28 @@ msgstr "Start"
 msgid "End"
 msgstr "Koniec"
 
-#: includes/wcs_schedule.php:27 includes/wcs_schedule.php:66
-#: includes/wcs_admin.php:68 includes/wcs_ajax.php:75
+#: includes/wcs_schedule.php:27 includes/wcs_schedule.php:71
+#: includes/wcs_admin.php:70 includes/wcs_ajax.php:75
 msgid "Subject"
 msgstr "Przedmiot"
 
-#: includes/wcs_schedule.php:30 includes/wcs_schedule.php:69
-#: includes/wcs_admin.php:72 includes/wcs_ajax.php:76
+#: includes/wcs_schedule.php:30 includes/wcs_schedule.php:74
+#: includes/wcs_admin.php:74 includes/wcs_ajax.php:76
 msgid "Teacher"
 msgstr "Pedagog"
 
-#: includes/wcs_schedule.php:33 includes/wcs_schedule.php:72
-#: includes/wcs_admin.php:78 includes/wcs_ajax.php:77
+#: includes/wcs_schedule.php:33 includes/wcs_schedule.php:77
+#: includes/wcs_admin.php:80 includes/wcs_ajax.php:77
 msgid "Student"
 msgstr "Uczeń"
 
-#: includes/wcs_schedule.php:36 includes/wcs_schedule.php:75
-#: includes/wcs_admin.php:82 includes/wcs_ajax.php:78
+#: includes/wcs_schedule.php:36 includes/wcs_schedule.php:80
+#: includes/wcs_admin.php:84 includes/wcs_ajax.php:78
 msgid "Classroom"
 msgstr "Sala"
 
-#: includes/wcs_schedule.php:39 includes/wcs_schedule.php:78
-#: includes/wcs_admin.php:100
+#: includes/wcs_schedule.php:39 includes/wcs_schedule.php:83
+#: includes/wcs_admin.php:102
 msgid "Visibility"
 msgstr "Widoczność"
 
@@ -268,10 +268,14 @@ msgid "Edit"
 msgstr "Edytuj"
 
 #: includes/wcs_schedule.php:59
+msgid "Duplicate"
+msgstr "Kopiuj"
+
+#: includes/wcs_schedule.php:64
 msgid "Delete"
 msgstr "Usuń"
 
-#: includes/wcs_schedule.php:88
+#: includes/wcs_schedule.php:93
 msgid "No lessons"
 msgstr "Brak lekcji"
 
@@ -346,8 +350,8 @@ msgstr "Ukryte"
 msgid "Error"
 msgstr "Błąd"
 
-#: includes/wcs_admin.php:23 includes/wcs_admin.php:58
-#: includes/wcs_admin.php:109
+#: includes/wcs_admin.php:23 includes/wcs_admin.php:60
+#: includes/wcs_admin.php:111
 msgctxt "button text"
 msgid "Add Lesson"
 msgstr "Dodaj lekcję"
@@ -362,53 +366,63 @@ msgctxt "button text"
 msgid "Exit edit lesson mode"
 msgstr "Anuluj"
 
-#: includes/wcs_admin.php:26 includes/wcs_admin.php:65
+#: includes/wcs_admin.php:26
+msgctxt "button text"
+msgid "Exit copy lesson mode"
+msgstr "Anuluj"
+
+#: includes/wcs_admin.php:27 includes/wcs_admin.php:67
 msgctxt "page title"
 msgid "Add New Lesson"
 msgstr "Dodaj nową lekcję"
 
-#: includes/wcs_admin.php:27
+#: includes/wcs_admin.php:28
 msgctxt "page title"
 msgid "Edit Lesson"
 msgstr "Edytuj lekcję"
 
-#: includes/wcs_admin.php:28
+#: includes/wcs_admin.php:29
+msgctxt "page title"
+msgid "Duplicate Lesson"
+msgstr "Kopiuj lekcję"
+
+#: includes/wcs_admin.php:30
 msgctxt "manage schedule"
 msgid "Are you sure you want to delete this entry?"
 msgstr "Czy na pewno chcesz usunąć ten wpis?"
 
-#: includes/wcs_admin.php:29
+#: includes/wcs_admin.php:31
 msgctxt "reset database"
 msgid "Are you sure you want to to this?"
 msgstr "Czy na pewno chcesz to wykonać?"
 
-#: includes/wcs_admin.php:57
+#: includes/wcs_admin.php:59
 msgctxt "manage schedule"
 msgid "Schedule Management"
 msgstr "Zarządzanie planem zajęć"
 
-#: includes/wcs_admin.php:86 includes/wcs_ajax.php:79
+#: includes/wcs_admin.php:88 includes/wcs_ajax.php:79
 msgid "Weekday"
 msgstr "Dzień"
 
-#: includes/wcs_admin.php:91 includes/wcs_ajax.php:80
+#: includes/wcs_admin.php:93 includes/wcs_ajax.php:80
 msgid "Start Hour"
 msgstr "Godzina początkowa"
 
-#: includes/wcs_admin.php:95 includes/wcs_ajax.php:82
+#: includes/wcs_admin.php:97 includes/wcs_ajax.php:82
 msgid "End Hour"
 msgstr "Godzina końcowa"
 
-#: includes/wcs_admin.php:104
+#: includes/wcs_admin.php:106
 msgid "Notes"
 msgstr "Notatka"
 
-#: includes/wcs_admin.php:110
+#: includes/wcs_admin.php:112
 msgctxt "button text"
 msgid "Reset form"
 msgstr "Resetuj formularz"
 
-#: includes/wcs_admin.php:140
+#: includes/wcs_admin.php:142
 #, php-format
 msgctxt "help"
 msgid ""
@@ -418,7 +432,7 @@ msgstr ""
 "Aby wyświetlić wszystkie lekcje w jednym harmonogramie, wystarczy wpisać "
 "krótki kod <code>%1$s</code> na stronie lub w poście."
 
-#: includes/wcs_admin.php:144
+#: includes/wcs_admin.php:146
 #, php-format
 msgctxt "help"
 msgid ""
@@ -428,36 +442,36 @@ msgstr ""
 "Możliwe jest również wyświetlanie harmonogramu jako listy przy użyciu układu "
 "listy: <code>%1$s</code>."
 
-#: includes/wcs_admin.php:145
+#: includes/wcs_admin.php:147
 msgctxt "help"
 msgid "You can also specify layout template."
 msgstr "Możesz także określić szablon układu."
 
-#: includes/wcs_admin.php:146 includes/wcs_admin.php:158
+#: includes/wcs_admin.php:148 includes/wcs_admin.php:160
 msgctxt "help"
 msgid "For example:"
 msgstr "Na przykład:"
 
-#: includes/wcs_admin.php:149
+#: includes/wcs_admin.php:151
 #, php-format
 msgctxt "help"
 msgid "Custom template for table layout: <code>%1$s</code>"
 msgstr "Własny szablon dla widoku tabeli: <code>%1$s</code>"
 
-#: includes/wcs_admin.php:150
+#: includes/wcs_admin.php:152
 #, php-format
 msgctxt "help"
 msgid "Custom template for list layout: <code>%1$s</code>"
 msgstr "Własny szablon dla widoku listy: <code>%1$s</code>"
 
-#: includes/wcs_admin.php:153
+#: includes/wcs_admin.php:155
 #, php-format
 msgctxt "help"
 msgid "See available <code>%1$s</code> in <strong>%2$s</strong> tab."
 msgstr ""
 "Zobcz co możez wstawić za <code>%1$s</code> w zakładce <strong>%2$s</strong>."
 
-#: includes/wcs_admin.php:157
+#: includes/wcs_admin.php:159
 msgctxt "help"
 msgid ""
 "In order to filter a schedule by a specific subject, teacher, student, "
@@ -468,43 +482,43 @@ msgstr ""
 "ucznia, lokalizacji lub dowolnej innej kombinacji tych czterech elementów, "
 "użyj atrybutów przedmiotu, nauczyciela i sali."
 
-#: includes/wcs_admin.php:161
+#: includes/wcs_admin.php:163
 #, php-format
 msgctxt "help"
 msgid "Only display lessons of \"%2$s\" subject: <code>%1$s</code>"
 msgstr "Pokaż tylko lekcje w temacie \"%2$s\": <code>%1$s</code>"
 
-#: includes/wcs_admin.php:162
+#: includes/wcs_admin.php:164
 #, php-format
 msgctxt "help"
 msgid "Only display lessons by \"%2$s\" teacher: <code>%1$s</code>"
 msgstr "Pokaż tylko lekcje prowadzone przez \"%2$s\": <code>%1$s</code>"
 
-#: includes/wcs_admin.php:163
+#: includes/wcs_admin.php:165
 #, php-format
 msgctxt "help"
 msgid "Only display lessons for \"%2$s\" student: <code>%1$s</code>"
 msgstr "Pokaż tylko lekcje dla \"%2$s\": <code>%1$s</code>"
 
-#: includes/wcs_admin.php:164
+#: includes/wcs_admin.php:166
 #, php-format
 msgctxt "help"
 msgid "Only display lessons in \"%2$s\" classroom: <code>%1$s</code>"
 msgstr "Pokaż tylko lekcje prowadzone w \"%2$s\": <code>%1$s</code>"
 
-#: includes/wcs_admin.php:168
+#: includes/wcs_admin.php:170
 #, php-format
 msgctxt "help"
 msgid "A finalized shortcode may look something like <code>%1$s</code>"
 msgstr ""
 "Sfinalizowany shortcode może wyglądać mniej więcej tak <code>%1$s</code>"
 
-#: includes/wcs_admin.php:177
+#: includes/wcs_admin.php:179
 msgctxt "help"
 msgid "Certain HTML tags are allowed in template design:"
 msgstr "W ustawieniach szablonu tylko niektóre tagi HTML są dozwolone:"
 
-#: includes/wcs_admin.php:192
+#: includes/wcs_admin.php:194
 msgctxt "help"
 msgid ""
 "Use placeholders to design the way the class details appear in the schedule."
@@ -512,79 +526,79 @@ msgstr ""
 "Użyj symboli zastępczych, aby zaprojektować sposób wyświetlania szczegółów "
 "zajęć w harmonogramie."
 
-#: includes/wcs_admin.php:193
+#: includes/wcs_admin.php:195
 msgctxt "help"
 msgid "Available placeholders:"
 msgstr "Dostępne symbole zastępcze:"
 
-#: includes/wcs_admin.php:197
+#: includes/wcs_admin.php:199
 #, php-format
 msgctxt "help"
 msgid "Will display general info: <code>%1$s</code>"
 msgstr "Pokaże główne informacje: <code>%1$s</code>"
 
-#: includes/wcs_admin.php:200
+#: includes/wcs_admin.php:202
 #, php-format
 msgctxt "help"
 msgid "Will display full name: <code>%1$s</code>"
 msgstr "Pokaże pełną nazwę: <code>%1$s</code>"
 
-#: includes/wcs_admin.php:203
+#: includes/wcs_admin.php:205
 #, php-format
 msgctxt "help"
 msgid "Will display full name as link to page: <code>%1$s</code>"
 msgstr "Pokaże pełną nazwę jako link do strony: <code>%1$s</code>"
 
-#: includes/wcs_admin.php:206
+#: includes/wcs_admin.php:208
 #, php-format
 msgctxt "help"
 msgid "Will display full name with description in qTip: <code>%1$s</code>"
 msgstr "Pokaże pełną nazwę z opisem w okienku qTip: <code>%1$s</code>"
 
-#: includes/wcs_admin.php:209
+#: includes/wcs_admin.php:211
 #, php-format
 msgctxt "help"
 msgid "Will display short name (initials): <code>%1$s</code>"
 msgstr "Pokaże krótką nazwę (inicjały): <code>%1$s</code>"
 
-#: includes/wcs_admin.php:212
+#: includes/wcs_admin.php:214
 #, php-format
 msgctxt "help"
 msgid "Will display short name as link to page: <code>%1$s</code>"
 msgstr "Pokaże krótką nazwę jako link do strony: <code>%1$s</code>"
 
-#: includes/wcs_admin.php:216
+#: includes/wcs_admin.php:218
 msgctxt "help"
 msgid "If item is private, full name will be replaced to short name."
 msgstr ""
 "Jeśli wpis jest prywatny, pełna nazwa zostanie zastąpiona krótką nazwą."
 
-#: includes/wcs_admin.php:240
+#: includes/wcs_admin.php:242
 msgctxt "manage schedule"
 msgid "select option"
 msgstr "wybierz opcję"
 
-#: includes/wcs_admin.php:260
+#: includes/wcs_admin.php:262
 msgctxt "Schedule layout as none"
 msgid "Do not display"
 msgstr "Nie wyświetlaj"
 
-#: includes/wcs_admin.php:260
+#: includes/wcs_admin.php:262
 msgctxt "Schedule layout as table"
 msgid "Table"
 msgstr "Tabela"
 
-#: includes/wcs_admin.php:260
+#: includes/wcs_admin.php:262
 msgctxt "Schedule layout as list"
 msgid "List"
 msgstr "Lista"
 
-#: includes/wcs_admin.php:294
+#: includes/wcs_admin.php:296
 msgctxt "visibility"
 msgid "Hidden"
 msgstr "Ukryte"
 
-#: includes/wcs_admin.php:295
+#: includes/wcs_admin.php:297
 msgctxt "visibility"
 msgid "Visible"
 msgstr "Widoczne"
