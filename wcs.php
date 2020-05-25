@@ -25,7 +25,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-define('WCS4_VERSION', '4.0');
+define('WCS4_VERSION', '4.03');
 
 define('WCS4_REQUIRED_WP_VERSION', '4.0');
 

@@ -39,6 +39,8 @@ You will find a 'Schedule' menu item as well as 'Classes', 'Teachers', 'Students
 
 == Changelog ==
 
+= Version 4.03 =
+* Cleanup JS code
 
 = Version 4.02 =
 * Copy lesson

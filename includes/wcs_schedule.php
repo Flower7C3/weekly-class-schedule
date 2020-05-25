@@ -50,17 +50,17 @@ function wcs4_render_admin_day_table($day)
                                 <?php if (current_user_can(WCS4_SCHEDULE_MANAGE_CAPABILITY)) { ?>
                                     <div class="row-actions">
                                         <span class="edit hide-if-no-js">
-                                            <a href="#" class="wcs4-edit-button wcs4-action-button-day-<?php echo $day; ?>" id="edit-entry-<?php echo $lesson->getId(); ?>">
+                                            <a href="#" class="wcs4-edit-button wcs4-action-button-day-<?php echo $day; ?>" id="wcs4-edit-button-<?php echo $lesson->getId(); ?>" data-lesson-id="<?php echo $lesson->getId(); ?>">
                                                 <?php echo __('Edit', 'wcs4'); ?>
                                             </a>
                                         </span>
                                         <span class="copy hide-if-no-js">
-                                            <a href="#" class="wcs4-copy-button wcs4-action-button-day-<?php echo $day; ?>" id="copy-entry-<?php echo $lesson->getId(); ?>">
+                                            <a href="#" class="wcs4-copy-button wcs4-action-button-day-<?php echo $day; ?>" id="wcs4-copy-button-<?php echo $lesson->getId(); ?>" data-lesson-id="<?php echo $lesson->getId(); ?>">
                                                 <?php echo __('Duplicate', 'wcs4'); ?>
                                             </a>
                                         </span>
                                         <span class="delete hide-if-no-js">
-                                            <a href="#delete" class="wcs4-delete-button wcs4-action-button-day-<?php echo $day; ?>" id="delete-entry-<?php echo $lesson->getId(); ?>">
+                                            <a href="#delete" class="wcs4-delete-button wcs4-action-button-day-<?php echo $day; ?>" id=wcs4-delete-<?php echo $lesson->getId(); ?>" data-lesson-id="<?php echo $lesson->getId(); ?>">
                                                 <?php echo __('Delete', 'wcs4'); ?>
                                             </a>
                                         </span>

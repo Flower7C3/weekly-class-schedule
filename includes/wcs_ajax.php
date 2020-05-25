@@ -388,7 +388,7 @@ add_action('wp_ajax_delete_schedule_entry', static function () {
 /**
  * Schedule entry edit handler.
  */
-add_action('wp_ajax_edit_schedule_entry', static function () {
+add_action('wp_ajax_get_lesson', static function () {
     $response = __('You are no allowed to run this action', 'wcs4');
     if (current_user_can(WCS4_SCHEDULE_MANAGE_CAPABILITY)) {
         wcs4_verify_nonce();

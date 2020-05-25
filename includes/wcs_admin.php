@@ -8,7 +8,7 @@
  * Register styles and scripts.
  */
 add_action('admin_enqueue_scripts', static function () {
-    wp_register_style('wcs4_admin_css', WCS4_PLUGIN_URL . '/css/wcs_admin.css', false, '1.0.0');
+    wp_register_style('wcs4_admin_css', WCS4_PLUGIN_URL . '/css/wcs_admin.css', false, WCS4_VERSION);
     wp_enqueue_style('wcs4_admin_css');
 });
 
@@ -16,7 +16,7 @@ add_action('admin_enqueue_scripts', static function () {
  * Load admin area scripts.
  */
 add_action('admin_enqueue_scripts', static function () {
-    wp_register_script('wcs4_admin_js', WCS4_PLUGIN_URL . '/js/wcs_admin.js', array('jquery'), '1.0.0');
+    wp_register_script('wcs4_admin_js', WCS4_PLUGIN_URL . '/js/wcs_admin.js', array('jquery'), WCS4_VERSION);
     wp_enqueue_script('wcs4_admin_js');
     wp_localize_script('wcs4_admin_js', 'WCS4_AJAX_OBJECT', array(
         'ajax_error' => __('Error', 'wcs4'),
