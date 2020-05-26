@@ -280,7 +280,7 @@ function wcs4_generate_hour_select_list($name = '', $default = array('hour' => N
     }
     $minutes = wcs4_select_list($minutes_arr, $name . '_minutes', $name . '_minutes', $default['minute'], $required);
 
-    return $hours . $minutes;
+    return $hours . ':' . $minutes;
 }
 
 /**

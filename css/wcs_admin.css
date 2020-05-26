@@ -52,13 +52,12 @@
 }
 
 #wcs4-schedule-management-form-wrapper #wcs4-schedule-management-form .form-2-columns .form-field.form-time-field select {
-    width: 44%;
+    width: 56px;
     display: inline-block;
 }
 
 @media screen and (max-width: 782px) {
     #wcs4-schedule-management-form-wrapper #wcs4-schedule-management-form .form-2-columns .form-field.form-time-field select {
-        width: 50%;
         margin-right: -1px;
     }
 }

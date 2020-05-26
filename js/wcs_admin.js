@@ -96,16 +96,9 @@
     var wcs4_bind_schedule_delete_handler = function () {
         $(document).on('click.wcs4-delete-button', '.wcs4-delete-button', function (e) {
             var row_id,
-                src,
                 entry,
                 confirm = true;
-
-            if (typeof (e.target) != 'undefined') {
-                src = e.target;
-            } else {
-                src = e.srcElement;
-            }
-            row_id = $('#' + src_elem.id).attr('data-lesson-id');
+            row_id = $(this).attr('data-lesson-id');
 
             // Confirm delete operation.
             confirm = window.confirm(WCS4_AJAX_OBJECT.delete_warning);
@@ -152,7 +145,7 @@
      */
     var wcs4_bind_schedule_edit_handler = function () {
         $(document).on('click.wcs4-edit-button', '.wcs4-edit-button', function (e) {
-            fetch_entry_data_to_form(e, enter_edit_mode);
+            fetch_entry_data_to_form($(this).attr('data-lesson-id'), enter_edit_mode);
         });
     }
 
@@ -161,7 +154,7 @@
      */
     var wcs4_bind_schedule_copy_handler = function () {
         $(document).on('click.wcs4-copy-button', '.wcs4-copy-button', function (e) {
-            fetch_entry_data_to_form(e, enter_copy_mode)
+            fetch_entry_data_to_form($(this).attr('data-lesson-id'), enter_copy_mode)
         });
     }
 
@@ -201,16 +194,8 @@
     /**
      * Fetch entry data for form
      */
-    var fetch_entry_data_to_form = function (e, callback) {
-        var src_elem,
-            row_id,
-            get_lesson_query;
-        if (typeof (e.target) != 'undefined') {
-            src_elem = e.target;
-        } else {
-            src_elem = e.srcElement;
-        }
-        row_id = $('#' + src_elem.id).attr('data-lesson-id');
+    var fetch_entry_data_to_form = function (row_id, callback) {
+        var get_lesson_query;
         get_lesson_query = {
             action: 'get_lesson',
             security: WCS4_AJAX_OBJECT.ajax_nonce,
