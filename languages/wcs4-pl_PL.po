@@ -2,18 +2,18 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Weekly Class Schedule\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-05-25 14:19+0000\n"
-"PO-Revision-Date: 2020-05-25 14:21+0000\n"
+"POT-Creation-Date: 2020-06-02 06:58+0000\n"
+"PO-Revision-Date: 2020-06-02 06:59+0000\n"
 "Last-Translator: Bartłomiej Kwiatek\n"
-"Language-Team: \n"
-"Language: pl_PL\n"
+"Language-Team: Polski\n"
+"Language: pl-PL\n"
 "Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10 >= 2 && n%10<=4 "
 "&&(n%100<10||n%100 >= 20)? 1 : 2);\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Loco https://localise.biz/\n"
-"X-Loco-Version: 2.3.4; wp-5.4.1"
+"X-Loco-Version: 2.4.0; wp-5.4.1"
 
 #: wcs.php:124
 msgctxt "Post Type General Name"
@@ -27,8 +27,8 @@ msgstr "Przedmiot"
 
 #: wcs.php:126
 msgctxt "menu"
-msgid "Subject"
-msgstr "Przedmiot"
+msgid "Subjects"
+msgstr "Przedmioty"
 
 #: wcs.php:127
 msgctxt "page title"
@@ -59,173 +59,173 @@ msgstr "Edytuj przedmiot"
 msgid "Search Subject"
 msgstr "Szukaj przedmiotu"
 
-#: wcs.php:133 wcs.php:166 wcs.php:193 wcs.php:220
+#: wcs.php:133 wcs.php:172 wcs.php:211 wcs.php:250
 msgid "Not Found"
 msgstr "Nie znaleziono"
 
-#: wcs.php:134 wcs.php:167 wcs.php:194 wcs.php:221
+#: wcs.php:134 wcs.php:173 wcs.php:212 wcs.php:251
 msgid "Not found in Trash"
 msgstr "Nie znaleziono w Koszu"
 
-#: wcs.php:157
+#: wcs.php:163
 msgctxt "Post Type General Name"
 msgid "Teachers"
 msgstr "Pedagodzy"
 
-#: wcs.php:158
+#: wcs.php:164
 msgctxt "Post Type Singular Name"
 msgid "Teacher"
 msgstr "Pedagog"
 
-#: wcs.php:159
+#: wcs.php:165
 msgctxt "menu"
-msgid "Teacher"
-msgstr "Pedagog"
+msgid "Teachers"
+msgstr "Pedagodzy"
 
-#: wcs.php:160
+#: wcs.php:166
 msgctxt "page title"
 msgid "All Teachers"
 msgstr "Wszyscy pedagodzy"
 
-#: wcs.php:161
+#: wcs.php:167
 msgctxt "page title"
 msgid "View Teacher"
 msgstr "Zobacz pedagoga"
 
-#: wcs.php:162
+#: wcs.php:168
 msgctxt "page title"
 msgid "Add New Teacher"
 msgstr "Dodaj nowego pedagoga"
 
-#: wcs.php:163
+#: wcs.php:169
 msgctxt "menu"
 msgid "Add New Teacher"
 msgstr "Dodaj nowego"
 
-#: wcs.php:164
+#: wcs.php:170
 msgctxt "page title"
 msgid "Edit Teacher"
 msgstr "Edytuj pedagoga"
 
-#: wcs.php:165
+#: wcs.php:171
 msgid "Search Teacher"
 msgstr "Szukaj nauczyciela"
 
-#: wcs.php:184
+#: wcs.php:202
 msgctxt "Post Type General Name"
 msgid "Students"
 msgstr "Uczniowie"
 
-#: wcs.php:185
+#: wcs.php:203
 msgctxt "Post Type Singular Name"
 msgid "Student"
 msgstr "Uczeń"
 
-#: wcs.php:186
+#: wcs.php:204
 msgctxt "menu"
-msgid "Student"
-msgstr "Uczeń"
+msgid "Students"
+msgstr "Uczniowie"
 
-#: wcs.php:187
+#: wcs.php:205
 msgctxt "page title"
 msgid "All Students"
 msgstr "Wszyscy uczniowie"
 
-#: wcs.php:188
+#: wcs.php:206
 msgctxt "page title"
 msgid "View Student"
 msgstr "Zobacz ucznia"
 
-#: wcs.php:189
+#: wcs.php:207
 msgctxt "page title"
 msgid "Add New Student"
 msgstr "Dodaj nowego ucznia"
 
-#: wcs.php:190
+#: wcs.php:208
 msgctxt "menu"
 msgid "Add New Student"
 msgstr "Dodaj nowego"
 
-#: wcs.php:191
+#: wcs.php:209
 msgctxt "page title"
 msgid "Edit Student"
 msgstr "Edytuj ucznia"
 
-#: wcs.php:192
+#: wcs.php:210
 msgid "Search Student"
 msgstr "Szukaj ucznia"
 
-#: wcs.php:211
+#: wcs.php:241
 msgctxt "Post Type General Name"
 msgid "Classrooms"
 msgstr "Lokalizacje"
 
-#: wcs.php:212
+#: wcs.php:242
 msgctxt "Post Type Singular Name"
 msgid "Classroom"
 msgstr "Sala"
 
-#: wcs.php:213
+#: wcs.php:243
 msgctxt "menu"
-msgid "Classroom"
-msgstr "Sala"
+msgid "Classrooms"
+msgstr "Sale"
 
-#: wcs.php:214
+#: wcs.php:244
 msgctxt "page title"
 msgid "All Classrooms"
 msgstr "Wszystkie sale"
 
-#: wcs.php:215
+#: wcs.php:245
 msgctxt "page title"
 msgid "View Classroom"
 msgstr "Zobacz salę"
 
-#: wcs.php:216
+#: wcs.php:246
 msgctxt "page title"
 msgid "Add New Classroom"
 msgstr "Dodaj nową salę"
 
-#: wcs.php:217
+#: wcs.php:247
 msgctxt "menu"
 msgid "Add New Classroom"
 msgstr "Dodaj nową"
 
-#: wcs.php:218
+#: wcs.php:248
 msgctxt "page title"
 msgid "Edit Classroom"
 msgstr "Edytuj salę"
 
-#: wcs.php:219
+#: wcs.php:249
 msgid "Search Classroom"
 msgstr "Szukaj sali"
 
-#: wcs.php:296
+#: wcs.php:338
 msgid "Schedule Management"
 msgstr "Zarządzanie planem zajęć"
 
-#: wcs.php:297
+#: wcs.php:339
 msgid "Schedule"
 msgstr "Plan zajęć"
 
-#: wcs.php:304 wcs.php:305
+#: wcs.php:346 wcs.php:347
 msgid "Standard Options"
 msgstr "Konfiguracja"
 
-#: wcs.php:311 wcs.php:312
+#: wcs.php:353 wcs.php:354
 msgid "Advanced Options"
 msgstr "Ustawienia zaawansowane"
 
-#: wcs.php:320
+#: wcs.php:362
 msgctxt "help title"
 msgid "Using shortcode"
 msgstr "Używanie shortcode"
 
-#: wcs.php:325 includes/wcs_admin.php:155
+#: wcs.php:367 includes/wcs_admin.php:155
 msgctxt "help title"
 msgid "Placeholders"
 msgstr "Symbole zastępcze"
 
-#: wcs.php:330
+#: wcs.php:372
 msgctxt "help title"
 msgid "HTML tags in template"
 msgstr "Tagi HTML w szablonie"
@@ -238,27 +238,27 @@ msgstr "Start"
 msgid "End"
 msgstr "Koniec"
 
-#: includes/wcs_schedule.php:27 includes/wcs_schedule.php:71
+#: includes/wcs_schedule.php:27 includes/wcs_schedule.php:71 
 #: includes/wcs_admin.php:70 includes/wcs_ajax.php:75
 msgid "Subject"
 msgstr "Przedmiot"
 
-#: includes/wcs_schedule.php:30 includes/wcs_schedule.php:74
+#: includes/wcs_schedule.php:30 includes/wcs_schedule.php:74 
 #: includes/wcs_admin.php:74 includes/wcs_ajax.php:76
 msgid "Teacher"
 msgstr "Pedagog"
 
-#: includes/wcs_schedule.php:33 includes/wcs_schedule.php:77
+#: includes/wcs_schedule.php:33 includes/wcs_schedule.php:77 
 #: includes/wcs_admin.php:80 includes/wcs_ajax.php:77
 msgid "Student"
 msgstr "Uczeń"
 
-#: includes/wcs_schedule.php:36 includes/wcs_schedule.php:80
+#: includes/wcs_schedule.php:36 includes/wcs_schedule.php:80 
 #: includes/wcs_admin.php:84 includes/wcs_ajax.php:78
 msgid "Classroom"
 msgstr "Sala"
 
-#: includes/wcs_schedule.php:39 includes/wcs_schedule.php:83
+#: includes/wcs_schedule.php:39 includes/wcs_schedule.php:83 
 #: includes/wcs_admin.php:102
 msgid "Visibility"
 msgstr "Widoczność"
@@ -279,7 +279,7 @@ msgstr "Usuń"
 msgid "No lessons"
 msgstr "Brak lekcji"
 
-#. Base ID
+#. # Base ID
 #: includes/wcs_widgets.php:19
 msgctxt "widget settings"
 msgid "WCS Today's Classes"
@@ -350,7 +350,7 @@ msgstr "Ukryte"
 msgid "Error"
 msgstr "Błąd"
 
-#: includes/wcs_admin.php:23 includes/wcs_admin.php:60
+#: includes/wcs_admin.php:23 includes/wcs_admin.php:60 
 #: includes/wcs_admin.php:111
 msgctxt "button text"
 msgid "Add Lesson"
@@ -1011,10 +1011,11 @@ msgctxt "validation"
 msgid "Field \"%s\" is required"
 msgstr "Pole \"%s\" jest wymagane"
 
-#: includes/wcs_ajax.php:55 includes/wcs_ajax.php:349 includes/wcs_ajax.php:392
-#: includes/wcs_ajax.php:435 includes/wcs_ajax.php:455
-#: includes/wcs_ajax.php:474 includes/wcs_ajax.php:493
-#: includes/wcs_ajax.php:512 includes/wcs_ajax.php:532
+#: includes/wcs_ajax.php:55 includes/wcs_ajax.php:349 
+#: includes/wcs_ajax.php:392 includes/wcs_ajax.php:435 
+#: includes/wcs_ajax.php:455 includes/wcs_ajax.php:474 
+#: includes/wcs_ajax.php:493 includes/wcs_ajax.php:512 
+#: includes/wcs_ajax.php:532
 msgid "You are no allowed to run this action"
 msgstr "Nie masz uprawnień do wykonania tej akcji"
 

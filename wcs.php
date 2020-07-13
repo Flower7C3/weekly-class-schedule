@@ -123,7 +123,7 @@ add_action('init', static function () {
             'labels' => array(
                 'name' => _x('Subjects', 'Post Type General Name', 'wcs4'),
                 'singular_name' => _x('Subject', 'Post Type Singular Name', 'wcs4'),
-                'menu_name' => _x('Subject', 'menu', 'wcs4'),
+                'menu_name' => _x('Subjects', 'menu', 'wcs4'),
                 'all_items' => _x('All Subjects', 'page title', 'wcs4'),
                 'view_item' => _x('View Subject', 'page title', 'wcs4'),
                 'add_new_item' => _x('Add New Subject', 'page title', 'wcs4'),
@@ -146,6 +146,11 @@ add_action('init', static function () {
                 'feeds' => false,
                 'pages' => true,
             ),
+            'supports' => array(
+                'title', 'editor',
+                'thumbnail',
+                'author',
+            ),
             'menu_icon' => 'dashicons-welcome-learn-more',
         )
     );
@@ -156,7 +161,7 @@ add_action('init', static function () {
             'labels' => array(
                 'name' => _x('Teachers', 'Post Type General Name', 'wcs4'),
                 'singular_name' => _x('Teacher', 'Post Type Singular Name', 'wcs4'),
-                'menu_name' => _x('Teacher', 'menu', 'wcs4'),
+                'menu_name' => _x('Teachers', 'menu', 'wcs4'),
                 'all_items' => _x('All Teachers', 'page title', 'wcs4'),
                 'view_item' => _x('View Teacher', 'page title', 'wcs4'),
                 'add_new_item' => _x('Add New Teacher', 'page title', 'wcs4'),
@@ -166,12 +171,23 @@ add_action('init', static function () {
                 'not_found' => __('Not Found', 'wcs4'),
                 'not_found_in_trash' => __('Not found in Trash', 'wcs4'),
             ),
+            'hierarchical' => true,
+            'show_ui' => true,
             'public' => true,
+            'publicly_queryable' => true,
             'exclude_from_search' => $wcs4_settings['teacher_archive_slug'] ? true : false,
             'show_in_nav_menus' => $wcs4_settings['teacher_item_slug'] ? true : false,
             'has_archive' => $wcs4_settings['teacher_archive_slug'] ?: false,
             'rewrite' => array(
                 'slug' => $wcs4_settings['teacher_item_slug'] ?: false,
+                'with_front' => true,
+                'feeds' => false,
+                'pages' => true,
+            ),
+            'supports' => array(
+                'title', 'editor',
+                'thumbnail',
+                'author',
             ),
             'menu_icon' => 'dashicons-businessperson',
         )
@@ -183,7 +199,7 @@ add_action('init', static function () {
             'labels' => array(
                 'name' => _x('Students', 'Post Type General Name', 'wcs4'),
                 'singular_name' => _x('Student', 'Post Type Singular Name', 'wcs4'),
-                'menu_name' => _x('Student', 'menu', 'wcs4'),
+                'menu_name' => _x('Students', 'menu', 'wcs4'),
                 'all_items' => _x('All Students', 'page title', 'wcs4'),
                 'view_item' => _x('View Student', 'page title', 'wcs4'),
                 'add_new_item' => _x('Add New Student', 'page title', 'wcs4'),
@@ -193,12 +209,23 @@ add_action('init', static function () {
                 'not_found' => __('Not Found', 'wcs4'),
                 'not_found_in_trash' => __('Not found in Trash', 'wcs4'),
             ),
+            'hierarchical' => true,
+            'show_ui' => true,
             'public' => true,
+            'publicly_queryable' => true,
             'exclude_from_search' => $wcs4_settings['student_archive_slug'] ? true : false,
             'show_in_nav_menus' => $wcs4_settings['student_item_slug'] ? true : false,
             'has_archive' => $wcs4_settings['student_archive_slug'] ?: false,
             'rewrite' => array(
                 'slug' => $wcs4_settings['student_item_slug'] ?: false,
+                'with_front' => true,
+                'feeds' => false,
+                'pages' => true,
+            ),
+            'supports' => array(
+                'title', 'editor',
+                'thumbnail',
+                'author',
             ),
             'menu_icon' => 'dashicons-groups',
         )
@@ -210,7 +237,7 @@ add_action('init', static function () {
             'labels' => array(
                 'name' => _x('Classrooms', 'Post Type General Name', 'wcs4'),
                 'singular_name' => _x('Classroom', 'Post Type Singular Name', 'wcs4'),
-                'menu_name' => _x('Classroom', 'menu', 'wcs4'),
+                'menu_name' => _x('Classrooms', 'menu', 'wcs4'),
                 'all_items' => _x('All Classrooms', 'page title', 'wcs4'),
                 'view_item' => _x('View Classroom', 'page title', 'wcs4'),
                 'add_new_item' => _x('Add New Classroom', 'page title', 'wcs4'),
@@ -220,12 +247,23 @@ add_action('init', static function () {
                 'not_found' => __('Not Found', 'wcs4'),
                 'not_found_in_trash' => __('Not found in Trash', 'wcs4'),
             ),
+            'hierarchical' => true,
+            'show_ui' => true,
             'public' => true,
+            'publicly_queryable' => true,
             'exclude_from_search' => $wcs4_settings['classroom_archive_slug'] ? true : false,
             'show_in_nav_menus' => $wcs4_settings['classroom_item_slug'] ? true : false,
             'has_archive' => $wcs4_settings['classroom_archive_slug'] ?: false,
             'rewrite' => array(
                 'slug' => $wcs4_settings['classroom_item_slug'] ?: false,
+                'with_front' => true,
+                'feeds' => false,
+                'pages' => true,
+            ),
+            'supports' => array(
+                'title', 'editor',
+                'thumbnail',
+                'author',
             ),
             'menu_icon' => 'dashicons-building',
         )

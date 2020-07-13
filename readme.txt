@@ -39,6 +39,9 @@ You will find a 'Schedule' menu item as well as 'Classes', 'Teachers', 'Students
 
 == Changelog ==
 
+= Version 4.04 =
+* Unify register_post_type settings
+
 = Version 4.03 =
 * Cleanup JS code
 
