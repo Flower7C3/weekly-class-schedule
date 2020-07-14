@@ -19,7 +19,7 @@
  */
 function wcs4_render_admin_day_table($classroom = null, $teacher = 'all', $student = 'all', $subject = 'all', $weekday = null)
 {
-    $lessons = wcs4_get_lessons($classroom, $teacher, $student, $subject, $weekday);
+    $lessons = wcs4_get_lessons($classroom, $teacher, $student, $subject, $weekday, null, null);
     ob_start();
     ?>
     <div class="wcs4-day-content-wrapper">
@@ -53,7 +53,7 @@ function wcs4_render_admin_day_table($classroom = null, $teacher = 'all', $stude
                     <?php
                     /** @var WCS4_Lesson $lesson */
                     foreach ($lessons as $lesson) { ?>
-                        <tr id="lesson-<?php echo $lesson->getId(); ?>">
+                        <tr id="lesson-<?php echo $lesson->getId(); ?>" class="<?php if ($lesson->isVisible()) { ?>active<?php } else { ?>inactive<?php } ?>">
                             <td class="start_end_hour column-start_end_hour column-primary<?php if (current_user_can(WCS4_SCHEDULE_MANAGE_CAPABILITY)) { ?> has-row-actions<?php } ?>">
                                 <?php echo $lesson->getStartHour(); ?> – <?php echo $lesson->getEndHour(); ?>
                                 <?php if (current_user_can(WCS4_SCHEDULE_MANAGE_CAPABILITY)) { ?>

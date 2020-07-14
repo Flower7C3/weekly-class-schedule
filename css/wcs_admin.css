@@ -163,3 +163,7 @@
     content: "/{slug}";
     right: 16px;
 }
+
+.inactive {
+    font-style: italic;
+}
