@@ -286,6 +286,7 @@ add_filter('the_content', static function ($content) {
         $wcs4_settings = wcs4_load_settings();
         $layout = $wcs4_settings[$post_type_key . '_schedule_layout'];
         if ('none' !== $layout && NULL !== $layout) {
+            $content .= '<h3>' . __('Schedule', 'wcs4') . '</h3>';
             $template_table_short = $wcs4_settings[$post_type_key . '_schedule_template_table_short'];
             $template_table_details = $wcs4_settings[$post_type_key . '_schedule_template_table_details'];
             $template_list = $wcs4_settings[$post_type_key . '_schedule_template_list'];
