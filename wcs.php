@@ -25,7 +25,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-define('WCS4_VERSION', '4.07');
+define('WCS4_VERSION', '4.08');
 
 define('WCS4_REQUIRED_WP_VERSION', '4.0');
 
@@ -281,26 +281,48 @@ add_action('init', static function () {
 add_filter('the_content', static function ($content) {
     $post_type = get_post_type();
     if (is_single() && in_array($post_type, WCS4_POST_TYPES_WHITELIST, true)) {
-        $postId = get_the_id();
+        $post_id = get_the_id();
         $post_type_key = str_replace('wcs4_', '', $post_type);
         $wcs4_settings = wcs4_load_settings();
         $layout = $wcs4_settings[$post_type_key . '_schedule_layout'];
         if ('none' !== $layout && NULL !== $layout) {
             $content .= '<h3>' . __('Schedule', 'wcs4') . '</h3>';
+            $calendar_download = $wcs4_settings[$post_type_key . '_download_icalendar'];
             $template_table_short = $wcs4_settings[$post_type_key . '_schedule_template_table_short'];
             $template_table_details = $wcs4_settings[$post_type_key . '_schedule_template_table_details'];
             $template_list = $wcs4_settings[$post_type_key . '_schedule_template_list'];
             $params = [];
-            $params[] = '' . $post_type_key . '="#' . $postId . '"';
+            $params[] = '' . $post_type_key . '="#' . $post_id . '"';
             $params[] = 'layout="' . $layout . '"';
             $params[] = 'template_table_short="' . $template_table_short . '"';
             $params[] = 'template_table_details="' . $template_table_details . '"';
             $params[] = 'template_list="' . $template_list . '"';
             $content .= '[wcs  ' . implode(' ', $params) . ']';
+            if ('yes' === $calendar_download) {
+                $content .= '<a href="?format=ical">' . __('Download iCal', 'wcs4') . '</a>';
+            }
         }
     }
     return $content;
 });
+/**
+ * Custom ICS page
+ */
+add_filter('single_template', static function ($single) {
+    global $post;
+    $post_type = $post->post_type;
+    $post_type_key = str_replace('wcs4_', '', $post_type);
+    $wcs4_settings = wcs4_load_settings();
+    $calendar_download = $wcs4_settings[$post_type_key . '_download_icalendar'];
+    if (isset($post_type, $_GET['format']) && in_array($post_type, WCS4_POST_TYPES_WHITELIST, true) && 'ical' === $_GET['format'] && 'yes' === $calendar_download) {
+        $template_file = WCS4_PLUGIN_DIR . '/templates/calendar.php';
+        if (file_exists($template_file)) {
+            return $template_file;
+        }
+    }
+    return $single;
+});
+
 
 /**
  * Order custom types by title

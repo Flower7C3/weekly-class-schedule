@@ -39,6 +39,7 @@ function wcs4_standard_options_page_callback()
                 'color_links' => 'wcs4_validate_color',
                 'subject_archive_slug' => 'wcs4_validate_html',
                 'subject_item_slug' => 'wcs4_validate_html',
+                'subject_download_icalendar' => 'wcs4_validate_yes_no',
                 'subject_hashed_slug' => 'wcs4_validate_yes_no',
                 'subject_schedule_layout' => 'wcs4_validate_html',
                 'subject_schedule_template_table_short' => 'wcs4_validate_html',
@@ -46,6 +47,7 @@ function wcs4_standard_options_page_callback()
                 'subject_schedule_template_list' => 'wcs4_validate_html',
                 'teacher_archive_slug' => 'wcs4_validate_html',
                 'teacher_item_slug' => 'wcs4_validate_html',
+                'teacher_download_icalendar' => 'wcs4_validate_yes_no',
                 'teacher_hashed_slug' => 'wcs4_validate_yes_no',
                 'teacher_schedule_layout' => 'wcs4_validate_html',
                 'teacher_schedule_template_table_short' => 'wcs4_validate_html',
@@ -53,6 +55,7 @@ function wcs4_standard_options_page_callback()
                 'teacher_schedule_template_list' => 'wcs4_validate_html',
                 'student_archive_slug' => 'wcs4_validate_html',
                 'student_item_slug' => 'wcs4_validate_html',
+                'student_download_icalendar' => 'wcs4_validate_yes_no',
                 'student_hashed_slug' => 'wcs4_validate_yes_no',
                 'student_schedule_layout' => 'wcs4_validate_html',
                 'student_schedule_template_table_short' => 'wcs4_validate_html',
@@ -60,6 +63,7 @@ function wcs4_standard_options_page_callback()
                 'student_schedule_template_list' => 'wcs4_validate_html',
                 'classroom_archive_slug' => 'wcs4_validate_html',
                 'classroom_item_slug' => 'wcs4_validate_html',
+                'classroom_download_icalendar' => 'wcs4_validate_yes_no',
                 'classroom_hashed_slug' => 'wcs4_validate_yes_no',
                 'classroom_schedule_layout' => 'wcs4_validate_html',
                 'classroom_schedule_template_table_short' => 'wcs4_validate_html',
@@ -170,6 +174,17 @@ function wcs4_standard_options_page_callback()
                         <?php foreach (array('Subjects' => 'subject', 'Teachers' => 'teacher', 'Students' => 'student', 'Classrooms' => 'classroom') as $name => $key): ?>
                             <td data-key="<?= $key ?>" data-type="wcs4_hashed_slug">
                                 <?php wcs4_bool_checkbox('wcs4_' . $key . '_hashed_slug', $wcs4_options[$key . '_hashed_slug'], __('Yes')); ?>
+                            </td>
+                        <?php endforeach; ?>
+                    </tr>
+                    <tr>
+                        <th>
+                            <?php _ex('Download iCalendar', 'options general settings', 'wcs4'); ?>
+                            <div class="wcs4-description"><?php _ex('Will display extra link to download schedule as iCalendar.', 'options general settings', 'wcs4'); ?></div>
+                        </th>
+                        <?php foreach (array('Subjects' => 'subject', 'Teachers' => 'teacher', 'Students' => 'student', 'Classrooms' => 'classroom') as $name => $key): ?>
+                            <td data-key="<?= $key ?>" data-type="wcs4_download_icalendar">
+                                <?php wcs4_bool_checkbox('wcs4_' . $key . '_download_icalendar', $wcs4_options[$key . '_download_icalendar'], __('Yes')); ?>
                             </td>
                         <?php endforeach; ?>
                     </tr>
@@ -372,6 +387,7 @@ function wcs4_set_default_settings()
             'color_links' => '1982D1',
             'subject_archive_slug' => _x('subjects', 'config slug for archive', 'wcs4'),
             'subject_item_slug' => _x('subject', 'config slug for item', 'wcs4'),
+            'subject_download_icalendar' => 'no',
             'subject_hashed_slug' => 'no',
             'subject_schedule_layout' => 'table',
             'subject_schedule_template_table_short' => _x('<small>{start hour}-{end hour}</small><br>{tea}/{stu} @{class}', 'config template table short at subject schedule', 'wcs4'),
@@ -379,6 +395,7 @@ function wcs4_set_default_settings()
             'subject_schedule_template_list' => _x('<small>{start hour}-{end hour}</small><br>{teacher link} at {classroom link} for {student link} {notes}', 'config template list at subject schedule', 'wcs4'),
             'teacher_archive_slug' => _x('teachers', 'config slug for archive', 'wcs4'),
             'teacher_item_slug' => _x('teacher', 'config slug for item', 'wcs4'),
+            'teacher_download_icalendar' => 'no',
             'teacher_hashed_slug' => 'no',
             'teacher_schedule_layout' => 'table',
             'teacher_schedule_template_table_short' => _x('<small>{start hour}-{end hour}</small><br>{subject} @{class} ({stu})', 'config template table short at teacher schedule', 'wcs4'),
@@ -393,6 +410,7 @@ function wcs4_set_default_settings()
             'student_schedule_template_list' => _x('{subject link} with {teacher link} at {classroom link} from {start hour} to {end hour} {notes}', 'config template list at student schedule', 'wcs4'),
             'classroom_archive_slug' => _x('classrooms', 'config slug for archive', 'wcs4'),
             'classroom_item_slug' => _x('classroom', 'config slug for item', 'wcs4'),
+            'classroom_download_icalendar' => 'no',
             'classroom_hashed_slug' => 'no',
             'classroom_schedule_layout' => 'table',
             'classroom_schedule_template_table_short' => _x('<small>{start hour}-{end hour}</small><br>{subject} ({tea}/{stu})', 'config template table short at classroom schedule', 'wcs4'),

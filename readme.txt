@@ -39,6 +39,9 @@ You will find a 'Schedule' menu item as well as 'Classes', 'Teachers', 'Students
 
 == Changelog ==
 
+= Version 4.09 =
+* Download custom page as iCalendar
+
 = Version 4.08 =
 * Search lessons in manage view
 

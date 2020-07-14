@@ -196,9 +196,9 @@ class WCS4_Lesson
     private $id;
     /** @var int */
     private $weekday;
-    /** @var DateTime */
+    /** @var string */
     private $start_hour;
-    /** @var DateTime */
+    /** @var string */
     private $end_hour;
     /** @var WCS4_Item */
     private $subject;
@@ -275,14 +275,6 @@ class WCS4_Lesson
     {
         $this->position = $position;
         return $this;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getWeekday()
-    {
-        return $this->weekday;
     }
 
     /**
@@ -390,6 +382,30 @@ class WCS4_Lesson
     public function getEndHour()
     {
         return $this->end_hour;
+    }
+
+    public function getEndTime()
+    {
+        return (new DateTime(
+            'last sunday ' .
+            $this->getEndHour()
+        ))->add(new DateInterval('P' . $this->getWeekday() . 'D'));
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getWeekday()
+    {
+        return $this->weekday;
+    }
+
+    public function getStartTime()
+    {
+        return (new DateTime(
+            'last sunday ' .
+            $this->getStartHour()
+        ))->add(new DateInterval('P' . $this->getWeekday() . 'D'));
     }
 
     /**
