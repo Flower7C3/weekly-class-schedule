@@ -436,11 +436,15 @@ add_action('wp_ajax_get_day_schedule', static function () {
     if (current_user_can(WCS4_SCHEDULE_MANAGE_CAPABILITY)) {
         wcs4_verify_nonce();
         $required = array(
-            'day' => __('Day'),
+            'weekday' => __('Day'),
         );
         wcs4_verify_required_fields($required);
-        $day = sanitize_text_field($_POST['day']);
-        $html = wcs4_render_admin_day_table($day);
+        $classroom = sanitize_text_field($_POST['classroom']);
+        $teacher = sanitize_text_field($_POST['teacher']);
+        $student = sanitize_text_field($_POST['student']);
+        $subject = sanitize_text_field($_POST['subject']);
+        $weekday = sanitize_text_field($_POST['weekday']);
+        $html = wcs4_render_admin_day_table($classroom, $teacher, $student, $subject, $weekday);
     }
     wcs4_json_response([
         'html' => $html,

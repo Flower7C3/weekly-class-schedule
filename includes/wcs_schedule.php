@@ -6,12 +6,20 @@
 /**
  * Generates the day table for admin use.
  *
- * @param int $day : the weekday (sunday = 0, monday = 1)
+ * @param int $weekday : the weekday (sunday = 0, monday = 1)
  * @return string
  */
-function wcs4_render_admin_day_table($day)
+/**
+ * @param int|null $classroom
+ * @param int|string $teacher
+ * @param int|string $student
+ * @param int|string $subject
+ * @param int|null $weekday
+ * @return false|string
+ */
+function wcs4_render_admin_day_table($classroom = null, $teacher = 'all', $student = 'all', $subject = 'all', $weekday = null)
 {
-    $lessons = wcs4_get_day_schedule($day);
+    $lessons = wcs4_get_lessons($classroom, $teacher, $student, $subject, $weekday);
     ob_start();
     ?>
     <div class="wcs4-day-content-wrapper">
@@ -176,7 +184,7 @@ function wcs4_get_lessons($classroom, $teacher = 'all', $student = 'all', $subje
         'cls' => $classroom,
     );
     foreach ($filters as $prefix => $filter) {
-        if ('all' !== $filter && NULL !== $filter) {
+        if ('all' !== $filter && '' !== $filter && NULL !== $filter) {
             if (is_array($filter)) {
                 $where[] = $prefix . '.ID IN (' . implode(', ', array_fill(0, count($filter), '%s')) . ')';
                 $query_arr += $filter;

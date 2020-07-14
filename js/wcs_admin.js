@@ -16,6 +16,22 @@
         wcs4_bind_reset_settings();
     });
 
+    var find_get_parameter = function (parameterName) {
+        var result = null,
+            tmp = [];
+        var items = location.search.substr(1).split("&");
+        for (var index = 0; index < items.length; index++) {
+            tmp = items[index].split("=");
+            if (tmp[0] === parameterName) {
+                result = decodeURIComponent(tmp[1]);
+                if ('undefined' === result) {
+                    result = null;
+                }
+            }
+        }
+        return result;
+    }
+
     /**
      * Handles the Show form button click event.
      */
@@ -162,10 +178,18 @@
      * Updates dynamically a specific day schedule.
      */
     var update_day_schedule = function (day, action) {
+        var classroom = find_get_parameter('classroom');
+        var teacher = find_get_parameter('teacher');
+        var student = find_get_parameter('student');
+        var subject = find_get_parameter('subject');
         entry = {
             action: 'get_day_schedule',
             security: WCS4_AJAX_OBJECT.ajax_nonce,
-            day: day
+            classroom: classroom ? '#' + classroom : null,
+            teacher: teacher ? '#' + teacher : null,
+            student: student ? '#' + student : null,
+            subject: subject ? '#' + subject : null,
+            weekday: day
         };
         jQuery.post(WCS4_AJAX_OBJECT.ajax_url, entry, function (data) {
             // Rebuild table

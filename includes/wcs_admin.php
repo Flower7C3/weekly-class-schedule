@@ -59,6 +59,21 @@ function wcs4_schedule_management_page_callback()
         <h1 class="wp-heading-inline"><?php _ex('Schedule Management', 'manage schedule', 'wcs4'); ?></h1>
         <a href="#" class="page-title-action" id="wcs4-show-form"><?php _ex('Add Lesson', 'button text', 'wcs4'); ?></a>
         <hr class="wp-header-end">
+        <div id="ajax-response"></div>
+        <form id="posts-filter" method="get">
+            <input type="hidden" name="page" value="<?php echo $_GET['page']; ?>"/>
+            <p class="search-box">
+                <label class="screen-reader-text" for="search_wcs4_lesson_subject_id"><?php _e('Subject', 'wcs4'); ?></label>
+                <?php echo wcs4_generate_admin_select_list('subject', 'search_wcs4_lesson_subject', 'subject', (int)$_GET['subject']); ?>
+                <label class="screen-reader-text" for="search_wcs4_lesson_teacher_id"><?php _e('Teacher', 'wcs4'); ?></label>
+                <?php echo wcs4_generate_admin_select_list('teacher', 'search_wcs4_lesson_teacher', 'teacher', (int)$_GET['teacher']); ?>
+                <label class="screen-reader-text" for="search_wcs4_lesson_student_id"><?php _e('Student', 'wcs4'); ?></label>
+                <?php echo wcs4_generate_admin_select_list('student', 'search_wcs4_lesson_student', 'student', (int)$_GET['student']); ?>
+                <label class="screen-reader-text" for="search_wcs4_lesson_classroom_id"><?php _e('Classroom', 'wcs4'); ?></label>
+                <?php echo wcs4_generate_admin_select_list('classroom', 'search_wcs4_lesson_classroom', 'classroom', (int)$_GET['classroom']); ?>
+                <input type="submit" id="search-submit" class="button" value="<?php _e('Search lessons', 'wcs4'); ?>">
+            </p>
+        </form>
         <div id="col-container" class="wp-clearfix">
             <?php if (current_user_can(WCS4_SCHEDULE_MANAGE_CAPABILITY)) { ?>
                 <div id="col-left">
@@ -74,8 +89,6 @@ function wcs4_schedule_management_page_callback()
                                     <label for="wcs4_lesson_teacher_id"><?php _e('Teacher', 'wcs4'); ?></label>
                                     <?php echo wcs4_generate_admin_select_list('teacher', 'wcs4_lesson_teacher', 'wcs4_lesson_teacher', null, true, true); ?>
                                 </div>
-                                <!--                                    </tr>-->
-                                <!--                                    <tr>-->
                                 <div class="form-field form-required term-wcs4_lesson_student_id-wrap">
                                     <label for="wcs4_lesson_student_id"><?php _e('Student', 'wcs4'); ?></label>
                                     <?php echo wcs4_generate_admin_select_list('student', 'wcs4_lesson_student', 'wcs4_lesson_student', null, true, true); ?>
@@ -123,7 +136,12 @@ function wcs4_schedule_management_page_callback()
                     <?php foreach ($days as $key => $day): ?>
                         <section id="wcs4-schedule-day-<?php echo $key; ?>">
                             <h2><?php echo $day; ?></h2>
-                            <?php echo wcs4_render_admin_day_table($key); ?>
+                            <?php echo wcs4_render_admin_day_table(
+                                $_GET['classroom'] ? '#' . $_GET['classroom'] : null,
+                                $_GET['teacher'] ? '#' . $_GET['teacher'] : null,
+                                $_GET['student'] ? '#' . $_GET['student'] : null,
+                                $_GET['subject'] ? '#' . $_GET['subject'] : null,
+                                $key); ?>
                         </section>
                     <?php endforeach; ?>
                 </div>
@@ -239,7 +257,23 @@ function wcs4_generate_admin_select_list($type, $id = '', $name = '', $default =
 
     $values = array();
     if (!$multiple) {
-        $values[''] = _x('select option', 'manage schedule', 'wcs4');
+        switch ($type) {
+            case 'subject':
+                $values[''] = _x('select subject', 'manage schedule', 'wcs4');
+                break;
+            case 'teacher':
+                $values[''] = _x('select teacher', 'manage schedule', 'wcs4');
+                break;
+            case 'student':
+                $values[''] = _x('select student', 'manage schedule', 'wcs4');
+                break;
+            case 'classroom':
+                $values[''] = _x('select classroom', 'manage schedule', 'wcs4');
+                break;
+            default:
+                $values[''] = _x('select option', 'manage schedule', 'wcs4');
+                break;
+        }
     }
 
     if (!empty($posts)) {

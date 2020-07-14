@@ -132,12 +132,25 @@ function wcs4_select_list($values, $id = '', $name = '', $default = NULL, $requi
     $output = '<select ' . implode(' ', $params) . '>';
 
     if (!empty($values)) {
+        $group = null;
+        $valuesAmount = count($values);
         foreach ($values as $key => $value) {
-            if ( (!is_array($default) && $key === $default) || (is_array($default) && in_array($key, $default, true))) {
+            $firstLetter = mb_substr($value, 0, 1);
+            if (10 < $valuesAmount && ($group !== $firstLetter) && '' !== $key) {
+                if (null !== $group) {
+                    $output .= '</optgroup>';
+                }
+                $output .= '<optgroup label="' . $firstLetter . '">';
+                $group = $firstLetter;
+            }
+            if ((!is_array($default) && $key === $default) || (is_array($default) && in_array($key, $default, true))) {
                 $output .= '<option value="' . $key . '" selected="selected">' . $value . '</option>';
             } else {
                 $output .= '<option value="' . $key . '">' . $value . '</option>';
             }
+        }
+        if (null !== $group) {
+            $output .= '</optgroup>';
         }
     } else {
         $output .= '<option value="">---</option>';
