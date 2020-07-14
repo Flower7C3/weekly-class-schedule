@@ -37,6 +37,7 @@ function wcs4_render_admin_day_table($day)
                         </th>
                         <th id="visibility" class="manage-column column-visibility" scope="col">
                             <span><?php echo __('Visibility', 'wcs4'); ?></span>
+                            <span><?php echo __('Notes', 'wcs4'); ?></span>
                         </th>
                     </tr>
                 </thead>
@@ -45,7 +46,7 @@ function wcs4_render_admin_day_table($day)
                     /** @var WCS4_Lesson $lesson */
                     foreach ($lessons as $lesson) { ?>
                         <tr id="lesson-<?php echo $lesson->getId(); ?>">
-                            <td class="start_end_hour column-start_end_hour column-primary has-row-actions">
+                            <td class="start_end_hour column-start_end_hour column-primary<?php if (current_user_can(WCS4_SCHEDULE_MANAGE_CAPABILITY)) { ?> has-row-actions<?php } ?>">
                                 <?php echo $lesson->getStartHour(); ?> – <?php echo $lesson->getEndHour(); ?>
                                 <?php if (current_user_can(WCS4_SCHEDULE_MANAGE_CAPABILITY)) { ?>
                                     <div class="row-actions">
@@ -82,6 +83,7 @@ function wcs4_render_admin_day_table($day)
                             </td>
                             <td class="visibility column-visibility" data-colname="<?php echo __('Visibility', 'wcs4'); ?>">
                                 <?php echo $lesson->getVisibleText(); ?>
+                                <?php echo $lesson->getNotes(); ?>
                             </td>
                         </tr>
                     <?php } ?>
