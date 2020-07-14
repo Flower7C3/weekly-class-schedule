@@ -282,7 +282,7 @@ function wcs4_generate_admin_select_list($type, $id = '', $name = '', $default =
         }
     }
 
-    return wcs4_select_list($values, $id, $name, $default, $required, $multiple, $classname);
+    return wcs4_select_list($values, $id, $name, $default, $required, $multiple, $classname, true);
 }
 
 /**

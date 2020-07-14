@@ -109,9 +109,10 @@ function wcs4_bool_checkbox($name, $checked = 'yes', $text = '')
  * @param bool $required
  * @param bool $multiple
  * @param string $classname
+ * @param bool $optgroup
  * @return string
  */
-function wcs4_select_list($values, $id = '', $name = '', $default = NULL, $required = false, $multiple = false, $classname = null)
+function wcs4_select_list($values, $id = '', $name = '', $default = NULL, $required = false, $multiple = false, $classname = null, $optgroup = false)
 {
     $params = [];
     if ('' !== $id) {
@@ -136,7 +137,7 @@ function wcs4_select_list($values, $id = '', $name = '', $default = NULL, $requi
         $valuesAmount = count($values);
         foreach ($values as $key => $value) {
             $firstLetter = mb_substr($value, 0, 1);
-            if (10 < $valuesAmount && ($group !== $firstLetter) && '' !== $key) {
+            if (true === $optgroup && 10 < $valuesAmount && ($group !== $firstLetter) && '' !== $key) {
                 if (null !== $group) {
                     $output .= '</optgroup>';
                 }
