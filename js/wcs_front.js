@@ -1,5 +1,5 @@
 /**
- * Scripts for the Weekly Class Schedule 3.0 front-end.
+ * Scripts for the Weekly Class Schedule 4.0 front-end.
  */
 (function($) {
 

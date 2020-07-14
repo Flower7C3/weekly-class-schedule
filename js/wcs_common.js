@@ -1,5 +1,5 @@
 /**
- * The Weekly Class Schedule 3 common JavaScript library.
+ * The Weekly Class Schedule 4 common JavaScript library.
  */
 
 var WCS4_LIB = {
@@ -20,5 +20,5 @@ var WCS4_LIB = {
                 style: {lessons: 'wcs4-qtip-tip'}
             })
         });
-    },
+    }
 };
