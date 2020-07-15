@@ -305,7 +305,7 @@ function wcs4_generate_weekday_select_list($name = '', $default = NULL, $require
 
 function wcs4_generate_hour_select_list($name = '', $default = array('hour' => NULL, 'minute' => NULL), $required = false)
 {
-    $hours_arr = range(0, 24, 1);
+    $hours_arr = range(0, 23, 1);
     $hours = wcs4_select_list($hours_arr, $name . '_hours', $name . '_hours', $default['hour'], $required);
 
     $minutes_arr = [];
