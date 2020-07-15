@@ -135,6 +135,7 @@ function wcs4_render_table_schedule($lessons, $weekdays, $schedule_key, $templat
         <?php } ?>
         <?php
     }
+    ksort($hours);
     foreach (array_keys($hours) as $index => $hourKey) {
         ?>
         #<?php echo $schedule_key; ?> .wcs4-grid-hour-<?php echo $hourKey ?> {
@@ -245,28 +246,28 @@ function wcs4_process_template($lesson, $template)
 function wcs4_load_frontend_scripts($js_data = array())
 {
     # Load qTip plugin
-    wp_register_style('wcs4_qtip_css', WCS4_PLUGIN_URL . '/plugins/qtip/jquery.qtip.min.css', false, '1.0.0');
+    wp_register_style('wcs4_qtip_css', WCS4_PLUGIN_URL . '/plugins/qtip/jquery.qtip.min.css', false, WCS4_VERSION);
     wp_enqueue_style('wcs4_qtip_css');
 
-    wp_register_script('wcs4_qtip_js', WCS4_PLUGIN_URL . '/plugins/qtip/jquery.qtip.min.js', array('jquery'), '1.0.0');
+    wp_register_script('wcs4_qtip_js', WCS4_PLUGIN_URL . '/plugins/qtip/jquery.qtip.min.js', array('jquery'), WCS4_VERSION);
     wp_enqueue_script('wcs4_qtip_js');
 
-    wp_register_script('wcs4_qtip_images_js', WCS4_PLUGIN_URL . '/plugins/qtip/imagesloaded.pkg.min.js', array('jquery'), '1.0.0');
+    wp_register_script('wcs4_qtip_images_js', WCS4_PLUGIN_URL . '/plugins/qtip/imagesloaded.pkg.min.js', array('jquery'), WCS4_VERSION);
     wp_enqueue_script('wcs4_qtip_images_js');
 
     # Load hoverintent
-    wp_register_script('wcs4_hoverintent_js', WCS4_PLUGIN_URL . '/plugins/hoverintent/jquery.hoverIntent.minified.js', array('jquery'), '1.0.0');
+    wp_register_script('wcs4_hoverintent_js', WCS4_PLUGIN_URL . '/plugins/hoverintent/jquery.hoverIntent.minified.js', array('jquery'), WCS4_VERSION);
     wp_enqueue_script('wcs4_hoverintent_js');
 
     # Load common WCS4 JS
-    wp_register_script('wcs4_common_js', WCS4_PLUGIN_URL . '/js/wcs_common.js', array('jquery'), '1.0.0');
+    wp_register_script('wcs4_common_js', WCS4_PLUGIN_URL . '/js/wcs_common.js', array('jquery'), WCS4_VERSION);
     wp_enqueue_script('wcs4_common_js');
 
     # Load custom scripts
-    wp_register_style('wcs4_front_css', WCS4_PLUGIN_URL . '/css/wcs_front.css', false, '1.0.0');
+    wp_register_style('wcs4_front_css', WCS4_PLUGIN_URL . '/css/wcs_front.css', false, WCS4_VERSION);
     wp_enqueue_style('wcs4_front_css');
 
-    wp_register_script('wcs4_front_js', WCS4_PLUGIN_URL . '/js/wcs_front.js', array('jquery'), '1.0.0');
+    wp_register_script('wcs4_front_js', WCS4_PLUGIN_URL . '/js/wcs_front.js', array('jquery'), WCS4_VERSION);
     wp_enqueue_script('wcs4_front_js');
 
     # Localize script
