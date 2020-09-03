@@ -133,7 +133,7 @@ function wcs4_standard_options_page_callback()
                     </tr>
                     <tr>
                         <th>
-                            <?php _ex('Detect classroom collisions', 'options general settings', 'wcs4'); ?>
+                            <?php _ex('Detect lesson collisions', 'options general settings', 'wcs4'); ?>
                             <div class="wcs4-description"><?php _ex('Enabling this feature will prevent scheduling of multiple subjects at the same classroom, with same teacher or student at the same time.', 'options general settings', 'wcs4'); ?></div>
                         </th>
                         <?php foreach (array('Subjects' => 'subject', 'Teachers' => 'teacher', 'Students' => 'student', 'Classrooms' => 'classroom') as $name => $key): ?>

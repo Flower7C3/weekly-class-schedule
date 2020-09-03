@@ -233,7 +233,7 @@ function wcs4_help_placeholders_callback()
         </li>
     </ul>
     <p>
-        <?php _ex('If item is private, full name will be replaced to short name.', 'help', 'wcs4'); ?>
+        <?php _ex('If item is private, full and short names will be replaced with item first letter.', 'help', 'wcs4'); ?>
     </p>
     <?php
 }

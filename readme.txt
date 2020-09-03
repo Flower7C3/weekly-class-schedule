@@ -39,6 +39,19 @@ You will find a 'Schedule' menu item as well as 'Classes', 'Teachers', 'Students
 
 == Changelog ==
 
+= Version 4.12 =
+* Translation fixes
+* Extra anonymized name for private items or password protected items if user is not logged - show only first letter
+* Do not show item schedule for password protected items if password not match
+
+= Version 4.11 =
+* Sort hours in table schedule
+* Shrink table schedule layout
+* Fix front scripts and styles version
+
+= Version 4.10 =
+* Hour picker up to 23 hours
+
 = Version 4.09 =
 * Download custom page as iCalendar
 

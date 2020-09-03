@@ -579,9 +579,9 @@ msgstr "Pokaże krótką nazwę jako link do strony: <code>%1$s</code>"
 
 #: includes/wcs_admin.php:236
 msgctxt "help"
-msgid "If item is private, full name will be replaced to short name."
+msgid "If item is private, full and short names will be replaced with item first letter."
 msgstr ""
-"Jeśli wpis jest prywatny, pełna nazwa zostanie zastąpiona krótką nazwą."
+"Jeśli wpis jest prywatny, pełna i krótka nazwa zostaną zastąpione pierwszą literą nazwy wpisu."
 
 #: includes/wcs_admin.php:262
 msgctxt "manage schedule"
@@ -687,8 +687,8 @@ msgstr "Ustawienia stron"
 
 #: includes/wcs_settings.php:136
 msgctxt "options general settings"
-msgid "Detect classroom collisions"
-msgstr "Wykryj kolizje sali"
+msgid "Detect lesson collisions"
+msgstr "Wykryj kolizje"
 
 #: includes/wcs_settings.php:137
 msgctxt "options general settings"

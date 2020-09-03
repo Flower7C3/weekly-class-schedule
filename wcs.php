@@ -25,7 +25,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-define('WCS4_VERSION', '4.11');
+define('WCS4_VERSION', '4.12');
 
 define('WCS4_REQUIRED_WP_VERSION', '4.0');
 
@@ -285,7 +285,7 @@ add_filter('the_content', static function ($content) {
         $post_type_key = str_replace('wcs4_', '', $post_type);
         $wcs4_settings = wcs4_load_settings();
         $layout = $wcs4_settings[$post_type_key . '_schedule_layout'];
-        if ('none' !== $layout && NULL !== $layout) {
+        if ('none' !== $layout && NULL !== $layout && !post_password_required($post_id)) {
             $content .= '<h3>' . __('Schedule', 'wcs4') . '</h3>';
             $calendar_download = $wcs4_settings[$post_type_key . '_download_icalendar'];
             $template_table_short = $wcs4_settings[$post_type_key . '_schedule_template_table_short'];

@@ -516,7 +516,8 @@ class WCS4_Item
             $this->description = $description;
             $this->permalink = get_permalink($this->id);
             $this->short = $this->convert_sentence_to_initials($this->name);
-            if (!('publish' === get_post_status($this->id) || is_user_logged_in())) {
+            if (!(('publish' === get_post_status($this->id) && !post_password_required($this->id)) || is_user_logged_in())) {
+                $this->short = $this->convert_sentence_to_initials($this->name, true);
                 $this->name = $this->short;
                 $this->description = null;
                 $this->permalink = null;
@@ -547,15 +548,19 @@ class WCS4_Item
 
     /**
      * Make initials from sentence
-     * @param $string
+     * @param string $string
+     * @param bool $private
      * @return string
      */
-    private function convert_sentence_to_initials($string)
+    private function convert_sentence_to_initials($text, $private = false)
     {
-        $words = explode(' ', $string);
+        $words = explode(' ', $text);
         $initials = [];
         foreach ($words as $word) {
             $initials[] = substr($word, 0, 1);
+        }
+        if (true === $private) {
+            return array_values($initials)[0] . '.';
         }
         return implode('.', $initials) . '.';
     }
