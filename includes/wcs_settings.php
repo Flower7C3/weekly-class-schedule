@@ -5,6 +5,25 @@
 
 function wcs4_standard_options_page_callback()
 {
+    $taxonomyTypes = array(
+        'subject' => array(
+            'tax' => _x('Branches', 'taxonomy general name', 'wcs4'),
+            'post' => _x('Subjects', 'post type general name', 'wcs4'),
+        ),
+        'teacher' => array(
+            'tax' => _x('Specializations', 'taxonomy general name', 'wcs4'),
+            'post' => _x('Teachers', 'post type general name', 'wcs4'),
+        ),
+        'student' => array(
+            'tax' => _x('Groups', 'taxonomy general name', 'wcs4'),
+            'post' => _x('Students', 'post type general name', 'wcs4'),
+        ),
+        'classroom' => array(
+            'tax' => _x('Locations', 'taxonomy general name', 'wcs4'),
+            'post' => _x('Classrooms', 'post type general name', 'wcs4'),
+        ),
+    );
+
     $wcs4_options = wcs4_load_settings();
 
     if (isset($_POST['wcs4_options_nonce'])) {
@@ -37,32 +56,40 @@ function wcs4_standard_options_page_callback()
                 'color_background' => 'wcs4_validate_color',
                 'color_qtip_background' => 'wcs4_validate_color',
                 'color_links' => 'wcs4_validate_color',
+                'subject_taxonomy_slug' => 'wcs4_validate_html',
+                'subject_taxonomy_hierarchical' => 'wcs4_validate_yes_no',
                 'subject_archive_slug' => 'wcs4_validate_html',
-                'subject_item_slug' => 'wcs4_validate_html',
+                'subject_post_slug' => 'wcs4_validate_html',
                 'subject_download_icalendar' => 'wcs4_validate_yes_no',
                 'subject_hashed_slug' => 'wcs4_validate_yes_no',
                 'subject_schedule_layout' => 'wcs4_validate_html',
                 'subject_schedule_template_table_short' => 'wcs4_validate_html',
                 'subject_schedule_template_table_details' => 'wcs4_validate_html',
                 'subject_schedule_template_list' => 'wcs4_validate_html',
+                'teacher_taxonomy_slug' => 'wcs4_validate_html',
+                'teacher_taxonomy_hierarchical' => 'wcs4_validate_yes_no',
                 'teacher_archive_slug' => 'wcs4_validate_html',
-                'teacher_item_slug' => 'wcs4_validate_html',
+                'teacher_post_slug' => 'wcs4_validate_html',
                 'teacher_download_icalendar' => 'wcs4_validate_yes_no',
                 'teacher_hashed_slug' => 'wcs4_validate_yes_no',
                 'teacher_schedule_layout' => 'wcs4_validate_html',
                 'teacher_schedule_template_table_short' => 'wcs4_validate_html',
                 'teacher_schedule_template_table_details' => 'wcs4_validate_html',
                 'teacher_schedule_template_list' => 'wcs4_validate_html',
+                'student_taxonomy_slug' => 'wcs4_validate_html',
+                'student_taxonomy_hierarchical' => 'wcs4_validate_yes_no',
                 'student_archive_slug' => 'wcs4_validate_html',
-                'student_item_slug' => 'wcs4_validate_html',
+                'student_post_slug' => 'wcs4_validate_html',
                 'student_download_icalendar' => 'wcs4_validate_yes_no',
                 'student_hashed_slug' => 'wcs4_validate_yes_no',
                 'student_schedule_layout' => 'wcs4_validate_html',
                 'student_schedule_template_table_short' => 'wcs4_validate_html',
                 'student_schedule_template_table_details' => 'wcs4_validate_html',
                 'student_schedule_template_list' => 'wcs4_validate_html',
+                'classroom_taxonomy_slug' => 'wcs4_validate_html',
+                'classroom_taxonomy_hierarchical' => 'wcs4_validate_yes_no',
                 'classroom_archive_slug' => 'wcs4_validate_html',
-                'classroom_item_slug' => 'wcs4_validate_html',
+                'classroom_post_slug' => 'wcs4_validate_html',
                 'classroom_download_icalendar' => 'wcs4_validate_yes_no',
                 'classroom_hashed_slug' => 'wcs4_validate_yes_no',
                 'classroom_schedule_layout' => 'wcs4_validate_html',
@@ -120,36 +147,61 @@ function wcs4_standard_options_page_callback()
                     </tr>
                 </tbody>
             </table>
-            <h2><?php _ex('Post Type Settings', 'options general settings', 'wcs4'); ?></h2>
             <table class="form-table">
-                <tbody>
+                <thead>
                     <tr>
-                        <th></th>
-                        <?php foreach (array('Subjects' => 'subject', 'Teachers' => 'teacher', 'Students' => 'student', 'Classrooms' => 'classroom') as $name => $key): ?>
+                        <th>
+                            <h2><?php _ex('Taxonomy Type Settings', 'options general settings', 'wcs4'); ?></h2>
+                        </th>
+                        <?php foreach ($taxonomyTypes as $key => $name): ?>
                             <th>
-                                <?php _ex($name, 'Post Type General Name', 'wcs4'); ?><br/>
+                                <h4><?php echo $name['tax']; ?></h4>
                             </th>
                         <?php endforeach; ?>
                     </tr>
+                </thead>
+                <tbody>
                     <tr>
                         <th>
-                            <?php _ex('Detect lesson collisions', 'options general settings', 'wcs4'); ?>
-                            <div class="wcs4-description"><?php _ex('Enabling this feature will prevent scheduling of multiple subjects at the same classroom, with same teacher or student at the same time.', 'options general settings', 'wcs4'); ?></div>
+                            <?php _ex('Custom taxonomy URL', 'options general settings', 'wcs4'); ?>
+                            <div class="wcs4-description"><?php _ex('Empty value will disable custom taxonomy URL.', 'options general settings', 'wcs4'); ?></div>
                         </th>
-                        <?php foreach (array('Subjects' => 'subject', 'Teachers' => 'teacher', 'Students' => 'student', 'Classrooms' => 'classroom') as $name => $key): ?>
-                            <td data-key="<?= $key ?>" data-type="wcs4_collision">
-                                <?php if ($key !== 'subject') { ?>
-                                    <?php wcs4_bool_checkbox('wcs4_' . $key . '_collision', $wcs4_options[$key . '_collision'], __('Yes')); ?>
-                                <?php } ?>
+                        <?php foreach ($taxonomyTypes as $key => $name): ?>
+                            <td data-key="<?= $key ?>" data-type="wcs4_taxonomy_slug">
+                                <?php wcs4_textfield('wcs4_' . $key . '_taxonomy_slug', $wcs4_options[$key . '_taxonomy_slug'], 20); ?>
                             </td>
                         <?php endforeach; ?>
                     </tr>
                     <tr>
                         <th>
+                            <?php _ex('Is taxonomy hierarchical?', 'options general settings', 'wcs4'); ?>
+                        </th>
+                        <?php foreach ($taxonomyTypes as $key => $name): ?>
+                            <td data-key="<?= $key ?>" data-type="wcs4_collision">
+                                <?php wcs4_bool_checkbox('wcs4_' . $key . '_taxonomy_hierarchical', $wcs4_options[$key . '_taxonomy_hierarchical'], __('Yes')); ?>
+                            </td>
+                        <?php endforeach; ?>
+                    </tr>
+                </tbody>
+                <thead>
+                    <tr>
+                        <th>
+                            <h2><?php _ex('Post Type Settings', 'options general settings', 'wcs4'); ?></h2>
+                        </th>
+                        <?php foreach ($taxonomyTypes as $key => $name): ?>
+                            <th>
+                                <h4><?php echo $name['post']; ?></h4>
+                            </th>
+                        <?php endforeach; ?>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <th>
                             <?php _ex('Custom archive URL', 'options general settings', 'wcs4'); ?>
                             <div class="wcs4-description"><?php _ex('Empty value will disable custom archive URL.', 'options general settings', 'wcs4'); ?></div>
                         </th>
-                        <?php foreach (array('Subjects' => 'subject', 'Teachers' => 'teacher', 'Students' => 'student', 'Classrooms' => 'classroom') as $name => $key): ?>
+                        <?php foreach ($taxonomyTypes as $key => $name): ?>
                             <td data-key="<?= $key ?>" data-type="wcs4_archive_slug">
                                 <?php wcs4_textfield('wcs4_' . $key . '_archive_slug', $wcs4_options[$key . '_archive_slug'], 20); ?>
                             </td>
@@ -160,9 +212,9 @@ function wcs4_standard_options_page_callback()
                             <?php _ex('Custom item URL', 'options general settings', 'wcs4'); ?>
                             <div class="wcs4-description"><?php _ex('Empty value will disable custom item URL.', 'options general settings', 'wcs4'); ?></div>
                         </th>
-                        <?php foreach (array('Subjects' => 'subject', 'Teachers' => 'teacher', 'Students' => 'student', 'Classrooms' => 'classroom') as $name => $key): ?>
-                            <td data-key="<?= $key ?>" data-type="wcs4_item_slug">
-                                <?php wcs4_textfield('wcs4_' . $key . '_item_slug', $wcs4_options[$key . '_item_slug'], 20); ?>
+                        <?php foreach ($taxonomyTypes as $key => $name): ?>
+                            <td data-key="<?= $key ?>" data-type="wcs4_post_slug">
+                                <?php wcs4_textfield('wcs4_' . $key . '_post_slug', $wcs4_options[$key . '_post_slug'], 20); ?>
                             </td>
                         <?php endforeach; ?>
                     </tr>
@@ -171,9 +223,24 @@ function wcs4_standard_options_page_callback()
                             <?php _ex('Hashed item slug', 'options general settings', 'wcs4'); ?>
                             <div class="wcs4-description"><?php _ex('Hashing slug will protect real page address.', 'options general settings', 'wcs4'); ?></div>
                         </th>
-                        <?php foreach (array('Subjects' => 'subject', 'Teachers' => 'teacher', 'Students' => 'student', 'Classrooms' => 'classroom') as $name => $key): ?>
+                        <?php foreach ($taxonomyTypes as $key => $name): ?>
                             <td data-key="<?= $key ?>" data-type="wcs4_hashed_slug">
                                 <?php wcs4_bool_checkbox('wcs4_' . $key . '_hashed_slug', $wcs4_options[$key . '_hashed_slug'], __('Yes')); ?>
+                            </td>
+                        <?php endforeach; ?>
+                    </tr>
+                    <tr>
+                        <th>
+                            <?php _ex('Detect lesson collisions', 'options general settings', 'wcs4'); ?>
+                            <div class="wcs4-description"><?php _ex('Enabling this feature will prevent scheduling of multiple subjects at the same classroom, with same teacher or student at the same time.', 'options general settings', 'wcs4'); ?></div>
+                        </th>
+                        <?php foreach ($taxonomyTypes as $key => $name): ?>
+                            <td data-key="<?= $key ?>" data-type="wcs4_collision">
+                                <?php if ($key !== 'subject') { ?>
+                                    <?php wcs4_bool_checkbox('wcs4_' . $key . '_collision', $wcs4_options[$key . '_collision'], __('Yes')); ?>
+                                <?php } else { ?>
+
+                                <?php } ?>
                             </td>
                         <?php endforeach; ?>
                     </tr>
@@ -182,7 +249,7 @@ function wcs4_standard_options_page_callback()
                             <?php _ex('Download iCalendar', 'options general settings', 'wcs4'); ?>
                             <div class="wcs4-description"><?php _ex('Will display extra link to download schedule as iCalendar.', 'options general settings', 'wcs4'); ?></div>
                         </th>
-                        <?php foreach (array('Subjects' => 'subject', 'Teachers' => 'teacher', 'Students' => 'student', 'Classrooms' => 'classroom') as $name => $key): ?>
+                        <?php foreach ($taxonomyTypes as $key => $name): ?>
                             <td data-key="<?= $key ?>" data-type="wcs4_download_icalendar">
                                 <?php wcs4_bool_checkbox('wcs4_' . $key . '_download_icalendar', $wcs4_options[$key . '_download_icalendar'], __('Yes')); ?>
                             </td>
@@ -193,7 +260,7 @@ function wcs4_standard_options_page_callback()
                             <?php _ex('Single page schedule layout', 'options general settings', 'wcs4'); ?>
                             <div class="wcs4-description"><?php _ex('How schedule should be generated on single page.', 'options general settings', 'wcs4'); ?></div>
                         </th>
-                        <?php foreach (array('Subjects' => 'subject', 'Teachers' => 'teacher', 'Students' => 'student', 'Classrooms' => 'classroom') as $name => $key): ?>
+                        <?php foreach ($taxonomyTypes as $key => $name): ?>
                             <td data-key="<?= $key ?>" data-type="wcs4_schedule_layout">
                                 <?php echo wcs4_generate_layout_select_list('wcs4_' . $key . '_schedule_layout', $wcs4_options[$key . '_schedule_layout']); ?>
                             </td>
@@ -203,7 +270,7 @@ function wcs4_standard_options_page_callback()
                         <th>
                             <?php _ex('Class Table Short Template', 'options general settings', 'wcs4'); ?>
                         </th>
-                        <?php foreach (array('Subjects' => 'subject', 'Teachers' => 'teacher', 'Students' => 'student', 'Classrooms' => 'classroom') as $name => $key): ?>
+                        <?php foreach ($taxonomyTypes as $key => $name): ?>
                             <td data-key="<?= $key ?>" data-type="wcs4_schedule_template_table_short">
                                 <textarea <?php if ('table' !== $wcs4_options[$key . '_schedule_layout']){ ?>readonly<?php } ?> name="wcs4_<?= $key ?>_schedule_template_table_short" cols="30"
                                           rows="4"><?php echo $wcs4_options[$key . '_schedule_template_table_short']; ?></textarea>
@@ -215,7 +282,7 @@ function wcs4_standard_options_page_callback()
                             <?php _ex('Class Table Hover Template', 'options general settings', 'wcs4'); ?>
 
                         </th>
-                        <?php foreach (array('Subjects' => 'subject', 'Teachers' => 'teacher', 'Students' => 'student', 'Classrooms' => 'classroom') as $name => $key): ?>
+                        <?php foreach ($taxonomyTypes as $key => $name): ?>
                             <td data-key="<?= $key ?>" data-type="wcs4_schedule_template_table_details">
                                 <textarea <?php if ('table' !== $wcs4_options[$key . '_schedule_layout']){ ?>readonly<?php } ?> name="wcs4_<?= $key ?>_schedule_template_table_details" cols="30"
                                           rows="4"><?php echo $wcs4_options[$key . '_schedule_template_table_details']; ?></textarea>
@@ -226,7 +293,7 @@ function wcs4_standard_options_page_callback()
                         <th>
                             <?php _ex('Class List Template', 'options general settings', 'wcs4'); ?>
                         </th>
-                        <?php foreach (array('Subjects' => 'subject', 'Teachers' => 'teacher', 'Students' => 'student', 'Classrooms' => 'classroom') as $name => $key): ?>
+                        <?php foreach ($taxonomyTypes as $key => $name): ?>
                             <td data-key="<?= $key ?>" data-type="wcs4_schedule_template_list">
                                 <textarea <?php if ('list' !== $wcs4_options[$key . '_schedule_layout']){ ?>readonly<?php } ?> name="wcs4_<?= $key ?>_schedule_template_list" cols="30"
                                           rows="4"><?php echo $wcs4_options[$key . '_schedule_template_list']; ?></textarea>
@@ -385,31 +452,39 @@ function wcs4_set_default_settings()
             'color_background' => 'FFFFFF',
             'color_qtip_background' => 'FFFFFF',
             'color_links' => '1982D1',
+            'subject_taxonomy_slug' => _x('branch', 'config slug for taxonomy', 'wcs4'),
+            'subject_taxonomy_hierarchical' => 'no',
             'subject_archive_slug' => _x('subjects', 'config slug for archive', 'wcs4'),
-            'subject_item_slug' => _x('subject', 'config slug for item', 'wcs4'),
+            'subject_post_slug' => _x('subject', 'config slug for item', 'wcs4'),
             'subject_download_icalendar' => 'no',
             'subject_hashed_slug' => 'no',
             'subject_schedule_layout' => 'table',
             'subject_schedule_template_table_short' => _x('<small>{start hour}-{end hour}</small><br>{tea}/{stu} @{class}', 'config template table short at subject schedule', 'wcs4'),
             'subject_schedule_template_table_details' => _x('<small>{start hour}-{end hour}</small><br>{teacher link} at {classroom link} for {student link} {notes}', 'config template table details at subject schedule', 'wcs4'),
             'subject_schedule_template_list' => _x('<small>{start hour}-{end hour}</small><br>{teacher link} at {classroom link} for {student link} {notes}', 'config template list at subject schedule', 'wcs4'),
+            'teacher_taxonomy_slug' => _x('specialization', 'config slug for taxonomy', 'wcs4'),
+            'teacher_taxonomy_hierarchical' => 'no',
             'teacher_archive_slug' => _x('teachers', 'config slug for archive', 'wcs4'),
-            'teacher_item_slug' => _x('teacher', 'config slug for item', 'wcs4'),
+            'teacher_post_slug' => _x('teacher', 'config slug for item', 'wcs4'),
             'teacher_download_icalendar' => 'no',
             'teacher_hashed_slug' => 'no',
             'teacher_schedule_layout' => 'table',
             'teacher_schedule_template_table_short' => _x('<small>{start hour}-{end hour}</small><br>{subject} @{class} ({stu})', 'config template table short at teacher schedule', 'wcs4'),
             'teacher_schedule_template_table_details' => _x('<small>{start hour}-{end hour}</small><br>{subject link} at {classroom link} for {student link} {notes}', 'config template table details at teacher schedule', 'wcs4'),
             'teacher_schedule_template_list' => _x('<small>{start hour}-{end hour}</small><br>{subject link} at {classroom link} for {student link} {notes}', 'config template list at teacher schedule', 'wcs4'),
+            'student_taxonomy_slug' => _x('group', 'config slug for taxonomy', 'wcs4'),
+            'student_taxonomy_hierarchical' => 'no',
             'student_archive_slug' => _x('students', 'config slug for archive', 'wcs4'),
-            'student_item_slug' => _x('student', 'config slug for item', 'wcs4'),
+            'student_post_slug' => _x('student', 'config slug for item', 'wcs4'),
             'student_hashed_slug' => 'yes',
             'student_schedule_layout' => 'table',
             'student_schedule_template_table_short' => _x('<small>{start hour}-{end hour}</small><br>{subject} ({tea}) @{class}', 'config template table short at student schedule', 'wcs4'),
             'student_schedule_template_table_details' => _x('<small>{start hour}-{end hour}</small><br>{subject link} with {teacher link} at {classroom link}', 'config template table details at student schedule', 'wcs4'),
             'student_schedule_template_list' => _x('{subject link} with {teacher link} at {classroom link} from {start hour} to {end hour} {notes}', 'config template list at student schedule', 'wcs4'),
+            'classroom_taxonomy_slug' => _x('locations', 'config slug for taxonomy', 'wcs4'),
+            'classroom_taxonomy_hierarchical' => 'no',
             'classroom_archive_slug' => _x('classrooms', 'config slug for archive', 'wcs4'),
-            'classroom_item_slug' => _x('classroom', 'config slug for item', 'wcs4'),
+            'classroom_post_slug' => _x('classroom', 'config slug for item', 'wcs4'),
             'classroom_download_icalendar' => 'no',
             'classroom_hashed_slug' => 'no',
             'classroom_schedule_layout' => 'table',

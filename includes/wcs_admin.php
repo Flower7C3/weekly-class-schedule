@@ -241,7 +241,7 @@ function wcs4_help_placeholders_callback()
 /**
  * Generates a select list of id => titles from the array of WP_Post objects.
  *
- * @param string $type : can be either subject, teacher, student, or classroom
+ * @param string $key : can be either subject, teacher, student, or classroom
  * @param string $id
  * @param string $name
  * @param string|null $default
@@ -250,14 +250,15 @@ function wcs4_help_placeholders_callback()
  * @param string|null $classname
  * @return string
  */
-function wcs4_generate_admin_select_list($type, $id = '', $name = '', $default = NULL, $required = false, $multiple = false, $classname = null)
+function wcs4_generate_admin_select_list($key, $id = '', $name = '', $default = NULL, $required = false, $multiple = false, $classname = null)
 {
-    $t = 'wcs4_' . $type;
-    $posts = wcs4_get_posts_of_type($t);
+    $post_type = 'wcs4_' . $key;
+    $tax_type = WCS4_POST_TYPES_WHITELIST[$post_type];
+    $posts = wcs4_get_posts_of_type($post_type);
 
     $values = array();
     if (!$multiple) {
-        switch ($type) {
+        switch ($key) {
             case 'subject':
                 $values[''] = _x('select subject', 'manage schedule', 'wcs4');
                 break;
@@ -278,7 +279,19 @@ function wcs4_generate_admin_select_list($type, $id = '', $name = '', $default =
 
     if (!empty($posts)) {
         foreach ($posts as $post) {
-            $values[$post->ID] = $post->post_title;
+            $name = $post->post_title;
+            $terms = get_the_terms($post, $tax_type);
+            if (!empty($terms)) {
+                $termNames = [];
+                foreach ($terms as $term) {
+                    $termNames[] = $term->name;
+                }
+                if (!empty($termNames)) {
+                    sort($termNames);
+                    $name .= ' [' . implode(', ', $termNames) . ']';
+                }
+            }
+            $values[$post->ID] = $name;
         }
     }
 

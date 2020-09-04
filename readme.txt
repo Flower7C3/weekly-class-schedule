@@ -39,6 +39,9 @@ You will find a 'Schedule' menu item as well as 'Classes', 'Teachers', 'Students
 
 == Changelog ==
 
+= Version 4.13 =
+* Custom Taxonomies
+
 = Version 4.12 =
 * Translation fixes
 * Extra anonymized name for private items or password protected items if user is not logged - show only first letter

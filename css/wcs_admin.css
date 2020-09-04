@@ -117,17 +117,18 @@
 }
 
 
-.form-table td[data-type="wcs4_item_slug"],
+.form-table td[data-type="wcs4_taxonomy_slug"],
+.form-table td[data-type="wcs4_post_slug"],
 .form-table td[data-type="wcs4_archive_slug"] {
     vertical-align: top;
 }
 
-.form-table td[data-type="wcs4_item_slug"] input,
+.form-table td[data-type="wcs4_post_slug"] input,
 .form-table td[data-type="wcs4_archive_slug"] input {
     width: 100%;
 }
 
-.form-table td[data-type="wcs4_item_slug"] input {
+.form-table td[data-type="wcs4_post_slug"] input {
     padding-left: 10px;
     padding-right: 10px;
 }
@@ -137,15 +138,16 @@
 }
 
 
-.form-table td[data-type="wcs4_item_slug"],
-.form-table td[data-type="wcs4_item_slug"],
-.form-table td[data-type="wcs4_archive_slug"],
+.form-table td[data-type="wcs4_taxonomy_slug"],
+.form-table td[data-type="wcs4_post_slug"],
 .form-table td[data-type="wcs4_archive_slug"] {
     position: relative;
 }
 
-.form-table td[data-type="wcs4_item_slug"]::before,
-.form-table td[data-type="wcs4_item_slug"]::after,
+.form-table td[data-type="wcs4_taxonomy_slug"]::before,
+.form-table td[data-type="wcs4_taxonomy_slug"]::after,
+.form-table td[data-type="wcs4_post_slug"]::before,
+.form-table td[data-type="wcs4_post_slug"]::after,
 .form-table td[data-type="wcs4_archive_slug"]::before,
 .form-table td[data-type="wcs4_archive_slug"]::after {
     position: absolute;
@@ -153,17 +155,23 @@
     top: 20px;
 }
 
-.form-table td[data-type="wcs4_item_slug"]::before,
+.form-table td[data-type="wcs4_taxonomy_slug"]::before,
+.form-table td[data-type="wcs4_post_slug"]::before,
 .form-table td[data-type="wcs4_archive_slug"]::before {
     content: "/";
     left: 16px;
 }
 
-.form-table td[data-type="wcs4_item_slug"]::after {
+.form-table td[data-type="wcs4_taxonomy_slug"]::after,
+.form-table td[data-type="wcs4_post_slug"]::after {
     content: "/{slug}";
     right: 16px;
 }
 
 .inactive {
     font-style: italic;
+}
+
+#posts-filter select {
+    max-width: 200px;
 }
