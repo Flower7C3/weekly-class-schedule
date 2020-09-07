@@ -39,6 +39,9 @@ You will find a 'Schedule' menu item as well as 'Classes', 'Teachers', 'Students
 
 == Changelog ==
 
+= Version 4.14 =
+* Hide title for private or protected elements
+
 = Version 4.13 =
 * Custom Taxonomies
 

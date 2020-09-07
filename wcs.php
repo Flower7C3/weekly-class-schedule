@@ -25,7 +25,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-define('WCS4_VERSION', '4.13');
+define('WCS4_VERSION', '4.14');
 
 define('WCS4_REQUIRED_WP_VERSION', '4.0');
 
@@ -576,6 +576,23 @@ add_filter("wp_unique_post_slug", static function ($slug, $post_ID, $post_status
     }
     return $slug;
 }, 10, 6);
+
+/**
+ * Post title from item name.
+ * Hide title for private or protected elements.
+ */
+add_filter('single_post_title', 'respect_item_name');
+add_filter('protected_title_format', 'respect_item_name');
+function respect_item_name($format)
+{
+    global $post;
+    $post_type = $post->post_type;
+    if (isset($post_type) && in_array($post_type, array_keys(WCS4_POST_TYPES_WHITELIST), true)) {
+        $item = new WCS4_Item($post->ID, $post->post_title, $post->post_content);
+        return $item->getName();
+    }
+    return $format;
+}
 
 /**
  * Register activation hook

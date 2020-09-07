@@ -557,7 +557,7 @@ class WCS4_Item
         $words = explode(' ', $text);
         $initials = [];
         foreach ($words as $word) {
-            $initials[] = substr($word, 0, 1);
+            $initials[] = mb_substr($word, 0, 1);
         }
         if (true === $private) {
             return array_values($initials)[0] . '.';
