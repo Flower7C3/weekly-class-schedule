@@ -8,6 +8,7 @@
 
     $(document).ready(function () {
         wcs4_bind_schedule_show_hide_handler();
+        wcs4_bind_schedule_search_handler();
         wcs4_bind_schedule_submit_handler();
         wcs4_bind_schedule_delete_handler();
         wcs4_bind_schedule_edit_handler();
@@ -42,6 +43,37 @@
         $('#wcs4-reset-form').click(function () {
             $('#wcs4-schedule-management-form-wrapper').removeClass('is-open');
             remove_item_message();
+        });
+    };
+
+    /**
+     * Handles the search button click event.
+     */
+    var wcs4_bind_schedule_search_handler = function () {
+        $('#posts-filter').submit(function (e) {
+            e.preventDefault();
+            var page = $('#search_wcs4_page').val();
+            var classroom = $('#search_wcs4_lesson_classroom_id').val();
+            var teacher = $('#search_wcs4_lesson_teacher_id').val();
+            var student = $('#search_wcs4_lesson_student_id').val();
+            var subject = $('#search_wcs4_lesson_subject_id').val();
+            var state = {
+                'page': page,
+                'classroom': classroom,
+                'teacher': teacher,
+                'student': student,
+                'subject': subject,
+            };
+            var url = $(this).attr('action');
+            url += '?page=' + page;
+            url += '&classroom=' + classroom;
+            url += '&teacher=' + teacher;
+            url += '&student=' + student;
+            url += '&subject=' + subject;
+            history.pushState(state, $('title').text(), url);
+            for (var day = 0; day < 7; day++) {
+                update_day_schedule(classroom, teacher, student, subject, day, 'fade');
+            }
         });
     };
 
@@ -85,9 +117,13 @@
                 schedule_item_message(data.response, data.result, data.errors);
 
                 if (data.result === 'updated') {
+                    var classroom = find_get_parameter('classroom');
+                    var teacher = find_get_parameter('teacher');
+                    var student = find_get_parameter('student');
+                    var subject = find_get_parameter('subject');
                     // Let's refresh the day
                     for (var day_to_update in data.days_to_update) {
-                        update_day_schedule(day_to_update, 'add');
+                        update_day_schedule(classroom, teacher, student, subject, day_to_update, 'fade');
                     }
 
                     // Clear notes.
@@ -139,11 +175,15 @@
                 } else {
                     elem = e.srcElement;
                 }
-                day = get_day_from_element(elem);
+                day = $(elem).data('day');
 
                 if (day !== false) {
+                    var classroom = find_get_parameter('classroom');
+                    var teacher = find_get_parameter('teacher');
+                    var student = find_get_parameter('student');
+                    var subject = find_get_parameter('subject');
                     // Let's refresh the day
-                    update_day_schedule(day, 'remove');
+                    update_day_schedule(classroom, teacher, student, subject, day, 'remove');
                 }
 
             }).fail(function (err) {
@@ -177,11 +217,7 @@
     /**
      * Updates dynamically a specific day schedule.
      */
-    var update_day_schedule = function (day, action) {
-        var classroom = find_get_parameter('classroom');
-        var teacher = find_get_parameter('teacher');
-        var student = find_get_parameter('student');
-        var subject = find_get_parameter('subject');
+    var update_day_schedule = function (classroom, teacher, student, subject, day, action) {
         entry = {
             action: 'get_day_schedule',
             security: WCS4_AJAX_OBJECT.ajax_nonce,
@@ -191,20 +227,21 @@
             subject: subject ? '#' + subject : null,
             weekday: day
         };
+        var parent = $('#wcs4-schedule-day-' + day);
+        parent.find('.spinner').addClass('is-active');
         jQuery.post(WCS4_AJAX_OBJECT.ajax_url, entry, function (data) {
             // Rebuild table
-            var html = data.html,
-                parent = $('#wcs4-schedule-day-' + day),
-                to_remove;
-            if (html.length > 0) {
-                to_remove = $('.wcs4-day-content-wrapper', parent);
-                if (action === 'add') {
-                    to_remove.remove();
-                    parent.append(html).hide().fadeIn('slow');
-                } else if (action === 'remove') {
-                    to_remove.remove();
+            var html = data.html;
+            if (html.length > 0 && $('.wcs4-day-content-wrapper', parent).data('hash') !== $(html).data('hash')) {
+                $('.wcs4-day-content-wrapper', parent).fadeOut(300, function () {
+                    jQuery(this).remove();
                     parent.append(html);
-                }
+                    if (action === 'fade') {
+                        $('.wcs4-day-content-wrapper', parent).hide().fadeIn(300, function () {
+                            $(this).attr('style', null);
+                        });
+                    }
+                });
             }
         }).fail(function (err) {
             // Failed
@@ -212,6 +249,7 @@
             schedule_item_message(WCS4_AJAX_OBJECT.ajax_error, 'error');
         }).always(function () {
             $('#wcs4-schedule-management-form-wrapper .spinner').removeClass('is-active');
+            $(parent).find('.spinner').removeClass('is-active');
         });
     }
 
@@ -386,25 +424,6 @@
         $('.wcs4-ajax-text').removeClass('updated').removeClass('error')
         $('.form-field').removeClass('form-invalid');
         $('.form-field .error').remove();
-    }
-
-
-    /**
-     * Extracts the day ID from an element (delete or edit).
-     */
-    var get_day_from_element = function (elem) {
-        var cls = elem.className,
-            m,
-            day;
-
-        m = cls.match(/wcs4-action-button-day-(\d)+/g);
-        if (m.length > 0) {
-            m = m[0];
-            day = m.replace('wcs4-action-button-day-', '');
-            return parseInt(day);
-        } else {
-            return false;
-        }
     }
 
     /**

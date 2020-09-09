@@ -60,18 +60,18 @@ function wcs4_schedule_management_page_callback()
         <a href="#" class="page-title-action" id="wcs4-show-form"><?php _ex('Add Lesson', 'button text', 'wcs4'); ?></a>
         <hr class="wp-header-end">
         <div id="ajax-response"></div>
-        <form id="posts-filter" method="get">
-            <input type="hidden" name="page" value="<?php echo $_GET['page']; ?>"/>
+        <form id="posts-filter" method="get" action="admin.php">
+            <input id="search_wcs4_page" type="hidden" name="page" value="<?php echo $_GET['page']; ?>"/>
             <p class="search-box">
                 <label class="screen-reader-text" for="search_wcs4_lesson_subject_id"><?php _e('Subject', 'wcs4'); ?></label>
-                <?php echo wcs4_generate_admin_select_list('subject', 'search_wcs4_lesson_subject', 'subject', (int)$_GET['subject']); ?>
+                <?php echo wcs4_generate_admin_select_list('subject', 'search_wcs4_lesson_subject_id', 'subject', (int)$_GET['subject']); ?>
                 <label class="screen-reader-text" for="search_wcs4_lesson_teacher_id"><?php _e('Teacher', 'wcs4'); ?></label>
-                <?php echo wcs4_generate_admin_select_list('teacher', 'search_wcs4_lesson_teacher', 'teacher', (int)$_GET['teacher']); ?>
+                <?php echo wcs4_generate_admin_select_list('teacher', 'search_wcs4_lesson_teacher_id', 'teacher', (int)$_GET['teacher']); ?>
                 <label class="screen-reader-text" for="search_wcs4_lesson_student_id"><?php _e('Student', 'wcs4'); ?></label>
-                <?php echo wcs4_generate_admin_select_list('student', 'search_wcs4_lesson_student', 'student', (int)$_GET['student']); ?>
+                <?php echo wcs4_generate_admin_select_list('student', 'search_wcs4_lesson_student_id', 'student', (int)$_GET['student']); ?>
                 <label class="screen-reader-text" for="search_wcs4_lesson_classroom_id"><?php _e('Classroom', 'wcs4'); ?></label>
-                <?php echo wcs4_generate_admin_select_list('classroom', 'search_wcs4_lesson_classroom', 'classroom', (int)$_GET['classroom']); ?>
-                <input type="submit" id="search-submit" class="button" value="<?php _e('Search lessons', 'wcs4'); ?>">
+                <?php echo wcs4_generate_admin_select_list('classroom', 'search_wcs4_lesson_classroom_id', 'classroom', (int)$_GET['classroom']); ?>
+                <input type="submit" id="wcs-search-submit" class="button" value="<?php _e('Search lessons', 'wcs4'); ?>">
             </p>
         </form>
         <div id="col-container" class="wp-clearfix">
@@ -135,7 +135,10 @@ function wcs4_schedule_management_page_callback()
                     <?php $days = wcs4_get_weekdays(); ?>
                     <?php foreach ($days as $key => $day): ?>
                         <section id="wcs4-schedule-day-<?php echo $key; ?>">
-                            <h2><?php echo $day; ?></h2>
+                            <h2>
+                                <?php echo $day; ?>
+                                <span class="spinner"></span>
+                            </h2>
                             <?php echo wcs4_render_admin_day_table(
                                 $_GET['classroom'] ? '#' . $_GET['classroom'] : null,
                                 $_GET['teacher'] ? '#' . $_GET['teacher'] : null,

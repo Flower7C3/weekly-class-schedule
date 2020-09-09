@@ -22,7 +22,7 @@ function wcs4_render_admin_day_table($classroom = null, $teacher = 'all', $stude
     $lessons = wcs4_get_lessons($classroom, $teacher, $student, $subject, $weekday, null, null);
     ob_start();
     ?>
-    <div class="wcs4-day-content-wrapper">
+    <div class="wcs4-day-content-wrapper" data-hash="<?php echo md5(json_encode($lessons)) ?>">
         <?php
         if ($lessons) { ?>
             <table class="wp-list-table widefat fixed striped wcs4-admin-schedule-table" id="wcs4-admin-table-day-<?php echo $day; ?>">
@@ -59,17 +59,17 @@ function wcs4_render_admin_day_table($classroom = null, $teacher = 'all', $stude
                                 <?php if (current_user_can(WCS4_SCHEDULE_MANAGE_CAPABILITY)) { ?>
                                     <div class="row-actions">
                                         <span class="edit hide-if-no-js">
-                                            <a href="#" class="wcs4-edit-button wcs4-action-button-day-<?php echo $day; ?>" id="wcs4-edit-button-<?php echo $lesson->getId(); ?>" data-lesson-id="<?php echo $lesson->getId(); ?>">
+                                            <a href="#" class="wcs4-edit-button" id="wcs4-edit-button-<?php echo $lesson->getId(); ?>" data-lesson-id="<?php echo $lesson->getId(); ?>" data-day="<?php echo $lesson->getWeekday(); ?>">
                                                 <?php echo __('Edit', 'wcs4'); ?>
                                             </a>
                                         </span>
                                         <span class="copy hide-if-no-js">
-                                            <a href="#" class="wcs4-copy-button wcs4-action-button-day-<?php echo $day; ?>" id="wcs4-copy-button-<?php echo $lesson->getId(); ?>" data-lesson-id="<?php echo $lesson->getId(); ?>">
+                                            <a href="#" class="wcs4-copy-button" id="wcs4-copy-button-<?php echo $lesson->getId(); ?>" data-lesson-id="<?php echo $lesson->getId(); ?>" data-day="<?php echo $lesson->getWeekday(); ?>">
                                                 <?php echo __('Duplicate', 'wcs4'); ?>
                                             </a>
                                         </span>
                                         <span class="delete hide-if-no-js">
-                                            <a href="#delete" class="wcs4-delete-button wcs4-action-button-day-<?php echo $day; ?>" id=wcs4-delete-<?php echo $lesson->getId(); ?>" data-lesson-id="<?php echo $lesson->getId(); ?>">
+                                            <a href="#delete" class="wcs4-delete-button" id=wcs4-delete-<?php echo $lesson->getId(); ?>" data-lesson-id="<?php echo $lesson->getId(); ?>" data-day="<?php echo $lesson->getWeekday(); ?>">
                                                 <?php echo __('Delete', 'wcs4'); ?>
                                             </a>
                                         </span>
@@ -105,6 +105,7 @@ function wcs4_render_admin_day_table($classroom = null, $teacher = 'all', $stude
     </div>
     <?php
     $result = ob_get_clean();
+    $result = trim($result);
     return $result;
 }
 

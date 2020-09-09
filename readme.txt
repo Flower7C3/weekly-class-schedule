@@ -39,7 +39,10 @@ You will find a 'Schedule' menu item as well as 'Classes', 'Teachers', 'Students
 
 == Changelog ==
 
-= Version 4.14 =
+= Version 4.16 =
+* Search with ajax and history push state
+
+= Version 4.15 =
 * Search fix
 
 = Version 4.14 =
