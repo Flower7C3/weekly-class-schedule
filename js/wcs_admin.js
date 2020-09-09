@@ -50,7 +50,7 @@
      * Handles the search button click event.
      */
     var wcs4_bind_schedule_search_handler = function () {
-        $('#posts-filter').submit(function (e) {
+        $('#wcs-posts-filter').submit(function (e) {
             e.preventDefault();
             var page = $('#search_wcs4_page').val();
             var classroom = $('#search_wcs4_lesson_classroom_id').val();

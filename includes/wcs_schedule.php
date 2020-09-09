@@ -17,15 +17,15 @@
  * @param int|null $weekday
  * @return false|string
  */
-function wcs4_render_admin_day_table($classroom = null, $teacher = 'all', $student = 'all', $subject = 'all', $weekday = null)
+function wcs4_get_admin_day_table_html($classroom = null, $teacher = 'all', $student = 'all', $subject = 'all', $weekday = null)
 {
     $lessons = wcs4_get_lessons($classroom, $teacher, $student, $subject, $weekday, null, null);
     ob_start();
     ?>
-    <div class="wcs4-day-content-wrapper" data-hash="<?php echo md5(json_encode($lessons)) ?>">
+    <div class="wcs4-day-content-wrapper" data-hash="<?php echo md5(serialize($lessons)) ?>">
         <?php
         if ($lessons) { ?>
-            <table class="wp-list-table widefat fixed striped wcs4-admin-schedule-table" id="wcs4-admin-table-day-<?php echo $day; ?>">
+            <table class="wp-list-table widefat fixed striped wcs4-admin-schedule-table" id="wcs4-admin-table-day-<?php echo $weekday; ?>">
                 <thead>
                     <tr>
                         <th id="start_end_hour" class="manage-column column-start_end_hour column-primary">
@@ -49,7 +49,7 @@ function wcs4_render_admin_day_table($classroom = null, $teacher = 'all', $stude
                         </th>
                     </tr>
                 </thead>
-                <tbody id="the-list-<?php echo $day; ?>">
+                <tbody id="the-list-<?php echo $weekday; ?>">
                     <?php
                     /** @var WCS4_Lesson $lesson */
                     foreach ($lessons as $lesson) { ?>

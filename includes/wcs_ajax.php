@@ -444,7 +444,7 @@ add_action('wp_ajax_get_day_schedule', static function () {
         $student = sanitize_text_field($_POST['student']);
         $subject = sanitize_text_field($_POST['subject']);
         $weekday = sanitize_text_field($_POST['weekday']);
-        $html = wcs4_render_admin_day_table($classroom, $teacher, $student, $subject, $weekday);
+        $html = wcs4_get_admin_day_table_html($classroom, $teacher, $student, $subject, $weekday);
     }
     wcs4_json_response([
         'html' => $html,

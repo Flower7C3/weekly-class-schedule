@@ -39,6 +39,10 @@ You will find a 'Schedule' menu item as well as 'Classes', 'Teachers', 'Students
 
 == Changelog ==
 
+= Version 4.17 =
+* Search with ajax apply only on wcs page
+* Admin day table fix parameters
+
 = Version 4.16 =
 * Search with ajax and history push state
 

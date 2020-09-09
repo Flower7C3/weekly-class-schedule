@@ -172,6 +172,6 @@
     font-style: italic;
 }
 
-#posts-filter select {
+#wcs-posts-filter select {
     max-width: 200px;
 }

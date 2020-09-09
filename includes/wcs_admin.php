@@ -60,7 +60,7 @@ function wcs4_schedule_management_page_callback()
         <a href="#" class="page-title-action" id="wcs4-show-form"><?php _ex('Add Lesson', 'button text', 'wcs4'); ?></a>
         <hr class="wp-header-end">
         <div id="ajax-response"></div>
-        <form id="posts-filter" method="get" action="admin.php">
+        <form id="wcs-posts-filter" method="get" action="admin.php">
             <input id="search_wcs4_page" type="hidden" name="page" value="<?php echo $_GET['page']; ?>"/>
             <p class="search-box">
                 <label class="screen-reader-text" for="search_wcs4_lesson_subject_id"><?php _e('Subject', 'wcs4'); ?></label>
@@ -139,7 +139,7 @@ function wcs4_schedule_management_page_callback()
                                 <?php echo $day; ?>
                                 <span class="spinner"></span>
                             </h2>
-                            <?php echo wcs4_render_admin_day_table(
+                            <?php echo wcs4_get_admin_day_table_html(
                                 $_GET['classroom'] ? '#' . $_GET['classroom'] : null,
                                 $_GET['teacher'] ? '#' . $_GET['teacher'] : null,
                                 $_GET['student'] ? '#' . $_GET['student'] : null,
