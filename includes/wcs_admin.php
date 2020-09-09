@@ -279,7 +279,7 @@ function wcs4_generate_admin_select_list($key, $id = '', $name = '', $default = 
 
     if (!empty($posts)) {
         foreach ($posts as $post) {
-            $name = $post->post_title;
+            $postName = $post->post_title;
             $terms = get_the_terms($post, $tax_type);
             if (!empty($terms)) {
                 $termNames = [];
@@ -288,10 +288,10 @@ function wcs4_generate_admin_select_list($key, $id = '', $name = '', $default = 
                 }
                 if (!empty($termNames)) {
                     sort($termNames);
-                    $name .= ' [' . implode(', ', $termNames) . ']';
+                    $postName .= ' [' . implode(', ', $termNames) . ']';
                 }
             }
-            $values[$post->ID] = $name;
+            $values[$post->ID] = $postName;
         }
     }
 
