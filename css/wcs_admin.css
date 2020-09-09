@@ -175,3 +175,9 @@
 #wcs-posts-filter select {
     max-width: 200px;
 }
+
+form.readonly input, form[readonly] input, input.readonly, input[readonly],
+form.readonly textarea, form[readonly] textarea, textarea.readonly, textarea[readonly],
+form.readonly select, form[readonly] select, select.readonly, select[readonly] {
+    background-color: #eee !important;
+}

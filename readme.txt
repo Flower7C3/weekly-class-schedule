@@ -39,6 +39,9 @@ You will find a 'Schedule' menu item as well as 'Classes', 'Teachers', 'Students
 
 == Changelog ==
 
+= Version 4.18 =
+* Edit form readonly while entering edit mode
+
 = Version 4.17 =
 * Search with ajax apply only on wcs page
 * Admin day table fix parameters

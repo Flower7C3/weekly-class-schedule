@@ -264,6 +264,7 @@
             row_id: row_id
         };
         $('#wcs4-schedule-management-form-wrapper .spinner').addClass('is-active');
+        $('#wcs4-schedule-management-form input,#wcs4-schedule-management-form select,#wcs4-schedule-management-form textarea').attr('readonly', true);
         jQuery.post(WCS4_AJAX_OBJECT.ajax_url, get_lesson_query, function (data) {
             set_entry_data_to_form(data.response, callback)
         }).fail(function (err) {
@@ -271,6 +272,7 @@
             schedule_item_message(WCS4_AJAX_OBJECT.ajax_error, 'error');
         }).always(function () {
             $('#wcs4-schedule-management-form-wrapper .spinner').removeClass('is-active');
+            $('#wcs4-schedule-management-form input,#wcs4-schedule-management-form select,#wcs4-schedule-management-form textarea').attr('readonly', null);
         });
     };
 
