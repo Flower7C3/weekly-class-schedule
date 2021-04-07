@@ -282,23 +282,30 @@ function wcs4_generate_admin_select_list($key, $id = '', $name = '', $default = 
 
     if (!empty($posts)) {
         foreach ($posts as $post) {
-            $postName = $post->post_title;
-            $terms = get_the_terms($post, $tax_type);
-            if (!empty($terms)) {
-                $termNames = [];
-                foreach ($terms as $term) {
-                    $termNames[] = $term->name;
-                }
-                if (!empty($termNames)) {
-                    sort($termNames);
-                    $postName .= ' [' . implode(', ', $termNames) . ']';
-                }
-            }
-            $values[$post->ID] = $postName;
+            $values[$post->ID] = get_post_title_with_taxonomy($post, $tax_type);
         }
     }
 
     return wcs4_select_list($values, $id, $name, $default, $required, $multiple, $classname, true);
+}
+
+function get_post_title_with_taxonomy($post, $tax_type = null, $terms_pattern = ' [%s]')
+{
+    $post_name = $post->post_title;
+    if (!empty($tax_type)) {
+        $terms = get_the_terms($post, $tax_type);
+        if (!empty($terms)) {
+            $term_names = [];
+            foreach ($terms as $term) {
+                $term_names[] = $term->name;
+            }
+            if (!empty($term_names)) {
+                sort($term_names);
+                $post_name .= sprintf($terms_pattern, implode(', ', $term_names));
+            }
+        }
+    }
+    return $post_name;
 }
 
 /**
