@@ -39,6 +39,10 @@ You will find a 'Schedule' menu item as well as 'Classes', 'Teachers', 'Students
 
 == Changelog ==
 
+= Version 4.19 =
+* get post title with taxonomy function
+* dynamic define WCS4_POST_TYPES_WHITELIST, allow location for teacher and classroom
+
 = Version 4.18 =
 * Edit form readonly while entering edit mode
 

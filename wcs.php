@@ -25,7 +25,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-define('WCS4_VERSION', '4.18');
+define('WCS4_VERSION', '4.19');
 
 define('WCS4_REQUIRED_WP_VERSION', '4.0');
 
@@ -78,21 +78,21 @@ if (!defined('WCS4_POST_TYPE_CLASSROOM')) {
 if (!defined('WCS4_TAXONOMY_TYPE_LOCATION')) {
     define('WCS4_TAXONOMY_TYPE_LOCATION', 'wcs4_location');
 }
-if (!defined('WCS4_POST_TYPES_WHITELIST')) {
-    define('WCS4_POST_TYPES_WHITELIST', [
-        WCS4_POST_TYPE_SUBJECT => WCS4_TAXONOMY_TYPE_BRANCH,
-        WCS4_POST_TYPE_TEACHER => WCS4_TAXONOMY_TYPE_SPECIALIZATION,
-        WCS4_POST_TYPE_STUDENT => WCS4_TAXONOMY_TYPE_GROUP,
-        WCS4_POST_TYPE_CLASSROOM => WCS4_TAXONOMY_TYPE_LOCATION,
-    ]);
-}
 if (!defined('WCS4_TAXONOMY_TYPES_WHITELIST')) {
     define('WCS4_TAXONOMY_TYPES_WHITELIST', [
-        WCS4_TAXONOMY_TYPE_BRANCH => WCS4_POST_TYPE_SUBJECT,
-        WCS4_TAXONOMY_TYPE_SPECIALIZATION => WCS4_POST_TYPE_TEACHER,
-        WCS4_TAXONOMY_TYPE_GROUP => WCS4_POST_TYPE_STUDENT,
-        WCS4_TAXONOMY_TYPE_LOCATION => WCS4_POST_TYPE_CLASSROOM,
+        WCS4_TAXONOMY_TYPE_BRANCH => [WCS4_POST_TYPE_SUBJECT],
+        WCS4_TAXONOMY_TYPE_SPECIALIZATION => [WCS4_POST_TYPE_TEACHER],
+        WCS4_TAXONOMY_TYPE_GROUP => [WCS4_POST_TYPE_STUDENT],
+        WCS4_TAXONOMY_TYPE_LOCATION => [WCS4_POST_TYPE_CLASSROOM, WCS4_POST_TYPE_TEACHER],
     ]);
+}
+$_WCS4_POST_TYPES_WHITELIST = [];
+foreach (WCS4_TAXONOMY_TYPES_WHITELIST as $_tax => $_types) {
+    $_WCS4_POST_TYPES_WHITELIST[$_types[0]] = $_tax;
+}
+if (!defined('WCS4_POST_TYPES_WHITELIST')) {
+    define('WCS4_POST_TYPES_WHITELIST', $_WCS4_POST_TYPES_WHITELIST);
+    unset($_WCS4_POST_TYPES_WHITELIST);
 }
 
 /**
@@ -144,7 +144,7 @@ add_action('init', static function () {
 
     # Register subject
     if (!empty($wcs4_settings['subject_taxonomy_slug'])) {
-        register_taxonomy(WCS4_TAXONOMY_TYPE_BRANCH, WCS4_POST_TYPE_SUBJECT, array(
+        register_taxonomy(WCS4_TAXONOMY_TYPE_BRANCH, WCS4_TAXONOMY_TYPES_WHITELIST[WCS4_TAXONOMY_TYPE_BRANCH], array(
             'labels' => array(
                 'name' => _x('Branches', 'taxonomy general name', 'wcs4'),
                 'singular_name' => _x('Branch', 'taxonomy singular name', 'wcs4'),
@@ -205,7 +205,7 @@ add_action('init', static function () {
 
     # Register teacher
     if (!empty($wcs4_settings['teacher_taxonomy_slug'])) {
-        register_taxonomy(WCS4_TAXONOMY_TYPE_SPECIALIZATION, WCS4_POST_TYPE_TEACHER, array(
+        register_taxonomy(WCS4_TAXONOMY_TYPE_SPECIALIZATION, WCS4_TAXONOMY_TYPES_WHITELIST[WCS4_TAXONOMY_TYPE_SPECIALIZATION], array(
             'labels' => array(
                 'name' => _x('Specializations', 'taxonomy general name', 'wcs4'),
                 'singular_name' => _x('Specialization', 'taxonomy singular name', 'wcs4'),
@@ -266,7 +266,7 @@ add_action('init', static function () {
 
     # Register student
     if (!empty($wcs4_settings['student_taxonomy_slug'])) {
-        register_taxonomy(WCS4_TAXONOMY_TYPE_GROUP, WCS4_POST_TYPE_STUDENT, array(
+        register_taxonomy(WCS4_TAXONOMY_TYPE_GROUP, WCS4_TAXONOMY_TYPES_WHITELIST[WCS4_TAXONOMY_TYPE_GROUP], array(
             'labels' => array(
                 'name' => _x('Groups', 'taxonomy general name', 'wcs4'),
                 'singular_name' => _x('Group', 'taxonomy singular name', 'wcs4'),
@@ -327,7 +327,7 @@ add_action('init', static function () {
 
     # Register classroom
     if (!empty($wcs4_settings['classroom_taxonomy_slug'])) {
-        register_taxonomy(WCS4_TAXONOMY_TYPE_LOCATION, WCS4_POST_TYPE_CLASSROOM, array(
+        register_taxonomy(WCS4_TAXONOMY_TYPE_LOCATION, WCS4_TAXONOMY_TYPES_WHITELIST[WCS4_TAXONOMY_TYPE_LOCATION], array(
             'labels' => array(
                 'name' => _x('Locations', 'taxonomy general name', 'wcs4'),
                 'singular_name' => _x('Location', 'taxonomy singular name', 'wcs4'),
@@ -397,7 +397,7 @@ add_action('init', static function () {
  */
 add_filter('the_content', static function ($content) {
     $post_type = get_post_type();
-    if (is_single() && in_array($post_type, array_keys(WCS4_POST_TYPES_WHITELIST), true)) {
+    if (is_single() && array_key_exists($post_type, WCS4_POST_TYPES_WHITELIST)) {
         $post_id = get_the_id();
         $post_type_key = str_replace('wcs4_', '', $post_type);
         $wcs4_settings = wcs4_load_settings();
@@ -431,7 +431,7 @@ add_filter('single_template', static function ($single) {
     $post_type_key = str_replace('wcs4_', '', $post_type);
     $wcs4_settings = wcs4_load_settings();
     $calendar_download = $wcs4_settings[$post_type_key . '_download_icalendar'];
-    if (isset($post_type, $_GET['format']) && in_array($post_type, array_keys(WCS4_POST_TYPES_WHITELIST), true) && 'ical' === $_GET['format'] && 'yes' === $calendar_download) {
+    if (isset($post_type, $_GET['format']) && array_key_exists($post_type, WCS4_POST_TYPES_WHITELIST) && 'ical' === $_GET['format'] && 'yes' === $calendar_download) {
         $template_file = WCS4_PLUGIN_DIR . '/templates/calendar.php';
         if (file_exists($template_file)) {
             return $template_file;
@@ -453,13 +453,19 @@ add_action('pre_get_posts', static function ($query) {
         if (isset($query->tax_query, $query->tax_query->queries[0]['taxonomy'])) {
             $taxonomy = $query->tax_query->queries[0]['taxonomy'];
         }
-        if (in_array($taxonomy, array_keys(WCS4_TAXONOMY_TYPES_WHITELIST), true)) {
+        if (array_key_exists($taxonomy, WCS4_TAXONOMY_TYPES_WHITELIST)) {
             $postTypes = $query->get('post_type') ?: [];
-            $postTypes[] = WCS4_TAXONOMY_TYPES_WHITELIST[$taxonomy];
+            $postTypes = array_merge($postTypes, WCS4_TAXONOMY_TYPES_WHITELIST[$taxonomy]);
             $query->set('post_type', $postTypes);
         }
     }
-    if (isset($query->query_vars['post_type']) && in_array($query->query_vars['post_type'], array_keys(WCS4_POST_TYPES_WHITELIST), true)) {
+    if (isset($query->query_vars['post_type'])
+        && (
+            (!is_array($query->query_vars['post_type']) && array_key_exists($query->query_vars['post_type'], WCS4_POST_TYPES_WHITELIST))
+            ||
+            (is_array($query->query_vars['post_type']) && array_intersect($query->query_vars['post_type'], array_keys(WCS4_POST_TYPES_WHITELIST)))
+        )
+    ) {
         $query->set('orderby', 'title');
         $query->set('order', 'ASC');
     }
@@ -565,7 +571,7 @@ add_action('admin_init', static function () {
  * Hashed post slug
  */
 add_filter("wp_unique_post_slug", static function ($slug, $post_ID, $post_status, $post_type, $post_parent, $original_slug) {
-    if (isset($post_type) && in_array($post_type, array_keys(WCS4_POST_TYPES_WHITELIST), true)) {
+    if (isset($post_type) && array_key_exists($post_type, WCS4_POST_TYPES_WHITELIST)) {
         $post_type_key = str_replace('wcs4_', '', $post_type);
         $wcs4_settings = wcs4_load_settings();
         $hashed_slug = $wcs4_settings[$post_type_key . '_hashed_slug'];
@@ -577,6 +583,7 @@ add_filter("wp_unique_post_slug", static function ($slug, $post_ID, $post_status
     return $slug;
 }, 10, 6);
 
+
 /**
  * Post title from item name.
  * Hide title for private or protected elements.
@@ -587,7 +594,7 @@ function respect_item_name($format)
 {
     global $post;
     $post_type = $post->post_type;
-    if (isset($post_type) && in_array($post_type, array_keys(WCS4_POST_TYPES_WHITELIST), true)) {
+    if (isset($post_type) && array_key_exists($post_type, WCS4_POST_TYPES_WHITELIST)) {
         $item = new WCS4_Item($post->ID, $post->post_title, $post->post_content);
         return $item->getName();
     }
