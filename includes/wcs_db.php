@@ -14,16 +14,34 @@ function wcs4_get_schedule_table_name()
     return $wpdb->prefix . 'wcs4_schedule';
 }
 
-function wcs4_get_teacher_table_name()
+function wcs4_get_schedule_teacher_table_name()
 {
     global $wpdb;
     return $wpdb->prefix . 'wcs4_schedule_teacher';
 }
 
-function wcs4_get_student_table_name()
+function wcs4_get_schedule_student_table_name()
 {
     global $wpdb;
     return $wpdb->prefix . 'wcs4_schedule_student';
+}
+
+function wcs4_get_report_table_name()
+{
+    global $wpdb;
+    return $wpdb->prefix . 'wcs4_report';
+}
+
+function wcs4_get_report_teacher_table_name()
+{
+    global $wpdb;
+    return $wpdb->prefix . 'wcs4_report_teacher';
+}
+
+function wcs4_get_report_student_table_name()
+{
+    global $wpdb;
+    return $wpdb->prefix . 'wcs4_report_student';
 }
 
 /**
@@ -32,32 +50,55 @@ function wcs4_get_student_table_name()
 function wcs4_create_db_tables()
 {
     $table_schedule = wcs4_get_schedule_table_name();
-    $table_teacher = wcs4_get_teacher_table_name();
-    $table_student = wcs4_get_student_table_name();
+    $table_schedule_teacher = wcs4_get_schedule_teacher_table_name();
+    $table_schedule_student = wcs4_get_schedule_student_table_name();
+    $table_report = wcs4_get_report_table_name();
+    $table_report_teacher = wcs4_get_report_teacher_table_name();
+    $table_report_student = wcs4_get_report_student_table_name();
 
     $sql_schedule = "CREATE TABLE `$table_schedule` (
         `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
         `subject_id` int(20) unsigned NOT NULL,
         `classroom_id` int(20) unsigned NOT NULL,
         `weekday` int(3) unsigned NOT NULL,
-        `start_hour` time NOT NULL,
-        `end_hour` time NOT NULL,
+        `start_time` time NOT NULL,
+        `end_time` time NOT NULL,
         `timezone` varchar(255) NOT NULL DEFAULT 'UTC',
         `visible` tinyint(1) NOT NULL DEFAULT '1',
         `notes` text,
         PRIMARY KEY (`id`)
         )";
-    $sql_teacher = "CREATE TABLE `$table_teacher` (
+    $sql_schedule_teacher = "CREATE TABLE `$table_schedule_teacher` (
         `id` int(11) unsigned NOT NULL,
         `teacher_id` int(20) unsigned NOT NULL)";
-    $sql_student = "CREATE TABLE `$table_student` (
+    $sql_schedule_student = "CREATE TABLE `$table_schedule_student` (
+        `id` int(11) unsigned NOT NULL,
+        `student_id` int(20) unsigned NOT NULL)";
+
+    $sql_report= "CREATE TABLE `$table_report` (
+        `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+        `subject_id` int(20) unsigned NOT NULL,
+        `date` date NOT NULL,
+        `start_time` time NOT NULL,
+        `end_time` time NOT NULL,
+        `timezone` varchar(255) NOT NULL DEFAULT 'UTC',
+        `notes` text,
+        PRIMARY KEY (`id`)
+        )";
+    $sql_report_teacher = "CREATE TABLE `$table_report_teacher` (
+        `id` int(11) unsigned NOT NULL,
+        `teacher_id` int(20) unsigned NOT NULL)";
+    $sql_report_student = "CREATE TABLE `$table_report_student` (
         `id` int(11) unsigned NOT NULL,
         `student_id` int(20) unsigned NOT NULL)";
 
     require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
     dbDelta($sql_schedule);
-    dbDelta($sql_teacher);
-    dbDelta($sql_student);
+    dbDelta($sql_schedule_teacher);
+    dbDelta($sql_schedule_student);
+    dbDelta($sql_report);
+    dbDelta($sql_report_teacher);
+    dbDelta($sql_report_student);
     add_option('wcs4_db_version', WCS4_DB_VERSION);
 }
 
@@ -174,9 +215,12 @@ function wcs4_delete_everything()
         }
     }
 
-    $wpdb->query('DROP TABLE IF EXISTS ' . wcs4_get_teacher_table_name());
-    $wpdb->query('DROP TABLE IF EXISTS ' . wcs4_get_student_table_name());
+    $wpdb->query('DROP TABLE IF EXISTS ' . wcs4_get_schedule_teacher_table_name());
+    $wpdb->query('DROP TABLE IF EXISTS ' . wcs4_get_schedule_student_table_name());
     $wpdb->query('DROP TABLE IF EXISTS ' . wcs4_get_schedule_table_name());
+    $wpdb->query('DROP TABLE IF EXISTS ' . wcs4_get_report_teacher_table_name());
+    $wpdb->query('DROP TABLE IF EXISTS ' . wcs4_get_report_student_table_name());
+    $wpdb->query('DROP TABLE IF EXISTS ' . wcs4_get_report_table_name());
 }
 
 /**
@@ -185,9 +229,20 @@ function wcs4_delete_everything()
 function wcs4_clear_schedule()
 {
     global $wpdb;
-    $wpdb->query('TRUNCATE ' . wcs4_get_teacher_table_name());
-    $wpdb->query('TRUNCATE ' . wcs4_get_student_table_name());
+    $wpdb->query('TRUNCATE ' . wcs4_get_schedule_teacher_table_name());
+    $wpdb->query('TRUNCATE ' . wcs4_get_schedule_student_table_name());
     $wpdb->query('TRUNCATE ' . wcs4_get_schedule_table_name());
+}
+
+/**
+ * Truncate all the report data
+ */
+function wcs4_clear_report()
+{
+    global $wpdb;
+    $wpdb->query('TRUNCATE ' . wcs4_get_report_teacher_table_name());
+    $wpdb->query('TRUNCATE ' . wcs4_get_report_student_table_name());
+    $wpdb->query('TRUNCATE ' . wcs4_get_report_table_name());
 }
 
 class WCS4_Lesson
@@ -197,9 +252,9 @@ class WCS4_Lesson
     /** @var int */
     private $weekday;
     /** @var string */
-    private $start_hour;
+    private $start_time;
     /** @var string */
-    private $end_hour;
+    private $end_time;
     /** @var WCS4_Item */
     private $subject;
     /** @var WCS4_Item */
@@ -232,8 +287,8 @@ class WCS4_Lesson
 
         $this->weekday = $dbrow->weekday;
 
-        $this->start_hour = date($format, strtotime($dbrow->start_hour));
-        $this->end_hour = date($format, strtotime($dbrow->end_hour));
+        $this->start_time = date($format, strtotime($dbrow->start_time));
+        $this->end_time = date($format, strtotime($dbrow->end_time));
         $this->notes = $dbrow->notes;
         $this->visible = $dbrow->visible ? true : false;
 
@@ -364,7 +419,7 @@ class WCS4_Lesson
      */
     public function getStartHour()
     {
-        return $this->start_hour;
+        return $this->start_time;
     }
 
     /**
@@ -381,7 +436,7 @@ class WCS4_Lesson
      */
     public function getEndHour()
     {
-        return $this->end_hour;
+        return $this->end_time;
     }
 
     public function getEndTime()
@@ -422,6 +477,251 @@ class WCS4_Lesson
     public function getClassroom()
     {
         return $this->classroom;
+    }
+
+    /**
+     * @return WCS4_Item
+     */
+    public function getTeacher()
+    {
+        if (empty($this->teacher)) {
+            $name = [];
+            $short = [];
+            $long = [];
+            $description = [];
+            $link_name = [];
+            $link_short = [];
+            /** @var WCS4_Item $_teacher */
+            foreach ($this->teachers as $_teacher) {
+                $name[] = $_teacher->getName();
+                $short[] = $_teacher->getShort();
+                $long[] = $_teacher->getInfo();
+                $description[] = $_teacher->getDescription();
+                $link_name[] = $_teacher->getLinkName();
+                $link_short[] = $_teacher->getLinkShort();
+            }
+            $this->teacher = new WCS4_Item();
+            $this->teacher
+                ->setName(implode(', ', $name))
+                ->setShort(implode(', ', $short))
+                ->setInfo(implode(', ', $long))
+                ->setDescription(implode(', ', $description))
+                ->setLinkName(implode(', ', $link_name))
+                ->setLinkShort(implode(', ', $link_short));
+        }
+        return $this->teacher;
+    }
+
+    /**
+     * @return WCS4_Item
+     */
+    public function getStudent()
+    {
+        if (empty($this->student)) {
+            $name = [];
+            $short = [];
+            $long = [];
+            $description = [];
+            $link_name = [];
+            $link_short = [];
+            /** @var WCS4_Item $_student */
+            foreach ($this->students as $_student) {
+                $name[] = $_student->getName();
+                $short[] = $_student->getShort();
+                $long[] = $_student->getInfo();
+                $description[] = $_student->getDescription();
+                $link_name[] = $_student->getLinkName();
+                $link_short[] = $_student->getLinkShort();
+            }
+            $this->student = new WCS4_Item();
+            $this->student
+                ->setName(implode(', ', $name))
+                ->setShort(implode(', ', $short))
+                ->setInfo(implode(', ', $long))
+                ->setDescription(implode(', ', $description))
+                ->setLinkName(implode(', ', $link_name))
+                ->setLinkShort(implode(', ', $link_short));
+        }
+        return $this->student;
+    }
+}
+
+class WCS4_Report
+{
+    /** @var int */
+    private $id;
+    /** @var string */
+    private $date;
+    /** @var string */
+    private $start_time;
+    /** @var string */
+    private $end_time;
+    /** @var WCS4_Item */
+    private $subject;
+    /** @var WCS4_Item */
+    private $teacher;
+    /** @var array */
+    private $teachers = [];
+    /** @var WCS4_Item */
+    private $student;
+    /** @var array */
+    private $students = [];
+    /** @var string */
+    private $notes;
+    /** @var int */
+    private $position = 0;
+
+    /**
+     * WCS4_Lesson constructor.
+     * @param array $dbrow
+     * @param string $format
+     */
+    public function __construct($dbrow, $format)
+    {
+        $this->id = $dbrow->report_id;
+
+        $this->date = $dbrow->date;
+
+        $this->start_time = date($format, strtotime($dbrow->start_time));
+        $this->end_time = date($format, strtotime($dbrow->end_time));
+        $this->notes = $dbrow->notes;
+
+        $this->subject = new WCS4_Item($dbrow->subject_id, $dbrow->subject_name, $dbrow->subject_desc);
+        $this->teachers[$dbrow->teacher_id] = new WCS4_Item($dbrow->teacher_id, $dbrow->teacher_name, $dbrow->teacher_desc);
+        $this->students[$dbrow->student_id] = new WCS4_Item($dbrow->student_id, $dbrow->student_name, $dbrow->student_desc);
+    }
+
+    /**
+     * @return int
+     */
+    public function getPosition()
+    {
+        return $this->position;
+    }
+
+    /**
+     * @param int $position
+     * @return WCS4_Lesson
+     */
+    public function setPosition($position)
+    {
+        $this->position = $position;
+        return $this;
+    }
+
+    /**
+     * @param $teachers
+     * @return $this
+     */
+    public function addTeachers($teachers)
+    {
+        $this->teachers += $teachers;
+        return $this;
+    }
+
+    /**
+     * @param $students
+     * @return $this
+     */
+    public function addStudents($students)
+    {
+        $this->students += $students;
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getTeachers()
+    {
+        return $this->teachers;
+    }
+
+    /**
+     * @return array
+     */
+    public function getStudents()
+    {
+        return $this->students;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getNotes()
+    {
+        return $this->notes;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    public function getAllMinutes()
+    {
+        $startMinutes = $this->getStartMinutes();
+        $endMinutes = $this->getEndMinutes();
+        $minutes = [];
+        for ($minute = $startMinutes; $minute < $endMinutes; $minute++) {
+            $timeM = sprintf('%02d', $minute % 60);
+            $timeH = sprintf('%02d', ($minute - $timeM) / 60);
+            $minutes[] = $timeH . ':' . $timeM;
+        }
+        return $minutes;
+    }
+
+    /**
+     * @return int
+     */
+    public function getStartMinutes()
+    {
+        $time = explode(':', $this->getStartHour());
+        return $time[0] * 60 + $time[1];
+    }
+
+    /**
+     * @return false|string
+     */
+    public function getStartHour()
+    {
+        return $this->start_time;
+    }
+
+    /**
+     * @return int
+     */
+    public function getEndMinutes()
+    {
+        $time = explode(':', $this->getEndHour());
+        return $time[0] * 60 + $time[1];
+    }
+
+    /**
+     * @return false|string
+     */
+    public function getEndHour()
+    {
+        return $this->end_time;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getDate()
+    {
+        return $this->date;
+    }
+
+    /**
+     * @return WCS4_Item
+     */
+    public function getSubject()
+    {
+        return $this->subject;
     }
 
     /**

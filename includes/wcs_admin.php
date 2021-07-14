@@ -3,6 +3,117 @@
  * Admin area functions.
  */
 
+/**
+ * Register admin pages (schedule management, settings, etc...).
+ */
+if (!defined('WCS4_SCHEDULE_VIEW_CAPABILITY')) {
+    define('WCS4_SCHEDULE_VIEW_CAPABILITY', 'wcs4_schedule_view');
+}
+if (!defined('WCS4_SCHEDULE_MANAGE_CAPABILITY')) {
+    define('WCS4_SCHEDULE_MANAGE_CAPABILITY', 'wcs4_schedule_manage');
+}
+if (!defined('WCS4_REPORT_VIEW_CAPABILITY')) {
+    define('WCS4_REPORT_VIEW_CAPABILITY', 'wcs4_report_view');
+}
+if (!defined('WCS4_REPORT_MANAGE_CAPABILITY')) {
+    define('WCS4_REPORT_MANAGE_CAPABILITY', 'wcs4_schedule_manage');
+}
+if (!defined('WCS4_STANDARD_OPTIONS_CAPABILITY')) {
+    define('WCS4_STANDARD_OPTIONS_CAPABILITY', 'wcs4_standard_options');
+}
+if (!defined('WCS4_ADVANCED_OPTIONS_CAPABILITY')) {
+    define('WCS4_ADVANCED_OPTIONS_CAPABILITY', 'wcs4_advanced_options');
+}
+add_action('admin_menu', static function () {
+    $page_management = add_menu_page(__('Schedule Management', 'wcs4'),
+        __('Schedule', 'wcs4'),
+        WCS4_SCHEDULE_VIEW_CAPABILITY,
+        'wcs4-schedule',
+        'wcs4_schedule_management_page_callback',
+        'dashicons-schedule', 50);
+
+    $page_report = add_submenu_page('wcs4-schedule',
+        __('Report', 'wcs4'),
+        __('Report', 'wcs4'),
+        WCS4_REPORT_VIEW_CAPABILITY,
+        'wcs4-report',
+        'wcs4_report_page_callback');
+
+    $page_standard_options = add_submenu_page('wcs4-schedule',
+        __('Standard Options', 'wcs4'),
+        __('Standard Options', 'wcs4'),
+        WCS4_STANDARD_OPTIONS_CAPABILITY,
+        'wcs4-standard-options',
+        'wcs4_standard_options_page_callback');
+
+    add_submenu_page('wcs4-schedule',
+        __('Advanced Options', 'wcs4'),
+        __('Advanced Options', 'wcs4'),
+        WCS4_ADVANCED_OPTIONS_CAPABILITY,
+        'wcs4-advanced',
+        'wcs4_advanced_options_page_callback');
+
+    $help_tabs = [];
+    $help_tabs[] = [
+        'id' => 'wcs4_help_shortcode',
+        'title' => _x('Using shortcode', 'help title', 'wcs4'),
+        'callback' => 'wcs4_help_shortcode_callback',
+    ];
+    $help_tabs[] = [
+        'id' => 'wcs4_help_placeholders',
+        'title' => _x('Placeholders', 'help title', 'wcs4'),
+        'callback' => 'wcs4_help_placeholders_callback',
+    ];
+    $help_tabs[] = [
+        'id' => 'wcs4_help_allowed_html',
+        'title' => _x('HTML tags in template', 'help title', 'wcs4'),
+        'callback' => 'wcs4_help_allowed_html_callback',
+    ];
+    add_action('load-' . $page_management, static function () use ($help_tabs) {
+        $screen = get_current_screen();
+        foreach ($help_tabs as $tab) {
+            $screen->add_help_tab($tab);
+        }
+    });
+    add_action('load-' . $page_standard_options, static function () use ($help_tabs) {
+        $screen = get_current_screen();
+        foreach ($help_tabs as $tab) {
+            $screen->add_help_tab($tab);
+        }
+    });
+});
+
+/**
+ * Loads plugin text domain
+ */
+add_action('init', static function () {
+    load_plugin_textdomain('wcs4');
+    $role = get_role('administrator');
+    $role->add_cap(WCS4_SCHEDULE_VIEW_CAPABILITY, true);
+    $role->add_cap(WCS4_SCHEDULE_MANAGE_CAPABILITY, true);
+    $role->add_cap(WCS4_REPORT_VIEW_CAPABILITY, true);
+    $role->add_cap(WCS4_REPORT_MANAGE_CAPABILITY, true);
+    $role->add_cap(WCS4_STANDARD_OPTIONS_CAPABILITY, true);
+    $role->add_cap(WCS4_ADVANCED_OPTIONS_CAPABILITY, true);
+    $role = get_role('editor');
+    $role->add_cap(WCS4_SCHEDULE_VIEW_CAPABILITY, true);
+    $role->add_cap(WCS4_REPORT_VIEW_CAPABILITY, true);
+    $role->add_cap(WCS4_SCHEDULE_MANAGE_CAPABILITY, true);
+    $role->add_cap(WCS4_STANDARD_OPTIONS_CAPABILITY, true);
+    $role = get_role('author');
+    $role->add_cap(WCS4_SCHEDULE_VIEW_CAPABILITY, true);
+    $role->add_cap(WCS4_REPORT_VIEW_CAPABILITY, true);
+});
+
+/**
+ * Updates the version in the options table.
+ */
+add_action('admin_init', static function () {
+    $version = get_option('wcs4_version');
+    if (is_admin() && $version < WCS4_VERSION) {
+        update_option('wcs4_version', WCS4_VERSION);
+    }
+});
 
 /**
  * Register styles and scripts.
@@ -16,22 +127,15 @@ add_action('admin_enqueue_scripts', static function () {
  * Load admin area scripts.
  */
 add_action('admin_enqueue_scripts', static function () {
+    wp_register_script('wcs4_common_js', WCS4_PLUGIN_URL . '/js/wcs_common.js', array('jquery'), WCS4_VERSION);
+    wp_enqueue_script('wcs4_common_js');
     wp_register_script('wcs4_admin_js', WCS4_PLUGIN_URL . '/js/wcs_admin.js', array('jquery'), WCS4_VERSION);
     wp_enqueue_script('wcs4_admin_js');
-    wp_localize_script('wcs4_admin_js', 'WCS4_AJAX_OBJECT', array(
-        'ajax_error' => __('Error', 'wcs4'),
-        'add_item' => _x('Add Lesson', 'button text', 'wcs4'),
-        'save_item' => _x('Save Lesson', 'button text', 'wcs4'),
-        'cancel_editing' => _x('Exit edit lesson mode', 'button text', 'wcs4'),
-        'cancel_copying' => _x('Exit copy lesson mode', 'button text', 'wcs4'),
-        'add_mode' => _x('Add New Lesson', 'page title', 'wcs4'),
-        'edit_mode' => _x('Edit Lesson', 'page title', 'wcs4'),
-        'copy_mode' => _x('Duplicate Lesson', 'page title', 'wcs4'),
-        'delete_warning' => _x('Are you sure you want to delete this entry?', 'manage schedule', 'wcs4'),
-        'reset_warning' => _x('Are you sure you want to to this?', 'reset database', 'wcs4'),
-        'ajax_url' => admin_url('admin-ajax.php'),
-        'ajax_nonce' => wp_create_nonce('wcs4-ajax-nonce'),
-    ));
+    wp_register_script('wcs4_lesson_js', WCS4_PLUGIN_URL . '/js/wcs_lesson.js', array('jquery'), WCS4_VERSION);
+    wp_enqueue_script('wcs4_lesson_js');
+    wp_register_script('wcs4_report_js', WCS4_PLUGIN_URL . '/js/wcs_report.js', array('jquery'), WCS4_VERSION);
+    wp_enqueue_script('wcs4_report_js');
+    wcs4_js_i18n('wcs4_admin_js');
 });
 
 /**
@@ -48,113 +152,6 @@ add_action('admin_enqueue_scripts', static function () {
         array('jquery')
     );
 });
-
-/**
- * Callback for generating the schedule management page.
- */
-function wcs4_schedule_management_page_callback()
-{
-    ?>
-    <div class="wrap">
-        <h1 class="wp-heading-inline"><?php _ex('Schedule Management', 'manage schedule', 'wcs4'); ?></h1>
-        <a href="#" class="page-title-action" id="wcs4-show-form"><?php _ex('Add Lesson', 'button text', 'wcs4'); ?></a>
-        <hr class="wp-header-end">
-        <div id="ajax-response"></div>
-        <form id="wcs-posts-filter" method="get" action="admin.php">
-            <input id="search_wcs4_page" type="hidden" name="page" value="<?php echo $_GET['page']; ?>"/>
-            <p class="search-box">
-                <label class="screen-reader-text" for="search_wcs4_lesson_subject_id"><?php _e('Subject', 'wcs4'); ?></label>
-                <?php echo wcs4_generate_admin_select_list('subject', 'search_wcs4_lesson_subject_id', 'subject', (int)$_GET['subject']); ?>
-                <label class="screen-reader-text" for="search_wcs4_lesson_teacher_id"><?php _e('Teacher', 'wcs4'); ?></label>
-                <?php echo wcs4_generate_admin_select_list('teacher', 'search_wcs4_lesson_teacher_id', 'teacher', (int)$_GET['teacher']); ?>
-                <label class="screen-reader-text" for="search_wcs4_lesson_student_id"><?php _e('Student', 'wcs4'); ?></label>
-                <?php echo wcs4_generate_admin_select_list('student', 'search_wcs4_lesson_student_id', 'student', (int)$_GET['student']); ?>
-                <label class="screen-reader-text" for="search_wcs4_lesson_classroom_id"><?php _e('Classroom', 'wcs4'); ?></label>
-                <?php echo wcs4_generate_admin_select_list('classroom', 'search_wcs4_lesson_classroom_id', 'classroom', (int)$_GET['classroom']); ?>
-                <input type="submit" id="wcs-search-submit" class="button" value="<?php _e('Search lessons', 'wcs4'); ?>">
-            </p>
-        </form>
-        <div id="col-container" class="wp-clearfix">
-            <?php if (current_user_can(WCS4_SCHEDULE_MANAGE_CAPABILITY)) { ?>
-                <div id="col-left">
-                    <div class="col-wrap">
-                        <div class="form-wrap" id="wcs4-schedule-management-form-wrapper">
-                            <h2 id="wcs4-schedule-management-form-title"><?php _ex('Add New Lesson', 'page title', 'wcs4'); ?></h2>
-                            <form id="wcs4-schedule-management-form" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
-                                <div class="form-field form-required term-wcs4_lesson_subject_id-wrap">
-                                    <label for="wcs4_lesson_subject_id"><?php _e('Subject', 'wcs4'); ?></label>
-                                    <?php echo wcs4_generate_admin_select_list('subject', 'wcs4_lesson_subject', 'wcs4_lesson_subject', null, true); ?>
-                                </div>
-                                <div class="form-field form-required term-wcs4_lesson_teacher_id-wrap">
-                                    <label for="wcs4_lesson_teacher_id"><?php _e('Teacher', 'wcs4'); ?></label>
-                                    <?php echo wcs4_generate_admin_select_list('teacher', 'wcs4_lesson_teacher', 'wcs4_lesson_teacher', null, true, true); ?>
-                                </div>
-                                <div class="form-field form-required term-wcs4_lesson_student_id-wrap">
-                                    <label for="wcs4_lesson_student_id"><?php _e('Student', 'wcs4'); ?></label>
-                                    <?php echo wcs4_generate_admin_select_list('student', 'wcs4_lesson_student', 'wcs4_lesson_student', null, true, true); ?>
-                                </div>
-                                <div class="form-field form-required term-wcs4_lesson_classroom_id-wrap">
-                                    <label for="wcs4_lesson_classroom_id"><?php _e('Classroom', 'wcs4'); ?></label>
-                                    <?php echo wcs4_generate_admin_select_list('classroom', 'wcs4_lesson_classroom', 'wcs4_lesson_classroom', null, true); ?>
-                                </div>
-                                <div class="form-field form-required term-wcs4_lesson_weekday-wrap">
-                                    <label for="wcs4_lesson_weekday"><?php _e('Weekday', 'wcs4'); ?></label>
-                                    <?php echo wcs4_generate_weekday_select_list('wcs4_lesson_weekday', null, true); ?>
-                                </div>
-                                <div class="form-field form-2-columns">
-                                    <div class="form-field form-time-field form-required term-wcs4_lesson_start_hour-wrap">
-                                        <label for="wcs4_lesson_start_hour"><?php _e('Start Hour', 'wcs4'); ?></label>
-                                        <?php echo wcs4_generate_hour_select_list('wcs4_lesson_start_time', array('hour' => 9, 'minute' => 0), true); ?>
-                                    </div>
-                                    <div class="form-field form-time-field form-required term-wcs4_lesson_end_hour-wrap">
-                                        <label for="wcs4_lesson_end_hour"><?php _e('End Hour', 'wcs4'); ?></label>
-                                        <?php echo wcs4_generate_hour_select_list('wcs4_lesson_end_time', array('hour' => 10, 'minute' => 0), true); ?>
-                                    </div>
-                                </div>
-                                <div class="form-field form-required term-wcs4_lesson_visibility-wrap">
-                                    <label for="wcs4_lesson_visibility"><?php _e('Visibility', 'wcs4'); ?></label>
-                                    <?php echo wcs4_generate_visibility_select_list('wcs4_lesson_visibility', 'visible', true); ?>
-                                </div>
-                                <div class="form-field form-required term-wcs4_lesson_notes-wrap">
-                                    <label for="wcs4_lesson_notes"><?php _e('Notes', 'wcs4'); ?></label>
-                                    <textarea rows="3" id="wcs4_lesson_notes" name="wcs4_lesson_notes"></textarea>
-                                </div>
-                                <div class="submit" id="wcs4-schedule-buttons-wrapper">
-                                    <span class="spinner"></span>
-                                    <input id="wcs4-submit-item" type="submit" class="button-primary" value="<?php _ex('Add Lesson', 'button text', 'wcs4'); ?>" name="wcs4-submit-item"/>
-                                    <button id="wcs4-reset-form" type="reset" class="button-link"><?php _ex('Reset form', 'button text', 'wcs4'); ?></button>
-                                    <div id="wcs4-ajax-text-wrapper" class="wcs4-ajax-text"></div>
-                                </div>
-                            </form>
-                        </div> <!-- /#schedule-management-form-wrapper -->
-                    </div>
-                </div><!-- /col-left -->
-            <?php } ?>
-            <div id="col-right">
-                <div class="col-wrap" id="wcs4-schedule-events-list-wrapper">
-                    <?php $days = wcs4_get_weekdays(); ?>
-                    <?php foreach ($days as $key => $day): ?>
-                        <section id="wcs4-schedule-day-<?php echo $key; ?>">
-                            <h2>
-                                <?php echo $day; ?>
-                                <span class="spinner"></span>
-                            </h2>
-                            <?php echo wcs4_get_admin_day_table_html(
-                                $_GET['classroom'] ? '#' . $_GET['classroom'] : null,
-                                $_GET['teacher'] ? '#' . $_GET['teacher'] : null,
-                                $_GET['student'] ? '#' . $_GET['student'] : null,
-                                $_GET['subject'] ? '#' . $_GET['subject'] : null,
-                                $key); ?>
-                        </section>
-                    <?php endforeach; ?>
-                </div>
-            </div><!-- /col-right -->
-        </div>
-    </div>
-
-    <?php
-}
-
 
 function wcs4_help_shortcode_callback()
 {
@@ -320,24 +317,20 @@ function wcs4_generate_layout_select_list($name = '', $default = NULL, $required
     return wcs4_select_list($layout, $name, $name, $default, $required);
 }
 
-function wcs4_generate_weekday_select_list($name = '', $default = NULL, $required = false)
+function wcs4_generate_date_select_list($id, $name, array $options = [])
 {
-    $days = wcs4_get_weekdays();
-    return wcs4_select_list($days, $name, $name, $default, $required);
+    return wcs4_datefield($id, $name, $options);
 }
 
-function wcs4_generate_hour_select_list($name = '', $default = array('hour' => NULL, 'minute' => NULL), $required = false)
+function wcs4_generate_time_select_list($id, $name, array $options = [])
 {
-    $hours_arr = range(0, 23, 1);
-    $hours = wcs4_select_list($hours_arr, $name . '_hours', $name . '_hours', $default['hour'], $required);
+    return wcs4_timefield($id, $name, $options);
+}
 
-    $minutes_arr = [];
-    foreach (range(0, 59, 5) as $key => $value) {
-        $minutes_arr[$value] = sprintf('%02d', $value);
-    }
-    $minutes = wcs4_select_list($minutes_arr, $name . '_minutes', $name . '_minutes', $default['minute'], $required);
-
-    return $hours . ':' . $minutes;
+function wcs4_generate_weekday_select_list($name, array $options = [])
+{
+    $days = wcs4_get_weekdays();
+    return wcs4_select_list($days, $name, $name, null, $options['required']);
 }
 
 /**
@@ -365,8 +358,8 @@ add_action('delete_post', static function ($post_id) {
     global $wpdb;
 
     $table_schedule = wcs4_get_schedule_table_name();
-    $table_teacher = wcs4_get_teacher_table_name();
-    $table_student = wcs4_get_student_table_name();
+    $table_teacher = wcs4_get_schedule_teacher_table_name();
+    $table_student = wcs4_get_schedule_student_table_name();
 
     # Since all three custom post types are in the same table, we can
     # assume the the ID will be unique so there's no need to check for

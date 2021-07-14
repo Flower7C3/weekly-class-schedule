@@ -82,21 +82,22 @@ function wcs4_get_indexed_weekdays($abbr = FALSE)
 }
 
 /**
- * Generages a simple HTML checkbox input field.
+ * Generates a simple HTML checkbox input field.
  *
- * @param string $name : will be used both for name and id
+ * @param string $id
+ * @param string $name
  * @param string $checked
  * @param string $text
  */
-function wcs4_bool_checkbox($name, $checked = 'yes', $text = '')
+function wcs4_bool_checkbox($id, $name, $checked = 'yes', $text = '')
 {
     $check = '';
     if ($checked === 'yes') {
         $check = 'checked';
     }
 
-    echo '<input type="hidden" name="' . $name . '" id="' . $name . '" value="no">';
-    echo '<input type="checkbox" name="' . $name . '" id="' . $name . '" value="yes" ' . $check . '><span class="wcs4-checkbox-text">' . $text . '</span>';
+    return '<input type="hidden" name="' . $name . '" id="' . $id . '_yes" value="no">'
+        . '<input type="checkbox" name="' . $name . '" id="' . $id . '_no" value="yes" ' . $check . '><span class="wcs4-checkbox-text">' . $text . '</span>';
 }
 
 /**
@@ -163,13 +164,28 @@ function wcs4_select_list($values, $id = '', $name = '', $default = NULL, $requi
 
 function wcs4_colorpicker($name, $default = 'DDFFDD', $size = 8)
 {
-    echo '<input type="text" class="wcs_colorpicker" id="' . $name . '" name="' . $name . '" value="' . $default . '" size="' . $size . '">';
-    echo '<span style="background: #' . $default . ';" class="colorpicker-preview ' . $name . '">&nbsp;</span>';
+    return '<input type="text" class="wcs_colorpicker" id="' . $name . '" name="' . $name . '" value="' . $default . '" size="' . $size . '">'
+        . '<span style="background: #' . $default . ';" class="colorpicker-preview ' . $name . '">&nbsp;</span>';
 }
 
-function wcs4_textfield($name, $default = '', $size = 8)
+function wcs4_textfield($id, $name, $default = '', $size = 8)
 {
-    echo '<input type="text" id="' . $name . '" name="' . $name . '" value="' . $default . '" size="' . $size . '">';
+    return '<input type="text" id="' . $id . '" name="' . $name . '" value="' . $default . '" size="' . $size . '">';
+}
+
+function wcs4_datefield($id, $name, array $options = [])
+{
+    return '<input type="date" id="' . $id . '" name="' . $name . '" value="' . ($options['default'] ?: null) . '" size="' . ($options['size'] ?: 8) . '"
+     ' . ($options['required'] ? ' required' : '') . '
+     >';
+}
+
+function wcs4_timefield($id, $name, array $options = [])
+{
+    return '<input type="time" id="' . $id . '" name="' . $name . '" value="' . ($options['default'] ?: null) . '" size="' . ($options['size'] ?: 8) . '" 
+    ' . ($options['step'] ? ' step="' . $options['step'] . '"' : '') . '
+    ' . ($options['required'] ? ' required' : '') . '
+    >';
 }
 
 
@@ -283,4 +299,34 @@ function wcs4_validate_html($data)
 
     $data = wp_kses($data, $wcs4_allowed_html);
     return $data;
+}
+
+function wcs4_js_i18n($handle)
+{
+    wp_localize_script($handle, 'WCS4_AJAX_OBJECT', array(
+        'ajax_error' => __('Error', 'wcs4'),
+        'lesson' => array(
+            'add_mode' => _x('Add New Lesson', 'page title', 'wcs4'),
+            'edit_mode' => _x('Edit Lesson', 'page title', 'wcs4'),
+            'copy_mode' => _x('Duplicate Lesson', 'page title', 'wcs4'),
+            'add_item' => _x('Add Lesson', 'button text', 'wcs4'),
+            'save_item' => _x('Save Lesson', 'button text', 'wcs4'),
+            'cancel_editing' => _x('Exit edit lesson mode', 'button text', 'wcs4'),
+            'cancel_copying' => _x('Exit copy lesson mode', 'button text', 'wcs4'),
+            'delete_warning' => _x('Are you sure you want to delete this lesson?', 'manage schedule', 'wcs4'),
+        ),
+        'report' => array(
+            'add_mode' => _x('Add New Report', 'page title', 'wcs4'),
+            'edit_mode' => _x('Edit Report', 'page title', 'wcs4'),
+            'copy_mode' => _x('Duplicate Report', 'page title', 'wcs4'),
+            'add_item' => _x('Add Report', 'button text', 'wcs4'),
+            'save_item' => _x('Save Report', 'button text', 'wcs4'),
+            'cancel_editing' => _x('Exit edit report mode', 'button text', 'wcs4'),
+            'cancel_copying' => _x('Exit copy report mode', 'button text', 'wcs4'),
+            'delete_warning' => _x('Are you sure you want to delete this report?', 'manage schedule', 'wcs4'),
+        ),
+        'reset_warning' => _x('Are you sure you want to to this?', 'reset database', 'wcs4'),
+        'ajax_url' => admin_url('admin-ajax.php'),
+        'ajax_nonce' => wp_create_nonce('wcs4-ajax-nonce'),
+    ));
 }

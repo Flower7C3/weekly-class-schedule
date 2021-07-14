@@ -8,7 +8,7 @@
 }
 
 @media screen and (max-width: 782px) {
-    #wcs4-schedule-management-form-wrapper {
+    #wcs4-management-form-wrapper {
         position: absolute;
         background: rgba(255, 255, 255, 0.89);
         width: calc(100% - 20px);
@@ -18,27 +18,27 @@
         display: none;
     }
 
-    #wcs4-schedule-management-form-wrapper.is-open {
+    #wcs4-management-form-wrapper.is-open {
         display: block;
     }
 }
 
-#wcs4-schedule-management-form-wrapper #wcs4-schedule-management-form .form-field input,
-#wcs4-schedule-management-form-wrapper #wcs4-schedule-management-form .form-field select {
+#wcs4-management-form-wrapper .form-field select {
     width: 100%;
 }
 
-#wcs4-schedule-management-form-wrapper #wcs4-schedule-management-form .form-field textarea {
+#wcs4-management-form-wrapper .form-field input,
+#wcs4-management-form-wrapper .form-field textarea {
     width: 95%;
 }
 
 @media screen and (max-width: 782px) {
-    #wcs4-schedule-management-form-wrapper #wcs4-schedule-management-form .form-field textarea {
+    #wcs4-management-form-wrapper .form-field textarea {
         width: 100%;
     }
 }
 
-#wcs4-schedule-management-form-wrapper #wcs4-schedule-management-form .form-field.form-time-field select {
+#wcs4-management-form-wrapper .form-field.form-time-field select {
     text-align: right;
 }
 
@@ -51,13 +51,16 @@
     flex: 1;
 }
 
-#wcs4-schedule-management-form-wrapper #wcs4-schedule-management-form .form-2-columns .form-field.form-time-field select {
+#wcs4-management-form-wrapper .form-2-columns .form-field.form-time-field input {
+    width: 90%;
+}
+#wcs4-management-form-wrapper .form-2-columns .form-field.form-time-field select {
     width: 56px;
     display: inline-block;
 }
 
 @media screen and (max-width: 782px) {
-    #wcs4-schedule-management-form-wrapper #wcs4-schedule-management-form .form-2-columns .form-field.form-time-field select {
+    #wcs4-management-form-wrapper .form-2-columns .form-field.form-time-field select {
         margin-right: -1px;
     }
 }
@@ -172,7 +175,8 @@
     font-style: italic;
 }
 
-#wcs-posts-filter select {
+#wcs-lessons-filter select,
+#wcs-reports-filter select {
     max-width: 200px;
 }
 

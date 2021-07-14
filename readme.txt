@@ -39,6 +39,14 @@ You will find a 'Schedule' menu item as well as 'Classes', 'Teachers', 'Students
 
 == Changelog ==
 
+= Version 4.21 =
+* report of lessons taken
+* refactor code
+* rename columns `start_hour` to `start_time` and `end_hour` to `end_time`
+* use HTML5 time selector
+* frontend shortcode for report `[wcs_new_report]`
+* frontend shortcode for listing items `[wp_query]`
+
 = Version 4.20 =
 * admin table with visibility icons and titles on hover
 

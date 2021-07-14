@@ -22,33 +22,33 @@ add_action('wp_head', static function () {
     $dynamic_css =
 
         <<<CSS
-	.wcs4-grid-lesson {
-	    background-color: #$base_color;
-	    color: #$text;
-	}
-	.wcs4-grid-lesson a {
-	    color: #$links;
-	}
-	.wcs4-details-box-container {
-	    background-color: #$details_box;
-	}
-	body .wcs4-qtip-tip {
-	    background-color: #$qtip_bg;
-	    border: 1px solid #$border;
-	    
-	}
-	.wcs4-schedule-wrapper table th {
-	    background-color: #$heading_bg;
-	    color: #$heading_text;
-	}
-	.wcs4-schedule-wrapper table {
-		    background-color: #$bg;
-	}
-	.wcs4-schedule-wrapper table,
-	.wcs4-schedule-wrapper table td,
-	.wcs4-schedule-wrapper table th {
-	    border: 1px solid #$border;
-	}
+    .wcs4-grid-lesson {
+        background-color: #$base_color;
+        color: #$text;
+    }
+    .wcs4-grid-lesson a {
+        color: #$links;
+    }
+    .wcs4-details-box-container {
+        background-color: #$details_box;
+    }
+    body .wcs4-qtip-tip {
+        background-color: #$qtip_bg;
+        border: 1px solid #$border;
+        
+    }
+    .wcs4-schedule-wrapper table th {
+        background-color: #$heading_bg;
+        color: #$heading_text;
+    }
+    .wcs4-schedule-wrapper table {
+            background-color: #$bg;
+    }
+    .wcs4-schedule-wrapper table,
+    .wcs4-schedule-wrapper table td,
+    .wcs4-schedule-wrapper table th {
+        border: 1px solid #$border;
+    }
 CSS;
 
     /* ------------- END ------------ */
