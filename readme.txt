@@ -39,6 +39,9 @@ You will find a 'Schedule' menu item as well as 'Classes', 'Teachers', 'Students
 
 == Changelog ==
 
+= Version 4.20 =
+* admin table with visibility icons and titles on hover
+
 = Version 4.19 =
 * get post title with taxonomy function
 * dynamic define WCS4_POST_TYPES_WHITELIST, allow location for teacher and classroom

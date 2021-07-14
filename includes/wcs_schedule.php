@@ -28,23 +28,23 @@ function wcs4_get_admin_day_table_html($classroom = null, $teacher = 'all', $stu
             <table class="wp-list-table widefat fixed striped wcs4-admin-schedule-table" id="wcs4-admin-table-day-<?php echo $weekday; ?>">
                 <thead>
                     <tr>
-                        <th id="start_end_hour" class="manage-column column-start_end_hour column-primary">
+                        <th id="visibility" class="manage-column column-visibility" scope="col" title="<?php echo __('Visibility', 'wcs4'); ?>" style="width:10px;"></th>
+                        <th id="start_end_hour" class="manage-column column-start_end_hour column-primary" title="<?php echo __('Start', 'wcs4'); ?> – <?php echo __('End', 'wcs4'); ?>">
                             <span><?php echo __('Start', 'wcs4'); ?> – <?php echo __('End', 'wcs4'); ?></span>
                         </th>
-                        <th id="subject" class="manage-column column-subject" scope="col">
+                        <th id="subject" class="manage-column column-subject" scope="col" title="<?php echo __('Subject', 'wcs4'); ?>">
                             <span><?php echo __('Subject', 'wcs4'); ?></span>
                         </th>
-                        <th id="teacher" class="manage-column column-teacher" scope="col">
+                        <th id="teacher" class="manage-column column-teacher" scope="col" title="<?php echo __('Teacher', 'wcs4'); ?>">
                             <span><?php echo __('Teacher', 'wcs4'); ?></span>
                         </th>
-                        <th id="student" class="manage-column column-student" scope="col">
+                        <th id="student" class="manage-column column-student" scope="col" title="<?php echo __('Student', 'wcs4'); ?>">
                             <span><?php echo __('Student', 'wcs4'); ?></span>
                         </th>
-                        <th id="classroom" class="manage-column column-classroom" scope="col">
+                        <th id="classroom" class="manage-column column-classroom" scope="col" title="<?php echo __('Classroom', 'wcs4'); ?>">
                             <span><?php echo __('Classroom', 'wcs4'); ?></span>
                         </th>
-                        <th id="visibility" class="manage-column column-visibility" scope="col">
-                            <span><?php echo __('Visibility', 'wcs4'); ?></span>
+                        <th id="notes" class="manage-column column-notes" scope="col" title="<?php echo __('Notes', 'wcs4'); ?>">
                             <span><?php echo __('Notes', 'wcs4'); ?></span>
                         </th>
                     </tr>
@@ -54,6 +54,9 @@ function wcs4_get_admin_day_table_html($classroom = null, $teacher = 'all', $stu
                     /** @var WCS4_Lesson $lesson */
                     foreach ($lessons as $lesson) { ?>
                         <tr id="lesson-<?php echo $lesson->getId(); ?>" class="<?php if ($lesson->isVisible()) { ?>active<?php } else { ?>inactive<?php } ?>">
+                            <td class="visibility column-visibility" data-colname="<?php echo __('Visibility', 'wcs4'); ?>">
+                                <em class="dashicons dashicons-<?php if ($lesson->isVisible()): ?>visibility<?php else: ?>hidden<?php endif; ?>" title="<?php echo $lesson->getVisibleText(); ?>"></em>
+                            </td>
                             <td class="start_end_hour column-start_end_hour column-primary<?php if (current_user_can(WCS4_SCHEDULE_MANAGE_CAPABILITY)) { ?> has-row-actions<?php } ?>">
                                 <?php echo $lesson->getStartHour(); ?> – <?php echo $lesson->getEndHour(); ?>
                                 <?php if (current_user_can(WCS4_SCHEDULE_MANAGE_CAPABILITY)) { ?>
@@ -63,11 +66,13 @@ function wcs4_get_admin_day_table_html($classroom = null, $teacher = 'all', $stu
                                                 <?php echo __('Edit', 'wcs4'); ?>
                                             </a>
                                         </span>
+                                        |
                                         <span class="copy hide-if-no-js">
                                             <a href="#" class="wcs4-copy-button" id="wcs4-copy-button-<?php echo $lesson->getId(); ?>" data-lesson-id="<?php echo $lesson->getId(); ?>" data-day="<?php echo $lesson->getWeekday(); ?>">
                                                 <?php echo __('Duplicate', 'wcs4'); ?>
                                             </a>
                                         </span>
+                                        |
                                         <span class="delete hide-if-no-js">
                                             <a href="#delete" class="wcs4-delete-button" id=wcs4-delete-<?php echo $lesson->getId(); ?>" data-lesson-id="<?php echo $lesson->getId(); ?>" data-day="<?php echo $lesson->getWeekday(); ?>">
                                                 <?php echo __('Delete', 'wcs4'); ?>
@@ -89,8 +94,7 @@ function wcs4_get_admin_day_table_html($classroom = null, $teacher = 'all', $stu
                             <td class="classroom column-classroom" data-colname="<?php echo __('Classroom', 'wcs4'); ?>">
                                 <?php echo $lesson->getClassroom()->getLinkName(); ?>
                             </td>
-                            <td class="visibility column-visibility" data-colname="<?php echo __('Visibility', 'wcs4'); ?>">
-                                <?php echo $lesson->getVisibleText(); ?>
+                            <td class="notes column-notes" data-colname="<?php echo __('Notes', 'wcs4'); ?>">
                                 <?php echo $lesson->getNotes(); ?>
                             </td>
                         </tr>
