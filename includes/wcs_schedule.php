@@ -98,11 +98,11 @@ class Schedule_Management
             $filename_params[] = str_replace('#', '', $subject);
         }
         $filename_key = 'wcs4-calendar-' . preg_replace('/[^A-Za-z0-9]/', '-', implode('-', $filename_params));
-        $filename_key = strtolower($filename_key). '.ics';
+        $filename_key = strtolower($filename_key) . '.ics';
 
         # result
         header('Content-type: text/calendar; charset=utf-8');
-        header('Content-Disposition: inline; filename=' . $filename_key );
+        header('Content-Disposition: inline; filename=' . $filename_key);
 
         $endline = "\r\n";
 
@@ -215,24 +215,27 @@ class Schedule_Management
                 <table class="wp-list-table widefat fixed striped wcs4-admin-schedule-table" id="wcs4-admin-table-day-<?php echo $weekday; ?>">
                     <thead>
                         <tr>
-                            <th id="visibility" class="manage-column column-visibility" scope="col" title="<?php echo __('Visibility', 'wcs4'); ?>" style="width:10px;"></th>
-                            <th id="start_end_time" class="manage-column column-start_end_time column-primary" title="<?php echo __('Start', 'wcs4'); ?> – <?php echo __('End', 'wcs4'); ?>">
+                            <th title="<?php echo __('Visibility', 'wcs4'); ?>" class="manage-column column-cb check-column"></th>
+                            <th class="column-primary">
                                 <span><?php echo __('Start', 'wcs4'); ?> – <?php echo __('End', 'wcs4'); ?></span>
                             </th>
-                            <th id="subject" class="manage-column column-subject" scope="col" title="<?php echo __('Subject', 'wcs4'); ?>">
+                            <th scope="col">
                                 <span><?php echo __('Subject', 'wcs4'); ?></span>
                             </th>
-                            <th id="teacher" class="manage-column column-teacher" scope="col" title="<?php echo __('Teacher', 'wcs4'); ?>">
+                            <th scope="col">
                                 <span><?php echo __('Teacher', 'wcs4'); ?></span>
                             </th>
-                            <th id="student" class="manage-column column-student" scope="col" title="<?php echo __('Student', 'wcs4'); ?>">
+                            <th scope="col">
                                 <span><?php echo __('Student', 'wcs4'); ?></span>
                             </th>
-                            <th id="classroom" class="manage-column column-classroom" scope="col" title="<?php echo __('Classroom', 'wcs4'); ?>">
+                            <th scope="col">
                                 <span><?php echo __('Classroom', 'wcs4'); ?></span>
                             </th>
-                            <th id="notes" class="manage-column column-notes" scope="col" title="<?php echo __('Notes', 'wcs4'); ?>">
+                            <th scope="col">
                                 <span><?php echo __('Notes', 'wcs4'); ?></span>
+                            </th>
+                            <th scope="col">
+                                <span><?php echo __('Date', 'wcs4'); ?></span>
                             </th>
                         </tr>
                     </thead>
@@ -241,13 +244,13 @@ class Schedule_Management
                         /** @var WCS4_Lesson $item */
                         foreach ($lessons as $item): ?>
                             <tr id="lesson-<?php echo $item->getId(); ?>" class="<?php if ($item->isVisible()) { ?>active<?php } else { ?>inactive<?php } ?>">
-                                <td class="visibility column-visibility" data-colname="<?php echo __('Visibility', 'wcs4'); ?>">
+                                <th scope="row" class="check-column">
                                     <em class="dashicons dashicons-<?php if ($item->isVisible()): ?>visibility<?php else: ?>hidden<?php endif; ?>" title="<?php echo $item->getVisibleText(); ?>"></em>
-                                </td>
-                                <td class="start_end_time column-start_end_time column-primary<?php if (current_user_can(WCS4_SCHEDULE_MANAGE_CAPABILITY)) { ?> has-row-actions<?php } ?>">
+                                </th>
+                                <td class="column-primary<?php if (current_user_can(WCS4_SCHEDULE_MANAGE_CAPABILITY)) { ?> has-row-actions<?php } ?>">
                                     <?php echo $item->getStartTime(); ?> – <?php echo $item->getEndTime(); ?>
-                                    <div class="row-actions">
-                                        <?php if (current_user_can(WCS4_SCHEDULE_MANAGE_CAPABILITY)) { ?>
+                                    <?php if (current_user_can(WCS4_SCHEDULE_MANAGE_CAPABILITY)): ?>
+                                        <div class="row-actions">
                                             <span class="edit hide-if-no-js">
                                                 <a href="#" class="wcs4-edit-lesson-button" id="wcs4-edit-button-<?php echo $item->getId(); ?>" data-lesson-id="<?php echo $item->getId(); ?>" data-day="<?php echo $item->getWeekday(); ?>">
                                                     <?php echo __('Edit', 'wcs4'); ?>
@@ -265,28 +268,37 @@ class Schedule_Management
                                                     <?php echo __('Delete', 'wcs4'); ?>
                                                 </a>
                                             </span>
-                                        <?php } ?>
-                                        <em class="dashicons dashicons-plus-alt" title="<?php printf(__('Created at %s by %s', 'wcs4'), $item->getCreatedAt()->format('Y-m-d H:i:s'), $item->getCreatedBy()->display_name ?: 'nn'); ?>"></em>
-                                        <?php if ($item->getUpdatedAt()): ?>
-                                            <em class="dashicons dashicons-edit" title="<?php printf(__('Updated at %s by %s', 'wcs4'), $item->getUpdatedAt()->format('Y-m-d H:i:s'), $item->getUpdatedBy()->display_name ?: 'nn'); ?>"></em>
-                                        <?php endif; ?>
-                                    </div>
+                                        </div>
+                                    <?php endif; ?>
                                     <button type="button" class="toggle-row"><span class="screen-reader-text"><?php _e('Show more details'); ?></span></button>
                                 </td>
-                                <td class="subject column-subject" data-colname="<?php echo __('Subject', 'wcs4'); ?>">
+                                <td data-colname="<?php echo __('Subject', 'wcs4'); ?>">
                                     <?php echo $item->getSubject()->getLinkName(); ?>
                                 </td>
-                                <td class="teacher column-teacher" data-colname="<?php echo __('Teacher', 'wcs4'); ?>">
+                                <td data-colname="<?php echo __('Teacher', 'wcs4'); ?>">
                                     <?php echo $item->getTeacher()->getLinkName(); ?>
                                 </td>
-                                <td class="student column-student" data-colname="<?php echo __('Student', 'wcs4'); ?>">
+                                <td data-colname="<?php echo __('Student', 'wcs4'); ?>">
                                     <?php echo $item->getStudent()->getLinkName(); ?>
                                 </td>
-                                <td class="classroom column-classroom" data-colname="<?php echo __('Classroom', 'wcs4'); ?>">
+                                <td data-colname="<?php echo __('Classroom', 'wcs4'); ?>">
                                     <?php echo $item->getClassroom()->getLinkName(); ?>
                                 </td>
-                                <td class="notes column-notes" data-colname="<?php echo __('Notes', 'wcs4'); ?>">
+                                <td data-colname="<?php echo __('Notes', 'wcs4'); ?>">
                                     <?php echo $item->getNotes(); ?>
+                                </td>
+                                <td data-colname="<?php echo __('Updated at', 'wcs4'); ?>">
+                                    <?php if ($item->getUpdatedAt()): ?>
+                                        <small title="<?php printf(__('Updated at %s by %s', 'wcs4'), $item->getUpdatedAt()->format('Y-m-d H:i:s'), $item->getUpdatedBy()->display_name ?: 'nn'); ?>">
+                                            <?php echo $item->getUpdatedAt()->format('Y-m-d H:i:s'); ?>
+                                            <?php echo $item->getUpdatedBy()->display_name; ?>
+                                        </small>
+                                    <?php else: ?>
+                                        <small title="<?php printf(__('Created at %s by %s', 'wcs4'), $item->getCreatedAt()->format('Y-m-d H:i:s'), $item->getCreatedBy()->display_name ?: 'nn'); ?>">
+                                            <?php echo $item->getCreatedAt()->format('Y-m-d H:i:s'); ?>
+                                            <?php echo $item->getCreatedBy()->display_name; ?>
+                                        </small>
+                                    <?php endif; ?>
                                 </td>
                             </tr>
                         <?php endforeach; ?>

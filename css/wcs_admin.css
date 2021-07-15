@@ -26,8 +26,8 @@
 #wcs4-management-form-wrapper .form-field select,
 #wcs4-management-form-wrapper .form-field input,
 #wcs4-management-form-wrapper .form-field textarea {
-    width: 100%;
-    max-width: 100%;
+    width: 95%;
+    max-width: 95%;
 }
 
 @media screen and (max-width: 782px) {
@@ -40,12 +40,21 @@
     text-align: right;
 }
 
+tr {
+    transition: all 0.2s ease-out 0s;
+}
+tr.is-active {
+    background-color: silver !important;
+    transition: all 0.2s ease-in 0s;
+}
+
 .form-field.row {
     display: flex;
     flex-wrap: wrap;
     margin-right: -5px;
     margin-left: -5px;
     align-items: flex-end;
+    max-width: 100%;
 }
 
 .form-field.row .col-3,
@@ -191,6 +200,7 @@ form.readonly select, form[readonly] select, select.readonly, select[readonly] {
 .wcs-management-page-callback [data-orderby][data-order] .dashicons {
     color: silver;
 }
+
 .wcs-management-page-callback [data-orderby][data-order].active .dashicons {
     color: blue;
 }

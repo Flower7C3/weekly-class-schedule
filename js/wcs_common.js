@@ -65,24 +65,29 @@ var WCS4_LIB = (function ($) {
         });
     }
 
-    var delete_entry = function (entry, callback) {
-        // Confirm delete operation.
-        var confirm = window.confirm(WCS4_AJAX_OBJECT.delete_warning);
-        if (!confirm) {
-            return;
+    var delete_entry = function (scope, entry, callback) {
+        if (scope !== 'lesson' && scope !== 'report') {
+            show_message(WCS4_AJAX_OBJECT.ajax_error, 'error');
+        } else {
+            // Confirm delete operation.
+            var confirm = window.confirm(WCS4_AJAX_OBJECT[scope].delete_warning);
+            if (!confirm) {
+                reset_to_add_mode(scope)
+                return;
+            }
+
+            $('#wcs4-management-form-wrapper .spinner').addClass('is-active');
+
+            jQuery.post(WCS4_AJAX_OBJECT.ajax_url, entry, function (data) {
+                callback(data);
+            }).fail(function (err) {
+                // Failed
+                console.error(err);
+                WCS4_LIB.show_message(WCS4_AJAX_OBJECT.ajax_error, 'error');
+            }).always(function () {
+                $('#wcs4-management-form-wrapper .spinner').removeClass('is-active');
+            });
         }
-
-        $('#wcs4-management-form-wrapper .spinner').addClass('is-active');
-
-        jQuery.post(WCS4_AJAX_OBJECT.ajax_url, entry, function (data) {
-            callback(data);
-        }).fail(function (err) {
-            // Failed
-            console.error(err);
-            WCS4_LIB.show_message(WCS4_AJAX_OBJECT.ajax_error, 'error');
-        }).always(function () {
-            $('#wcs4-management-form-wrapper .spinner').removeClass('is-active');
-        });
     }
     /**
      * Fetch entry data for form
@@ -90,25 +95,27 @@ var WCS4_LIB = (function ($) {
     var fetch_entry_data_to_form = function (scope, row_id, set_entry_data_to_form, reset_callback) {
         if (scope !== 'lesson' && scope !== 'report') {
             show_message(WCS4_AJAX_OBJECT.ajax_error, 'error');
+        } else {
+            $('tr#' + scope + '-' + row_id).addClass('is-active');
+            var get_report_query;
+            get_report_query = {
+                action: 'get_' + scope,
+                security: WCS4_AJAX_OBJECT.ajax_nonce,
+                row_id: row_id
+            };
+            $('#wcs4-management-form-wrapper .spinner').addClass('is-active');
+            $('#wcs4-management-form-wrapper input,#wcs4-management-form-wrapper select,#wcs4-management-form-wrapper textarea').attr('readonly', true);
+            jQuery.post(WCS4_AJAX_OBJECT.ajax_url, get_report_query, function (data) {
+                set_entry_data_to_form(data.response)
+                reset_callback(scope, data.response)
+            }).fail(function (err) {
+                console.error(err);
+                show_message(WCS4_AJAX_OBJECT.ajax_error, 'error');
+            }).always(function () {
+                $('#wcs4-management-form-wrapper .spinner').removeClass('is-active');
+                $('#wcs4-management-form-wrapper input,#wcs4-management-form-wrapper select,#wcs4-management-form-wrapper textarea').attr('readonly', null);
+            });
         }
-        var get_report_query;
-        get_report_query = {
-            action: 'get_' + scope,
-            security: WCS4_AJAX_OBJECT.ajax_nonce,
-            row_id: row_id
-        };
-        $('#wcs4-management-form-wrapper .spinner').addClass('is-active');
-        $('#wcs4-management-form-wrapper input,#wcs4-management-form-wrapper select,#wcs4-management-form-wrapper textarea').attr('readonly', true);
-        jQuery.post(WCS4_AJAX_OBJECT.ajax_url, get_report_query, function (data) {
-            set_entry_data_to_form(data.response)
-            reset_callback(scope, data.response)
-        }).fail(function (err) {
-            console.error(err);
-            show_message(WCS4_AJAX_OBJECT.ajax_error, 'error');
-        }).always(function () {
-            $('#wcs4-management-form-wrapper .spinner').removeClass('is-active');
-            $('#wcs4-management-form-wrapper input,#wcs4-management-form-wrapper select,#wcs4-management-form-wrapper textarea').attr('readonly', null);
-        });
     };
     var update_view = function ($parent, entry, action) {
         $parent.find('.spinner').addClass('is-active');
@@ -190,6 +197,7 @@ var WCS4_LIB = (function ($) {
      * Exit edit mode.
      */
     var reset_to_add_mode = function (scope) {
+        console.log('reset_to_add_mode', scope)
         $('#wcs4-management-form-wrapper form').get(0).reset();
         $('#wcs4-management-form-title').text(WCS4_AJAX_OBJECT[scope].add_mode);
         $('#wcs4-row-id').remove();
@@ -198,6 +206,7 @@ var WCS4_LIB = (function ($) {
         $('#wcs4-submit-form').val(WCS4_AJAX_OBJECT[scope].add_item);
         $('#wcs4-reset-form').show();
         $('#wcs4-management-form-wrapper').removeClass('is-open');
+        $('tr.is-active').removeClass('is-active');
     }
 
     /**

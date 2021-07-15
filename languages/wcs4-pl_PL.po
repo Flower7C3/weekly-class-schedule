@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: Weekly Class Schedule\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-09-04 11:57+0000\n"
-"PO-Revision-Date: 2021-07-15 13:42+0000\n"
+"PO-Revision-Date: 2021-07-15 21:36+0000\n"
 "Last-Translator: Bartłomiej Kwiatek\n"
 "Language-Team: Polski\n"
 "Language: pl_PL\n"
@@ -404,12 +404,12 @@ msgstr "<small>{start time}-{end time}</small><br>{subject} @{class} ({stu})"
 
 #: templates/report.php:35
 msgid "Created at"
-msgstr "Utworzone dnia"
+msgstr "Utworzono"
 
 #: includes/wcs_schedule.php:188 includes/wcs_report.php:193
 #, php-format
 msgid "Created at %s by %s"
-msgstr "Utworzono w %s przez %s"
+msgstr "Utworzono %s przez %s"
 
 #: templates/report.php:36
 msgid "Created by"
@@ -1502,7 +1502,7 @@ msgstr "Konfiguracja"
 
 #: includes/wcs_schedule.php:138 includes/wcs_schedule.php:139
 msgid "Start"
-msgstr "Start"
+msgstr "Początek"
 
 #: templates/report.php:29 includes/wcs_schedule.php:100
 #: includes/wcs_schedule.php:362 includes/wcs_report.php:102
@@ -1600,12 +1600,12 @@ msgstr "Nieobsługiwany układ"
 
 #: templates/report.php:37
 msgid "Updated at"
-msgstr "Zaktualizowane dnia"
+msgstr "Zaktualizowano"
 
 #: includes/wcs_schedule.php:190 includes/wcs_report.php:195
 #, php-format
 msgid "Updated at %s by %s"
-msgstr "Zaktualizowano w %s przez %s"
+msgstr "Zaktualizowano %s przez %s"
 
 #: templates/report.php:38
 msgid "Updated by"

@@ -120,7 +120,7 @@
                 security: WCS4_AJAX_OBJECT.ajax_nonce,
                 row_id: $(this).attr('data-report-id')
             };
-            WCS4_LIB.delete_entry(entry, function (data) {
+            WCS4_LIB.delete_entry('report', entry, function (data) {
                 var date,
                     elem;
                 if (typeof (e.target) != 'undefined') {
@@ -180,7 +180,6 @@
      * Fill up form with entry data
      */
     var set_entry_data_to_form = function (entry) {
-        WCS4_LIB.reset_to_add_mode('report');
         // prepare form data
         if (entry.hasOwnProperty('id')) {
             // We got an entry.

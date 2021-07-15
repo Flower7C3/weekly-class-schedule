@@ -231,15 +231,6 @@ class Report_Management
         <?php
     }
 
-    private static function draw_sort_arrow($set_order_field, $set_order_dir, $post_order_field, $post_order_dir)
-    {
-        ?>
-        <a href="#" data-orderby="<?php echo $set_order_field; ?>" data-order="<?php echo $set_order_dir; ?>" class="<?php if ($set_order_field === $post_order_field && $set_order_dir === $post_order_dir): ?>active<?php endif; ?>">
-            <em class="dashicons dashicons-arrow-<?php echo $set_order_dir === 'asc' ? 'up' : 'down'; ?>"></em>
-        </a>
-        <?php
-    }
-
     public static function get_admin_html_table($teacher = 'all', $student = 'all', $subject = 'all', $date_from = null, $date_upto = null, $orderby = null, $order = null): string
     {
         ob_start();
@@ -263,22 +254,29 @@ class Report_Management
                         <table class="wp-list-table widefat fixed striped wcs4-admin-report-table">
                             <thead>
                                 <tr>
-                                    <th id="start_end_time" class="manage-column column-start_end_time column-primary" title="<?php echo __('Date and time', 'wcs4'); ?>">
-                                        <span><?php echo __('Date and time', 'wcs4'); ?></span>
-                                        <?php self::draw_sort_arrow('time', 'asc', $orderby, $order); ?>
-                                        <?php self::draw_sort_arrow('time', 'desc', $orderby, $order); ?>
+                                    <th class="column-primary sortable <?php echo ($order === 'asc') ? 'asc' : 'desc'; ?>">
+                                        <a href="#" data-orderby="time" data-order="<?php echo ($order === 'desc') ? 'asc' : 'desc'; ?>">
+                                            <span><?php echo __('Start', 'wcs4'); ?> – <?php echo __('End', 'wcs4'); ?></span>
+                                            <span class="sorting-indicator"></span>
+                                        </a>
                                     </th>
-                                    <th id="subject" class="manage-column column-subject" scope="col" title="<?php echo __('Subject', 'wcs4'); ?>">
+                                    <th scope="col">
                                         <span><?php echo __('Subject', 'wcs4'); ?></span>
                                     </th>
-                                    <th id="teacher" class="manage-column column-teacher" scope="col" title="<?php echo __('Teacher', 'wcs4'); ?>">
+                                    <th scope="col">
                                         <span><?php echo __('Teacher', 'wcs4'); ?></span>
                                     </th>
-                                    <th id="student" class="manage-column column-student" scope="col" title="<?php echo __('Student', 'wcs4'); ?>">
+                                    <th scope="col">
                                         <span><?php echo __('Student', 'wcs4'); ?></span>
                                     </th>
-                                    <th id="topic" class="manage-column column-topic" scope="col" title="<?php echo __('Topic', 'wcs4'); ?>">
+                                    <th scope="col">
                                         <span><?php echo __('Topic', 'wcs4'); ?></span>
+                                    </th>
+                                    <th scope="col" class="sortable <?php echo ($order === 'asc') ? 'asc' : 'desc'; ?>">
+                                        <a href="#" data-orderby="updated-at" data-order="<?php echo ($order === 'desc') ? 'asc' : 'desc'; ?>">
+                                            <span><?php echo __('Date', 'wcs4'); ?></span>
+                                            <span class="sorting-indicator"></span>
+                                        </a>
                                     </th>
                                 </tr>
                             </thead>
@@ -287,10 +285,10 @@ class Report_Management
                                 /** @var WCS4_Report $item */
                                 foreach ($dayData as $item): ?>
                                     <tr id="report-<?php echo $item->getId(); ?>">
-                                        <td class="start_end_time column-start_end_time column-primary<?php if (current_user_can(WCS4_REPORT_MANAGE_CAPABILITY)) { ?> has-row-actions<?php } ?>">
+                                        <td class="column-primary<?php if (current_user_can(WCS4_REPORT_MANAGE_CAPABILITY)) { ?> has-row-actions<?php } ?>">
                                             <?php echo $item->getStartTime(); ?> – <?php echo $item->getEndTime(); ?>
-                                            <div class="row-actions">
-                                                <?php if (current_user_can(WCS4_REPORT_MANAGE_CAPABILITY)) { ?>
+                                            <?php if (current_user_can(WCS4_REPORT_MANAGE_CAPABILITY)): ?>
+                                                <div class="row-actions">
                                                     <span class="edit hide-if-no-js">
                                                         <a href="#" class="wcs4-edit-report-button" id="wcs4-edit-button-<?php echo $item->getId(); ?>" data-report-id="<?php echo $item->getId(); ?>">
                                                             <?php echo __('Edit', 'wcs4'); ?>
@@ -308,25 +306,34 @@ class Report_Management
                                                             <?php echo __('Delete', 'wcs4'); ?>
                                                         </a>
                                                     </span>
-                                                <?php } ?>
-                                                <em class="dashicons dashicons-plus-alt" title="<?php printf(__('Created at %s by %s', 'wcs4'), $item->getCreatedAt()->format('Y-m-d H:i:s'), $item->getCreatedBy()->display_name ?: 'nn'); ?>"></em>
-                                                <?php if ($item->getUpdatedAt()): ?>
-                                                    <em class="dashicons dashicons-edit" title="<?php printf(__('Updated at %s by %s', 'wcs4'), $item->getUpdatedAt()->format('Y-m-d H:i:s'), $item->getUpdatedBy()->display_name ?: 'nn'); ?>"></em>
-                                                <?php endif; ?>
-                                            </div>
+                                                </div>
+                                            <?php endif; ?>
                                             <button type="button" class="toggle-row"><span class="screen-reader-text"><?php _e('Show more details'); ?></span></button>
                                         </td>
-                                        <td class="subject column-subject" data-colname="<?php echo __('Subject', 'wcs4'); ?>">
+                                        <td data-colname="<?php echo __('Subject', 'wcs4'); ?>">
                                             <?php echo $item->getSubject()->getLinkName(); ?>
                                         </td>
-                                        <td class="teacher column-teacher" data-colname="<?php echo __('Teacher', 'wcs4'); ?>">
+                                        <td data-colname="<?php echo __('Teacher', 'wcs4'); ?>">
                                             <?php echo $item->getTeacher()->getLinkName(); ?>
                                         </td>
-                                        <td class="student column-student" data-colname="<?php echo __('Student', 'wcs4'); ?>">
+                                        <td data-colname="<?php echo __('Student', 'wcs4'); ?>">
                                             <?php echo $item->getStudent()->getLinkName(); ?>
                                         </td>
-                                        <td class="topic column-topic" data-colname="<?php echo __('Topic', 'wcs4'); ?>">
+                                        <td data-colname="<?php echo __('Topic', 'wcs4'); ?>">
                                             <?php echo $item->getTopic(); ?>
+                                        </td>
+                                        <td data-colname="<?php echo __('Updated at', 'wcs4'); ?>">
+                                            <?php if ($item->getUpdatedAt()): ?>
+                                                <small title="<?php printf(__('Updated at %s by %s', 'wcs4'), $item->getUpdatedAt()->format('Y-m-d H:i:s'), $item->getUpdatedBy()->display_name ?: 'nn'); ?>">
+                                                    <?php echo $item->getUpdatedAt()->format('Y-m-d H:i:s'); ?>
+                                                    <?php echo $item->getUpdatedBy()->display_name; ?>
+                                                </small>
+                                            <?php else: ?>
+                                                <small title="<?php printf(__('Created at %s by %s', 'wcs4'), $item->getCreatedAt()->format('Y-m-d H:i:s'), $item->getCreatedBy()->display_name ?: 'nn'); ?>">
+                                                    <?php echo $item->getCreatedAt()->format('Y-m-d H:i:s'); ?>
+                                                    <?php echo $item->getCreatedBy()->display_name; ?>
+                                                </small>
+                                            <?php endif; ?>
                                         </td>
                                     </tr>
                                 <?php endforeach; ?>
@@ -421,6 +428,10 @@ class Report_Management
             case 'time':
                 $order = ($order === 'asc' || $order === 'ASC') ? 'ASC' : 'DESC';
                 $query .= ' ORDER BY date ' . $order . ', start_time ' . $order;
+                break;
+            case 'updated-at':
+                $order = ($order === 'asc' || $order === 'ASC') ? 'ASC' : 'DESC';
+                $query .= ' ORDER BY updated_at ' . $order;
                 break;
         }
         if (NULL !== $limit) {
