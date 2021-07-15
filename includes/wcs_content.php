@@ -58,10 +58,7 @@ add_filter('single_template', static function ($single) {
     $wcs4_settings = wcs4_load_settings();
     if (isset($post_type, $_GET['format']) && array_key_exists($post_type, WCS4_POST_TYPES_WHITELIST)) {
         if ('ical' === $_GET['format'] && 'yes' === $wcs4_settings[$post_type_key . '_download_icalendar']) {
-            $template_file = WCS4_PLUGIN_DIR . '/templates/calendar.php';
-            if (file_exists($template_file)) {
-                return $template_file;
-            }
+            Schedule_Management::calendar_page_callback();
         }
         if ('csv' === $_GET['format'] && 'yes' === $wcs4_settings[$post_type_key . '_download_report_csv'] && current_user_can(WCS4_REPORT_EXPORT_CAPABILITY)) {
             Report_Management::export_page_callback();

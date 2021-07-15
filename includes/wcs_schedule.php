@@ -49,6 +49,87 @@ class Schedule_Management
         <?php
     }
 
+    /**
+     * Callback for generating the calendar page.
+     */
+    public static function calendar_page_callback()
+    {
+        # get user data
+        $classroom = sanitize_text_field($_GET['classroom'] ? '#' . $_GET['classroom'] : null);
+        $teacher = sanitize_text_field($_GET['teacher'] ? '#' . $_GET['teacher'] : null);
+        $student = sanitize_text_field($_GET['student'] ? '#' . $_GET['student'] : null);
+        $subject = sanitize_text_field($_GET['subject'] ? '#' . $_GET['subject'] : null);
+        switch (get_post_type()) {
+            case 'wcs4_classroom':
+                $classroom = '#' . get_the_id();
+                break;
+            case 'wcs4_teacher':
+                $teacher = '#' . get_the_id();
+                break;
+            case 'wcs4_student':
+                $student = '#' . get_the_id();
+                break;
+            case 'wcs4_subject':
+                $subject = '#' . get_the_id();
+                break;
+        }
+
+        # get lessons
+        $lessons = self::get_lessons($classroom, $teacher, $student, $subject, null, null, 1);
+
+        # build filename
+        $filename_params = [];
+        $filename_params[] = 'at';
+        $filename_params[] = date('YmdHis');
+        if ($classroom) {
+            $filename_params[] = 'cls';
+            $filename_params[] = str_replace('#', '', $classroom);
+        }
+        if ($teacher) {
+            $filename_params[] = 'tea';
+            $filename_params[] = str_replace('#', '', $teacher);
+        }
+        if ($student) {
+            $filename_params[] = 'stu';
+            $filename_params[] = str_replace('#', '', $student);
+        }
+        if ($subject) {
+            $filename_params[] = 'sub';
+            $filename_params[] = str_replace('#', '', $subject);
+        }
+        $filename_key = 'wcs4-calendar-' . preg_replace('/[^A-Za-z0-9]/', '-', implode('-', $filename_params));
+        $filename_key = strtolower($filename_key). '.ics';
+
+        # result
+        header('Content-type: text/calendar; charset=utf-8');
+        header('Content-Disposition: inline; filename=' . $filename_key );
+
+        $endline = "\r\n";
+
+        echo 'BEGIN:VCALENDAR' . $endline;
+        echo 'VERSION:2.0' . $endline;
+        echo 'PRODID:-//hacksw/handcal//NONSGML v1.0//EN' . $endline . $endline;
+        /** @var WCS4_Lesson $lesson */
+        foreach ($lessons as $lesson) {
+            $description = '';
+            $description .= __('Teacher', 'wcs4') . ': ';
+            $description .= $lesson->getTeacher()->getName() . '. ';
+            $description .= __('Student', 'wcs4') . ': ';
+            $description .= $lesson->getStudent()->getName() . '.';
+            $description = wordwrap($description, 75, $endline . " ", true);
+            echo 'BEGIN:VEVENT' . $endline;
+            echo 'CATEGORIES:EDUCATION' . $endline;
+            echo 'DTSTART:' . $lesson->getStartDateTime()->format('Ymd\THis') . $endline;
+            echo 'DTEND:' . $lesson->getEndDateTime()->format('Ymd\THis') . $endline;
+            echo 'SUMMARY:' . $lesson->getSubject()->getName() . $endline;
+            echo 'DESCRIPTION:' . $description . $endline;
+            echo 'LOCATION:' . $lesson->getClassroom()->getName() . $endline;
+            echo 'END:VEVENT' . $endline . $endline;
+        }
+        echo 'END:VCALENDAR' . $endline;
+        exit;
+    }
+
     private static function draw_search_form(): void
     {
         ?>

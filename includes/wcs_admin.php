@@ -393,44 +393,6 @@ function wcs4_generate_admin_select_list($key, $id = '', $name = '', $default = 
             $values[$post_id] = get_post_title_with_taxonomy($post, $tax_type);
         }
     }
-
-//    if(isset($filter['subject']))
-//
-//    $classroom_collision = $wpdb->get_col($wpdb->prepare("
-//                     SELECT id
-//                     FROM $table
-//                     WHERE
-//                           classroom_id = %d
-//                       AND weekday = %d
-//                       AND %s < end_time
-//                       AND %s > start_time
-//                       AND id != %d
-//                     ",
-//        array($classroom_id, $weekday, $start_time, $end_time, $row_id,)));
-//    if (!empty($classroom_collision)) {
-//        $errors['classroom_id'][] = __('Classroom is not available at this time', 'wcs4');
-//    }
-//}
-
-
-//if ($wcs4_settings['student_collision'] === 'yes') {
-//    # Validate student collision (if applicable)
-//    $student_collision = $wpdb->get_col($wpdb->prepare("
-//                        SELECT id
-//                        FROM $table
-//                        LEFT JOIN $table_student USING (id)
-//                        WHERE
-//                              student_id IN (%s)
-//                          AND weekday = %d
-//                          AND %s < end_time
-//                          AND %s > start_time
-//                          AND id != %d
-//                    ",
-//        array(implode(',', $student_id), $weekday, $start_time, $end_time, $row_id,)));
-//    if (!empty($student_collision)) {
-//        $errors['student_id'][] = __('Student is not available at this time', 'wcs4');
-//    }
-
     return wcs4_select_list($values, $id, $name, $default, $required, $multiple, $classname, true);
 }
 

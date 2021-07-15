@@ -1,6 +1,5 @@
 <?php
 
-
 /**
  * Create the subject, teacher, student, and classroom post types.
  */

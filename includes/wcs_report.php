@@ -70,35 +70,36 @@ class Report_Management
                 $subject = '#' . get_the_id();
                 break;
         }
+
         # get reports
         $reports = Report_Management::get_reports($teacher, $student, $subject, $date_from, $date_upto);
 
         # build filename
-        $report_params = [];
-        $report_params[] = 'at';
-        $report_params[] = date('YmdHis');
+        $filename_params = [];
+        $filename_params[] = 'at';
+        $filename_params[] = date('YmdHis');
         if ($teacher) {
-            $report_params[] = 'tea';
-            $report_params[] = str_replace('#', '', $teacher);
+            $filename_params[] = 'tea';
+            $filename_params[] = str_replace('#', '', $teacher);
         }
         if ($student) {
-            $report_params[] = 'stu';
-            $report_params[] = str_replace('#', '', $student);
+            $filename_params[] = 'stu';
+            $filename_params[] = str_replace('#', '', $student);
         }
         if ($subject) {
-            $report_params[] = 'sub';
-            $report_params[] = str_replace('#', '', $subject);
+            $filename_params[] = 'sub';
+            $filename_params[] = str_replace('#', '', $subject);
         }
         if ($date_from) {
-            $report_params[] = 'from';
-            $report_params[] = str_replace('-', '', $date_from);
+            $filename_params[] = 'from';
+            $filename_params[] = str_replace('-', '', $date_from);
         }
         if ($date_upto) {
-            $report_params[] = 'to';
-            $report_params[] = str_replace('-', '', $date_upto);
+            $filename_params[] = 'to';
+            $filename_params[] = str_replace('-', '', $date_upto);
         }
-        $report_key = 'wcs4-report-' . preg_replace('/[^A-Za-z0-9]/', '-', implode('-', $report_params));
-        $report_key = strtolower($report_key);
+        $filename_key = 'wcs4-report-' . preg_replace('/[^A-Za-z0-9]/', '-', implode('-', $filename_params));
+        $filename_key = strtolower($filename_key) . '.csv';
 
 
         # build csv
@@ -140,7 +141,7 @@ class Report_Management
 
         # submit content to browser
         header('Content-Type: application/csv');
-        header('Content-Disposition: attachment; filename="' . $report_key . '.csv";');
+        header('Content-Disposition: attachment; filename=' . $filename_key);
         fseek($handle, 0);
         fpassthru($handle);
         exit;
