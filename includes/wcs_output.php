@@ -104,7 +104,6 @@ function wcs4_render_table_schedule($lessons, $weekdays, $schedule_key, $templat
  * @param string $template_list
  * @return string
  */
-
 function wcs4_render_list_schedule($lessons, $weekdays, $schedule_key, $template_list)
 {
     if (empty($lessons)) {
@@ -138,28 +137,96 @@ function wcs4_render_list_schedule($lessons, $weekdays, $schedule_key, $template
 }
 
 /**
+ * Renders list layout
+ *
+ * @param array $reports : lessons array as returned by wcs4_get_lessons().
+ * @param string $schedule_key
+ * @param string $template_list
+ * @return string
+ */
+function wcs4_render_list_report($reports, $schedule_key, $template_list)
+{
+    if (empty($reports)) {
+        return '<div class="wcs4-no-lessons-message">' . __('No lessons reported', 'wcs4') . '</div>';
+    }
+
+    $dateWithLessons = [];
+    /** @var WCS4_Report $report */
+    foreach ($reports as $report) {
+        $dateWithLessons[$report->getDate()][] = $report;
+    }
+    krsort($dateWithLessons);
+
+    $output = '<div class="wcs4-schedule-list-layout">';
+    # Classes are grouped by indexed weekdays.
+    foreach ($dateWithLessons as $date => $reports) {
+        if (!empty($reports)) {
+            $output .= '<h3>' . $date . '</h3>';
+            $output .= '<ul class="wcs4-grid-date-list wcs4-grid-date-list-' . $date . '">';
+            /** @var WCS4_Report $report */
+            foreach ($reports as $report) {
+                $output .= '<li class="wcs4-list-item-lesson">';
+                $output .= wcs4_process_template($report, $template_list);
+                $output .= '</li>';
+            }
+            $output .= '</ul>';
+        }
+    }
+    $output .= '</div>';
+    return $output;
+}
+
+/**
  * Processes a template (replace placeholder, apply plugins).
  *
- * @param WCS4_Lesson $lesson : subject object with all required data.
+ * @param WCS4_Lesson|WCS4_Report $item : subject object with all required data.
  * @param string $template : user defined template from settings.
  * @return string|string[]
  */
-function wcs4_process_template($lesson, $template)
+function wcs4_process_template($item, string $template)
 {
-    $shortcodes = [
-        '{subject}', '{subject info}', '{sub}', '{subject link}', '{sub link}',
-        '{teacher}', '{teacher info}', '{tea}', '{teacher link}', '{tea link}',
-        '{student}', '{student info}', '{stu}', '{student link}', '{stu link}',
-        '{classroom}', '{classroom info}', '{class}', '{classroom link}', '{class link}',
-        '{schedule no}', '{start hour}', '{end hour}', '{notes}'];
-    $values = [
-        $lesson->getSubject()->getName(), $lesson->getSubject()->getInfo(), $lesson->getSubject()->getShort(), $lesson->getSubject()->getLinkName(), $lesson->getSubject()->getLinkShort(),
-        $lesson->getTeacher()->getName(), $lesson->getTeacher()->getInfo(), $lesson->getTeacher()->getShort(), $lesson->getTeacher()->getLinkName(), $lesson->getTeacher()->getLinkShort(),
-        $lesson->getStudent()->getName(), $lesson->getStudent()->getInfo(), $lesson->getStudent()->getShort(), $lesson->getStudent()->getLinkName(), $lesson->getStudent()->getLinkShort(),
-        $lesson->getClassroom()->getName(), $lesson->getClassroom()->getInfo(), $lesson->getClassroom()->getShort(), $lesson->getClassroom()->getLinkName(), $lesson->getClassroom()->getLinkShort(),
-        $lesson->getId(), $lesson->getStartHour(), $lesson->getEndHour(), $lesson->getNotes()];
-    $template = str_replace($shortcodes, $values, $template);
-
+    if ($item instanceof WCS4_Lesson || $item instanceof WCS4_Report) {
+        $template = str_replace(
+            ['{subject}', '{subject info}', '{sub}', '{subject link}', '{sub link}'],
+            [$item->getSubject()->getName(), $item->getSubject()->getInfo(), $item->getSubject()->getShort(), $item->getSubject()->getLinkName(), $item->getSubject()->getLinkShort()]
+            , $template);
+    }
+    if ($item instanceof WCS4_Lesson || $item instanceof WCS4_Report) {
+        $template = str_replace(
+            ['{teacher}', '{teacher info}', '{tea}', '{teacher link}', '{tea link}'],
+            [$item->getTeacher()->getName(), $item->getTeacher()->getInfo(), $item->getTeacher()->getShort(), $item->getTeacher()->getLinkName(), $item->getTeacher()->getLinkShort()]
+            , $template);
+    }
+    if ($item instanceof WCS4_Lesson || $item instanceof WCS4_Report) {
+        $template = str_replace(['{student}', '{student info}', '{stu}', '{student link}', '{stu link}'],
+            [$item->getStudent()->getName(), $item->getStudent()->getInfo(), $item->getStudent()->getShort(), $item->getStudent()->getLinkName(), $item->getStudent()->getLinkShort()]
+            , $template);
+    }
+    if ($item instanceof WCS4_Lesson) {
+        $template = str_replace(['{classroom}', '{classroom info}', '{class}', '{classroom link}', '{class link}'],
+            [$item->getClassroom()->getName(), $item->getClassroom()->getInfo(), $item->getClassroom()->getShort(), $item->getClassroom()->getLinkName(), $item->getClassroom()->getLinkShort()]
+            , $template);
+    }
+    if ($item instanceof WCS4_Lesson) {
+        $template = str_replace(['{schedule no}', '{start hour}', '{end hour}', '{notes}'],
+            [$item->getId(), $item->getStartHour(), $item->getEndHour(), $item->getNotes()]
+            , $template);
+    }
+    if ($item instanceof WCS4_Report) {
+        $template = str_replace(['{schedule no}', '{start hour}', '{end hour}', '{topic}'],
+            [$item->getId(), $item->getStartHour(), $item->getEndHour(), $item->getTopic()]
+            , $template);
+    }
+    if ($item instanceof WCS4_Lesson) {
+        $template = str_replace(['{weekday}'],
+            [$item->getWeekday()]
+            , $template);
+    }
+    if ($item instanceof WCS4_Report) {
+        $template = str_replace(['{date}'],
+            [$item->getDate()]
+            , $template);
+    }
     return $template;
 }
 

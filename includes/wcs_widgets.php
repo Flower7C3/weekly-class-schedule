@@ -51,7 +51,7 @@ class WCS4_TodayClassesWidget extends WP_Widget
         $no_entries_msg = ($instance['no_entries_text'] !== '') ? $instance['no_entries_text'] : _x('No lessons today', 'widget settings', 'wcs4');
         $template = $instance['template'];
 
-        $lessons = wcs4_get_day_schedule($today, $time, $classroom_ids, $limit, 1);
+        $lessons = Schedule_Management::get_lessons($classroom_ids, 'all', 'all', 'all', $today, $time, 1, $limit);
 
         if (empty($lessons)) {
             $output .= '<div class="wcs4-no-lessons">' . $no_entries_msg . '</div>';

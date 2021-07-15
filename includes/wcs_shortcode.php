@@ -5,7 +5,7 @@
  * Standard [wcs] shortcode
  *
  * Default:
- *     [wcs layout="table" classroom="all" class="all" teacher="all" student="all"]
+ *     [wcs layout="table" classroom="all" subject="all" teacher="all" student="all"]
  * @param $atts
  * @return string
  */
@@ -18,6 +18,8 @@ add_shortcode('wcs', static function ($atts) {
     $student = '';
     $subject = '';
     $style = '';
+    $limit = null;
+    $page = null;
     $template_table_short = '';
     $template_table_details = '';
     $template_list = '';
@@ -30,16 +32,18 @@ add_shortcode('wcs', static function ($atts) {
         'student' => 'all',
         'subject' => 'all',
         'style' => 'normal',
+        'limit' => null,
+        'page' => null,
         'template_table_short' => $wcs4_options['template_table_short'],
         'template_table_details' => $wcs4_options['template_table_details'],
         'template_list' => $wcs4_options['template_list'],
     ), $atts), EXTR_OVERWRITE);
 
     # Get lesssons
-    $lessons = wcs4_get_lessons($classroom, $teacher, $student, $subject);
+    $lessons = Schedule_Management::get_lessons($classroom, $teacher, $student, $subject, null, null, 1, $limit, $page);
 
     # Classroom
-    $schedule_key = 'wcs4-key-' . preg_replace('/[^A-Za-z0-9]/', '-', implode('-', [$classroom, $teacher, $student, $subject]));
+    $schedule_key = 'wcs4-key-' . preg_replace('/[^A-Za-z0-9]/', '-', implode('-', [$classroom, $teacher, $student, $subject, $limit, $page]));
     $schedule_key = strtolower($schedule_key);
 
     $output = apply_filters('wcs4_pre_render', $output, $style);
@@ -77,9 +81,80 @@ add_shortcode('wcs', static function ($atts) {
     return $output;
 });
 
-add_shortcode('wcs_new_report', static function () {
+/**
+ * Standard [wcr] shortcode
+ *
+ * Default:
+ *     [wcr subject="all" teacher="all" student="all" date_from="" date_upto=""]
+ * @param $atts
+ * @return string
+ */
+add_shortcode('wcr', static function ($atts) {
+    $output = '';
+    $buffer = '';
+    $subject = '';
+    $teacher = '';
+    $student = '';
+    $date_from = '';
+    $date_upto = '';
+    $style = '';
+    $limit = null;
+    $page = null;
+    $template_report = '';
+    $wcs4_options = wcs4_load_settings();
+
+    extract(shortcode_atts(array(
+        'subject' => 'all',
+        'teacher' => 'all',
+        'student' => 'all',
+        'style' => 'normal',
+        'date_from' => null,
+        'date_upto' => null,
+        'limit' => null,
+        'page' => null,
+        'template_report' => $wcs4_options['template_report'],
+    ), $atts), EXTR_OVERWRITE);
+
+    # Get reports
+    $reports = Report_Management::get_reports($teacher, $student, $subject, $date_from, $date_upto, $limit, $page);
+
+    # Classroom
+    $schedule_key = 'wcs4-key-' . preg_replace('/[^A-Za-z0-9]/', '-', implode('-', [$teacher, $student, $subject, $date_from, $date_upto, $limit, $page]));
+    $schedule_key = strtolower($schedule_key);
+
+    $output = apply_filters('wcs4_pre_render', $output, $style);
+    $output .= '<div class="wcs4-schedule-wrapper" id="' . $schedule_key . '">';
+
+    # Render list layout
+    $output .= wcs4_render_list_report($reports, $schedule_key, $template_report);
+
+    $output .= '</div>';
+    $output = apply_filters('wcs4_post_render', $output, $style, $teacher, $student, $subject, $date_from, $date_upto);
+
+    # Only load front end scripts and styles if it's our shortcode
+    add_action('wp_footer', static function () {
+        $wcs4_options = wcs4_load_settings();
+        $wcs4_js_data = [];
+        $wcs4_js_data['options'] = $wcs4_options;
+        wcs4_load_frontend_scripts($wcs4_js_data);
+    });
+
+    return $output;
+});
+
+add_shortcode('wcr_create', static function ($atts) {
+    $subject = '';
+    $teacher = '';
+    $student = '';
+
+    extract(shortcode_atts(array(
+        'subject' => '',
+        'teacher' => '',
+        'student' => '',
+    ), $atts), EXTR_OVERWRITE);
+
     ob_start();
-    wcs4_report_manage_form();
+    Report_Management::draw_manage_form($subject, $teacher, $student);
     $result = ob_get_clean();
 
     # Only load front end scripts and styles if it's our shortcode

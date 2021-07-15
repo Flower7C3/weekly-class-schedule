@@ -25,59 +25,73 @@ if (!defined('WCS4_ADVANCED_OPTIONS_CAPABILITY')) {
     define('WCS4_ADVANCED_OPTIONS_CAPABILITY', 'wcs4_advanced_options');
 }
 add_action('admin_menu', static function () {
-    $page_management = add_menu_page(__('Schedule Management', 'wcs4'),
+    $page_schedule = add_menu_page(__('Schedule Management', 'wcs4'),
         __('Schedule', 'wcs4'),
         WCS4_SCHEDULE_VIEW_CAPABILITY,
-        'wcs4-schedule',
-        'wcs4_schedule_management_page_callback',
+        'weekly-class-schedule',
+        array("\Schedule_Management", "management_page_callback"),
         'dashicons-schedule', 50);
 
-    $page_report = add_submenu_page('wcs4-schedule',
+    $page_report = add_submenu_page('weekly-class-schedule',
         __('Report', 'wcs4'),
         __('Report', 'wcs4'),
         WCS4_REPORT_VIEW_CAPABILITY,
-        'wcs4-report',
-        'wcs4_report_page_callback');
+        'class-schedule-report',
+        array("\Report_Management", "management_page_callback"));
 
-    $page_standard_options = add_submenu_page('wcs4-schedule',
+    $page_standard_options = add_submenu_page('weekly-class-schedule',
         __('Standard Options', 'wcs4'),
         __('Standard Options', 'wcs4'),
         WCS4_STANDARD_OPTIONS_CAPABILITY,
-        'wcs4-standard-options',
+        'class-schedule-standard-options',
         'wcs4_standard_options_page_callback');
 
-    add_submenu_page('wcs4-schedule',
+    add_submenu_page('weekly-class-schedule',
         __('Advanced Options', 'wcs4'),
         __('Advanced Options', 'wcs4'),
         WCS4_ADVANCED_OPTIONS_CAPABILITY,
-        'wcs4-advanced',
+        'class-schedule-advanced-options',
         'wcs4_advanced_options_page_callback');
 
     $help_tabs = [];
-    $help_tabs[] = [
+    $help_tabs['wcs_shortcode'] = [
         'id' => 'wcs4_help_shortcode',
         'title' => _x('Using shortcode', 'help title', 'wcs4'),
-        'callback' => 'wcs4_help_shortcode_callback',
+        'callback' => 'wcs4_help_wcs_shortcode_callback',
     ];
-    $help_tabs[] = [
+    $help_tabs['wcr_shortcode'] = [
+        'id' => 'wcs4_help_shortcode',
+        'title' => _x('Using shortcode', 'help title', 'wcs4'),
+        'callback' => 'wcs4_help_wcr_shortcode_callback',
+    ];
+    $help_tabs['placeholders'] = [
         'id' => 'wcs4_help_placeholders',
         'title' => _x('Placeholders', 'help title', 'wcs4'),
         'callback' => 'wcs4_help_placeholders_callback',
     ];
-    $help_tabs[] = [
+    $help_tabs['allowed_html'] = [
         'id' => 'wcs4_help_allowed_html',
         'title' => _x('HTML tags in template', 'help title', 'wcs4'),
         'callback' => 'wcs4_help_allowed_html_callback',
     ];
-    add_action('load-' . $page_management, static function () use ($help_tabs) {
+    add_action('load-' . $page_schedule, static function () use ($help_tabs) {
         $screen = get_current_screen();
-        foreach ($help_tabs as $tab) {
+        $tabs = array($help_tabs['wcs_shortcode'], $help_tabs['placeholders']);
+        foreach ($tabs as $tab) {
+            $screen->add_help_tab($tab);
+        }
+    });
+    add_action('load-' . $page_report, static function () use ($help_tabs) {
+        $screen = get_current_screen();
+        $tabs = array($help_tabs['wcr_shortcode'], $help_tabs['placeholders']);
+        foreach ($tabs as $tab) {
             $screen->add_help_tab($tab);
         }
     });
     add_action('load-' . $page_standard_options, static function () use ($help_tabs) {
         $screen = get_current_screen();
-        foreach ($help_tabs as $tab) {
+        $tabs = array($help_tabs['placeholders'], $help_tabs['allowed_html']);
+        foreach ($tabs as $tab) {
             $screen->add_help_tab($tab);
         }
     });
@@ -153,7 +167,7 @@ add_action('admin_enqueue_scripts', static function () {
     );
 });
 
-function wcs4_help_shortcode_callback()
+function wcs4_help_wcs_shortcode_callback()
 {
     ?>
     <h3>
@@ -167,14 +181,14 @@ function wcs4_help_shortcode_callback()
     </p>
     <ul>
         <li><?php printf(_x('Custom template for table layout: <code>%1$s</code>', 'help', 'wcs4'), '[wcs layout=table template_table_short="CODE" template_table_details="CODE"]'); ?></li>
-        <li><?php printf(_x('Custom template for list layout: <code>%1$s</code>', 'help', 'wcs4'), '[wcs layout=list template_list="CODE"]', 'Yoga'); ?></li>
+        <li><?php printf(_x('Custom template for list layout: <code>%1$s</code>', 'help', 'wcs4'), '[wcs layout=list template_list="CODE"]'); ?></li>
     </ul>
     <p>
         <?php printf(_x('See available <code>%1$s</code> in <strong>%2$s</strong> tab.', 'help', 'wcs4'), 'CODE', _x('Placeholders', 'help title', 'wcs4')); ?>
     </p>
     <hr>
     <p>
-        <?php _ex('In order to filter a schedule by a specific subject, teacher, student, classroom, or any other combination of the four, use the subject, teacher, and classroom attributes.', 'help', 'wcs4'); ?>
+        <?php _ex('In order to filter a schedule by a specific subject, teacher, student, classroom, or any other combination of the four, use the subject, teacher, student, and classroom attributes.', 'help', 'wcs4'); ?>
         <?php _ex('For example:', 'help', 'wcs4'); ?>
     </p>
     <ul>
@@ -186,6 +200,42 @@ function wcs4_help_shortcode_callback()
     <hr>
     <p>
         <?php printf(_x('A finalized shortcode may look something like <code>%1$s</code>', 'help', 'wcs4'), '[wcs classroom="Classroom A" layout=list]'); ?>
+    </p>
+    <?php
+}
+
+function wcs4_help_wcr_shortcode_callback()
+{
+    ?>
+    <h3>
+        <?php printf(_x('To display all the reports in a single schedule, simply enter the shortcode <code>%1$s</code> inside a page or a post.', 'help', 'wcs4'), '[wcr]'); ?>
+    </h3>
+    <hr>
+    <p>
+        <?php printf(_x('You can also specify layout template.', 'help', 'wcs4')); ?>
+        <?php _ex('For example:', 'help', 'wcs4'); ?>
+    </p>
+    <ul>
+        <li><?php printf(_x('Custom template for report layout: <code>%1$s</code>', 'help', 'wcs4'), '[wcr template_report="CODE"]'); ?></li>
+    </ul>
+    <p>
+        <?php printf(_x('See available <code>%1$s</code> in <strong>%2$s</strong> tab.', 'help', 'wcs4'), 'CODE', _x('Placeholders', 'help title', 'wcs4')); ?>
+    </p>
+    <hr>
+    <p>
+        <?php _ex('In order to filter a report by a specific subject, teacher, student, or any other combination of the three, use the subject, student and teacher attributes.', 'help', 'wcs4'); ?>
+        <?php _ex('For example:', 'help', 'wcs4'); ?>
+    </p>
+    <ul>
+        <li><?php printf(_x('Only display reports of "%2$s" subject: <code>%1$s</code>', 'help', 'wcs4'), '[wcr subject="Yoga"]', 'Yoga'); ?></li>
+        <li><?php printf(_x('Only display reports by "%2$s" teacher: <code>%1$s</code>', 'help', 'wcs4'), '[wcr teacher="John Doe"]', 'John Doe'); ?></li>
+        <li><?php printf(_x('Only display reports for "%2$s" student: <code>%1$s</code>', 'help', 'wcs4'), '[wcr student="Jane Doe"]', 'Jane Doe'); ?></li>
+        <li><?php printf(_x('Only display reports in "%2$s" date from: <code>%1$s</code>', 'help', 'wcs4'), '[wcr date_from="2020-01-01"]', '2020-01-01'); ?></li>
+        <li><?php printf(_x('Only display reports in "%2$s" date upto: <code>%1$s</code>', 'help', 'wcs4'), '[wcr date_upto="2020-01-31"]', '2020-01-31'); ?></li>
+    </ul>
+    <hr>
+    <p>
+        <?php printf(_x('A finalized shortcode may look something like <code>%1$s</code>', 'help', 'wcs4'), '[wcr classroom="Classroom A"]'); ?>
     </p>
     <?php
 }
@@ -214,7 +264,7 @@ function wcs4_help_placeholders_callback()
     </p>
     <ul>
         <li>
-            <?php printf(_x('Will display general info: <code>%1$s</code>', 'help', 'wcs4'), implode('</code>, <code>', ['{schedule no}', '{start hour}', '{end hour}', '{notes}',])); ?>
+            <?php printf(_x('Will display general info: <code>%1$s</code>', 'help', 'wcs4'), implode('</code>, <code>', ['{schedule no}', '{date}', '{weekday}', '{start hour}', '{end hour}', '{notes}', '{topic}',])); ?>
         </li>
         <li>
             <?php printf(_x('Will display full name: <code>%1$s</code>', 'help', 'wcs4'), implode('</code>, <code>', ['{subject}', '{teacher}', '{student}', '{classroom}',])); ?>
@@ -354,39 +404,4 @@ function wcs4_generate_visibility_select_list($name = '', $default = NULL, $requ
  * Delete schedule entries when subject, teacher, student, or classroom gets deleted.
  * @param $post_id
  */
-add_action('delete_post', static function ($post_id) {
-    global $wpdb;
-
-    $table_schedule = wcs4_get_schedule_table_name();
-    $table_teacher = wcs4_get_schedule_teacher_table_name();
-    $table_student = wcs4_get_schedule_student_table_name();
-
-    # Since all three custom post types are in the same table, we can
-    # assume the the ID will be unique so there's no need to check for
-    # post type.
-    $query = "DELETE FROM $table_schedule
-                WHERE
-                    subject_id = %d 
-                    OR teacher_id = %d 
-                    OR student_id = %d
-                    OR classroom_id = %d";
-
-    $wpdb->query($wpdb->prepare(
-        $query,
-        array($post_id, $post_id, $post_id, $post_id)
-    ));
-    $query = "DELETE FROM $table_teacher
-                WHERE teacher_id = %d ";
-
-    $wpdb->query($wpdb->prepare(
-        $query,
-        array($post_id)
-    ));
-    $query = "DELETE FROM $table_student
-                WHERE student_id = %d";
-
-    $wpdb->query($wpdb->prepare(
-        $query,
-        array($post_id)
-    ));
-}, 10);
+add_action('delete_post', ['WCS4_DB', 'delete_item_when_delete_post'], 10);

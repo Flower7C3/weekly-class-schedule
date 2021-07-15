@@ -20,7 +20,7 @@ switch ($post_type) {
         $subject = '#' . $post_id;
         break;
 }
-$lessons = wcs4_get_lessons($classroom, $teacher, $student, $subject, null, null, 1);
+$lessons = Schedule_Management::get_lessons($classroom, $teacher, $student, $subject, null, null, 1);
 $endline = "\r\n";
 
 header('Content-type: text/calendar; charset=utf-8');

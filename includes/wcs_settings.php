@@ -47,6 +47,7 @@ function wcs4_standard_options_page_callback()
                 'template_table_short' => 'wcs4_validate_html',
                 'template_table_details' => 'wcs4_validate_html',
                 'template_list' => 'wcs4_validate_html',
+                'template_report' => 'wcs4_validate_html',
                 'color_base' => 'wcs4_validate_color',
                 'color_details_box' => 'wcs4_validate_color',
                 'color_text' => 'wcs4_validate_color',
@@ -66,6 +67,9 @@ function wcs4_standard_options_page_callback()
                 'subject_schedule_template_table_short' => 'wcs4_validate_html',
                 'subject_schedule_template_table_details' => 'wcs4_validate_html',
                 'subject_schedule_template_list' => 'wcs4_validate_html',
+                'subject_report_view' => 'wcs4_validate_yes_no',
+                'subject_schedule_template_report' => 'wcs4_validate_html',
+                'subject_report_create' => 'wcs4_validate_yes_no',
                 'teacher_taxonomy_slug' => 'wcs4_validate_html',
                 'teacher_taxonomy_hierarchical' => 'wcs4_validate_yes_no',
                 'teacher_archive_slug' => 'wcs4_validate_html',
@@ -76,6 +80,9 @@ function wcs4_standard_options_page_callback()
                 'teacher_schedule_template_table_short' => 'wcs4_validate_html',
                 'teacher_schedule_template_table_details' => 'wcs4_validate_html',
                 'teacher_schedule_template_list' => 'wcs4_validate_html',
+                'teacher_report_view' => 'wcs4_validate_yes_no',
+                'teacher_schedule_template_report' => 'wcs4_validate_html',
+                'teacher_report_create' => 'wcs4_validate_yes_no',
                 'student_taxonomy_slug' => 'wcs4_validate_html',
                 'student_taxonomy_hierarchical' => 'wcs4_validate_yes_no',
                 'student_archive_slug' => 'wcs4_validate_html',
@@ -86,6 +93,9 @@ function wcs4_standard_options_page_callback()
                 'student_schedule_template_table_short' => 'wcs4_validate_html',
                 'student_schedule_template_table_details' => 'wcs4_validate_html',
                 'student_schedule_template_list' => 'wcs4_validate_html',
+                'student_report_view' => 'wcs4_validate_yes_no',
+                'student_schedule_template_report' => 'wcs4_validate_html',
+                'student_report_create' => 'wcs4_validate_yes_no',
                 'classroom_taxonomy_slug' => 'wcs4_validate_html',
                 'classroom_taxonomy_hierarchical' => 'wcs4_validate_yes_no',
                 'classroom_archive_slug' => 'wcs4_validate_html',
@@ -124,6 +134,9 @@ function wcs4_standard_options_page_callback()
                         <th colspan="2">
                             <?php _ex('Class List Template', 'options general settings', 'wcs4'); ?>
                         </th>
+                        <th colspan="2">
+                            <?php _ex('Class Report Template', 'options general settings', 'wcs4'); ?>
+                        </th>
                     </tr>
                 </thead>
                 <tbody>
@@ -137,6 +150,9 @@ function wcs4_standard_options_page_callback()
                         <td colspan="2">
                             <textarea name="wcs4_template_list" cols="40" rows="6"><?php echo $wcs4_options['template_list']; ?></textarea>
                         </td>
+                        <td colspan="2">
+                            <textarea name="wcs4_template_report" cols="40" rows="6"><?php echo $wcs4_options['template_report']; ?></textarea>
+                        </td>
                     </tr>
                     <tr>
                         <th>
@@ -148,6 +164,7 @@ function wcs4_standard_options_page_callback()
                     </tr>
                 </tbody>
             </table>
+            <hr>
             <table class="form-table">
                 <thead>
                     <tr>
@@ -288,7 +305,6 @@ function wcs4_standard_options_page_callback()
                     <tr>
                         <th>
                             <?php _ex('Class Table Hover Template', 'options general settings', 'wcs4'); ?>
-
                         </th>
                         <?php foreach ($taxonomyTypes as $key => $name): ?>
                             <td data-key="<?= $key ?>" data-type="wcs4_schedule_template_table_details">
@@ -308,9 +324,50 @@ function wcs4_standard_options_page_callback()
                             </td>
                         <?php endforeach; ?>
                     </tr>
+                    <tr>
+                        <th>
+                            <?php _ex('Display Reports', 'options general settings', 'wcs4'); ?>
+                            <div class="wcs4-description"><?php _ex('Will display reported lessons.', 'options general settings', 'wcs4'); ?></div>
+                        </th>
+                        <?php foreach ($taxonomyTypes as $key => $name): ?>
+                        <td data-key="<?= $key ?>" data-type="wcs4_report_view">
+                            <?php if ($key !== 'classroom'): ?>
+                                <?php echo wcs4_bool_checkbox('wcs4_' . $key . '_report_view', 'wcs4_' . $key . '_report_view',
+                                    $wcs4_options[$key . '_report_view'], __('Yes')); ?>
+                                </td>
+                            <?php endif; ?>
+                        <?php endforeach; ?>
+                    </tr>
+                    <tr>
+                        <th>
+                            <?php _ex('Class Report Template', 'options general settings', 'wcs4'); ?>
+                        </th>
+                        <?php foreach ($taxonomyTypes as $key => $name): ?>
+                            <td data-key="<?= $key ?>" data-type="wcs4_schedule_template_report">
+                                <?php if ($key !== 'classroom'): ?>
+                                    <textarea name="wcs4_<?= $key ?>_schedule_template_report" cols="30"
+                                              rows="4"><?php echo $wcs4_options[$key . '_schedule_template_report']; ?></textarea>
+                                <?php endif; ?>
+                            </td>
+                        <?php endforeach; ?>
+                    </tr>
+                    <tr>
+                        <th>
+                            <?php _ex('Add New Report', 'options general settings', 'wcs4'); ?>
+                            <div class="wcs4-description"><?php _ex('Will display form allowing anyone to add new lesson report.', 'options general settings', 'wcs4'); ?></div>
+                        </th>
+                        <?php foreach ($taxonomyTypes as $key => $name): ?>
+                            <td data-key="<?= $key ?>" data-type="wcs4_report_create">
+                                <?php if ($key !== 'classroom'): ?>
+                                    <?php echo wcs4_bool_checkbox('wcs4_' . $key . '_report_create', 'wcs4_' . $key . '_report_create',
+                                        $wcs4_options[$key . '_report_create'], __('Yes')); ?>
+                                <?php endif; ?>
+                            </td>
+                        <?php endforeach; ?>
+                    </tr>
                 </tbody>
             </table>
-
+            <hr>
             <h2><?php _ex('Appearance Settings', 'options appearance settings', 'wcs4'); ?></h2>
             <table class="form-table">
                 <tbody>
@@ -452,6 +509,7 @@ function wcs4_set_default_settings()
             'template_table_short' => _x('<small>{start hour}-{end hour}</small><br>{subject} ({tea}/{stu})', 'config template table short', 'wcs4'),
             'template_table_details' => _x('{teacher link} has {subject link} at {classroom link} from {start hour} to {end hour} for {student link} {notes}', 'config template table details', 'wcs4'),
             'template_list' => _x('{teacher link} has {subject link} at {classroom link} from {start hour} to {end hour} for {student link} {notes}', 'config template list', 'wcs4'),
+            'template_report' => _x('{teacher link} has {subject link} from {start hour} to {end hour} for {student link} {topic}', 'config template report', 'wcs4'),
             'color_base' => 'DDFFDD',
             'color_details_box' => 'FFDDDD',
             'color_text' => '373737',
@@ -471,6 +529,9 @@ function wcs4_set_default_settings()
             'subject_schedule_template_table_short' => _x('<small>{start hour}-{end hour}</small><br>{tea}/{stu} @{class}', 'config template table short at subject schedule', 'wcs4'),
             'subject_schedule_template_table_details' => _x('<small>{start hour}-{end hour}</small><br>{teacher link} at {classroom link} for {student link} {notes}', 'config template table details at subject schedule', 'wcs4'),
             'subject_schedule_template_list' => _x('<small>{start hour}-{end hour}</small><br>{teacher link} at {classroom link} for {student link} {notes}', 'config template list at subject schedule', 'wcs4'),
+            'subject_report_view' => 'no',
+            'subject_schedule_template_report' => _x('<small>{start hour}-{end hour}</small><br>{teacher link} at for {student link} {topic}', 'config template report at subject schedule', 'wcs4'),
+            'subject_report_create' => 'no',
             'teacher_taxonomy_slug' => _x('specialization', 'config slug for taxonomy', 'wcs4'),
             'teacher_taxonomy_hierarchical' => 'no',
             'teacher_archive_slug' => _x('teachers', 'config slug for archive', 'wcs4'),
@@ -481,15 +542,22 @@ function wcs4_set_default_settings()
             'teacher_schedule_template_table_short' => _x('<small>{start hour}-{end hour}</small><br>{subject} @{class} ({stu})', 'config template table short at teacher schedule', 'wcs4'),
             'teacher_schedule_template_table_details' => _x('<small>{start hour}-{end hour}</small><br>{subject link} at {classroom link} for {student link} {notes}', 'config template table details at teacher schedule', 'wcs4'),
             'teacher_schedule_template_list' => _x('<small>{start hour}-{end hour}</small><br>{subject link} at {classroom link} for {student link} {notes}', 'config template list at teacher schedule', 'wcs4'),
+            'teacher_report_view' => 'no',
+            'teacher_schedule_template_report' => _x('<small>{start hour}-{end hour}</small><br>{subject link} for {student link} {topic}', 'config template report at teacher schedule', 'wcs4'),
+            'teacher_report_create' => 'no',
             'student_taxonomy_slug' => _x('group', 'config slug for taxonomy', 'wcs4'),
             'student_taxonomy_hierarchical' => 'no',
             'student_archive_slug' => _x('students', 'config slug for archive', 'wcs4'),
             'student_post_slug' => _x('student', 'config slug for item', 'wcs4'),
+            'student_download_icalendar' => 'no',
             'student_hashed_slug' => 'yes',
             'student_schedule_layout' => 'table',
             'student_schedule_template_table_short' => _x('<small>{start hour}-{end hour}</small><br>{subject} ({tea}) @{class}', 'config template table short at student schedule', 'wcs4'),
             'student_schedule_template_table_details' => _x('<small>{start hour}-{end hour}</small><br>{subject link} with {teacher link} at {classroom link}', 'config template table details at student schedule', 'wcs4'),
-            'student_schedule_template_list' => _x('{subject link} with {teacher link} at {classroom link} from {start hour} to {end hour} {notes}', 'config template list at student schedule', 'wcs4'),
+            'student_schedule_template_list' => _x('{subject link} with {teacher link} at {classroom link} from {start hour} to {end hour} {notes}', 'config template report at student schedule', 'wcs4'),
+            'student_report_view' => 'no',
+            'student_schedule_template_report' => _x('{subject link} with {teacher link} from {start hour} to {end hour} {topic}', 'config template list at student schedule', 'wcs4'),
+            'student_report_create' => 'no',
             'classroom_taxonomy_slug' => _x('locations', 'config slug for taxonomy', 'wcs4'),
             'classroom_taxonomy_hierarchical' => 'no',
             'classroom_archive_slug' => _x('classrooms', 'config slug for archive', 'wcs4'),

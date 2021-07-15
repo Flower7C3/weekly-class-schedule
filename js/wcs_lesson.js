@@ -70,10 +70,10 @@
 
             WCS4_LIB.submit_entry(entry, function (data) {
                 if (data.result === 'updated') {
-                    var classroom = WCS4_LIB.find_get_parameter('classroom');
-                    var teacher = WCS4_LIB.find_get_parameter('teacher');
-                    var student = WCS4_LIB.find_get_parameter('student');
-                    var subject = WCS4_LIB.find_get_parameter('subject');
+                    var classroom = $('#search_wcs4_lesson_classroom_id').val();
+                    var teacher = $('#search_wcs4_lesson_teacher_id').val();
+                    var student = $('#search_wcs4_lesson_student_id').val();
+                    var subject = $('#search_wcs4_lesson_subject_id').val();
                     // Let's refresh the day
                     for (var day_to_update in data.days_to_update) {
                         reload_html_view(classroom, teacher, student, subject, day_to_update, 'fade');
@@ -125,10 +125,10 @@
                 }
                 day = $(elem).data('day');
                 if (day !== false) {
-                    var classroom = WCS4_LIB.find_get_parameter('classroom');
-                    var teacher = WCS4_LIB.find_get_parameter('teacher');
-                    var student = WCS4_LIB.find_get_parameter('student');
-                    var subject = WCS4_LIB.find_get_parameter('subject');
+                    var classroom = $('#search_wcs4_lesson_classroom_id').val();
+                    var teacher = $('#search_wcs4_lesson_teacher_id').val();
+                    var student = $('#search_wcs4_lesson_student_id').val();
+                    var subject = $('#search_wcs4_lesson_subject_id').val();
                     // Let's refresh the day
                     reload_html_view(classroom, teacher, student, subject, day, 'remove');
                 }

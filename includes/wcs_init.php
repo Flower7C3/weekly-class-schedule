@@ -256,3 +256,21 @@ add_action('init', static function () {
     add_post_type_support(WCS4_POST_TYPE_STUDENT, 'thumbnail');
     add_post_type_support(WCS4_POST_TYPE_CLASSROOM, 'thumbnail');
 });
+
+/**
+ * Register activation hook
+ */
+register_activation_hook(__FILE__, static function () {
+    do_action('wcs4_activate_action');
+});
+
+/**
+ * Activation
+ */
+add_action('wcs4_activate_action', static function () {
+    $version = get_option('wcs4_version');
+    if (FALSE === $version) {
+        WCS4_DB::create_schema();
+    }
+});
+

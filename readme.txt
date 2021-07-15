@@ -1,6 +1,6 @@
-=== Weekly Class Schedule ===
+=== Weekly Class Schedule and Report ===
 Contributors: flower7c3, ty_pwd
-Tags: schedule, weekly, class schedule, subjects, teachers, students, classes, lessons
+Tags: schedule, weekly schedule, report, subjects, teachers, students, classes, lessons
 Requires at least: 4.0
 Tested up to: 5.4
 Stable tag: 4.02
@@ -39,12 +39,21 @@ You will find a 'Schedule' menu item as well as 'Classes', 'Teachers', 'Students
 
 == Changelog ==
 
+= Version 4.22 =
+* report of lessons taken
+* refactor code
+* rename columns `start_hour` to `start_time` and `end_hour` to `end_time`
+* use HTML5 time selector
+* frontend shortcode for report view `[wcr]`
+* frontend shortcode for report create `[wcr_create]`
+* frontend shortcode for listing items `[wp_query]`
+
 = Version 4.21 =
 * report of lessons taken
 * refactor code
 * rename columns `start_hour` to `start_time` and `end_hour` to `end_time`
 * use HTML5 time selector
-* frontend shortcode for report `[wcs_new_report]`
+* frontend shortcode for report `[wcr_create]`
 * frontend shortcode for listing items `[wp_query]`
 
 = Version 4.20 =

@@ -26,25 +26,15 @@ function wcs4_verify_nonce()
  *
  * @param array $data : list of required fields ( field_name => Field Name ).
  */
-function wcs4_verify_required_fields(array $data)
+function wcs4_verify_required_fields(array $data): array
 {
-    $response = [];
     $errors = [];
-    $status = 'success';
     foreach ($data as $k => $v) {
         if (!isset($_POST[$k]) || '' === $_POST[$k] || '_none' === $_POST[$k]) {
             $errors[$k][] = sprintf(_x('Field "%s" is required', 'validation', 'wcs4'), $v);
-            $status = 'error';
         }
     }
-    if ('success' !== $status) {
-        wcs4_json_response([
-            'response' => implode('<br>', $response),
-            'errors' => $errors,
-            'result' => $status,
-        ]);
-        die();
-    }
+    return $errors;
 }
 
 /**
@@ -55,7 +45,7 @@ add_action('wp_ajax_create_schema', static function () {
     $status = 'error';
     if (current_user_can(WCS4_ADVANCED_OPTIONS_CAPABILITY)) {
         wcs4_verify_nonce();
-        wcs4_create_schema();
+        WCS4_DB::create_schema();
         $response = __('Weekly Class Schedule installed successfully.', 'wcs4');
         $status = 'updated';
     }
@@ -74,7 +64,7 @@ add_action('wp_ajax_load_example_data', static function () {
     $status = 'error';
     if (current_user_can(WCS4_ADVANCED_OPTIONS_CAPABILITY)) {
         wcs4_verify_nonce();
-        wcs4_load_example_data();
+        WCS4_DB::load_example_data();
         $response = __('Weekly Class Schedule example data loaded successfully.', 'wcs4');
         $status = 'updated';
     }
@@ -93,7 +83,7 @@ add_action('wp_ajax_delete_everything', static function () {
     $status = 'error';
     if (current_user_can(WCS4_ADVANCED_OPTIONS_CAPABILITY)) {
         wcs4_verify_nonce();
-        wcs4_delete_everything();
+        WCS4_DB::delete_everything();
         $response = __('Weekly Class Schedule deleted successfully.', 'wcs4');
         $status = 'updated';
     }
@@ -132,7 +122,7 @@ add_action('wp_ajax_clear_schedule', static function () {
     $status = 'error';
     if (current_user_can(WCS4_ADVANCED_OPTIONS_CAPABILITY)) {
         wcs4_verify_nonce();
-        wcs4_clear_schedule();
+        WCS4_DB::delete_schedules();
         $response = __('Weekly Class Schedule truncated successfully.', 'wcs4');
         $status = 'cleared';
     }
@@ -151,7 +141,7 @@ add_action('wp_ajax_clear_report', static function () {
     $status = 'error';
     if (current_user_can(WCS4_ADVANCED_OPTIONS_CAPABILITY)) {
         wcs4_verify_nonce();
-        wcs4_clear_report();
+        WCS4_DB::delete_reports();
         $response = __('Weekly Class Report truncated successfully.', 'wcs4');
         $status = 'cleared';
     }

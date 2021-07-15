@@ -56,26 +56,25 @@
             entry = {
                 action: 'add_or_update_report_entry',
                 security: WCS4_AJAX_OBJECT.ajax_nonce,
-                subject_id: $('#wcs4_report_subject[multiple]').length ? $('#wcs4_report_subject option:selected').toArray().map(item => item.value) : $('#wcs4_report_subject option:selected').val(),
-                teacher_id: $('#wcs4_report_teacher[multiple]').length ? $('#wcs4_report_teacher option:selected').toArray().map(item => item.value) : $('#wcs4_report_teacher option:selected').val(),
-                student_id: $('#wcs4_report_student[multiple]').length ? $('#wcs4_report_student option:selected').toArray().map(item => item.value) : $('#wcs4_report_student option:selected').val(),
+                subject_id: $('input#wcs4_report_subject').length ? [$('input#wcs4_report_subject').val()] :($('select#wcs4_report_subject[multiple]').length ? $('select#wcs4_report_subject option:selected').toArray().map(item => item.value) : $('select#wcs4_report_subject option:selected').val()),
+                teacher_id: $('input#wcs4_report_teacher').length ? [$('input#wcs4_report_teacher').val()] :($('select#wcs4_report_teacher[multiple]').length ? $('select#wcs4_report_teacher option:selected').toArray().map(item => item.value) : $('select#wcs4_report_teacher option:selected').val()),
+                student_id: $('input#wcs4_report_student').length ? [$('input#wcs4_report_student').val()] :($('select#wcs4_report_student[multiple]').length ? $('select#wcs4_report_student option:selected').toArray().map(item => item.value) : $('select#wcs4_report_student option:selected').val()),
                 date: $('#wcs4_report_date').val(),
                 start_time: $('#wcs4_report_start_time').val(),
                 end_time: $('#wcs4_report_end_time').val(),
-                notes: $('#wcs4_report_notes').val()
+                topic: $('#wcs4_report_topic').val()
             };
             WCS4_LIB.submit_entry(entry, function (data) {
                 if (data.result === 'updated') {
-                    var teacher = WCS4_LIB.find_get_parameter('teacher');
-                    var student = WCS4_LIB.find_get_parameter('student');
-                    var subject = WCS4_LIB.find_get_parameter('subject');
+                    var teacher = $('#search_wcs4_report_teacher_id').val();
+                    var student = $('#search_wcs4_report_student_id').val();
+                    var subject = $('#search_wcs4_report_subject_id').val();
+                    var date_from = $('#search_wcs4_report_date_from').val();
+                    var date_upto = $('#search_wcs4_report_date_upto').val();
                     // Let's refresh the day
-                    for (var day_to_update in data.days_to_update) {
-                        reload_html_view(teacher, student, subject, day_to_update, day_to_update, 'fade');
-                    }
-
-                    // Clear notes.
-                    $('#wcs4_report_notes').val('');
+                    reload_html_view(teacher, student, subject, date_from, date_upto, 'fade');
+                    // Clear topic.
+                    $('#wcs4_report_topic').val('');
                     WCS4_LIB.reset_to_add_mode('report');
                 }
             });
@@ -118,14 +117,13 @@
                 } else {
                     elem = e.srcElement;
                 }
-                date = $(elem).data('date');
-                if (date !== false) {
-                    var teacher = WCS4_LIB.find_get_parameter('teacher');
-                    var student = WCS4_LIB.find_get_parameter('student');
-                    var subject = WCS4_LIB.find_get_parameter('subject');
-                    // Let's refresh the date
-                    reload_html_view(teacher, student, subject, date, date, 'remove');
-                }
+                var teacher = $('#search_wcs4_report_teacher_id').val();
+                var student = $('#search_wcs4_report_student_id').val();
+                var subject = $('#search_wcs4_report_subject_id').val();
+                var date_from = $('#search_wcs4_report_date_from').val();
+                var date_upto = $('#search_wcs4_report_date_upto').val();
+                // Let's refresh the date
+                reload_html_view(teacher, student, subject, date_from, date_upto, 'remove');
             });
         });
     }
@@ -143,7 +141,7 @@
             date_from: date_from,
             date_upto: date_upto
         };
-        var $parent = $('#wcs4-report-days');
+        var $parent = $('#wcs4-report-events-list-wrapper');
         WCS4_LIB.update_view($parent, entry, action)
     }
 
@@ -161,7 +159,7 @@
             $('#wcs4_report_date').val(entry.date);
             $('#wcs4_report_start_time').val(entry.start_time);
             $('#wcs4_report_end_time').val(entry.end_time);
-            $('#wcs4_report_notes').val(entry.notes);
+            $('#wcs4_report_topic').val(entry.topic);
         } else {
             WCS4_LIB.show_message(WCS4_AJAX_OBJECT.ajax_error, 'error');
         }

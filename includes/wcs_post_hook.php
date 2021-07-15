@@ -1,6 +1,5 @@
 <?php
 
-
 /**
  * Hashed post slug
  */
@@ -16,7 +15,6 @@ add_filter("wp_unique_post_slug", static function ($slug, $post_ID, $post_status
     }
     return $slug;
 }, 10, 6);
-
 
 /**
  * Post title from item name.
@@ -34,21 +32,3 @@ function respect_item_name($format)
     }
     return $format;
 }
-
-/**
- * Register activation hook
- */
-register_activation_hook(__FILE__, static function () {
-    do_action('wcs4_activate_action');
-});
-
-/**
- * Activation
- */
-add_action('wcs4_activate_action', static function () {
-    $version = get_option('wcs4_version');
-    if (FALSE === $version) {
-        wcs4_create_schema();
-    }
-});
-

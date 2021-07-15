@@ -12,8 +12,7 @@ add_filter('the_content', static function ($content) {
         $wcs4_settings = wcs4_load_settings();
         $layout = $wcs4_settings[$post_type_key . '_schedule_layout'];
         if ('none' !== $layout && NULL !== $layout && !post_password_required($post_id)) {
-            $content .= '<h3>' . __('Schedule', 'wcs4') . '</h3>';
-            $calendar_download = $wcs4_settings[$post_type_key . '_download_icalendar'];
+            $content .= '<h2>' . __('Schedule', 'wcs4') . '</h2>';
             $template_table_short = $wcs4_settings[$post_type_key . '_schedule_template_table_short'];
             $template_table_details = $wcs4_settings[$post_type_key . '_schedule_template_table_details'];
             $template_list = $wcs4_settings[$post_type_key . '_schedule_template_list'];
@@ -24,8 +23,22 @@ add_filter('the_content', static function ($content) {
             $params[] = 'template_table_details="' . $template_table_details . '"';
             $params[] = 'template_list="' . $template_list . '"';
             $content .= '[wcs  ' . implode(' ', $params) . ']';
-            if ('yes' === $calendar_download) {
+            if ('yes' === $wcs4_settings[$post_type_key . '_download_icalendar']) {
                 $content .= '<a href="?format=ical">' . __('Download iCal', 'wcs4') . '</a>';
+            }
+            if ('yes' === $wcs4_settings[$post_type_key . '_report_view']) {
+                $content .= '<h2>' . __('Report', 'wcs4') . '</h2>';
+                $template_report = $wcs4_settings[$post_type_key . '_schedule_template_report'];
+                $params = [];
+                $params[] = '' . $post_type_key . '="#' . $post_id . '"';
+                $params[] = 'template_report="' . $template_report . '"';
+                $params[] = 'limit=10';
+                $content .= '[wcr  ' . implode(' ', $params) . ']';
+            }
+            if ('yes' === $wcs4_settings[$post_type_key . '_report_create']) {
+                $params = [];
+                $params[] = '' . $post_type_key . '="' . $post_id . '"';
+                $content .= '[wcr_create  ' . implode(' ', $params) . ']';
             }
         }
     }
