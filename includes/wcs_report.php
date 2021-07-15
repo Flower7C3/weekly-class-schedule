@@ -227,8 +227,7 @@ class Report_Management
     /**
      * Gets all the visible subjects from the database including teachers, students and classrooms.
      */
-    public
-    static function get_reports($teacher = 'all', $student = 'all', $subject = 'all', $date_from = NULL, $date_upto = NULL, $limit = NULL, $page = NULL): array
+    public static function get_reports($teacher = 'all', $student = 'all', $subject = 'all', $date_from = NULL, $date_upto = NULL, $limit = NULL, $page = NULL): array
     {
         global $wpdb;
 
@@ -334,8 +333,7 @@ class Report_Management
         return $reports;
     }
 
-    public
-    static function save_report($force_insert = false): void
+    public static function save_report($force_insert = false): void
     {
         $response = __('You are no allowed to run this action', 'wcs4');
         $errors = [];
@@ -540,8 +538,7 @@ class Report_Management
         die();
     }
 
-    public
-    static function delete_report(): void
+    public static function delete_report(): void
     {
         $errors = [];
         $response = __('You are no allowed to run this action', 'wcs4');
@@ -583,8 +580,7 @@ class Report_Management
         die();
     }
 
-    public
-    static function get_report(): void
+    public static function get_report(): void
     {
         $errors = [];
         $response = __('You are no allowed to run this action', 'wcs4');
@@ -606,12 +602,12 @@ class Report_Management
             if (empty($errors)) {
                 $row_id = sanitize_text_field($_POST['row_id']);
                 $result = $wpdb->get_row($wpdb->prepare("
-            SELECT *, group_concat(teacher_id) as teacher_id, group_concat(student_id) as student_id
-            FROM $table
-            LEFT JOIN $table_teacher USING (id)
-            LEFT JOIN $table_student USING (id)
-            WHERE id = %d
-            GROUP BY id", $row_id), ARRAY_A);
+                    SELECT *, group_concat(teacher_id) as teacher_id, group_concat(student_id) as student_id
+                    FROM $table
+                    LEFT JOIN $table_teacher USING (id)
+                    LEFT JOIN $table_student USING (id)
+                    WHERE id = %d
+                    GROUP BY id", $row_id), ARRAY_A);
                 if ($result) {
                     foreach ($result as $key => $val) {
                         $response->$key = preg_match('/([,]+)/', $val) ? explode(',', $val) : $val;
@@ -627,8 +623,7 @@ class Report_Management
         die();
     }
 
-    public
-    static function get_reports_html(): void
+    public static function get_reports_html(): void
     {
         $html = __('You are no allowed to run this action', 'wcs4');
         if (current_user_can(WCS4_REPORT_MANAGE_CAPABILITY)) {
@@ -649,6 +644,9 @@ class Report_Management
  * Add report entry handler.
  */
 add_action('wp_ajax_add_report_entry', static function () {
+    Report_Management::save_report(true);
+});
+add_action('wp_ajax_nopriv_add_report_entry', static function () {
     Report_Management::save_report(true);
 });
 /**
