@@ -99,7 +99,7 @@ add_shortcode('wcr', static function ($atts) {
     $date_upto = '';
     $style = '';
     $limit = null;
-    $page = null;
+    $paged = null;
     $template_report = '';
     $wcs4_options = wcs4_load_settings();
 
@@ -111,12 +111,12 @@ add_shortcode('wcr', static function ($atts) {
         'date_from' => null,
         'date_upto' => null,
         'limit' => null,
-        'page' => null,
+        'paged' => null,
         'template_report' => $wcs4_options['template_report'],
     ), $atts), EXTR_OVERWRITE);
 
     # Get reports
-    $reports = Report_Management::get_reports($teacher, $student, $subject, $date_from, $date_upto, $limit, $page);
+    $reports = Report_Management::get_reports($teacher, $student, $subject, $date_from, $date_upto, $limit, null, null, $paged);
 
     # Classroom
     $schedule_key = 'wcs4-key-' . preg_replace('/[^A-Za-z0-9]/', '-', implode('-', [$teacher, $student, $subject, $date_from, $date_upto, $limit, $page]));

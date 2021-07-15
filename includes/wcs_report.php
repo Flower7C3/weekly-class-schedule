@@ -11,7 +11,7 @@ class Report_Management
     public static function management_page_callback(): void
     {
         ?>
-        <div class="wrap">
+        <div class="wrap wcs-management-page-callback">
             <h1 class="wp-heading-inline"><?php _ex('Report Management', 'manage report', 'wcs4'); ?></h1>
             <a href="#" class="page-title-action" id="wcs4-show-form"><?php _ex('Add Report', 'button text', 'wcs4'); ?></a>
             <hr class="wp-header-end">
@@ -32,13 +32,118 @@ class Report_Management
                             $_GET['student'] ? '#' . $_GET['student'] : null,
                             $_GET['subject'] ? '#' . $_GET['subject'] : null,
                             $_GET['date_from'] ? sanitize_text_field($_GET['date_from']) : date('Y-m-01'),
-                            $_GET['date_upto'] ? sanitize_text_field($_GET['date_upto']) : date('Y-m-d')
+                            $_GET['date_upto'] ? sanitize_text_field($_GET['date_upto']) : date('Y-m-d'),
+                            $_GET['orderby'] ? sanitize_text_field($_GET['orderby']) : 'time',
+                            $_GET['order'] ? sanitize_text_field($_GET['order']) : 'desc'
                         ); ?>
                     </div>
                 </div><!-- /col-right -->
             </div>
         </div>
         <?php
+    }
+
+    /**
+     * Callback for generating the report management page.
+     */
+    public static function export_page_callback(): void
+    {
+        if (!current_user_can(WCS4_REPORT_EXPORT_CAPABILITY)) {
+            header('HTTP/1.0 403 Forbidden');
+            exit();
+        }
+
+        # get user data
+        $teacher = sanitize_text_field($_GET['teacher'] ? '#' . $_GET['teacher'] : null);
+        $student = sanitize_text_field($_GET['student'] ? '#' . $_GET['student'] : null);
+        $subject = sanitize_text_field($_GET['subject'] ? '#' . $_GET['subject'] : null);
+        $date_from = sanitize_text_field($_GET['date_from']);
+        $date_upto = sanitize_text_field($_GET['date_upto']);
+        switch (get_post_type()) {
+            case 'wcs4_teacher':
+                $teacher = '#' . get_the_id();
+                break;
+            case 'wcs4_student':
+                $student = '#' . get_the_id();
+                break;
+            case 'wcs4_subject':
+                $subject = '#' . get_the_id();
+                break;
+        }
+        # get reports
+        $reports = Report_Management::get_reports($teacher, $student, $subject, $date_from, $date_upto);
+
+        # build filename
+        $report_params = [];
+        $report_params[] = 'at';
+        $report_params[] = date('YmdHis');
+        if ($teacher) {
+            $report_params[] = 'tea';
+            $report_params[] = str_replace('#', '', $teacher);
+        }
+        if ($student) {
+            $report_params[] = 'stu';
+            $report_params[] = str_replace('#', '', $student);
+        }
+        if ($subject) {
+            $report_params[] = 'sub';
+            $report_params[] = str_replace('#', '', $subject);
+        }
+        if ($date_from) {
+            $report_params[] = 'from';
+            $report_params[] = str_replace('-', '', $date_from);
+        }
+        if ($date_upto) {
+            $report_params[] = 'to';
+            $report_params[] = str_replace('-', '', $date_upto);
+        }
+        $report_key = 'wcs4-report-' . preg_replace('/[^A-Za-z0-9]/', '-', implode('-', $report_params));
+        $report_key = strtolower($report_key);
+
+
+        # build csv
+        $handle = fopen('php://memory', 'w');
+        $delimiter = ";";
+
+        # build csv header
+        $header = [];
+        $header[] = __('ID', 'wcs4');
+        $header[] = __('Start Time', 'wcs4');
+        $header[] = __('End Time', 'wcs4');
+        $header[] = __('Subject', 'wcs4');
+        $header[] = __('Teacher', 'wcs4');
+        $header[] = __('Student', 'wcs4');
+        $header[] = __('Topic', 'wcs4');
+        $header[] = __('Created at', 'wcs4');
+        $header[] = __('Created by', 'wcs4');
+        $header[] = __('Updated at', 'wcs4');
+        $header[] = __('Updated by', 'wcs4');
+        fputcsv($handle, $header, $delimiter);
+
+        # build csv content
+        /** @var WCS4_Report $report */
+        foreach ($reports as $report) {
+            $line = [];
+            $line[] = $report->getId();
+            $line[] = $report->getStartDateTime()->format('Y-m-d H:i');
+            $line[] = $report->getEndDateTime()->format('Y-m-d H:i');
+            $line[] = $report->getSubject()->getName();
+            $line[] = $report->getTeacher()->getName();
+            $line[] = $report->getStudent()->getName();
+            $line[] = $report->getTopic();
+            $line[] = $report->getCreatedAt() ? $report->getCreatedAt()->format('Y-m-d H:i:s') : null;
+            $line[] = $report->getCreatedBy() ? $report->getCreatedBy()->display_name : null;
+            $line[] = $report->getUpdatedAt() ? $report->getUpdatedAt()->format('Y-m-d H:i:s') : null;
+            $line[] = $report->getUpdatedBy() ? $report->getUpdatedBy()->display_name : null;
+            fputcsv($handle, $line, $delimiter);
+        }
+
+        # submit content to browser
+        header('Content-Type: application/csv');
+        header('Content-Disposition: attachment; filename="' . $report_key . '.csv";');
+        fseek($handle, 0);
+        fpassthru($handle);
+        exit;
     }
 
     private static function draw_search_form(): void
@@ -58,6 +163,9 @@ class Report_Management
                 <label class="screen-reader-text" for="search_wcs4_report_date_upto"><?php _e('Date to', 'wcs4'); ?></label>
                 <?php echo wcs4_generate_date_select_list('search_wcs4_report_date_upto', 'wcs4_report_date_upto', ['default' => date('Y-m-d')]); ?>
                 <input type="submit" id="wcs-search-submit" class="button" value="<?php _e('Search reports', 'wcs4'); ?>">
+                <?php if (current_user_can(WCS4_REPORT_EXPORT_CAPABILITY)): ?>
+                    <button type="submit" id="wcs-search-download" name="page" value="class-schedule-report-download" class="button"><?php _e('Download report as CSV', 'wcs4'); ?></button>
+                <?php endif; ?>
             </p>
         </form>
         <?php
@@ -122,10 +230,19 @@ class Report_Management
         <?php
     }
 
-    public static function get_admin_html_table($teacher = 'all', $student = 'all', $subject = 'all', $date_from = null, $date_upto = null): string
+    private static function draw_sort_arrow($set_order_field, $set_order_dir, $post_order_field, $post_order_dir)
+    {
+        ?>
+        <a href="#" data-orderby="<?php echo $set_order_field; ?>" data-order="<?php echo $set_order_dir; ?>" class="<?php if ($set_order_field === $post_order_field && $set_order_dir === $post_order_dir): ?>active<?php endif; ?>">
+            <em class="dashicons dashicons-arrow-<?php echo $set_order_dir === 'asc' ? 'up' : 'down'; ?>"></em>
+        </a>
+        <?php
+    }
+
+    public static function get_admin_html_table($teacher = 'all', $student = 'all', $subject = 'all', $date_from = null, $date_upto = null, $orderby = null, $order = null): string
     {
         ob_start();
-        $reports = self::get_reports($teacher, $student, $subject, $date_from, $date_upto, null);
+        $reports = self::get_reports($teacher, $student, $subject, $date_from, $date_upto, $orderby, $order);
         ?>
         <div class="wcs4-day-content-wrapper" data-hash="<?php echo md5(serialize($reports)) ?>">
             <?php if ($reports): ?>
@@ -135,7 +252,6 @@ class Report_Management
                 foreach ($reports as $report) {
                     $days[$report->getDate()][] = $report;
                 }
-                krsort($days);
                 ?>
                 <?php foreach ($days as $day => $dayData): ?>
                     <section id="wcs4-report-day-<?php echo $day; ?>">
@@ -148,6 +264,8 @@ class Report_Management
                                 <tr>
                                     <th id="start_end_time" class="manage-column column-start_end_time column-primary" title="<?php echo __('Date and time', 'wcs4'); ?>">
                                         <span><?php echo __('Date and time', 'wcs4'); ?></span>
+                                        <?php self::draw_sort_arrow('time', 'asc', $orderby, $order); ?>
+                                        <?php self::draw_sort_arrow('time', 'desc', $orderby, $order); ?>
                                     </th>
                                     <th id="subject" class="manage-column column-subject" scope="col" title="<?php echo __('Subject', 'wcs4'); ?>">
                                         <span><?php echo __('Subject', 'wcs4'); ?></span>
@@ -227,7 +345,7 @@ class Report_Management
     /**
      * Gets all the visible subjects from the database including teachers, students and classrooms.
      */
-    public static function get_reports($teacher = 'all', $student = 'all', $subject = 'all', $date_from = NULL, $date_upto = NULL, $limit = NULL, $page = NULL): array
+    public static function get_reports($teacher = 'all', $student = 'all', $subject = 'all', $date_from = NULL, $date_upto = NULL, $orderby = null, $order = null, $limit = NULL, $paged = NULL): array
     {
         global $wpdb;
 
@@ -238,7 +356,7 @@ class Report_Management
         $table_meta = $wpdb->prefix . 'postmeta';
 
         $query = "SELECT
-                $table.id AS report_id, $table.created_at, $table.updated_at,
+                $table.id AS report_id, $table.created_at, $table.updated_at, $table.created_by, $table.updated_by,
                 sub.ID AS subject_id, sub.post_title AS subject_name, sub.post_content AS subject_desc,
                 tea.ID AS teacher_id, tea.post_title AS teacher_name, tea.post_content AS teacher_desc,
                 stu.ID AS student_id, stu.post_title AS student_name, stu.post_content AS student_desc,
@@ -297,13 +415,19 @@ class Report_Management
         if (!empty($where)) {
             $query .= ' WHERE ' . implode(' AND ', $where);
         }
-        $query .= ' ORDER BY date DESC, start_time DESC';
+        switch ($orderby) {
+            default:
+            case 'time':
+                $order = ($order === 'asc' || $order === 'ASC') ? 'ASC' : 'DESC';
+                $query .= ' ORDER BY date ' . $order . ', start_time ' . $order;
+                break;
+        }
         if (NULL !== $limit) {
             $query .= ' LIMIT %d';
             $query_arr[] = $limit;
-            if (NULL !== $page) {
+            if (NULL !== $paged) {
                 $query .= ' OFFSET %d';
-                $query_arr[] = $limit * ($page - 1);
+                $query_arr[] = $limit * ($paged - 1);
             }
         }
         $query = $wpdb->prepare($query, $query_arr);
@@ -311,8 +435,7 @@ class Report_Management
         return self::parse_results($results);
     }
 
-    private
-    static function parse_results($results): array
+    private static function parse_results($results): array
     {
         $format = get_option('time_format');
         $reports = array();
@@ -633,7 +756,9 @@ class Report_Management
             $subject = sanitize_text_field($_POST['subject']);
             $date_from = sanitize_text_field($_POST['date_from']);
             $date_upto = sanitize_text_field($_POST['date_upto']);
-            $html = self::get_admin_html_table($teacher, $student, $subject, $date_from, $date_upto);
+            $orderby = sanitize_text_field($_POST['orderby']);
+            $order = sanitize_text_field($_POST['order']);
+            $html = self::get_admin_html_table($teacher, $student, $subject, $date_from, $date_upto, $orderby, $order);
         }
         wcs4_json_response(['html' => $html,]);
         die();
@@ -641,19 +766,13 @@ class Report_Management
 }
 
 /**
- * Add report entry handler.
- */
-add_action('wp_ajax_add_report_entry', static function () {
-    Report_Management::save_report(true);
-});
-add_action('wp_ajax_nopriv_add_report_entry', static function () {
-    Report_Management::save_report(true);
-});
-/**
  * Add or update report entry handler.
  */
 add_action('wp_ajax_add_or_update_report_entry', static function () {
     Report_Management::save_report(false);
+});
+add_action('wp_ajax_nopriv_add_or_update_report_entry', static function () {
+    Report_Management::save_report(true);
 });
 
 /**
@@ -675,4 +794,8 @@ add_action('wp_ajax_get_report', static function () {
  */
 add_action('wp_ajax_get_reports_html', static function () {
     Report_Management::get_reports_html();
+});
+
+add_action('wp_ajax_download_report_csv', static function () {
+    Report_Management::export_page_callback();
 });

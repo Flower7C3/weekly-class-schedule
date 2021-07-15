@@ -11,7 +11,7 @@ class Schedule_Management
     public static function management_page_callback(): void
     {
         ?>
-        <div class="wrap">
+        <div class="wrap wcs-management-page-callback">
             <h1 class="wp-heading-inline"><?php _ex('Schedule Management', 'manage schedule', 'wcs4'); ?></h1>
             <a href="#" class="page-title-action" id="wcs4-show-form"><?php _ex('Add Lesson', 'button text', 'wcs4'); ?></a>
             <hr class="wp-header-end">

@@ -8,6 +8,7 @@
 
     $(document).ready(function () {
         bind_search_handler();
+        bind_sort_handler();
         bind_submit_handler();
         bind_edit_handler();
         bind_copy_handler();
@@ -18,31 +19,40 @@
      * Handles the search button click event.
      */
     var bind_search_handler = function () {
-        $('#wcs-reports-filter').submit(function (e) {
+        $(document).on('click.wcs-reports-download', '#wcs-search-download', function (e) {
             e.preventDefault();
-            var page = $('#search_wcs4_page').val();
-            var teacher = $('#search_wcs4_report_teacher_id').val();
-            var student = $('#search_wcs4_report_student_id').val();
-            var subject = $('#search_wcs4_report_subject_id').val();
-            var date_from = $('#search_wcs4_report_date_from').val();
-            var date_upto = $('#search_wcs4_report_date_upto').val();
-            var state = {
-                'page': page,
-                'teacher': teacher,
-                'student': student,
-                'subject': subject,
-                'date_from': date_from,
-                'date_upto': date_upto,
-            };
-            var url = $(this).attr('action');
-            url += '?page=' + page;
-            url += '&teacher=' + teacher;
-            url += '&student=' + student;
-            url += '&subject=' + subject;
-            url += '&date_from=' + date_from;
-            url += '&date_upto=' + date_upto;
-            history.pushState(state, $('title').text(), url);
-            reload_html_view(teacher, student, subject, date_from, date_upto, 'fade');
+            window.location = WCS4_AJAX_OBJECT.ajax_url
+                + '?action=download_report_csv'
+                + '&teacher=' + $('#search_wcs4_report_teacher_id').val()
+                + '&student=' + $('#search_wcs4_report_student_id').val()
+                + '&subject=' + $('#search_wcs4_report_subject_id').val()
+                + '&date_from=' + $('#search_wcs4_report_date_from').val()
+                + '&date_upto=' + $('#search_wcs4_report_date_upto').val();
+        });
+        $(document).on('submit.wcs-reports-filter', '#wcs-reports-filter', function (e) {
+            e.preventDefault();
+            reload_html_view(
+                $('#search_wcs4_report_teacher_id').val(),
+                $('#search_wcs4_report_student_id').val(),
+                $('#search_wcs4_report_subject_id').val(),
+                $('#search_wcs4_report_date_from').val(),
+                $('#search_wcs4_report_date_upto').val(),
+                null, null, 'fade');
+        });
+    };
+
+    /**
+     * Handles the Add Item button click event.
+     */
+    var bind_sort_handler = function () {
+        $(document).on('click.wcs4-events-list-sort', '#wcs4-report-events-list-wrapper [data-orderby][data-order]', function (e) {
+            reload_html_view(
+                $('#search_wcs4_report_teacher_id').val(),
+                $('#search_wcs4_report_student_id').val(),
+                $('#search_wcs4_report_subject_id').val(),
+                $('#search_wcs4_report_date_from').val(),
+                $('#search_wcs4_report_date_upto').val(),
+                $(this).data('orderby'), $(this).data('order'), 'fade');
         });
     };
 
@@ -56,9 +66,9 @@
             entry = {
                 action: 'add_or_update_report_entry',
                 security: WCS4_AJAX_OBJECT.ajax_nonce,
-                subject_id: $('input#wcs4_report_subject').length ? [$('input#wcs4_report_subject').val()] :($('select#wcs4_report_subject[multiple]').length ? $('select#wcs4_report_subject option:selected').toArray().map(item => item.value) : $('select#wcs4_report_subject option:selected').val()),
-                teacher_id: $('input#wcs4_report_teacher').length ? [$('input#wcs4_report_teacher').val()] :($('select#wcs4_report_teacher[multiple]').length ? $('select#wcs4_report_teacher option:selected').toArray().map(item => item.value) : $('select#wcs4_report_teacher option:selected').val()),
-                student_id: $('input#wcs4_report_student').length ? [$('input#wcs4_report_student').val()] :($('select#wcs4_report_student[multiple]').length ? $('select#wcs4_report_student option:selected').toArray().map(item => item.value) : $('select#wcs4_report_student option:selected').val()),
+                subject_id: $('input#wcs4_report_subject').length ? [$('input#wcs4_report_subject').val()] : ($('select#wcs4_report_subject[multiple]').length ? $('select#wcs4_report_subject option:selected').toArray().map(item => item.value) : $('select#wcs4_report_subject option:selected').val()),
+                teacher_id: $('input#wcs4_report_teacher').length ? [$('input#wcs4_report_teacher').val()] : ($('select#wcs4_report_teacher[multiple]').length ? $('select#wcs4_report_teacher option:selected').toArray().map(item => item.value) : $('select#wcs4_report_teacher option:selected').val()),
+                student_id: $('input#wcs4_report_student').length ? [$('input#wcs4_report_student').val()] : ($('select#wcs4_report_student[multiple]').length ? $('select#wcs4_report_student option:selected').toArray().map(item => item.value) : $('select#wcs4_report_student option:selected').val()),
                 date: $('#wcs4_report_date').val(),
                 start_time: $('#wcs4_report_start_time').val(),
                 end_time: $('#wcs4_report_end_time').val(),
@@ -66,13 +76,14 @@
             };
             WCS4_LIB.submit_entry(entry, function (data) {
                 if (data.result === 'updated') {
-                    var teacher = $('#search_wcs4_report_teacher_id').val();
-                    var student = $('#search_wcs4_report_student_id').val();
-                    var subject = $('#search_wcs4_report_subject_id').val();
-                    var date_from = $('#search_wcs4_report_date_from').val();
-                    var date_upto = $('#search_wcs4_report_date_upto').val();
                     // Let's refresh the day
-                    reload_html_view(teacher, student, subject, date_from, date_upto, 'fade');
+                    reload_html_view(
+                        $('#search_wcs4_report_teacher_id').val(),
+                        $('#search_wcs4_report_student_id').val(),
+                        $('#search_wcs4_report_subject_id').val(),
+                        $('#search_wcs4_report_date_from').val(),
+                        $('#search_wcs4_report_date_upto').val(),
+                        null, null, 'fade');
                     // Clear topic.
                     $('#wcs4_report_topic').val('');
                     WCS4_LIB.reset_to_add_mode('report');
@@ -117,13 +128,14 @@
                 } else {
                     elem = e.srcElement;
                 }
-                var teacher = $('#search_wcs4_report_teacher_id').val();
-                var student = $('#search_wcs4_report_student_id').val();
-                var subject = $('#search_wcs4_report_subject_id').val();
-                var date_from = $('#search_wcs4_report_date_from').val();
-                var date_upto = $('#search_wcs4_report_date_upto').val();
                 // Let's refresh the date
-                reload_html_view(teacher, student, subject, date_from, date_upto, 'remove');
+                reload_html_view(
+                    $('#search_wcs4_report_teacher_id').val(),
+                    $('#search_wcs4_report_student_id').val(),
+                    $('#search_wcs4_report_subject_id').val(),
+                    $('#search_wcs4_report_date_from').val(),
+                    $('#search_wcs4_report_date_upto').val(),
+                    null, null, 'remove');
             });
         });
     }
@@ -131,7 +143,24 @@
     /**
      * Updates dynamically a specific report vi.
      */
-    var reload_html_view = function (teacher, student, subject, date_from, date_upto, action) {
+    var reload_html_view = function (teacher, student, subject, date_from, date_upto, orderby, order, action) {
+        var page = $('#search_wcs4_page').val();
+        var state = {
+            'page': page,
+            'teacher': teacher,
+            'student': student,
+            'subject': subject,
+            'date_from': date_from,
+            'date_upto': date_upto,
+        };
+        var url = $('#wcs-reports-filter').attr('action')
+            + '?page=' + page
+            + '&teacher=' + teacher
+            + '&student=' + student
+            + '&subject=' + subject
+            + '&date_from=' + date_from
+            + '&date_upto=' + date_upto;
+        history.pushState(state, $('title').text(), url);
         entry = {
             action: 'get_reports_html',
             security: WCS4_AJAX_OBJECT.ajax_nonce,
@@ -139,7 +168,9 @@
             student: student ? '#' + student : null,
             subject: subject ? '#' + subject : null,
             date_from: date_from,
-            date_upto: date_upto
+            date_upto: date_upto,
+            orderby: orderby,
+            order: order,
         };
         var $parent = $('#wcs4-report-events-list-wrapper');
         WCS4_LIB.update_view($parent, entry, action)

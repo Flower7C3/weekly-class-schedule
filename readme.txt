@@ -39,6 +39,10 @@ You will find a 'Schedule' menu item as well as 'Classes', 'Teachers', 'Students
 
 == Changelog ==
 
+= Version 4.25 =
+* download report in admin panel
+* order reports in admin panel
+
 = Version 4.24 =
 * save created at, updated at, created by and updated by
 

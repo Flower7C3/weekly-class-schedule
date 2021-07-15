@@ -15,7 +15,7 @@
             var entry;
             e.preventDefault();
             entry = {
-                action: 'add_report_entry',
+                action: 'add_or_update_report_entry',
                 security: WCS4_AJAX_OBJECT.ajax_nonce,
                 subject_id: $('input#wcs4_report_subject').length ? [$('input#wcs4_report_subject').val()] :($('select#wcs4_report_subject[multiple]').length ? $('select#wcs4_report_subject option:selected').toArray().map(item => item.value) : $('select#wcs4_report_subject option:selected').val()),
                 teacher_id: $('input#wcs4_report_teacher').length ? [$('input#wcs4_report_teacher').val()] :($('select#wcs4_report_teacher[multiple]').length ? $('select#wcs4_report_teacher option:selected').toArray().map(item => item.value) : $('select#wcs4_report_teacher option:selected').val()),

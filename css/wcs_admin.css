@@ -187,3 +187,10 @@ form.readonly textarea, form[readonly] textarea, textarea.readonly, textarea[rea
 form.readonly select, form[readonly] select, select.readonly, select[readonly] {
     background-color: #eee !important;
 }
+
+.wcs-management-page-callback [data-orderby][data-order] .dashicons {
+    color: silver;
+}
+.wcs-management-page-callback [data-orderby][data-order].active .dashicons {
+    color: blue;
+}

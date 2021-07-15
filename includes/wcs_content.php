@@ -64,10 +64,7 @@ add_filter('single_template', static function ($single) {
             }
         }
         if ('csv' === $_GET['format'] && 'yes' === $wcs4_settings[$post_type_key . '_download_report_csv'] && current_user_can(WCS4_REPORT_EXPORT_CAPABILITY)) {
-            $template_file = WCS4_PLUGIN_DIR . '/templates/report.php';
-            if (file_exists($template_file)) {
-                return $template_file;
-            }
+            Report_Management::export_page_callback();
         }
     }
     return $single;
