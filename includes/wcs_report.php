@@ -68,55 +68,55 @@ class Report_Management
         ?>
         <div class="form-wrap" id="wcs4-management-form-wrapper">
             <h2 id="wcs4-management-form-title"><?php _ex('Add New Report', 'page title', 'wcs4'); ?></h2>
-            <form id="wcs4-report-management-form" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+            <form id="wcs4-report-management-form" class="czr-form" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
                 <?php if (empty($subject)): ?>
-                    <div class="form-field form-required form-field-subject_id-wrap">
+                    <fieldset class="form-field form-required form-field-subject_id-wrap">
                         <label for="wcs4_report_subject_id"><?php _e('Subject', 'wcs4'); ?></label>
-                        <?php echo wcs4_generate_admin_select_list('subject', 'wcs4_report_subject', 'wcs4_report_subject', $subject, true); ?>
-                    </div>
+                        <?php echo wcs4_generate_admin_select_list('subject', 'wcs4_report_subject', 'wcs4_report_subject', $subject, true, false, null, ['subject' => $subject, 'teacher' => $teacher, 'student' => $student]); ?>
+                    </fieldset>
                 <?php else: ?>
                     <input type="hidden" id="wcs4_report_subject" name="wcs4_report_subject" value="<?php echo $subject; ?>"/>
                 <?php endif; ?>
                 <?php if (empty($teacher)): ?>
-                    <div class="form-field form-required form-field-teacher_id-wrap">
+                    <fieldset class="form-field form-required form-field-teacher_id-wrap">
                         <label for="wcs4_report_teacher_id"><?php _e('Teacher', 'wcs4'); ?></label>
-                        <?php echo wcs4_generate_admin_select_list('teacher', 'wcs4_report_teacher', 'wcs4_report_teacher', $teacher, true, true); ?>
-                    </div>
+                        <?php echo wcs4_generate_admin_select_list('teacher', 'wcs4_report_teacher', 'wcs4_report_teacher', $teacher, true, true, null, ['subject' => $subject, 'teacher' => $teacher, 'student' => $student]); ?>
+                    </fieldset>
                 <?php else: ?>
                     <input type="hidden" id="wcs4_report_teacher" name="wcs4_report_teacher[]" value="<?php echo $teacher; ?>"/>
                 <?php endif; ?>
                 <?php if (empty($student)): ?>
-                    <div class="form-field form-required form-field-student_id-wrap">
+                    <fieldset class="form-field form-required form-field-student_id-wrap">
                         <label for="wcs4_report_student_id"><?php _e('Student', 'wcs4'); ?></label>
-                        <?php echo wcs4_generate_admin_select_list('student', 'wcs4_report_student', 'wcs4_report_student', $student, true, true); ?>
-                    </div>
+                        <?php echo wcs4_generate_admin_select_list('student', 'wcs4_report_student', 'wcs4_report_student', $student, true, true, null, ['subject' => $subject, 'teacher' => $teacher, 'student' => $student]); ?>
+                    </fieldset>
                 <?php else: ?>
                     <input type="hidden" id="wcs4_report_student" name="wcs4_report_student[]" value="<?php echo $student; ?>"/>
                 <?php endif; ?>
-                <div class="form-field form-required form-field-date-wrap">
-                    <label for="wcs4_report_date"><?php _e('Date', 'wcs4'); ?></label>
-                    <?php echo wcs4_generate_date_select_list('wcs4_report_date', 'wcs4_report_date', ['default' => date('Y-m-d'), 'required' => true]); ?>
-                </div>
-                <div class="form-field form-2-columns">
-                    <div class="form-field form-time-field form-required form-field-start_time-wrap">
+                <fieldset class="form-field row">
+                    <div class="form-field form-required form-field-date-wrap col-6">
+                        <label for="wcs4_report_date"><?php _e('Date', 'wcs4'); ?></label>
+                        <?php echo wcs4_generate_date_select_list('wcs4_report_date', 'wcs4_report_date', ['default' => date('Y-m-d'), 'required' => true]); ?>
+                    </div>
+                    <div class="form-field form-time-field form-required form-field-start_time-wrap col-3">
                         <label for="wcs4_report_start_time"><?php _e('Start Time', 'wcs4'); ?></label>
                         <?php echo wcs4_generate_time_select_list('wcs4_report_start_time', 'wcs4_report_start_time', ['default' => date('H:00', strtotime('-1 hour')), 'required' => true, 'step' => 300]); ?>
                     </div>
-                    <div class="form-field form-time-field form-required form-field-end_time-wrap">
+                    <div class="form-field form-time-field form-required form-field-end_time-wrap col-3">
                         <label for="wcs4_report_end_time"><?php _e('End Time', 'wcs4'); ?></label>
                         <?php echo wcs4_generate_time_select_list('wcs4_report_end_time', 'wcs4_report_end_time', ['default' => date('H:00'), 'required' => true, 'step' => 300]); ?>
                     </div>
-                </div>
-                <div class="form-field form-required form-field-topic-wrap">
+                </fieldset>
+                <fieldset class="form-field form-required form-field-topic-wrap">
                     <label for="wcs4_report_topic"><?php _e('Topic', 'wcs4'); ?></label>
                     <textarea rows="3" id="wcs4_report_topic" name="wcs4_report_topic"></textarea>
-                </div>
-                <div class="submit" id="wcs4-report-buttons-wrapper">
+                </fieldset>
+                <fieldset class="submit" id="wcs4-report-buttons-wrapper">
                     <span class="spinner"></span>
                     <input id="wcs4-submit-form" type="submit" class="button-primary wcs4-submit-report-form" value="<?php _ex('Add Report', 'button text', 'wcs4'); ?>" name="wcs4-submit"/>
                     <button id="wcs4-reset-form" type="reset" class="button-link wcs4-reset-report-form"><?php _ex('Reset form', 'button text', 'wcs4'); ?></button>
                     <div id="wcs4-ajax-text-wrapper" class="wcs4-ajax-text"></div>
-                </div>
+                </fieldset>
             </form>
         </div> <!-- /#report-management-form-wrapper -->
         <?php
@@ -169,7 +169,7 @@ class Report_Management
                                 foreach ($dayData as $report): ?>
                                     <tr id="report-<?php echo $report->getId(); ?>">
                                         <td class="start_end_time column-start_end_time column-primary<?php if (current_user_can(WCS4_REPORT_MANAGE_CAPABILITY)) { ?> has-row-actions<?php } ?>">
-                                            <?php echo $report->getStartHour(); ?> – <?php echo $report->getEndHour(); ?>
+                                            <?php echo $report->getStartTime(); ?> – <?php echo $report->getEndTime(); ?>
                                             <?php if (current_user_can(WCS4_REPORT_MANAGE_CAPABILITY)) { ?>
                                                 <div class="row-actions">
                                                     <span class="edit hide-if-no-js">

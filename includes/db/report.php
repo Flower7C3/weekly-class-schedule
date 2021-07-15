@@ -115,55 +115,24 @@ class WCS4_Report
         return $this->id;
     }
 
-    public function getAllMinutes()
-    {
-        $startMinutes = $this->getStartMinutes();
-        $endMinutes = $this->getEndMinutes();
-        $minutes = [];
-        for ($minute = $startMinutes; $minute < $endMinutes; $minute++) {
-            $timeM = sprintf('%02d', $minute % 60);
-            $timeH = sprintf('%02d', ($minute - $timeM) / 60);
-            $minutes[] = $timeH . ':' . $timeM;
-        }
-        return $minutes;
-    }
-
     /**
-     * @return int
+     * @return string
      */
-    public function getStartMinutes()
-    {
-        $time = explode(':', $this->getStartHour());
-        return $time[0] * 60 + $time[1];
-    }
-
-    /**
-     * @return false|string
-     */
-    public function getStartHour()
+    public function getStartTime()
     {
         return $this->start_time;
     }
 
     /**
-     * @return int
+     * @return string
      */
-    public function getEndMinutes()
-    {
-        $time = explode(':', $this->getEndHour());
-        return $time[0] * 60 + $time[1];
-    }
-
-    /**
-     * @return false|string
-     */
-    public function getEndHour()
+    public function getEndTime()
     {
         return $this->end_time;
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getDate()
     {

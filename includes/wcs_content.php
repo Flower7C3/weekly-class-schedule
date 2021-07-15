@@ -35,6 +35,9 @@ add_filter('the_content', static function ($content) {
                 $params[] = 'limit=10';
                 $content .= '[wcr  ' . implode(' ', $params) . ']';
             }
+            if ('yes' === $wcs4_settings[$post_type_key . '_download_report_csv']) {
+                $content .= '<a href="?format=csv">' . __('Download report as CSV', 'wcs4') . '</a>';
+            }
             if ('yes' === $wcs4_settings[$post_type_key . '_report_create']) {
                 $params = [];
                 $params[] = '' . $post_type_key . '="' . $post_id . '"';
@@ -44,6 +47,7 @@ add_filter('the_content', static function ($content) {
     }
     return $content;
 });
+
 /**
  * Custom ICS page
  */
@@ -52,16 +56,22 @@ add_filter('single_template', static function ($single) {
     $post_type = $post->post_type;
     $post_type_key = str_replace('wcs4_', '', $post_type);
     $wcs4_settings = wcs4_load_settings();
-    $calendar_download = $wcs4_settings[$post_type_key . '_download_icalendar'];
-    if (isset($post_type, $_GET['format']) && array_key_exists($post_type, WCS4_POST_TYPES_WHITELIST) && 'ical' === $_GET['format'] && 'yes' === $calendar_download) {
-        $template_file = WCS4_PLUGIN_DIR . '/templates/calendar.php';
-        if (file_exists($template_file)) {
-            return $template_file;
+    if (isset($post_type, $_GET['format']) && array_key_exists($post_type, WCS4_POST_TYPES_WHITELIST)) {
+        if ('ical' === $_GET['format'] && 'yes' === $wcs4_settings[$post_type_key . '_download_icalendar']) {
+            $template_file = WCS4_PLUGIN_DIR . '/templates/calendar.php';
+            if (file_exists($template_file)) {
+                return $template_file;
+            }
+        }
+        if ('csv' === $_GET['format'] && 'yes' === $wcs4_settings[$post_type_key . '_download_report_csv'] && current_user_can(WCS4_REPORT_EXPORT_CAPABILITY)) {
+            $template_file = WCS4_PLUGIN_DIR . '/templates/report.php';
+            if (file_exists($template_file)) {
+                return $template_file;
+            }
         }
     }
     return $single;
 });
-
 
 /**
  * Order custom types by title

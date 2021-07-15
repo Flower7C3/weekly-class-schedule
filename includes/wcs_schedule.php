@@ -75,50 +75,50 @@ class Schedule_Management
         <div class="form-wrap" id="wcs4-management-form-wrapper">
             <h2 id="wcs4-management-form-title"><?php _ex('Add New Lesson', 'page title', 'wcs4'); ?></h2>
             <form id="wcs4-schedule-management-form" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
-                <div class="form-field form-required form-field-subject_id-wrap">
+                <fieldset class="form-field form-required form-field-subject_id-wrap">
                     <label for="wcs4_lesson_subject_id"><?php _e('Subject', 'wcs4'); ?></label>
                     <?php echo wcs4_generate_admin_select_list('subject', 'wcs4_lesson_subject', 'wcs4_lesson_subject', null, true); ?>
-                </div>
-                <div class="form-field form-required form-field-teacher_id-wrap">
+                </fieldset>
+                <fieldset class="form-field form-required form-field-teacher_id-wrap">
                     <label for="wcs4_lesson_teacher_id"><?php _e('Teacher', 'wcs4'); ?></label>
                     <?php echo wcs4_generate_admin_select_list('teacher', 'wcs4_lesson_teacher', 'wcs4_lesson_teacher', null, true, true); ?>
-                </div>
-                <div class="form-field form-required form-field-student_id-wrap">
+                </fieldset>
+                <fieldset class="form-field form-required form-field-student_id-wrap">
                     <label for="wcs4_lesson_student_id"><?php _e('Student', 'wcs4'); ?></label>
                     <?php echo wcs4_generate_admin_select_list('student', 'wcs4_lesson_student', 'wcs4_lesson_student', null, true, true); ?>
-                </div>
-                <div class="form-field form-required form-field-classroom_id-wrap">
+                </fieldset>
+                <fieldset class="form-field form-required form-field-classroom_id-wrap">
                     <label for="wcs4_lesson_classroom_id"><?php _e('Classroom', 'wcs4'); ?></label>
                     <?php echo wcs4_generate_admin_select_list('classroom', 'wcs4_lesson_classroom', 'wcs4_lesson_classroom', null, true); ?>
-                </div>
-                <div class="form-field form-required form-field-weekday-wrap">
-                    <label for="wcs4_lesson_weekday"><?php _e('Weekday', 'wcs4'); ?></label>
-                    <?php echo wcs4_generate_weekday_select_list('wcs4_lesson_weekday', ['required' => true]); ?>
-                </div>
-                <div class="form-field form-2-columns">
-                    <div class="form-field form-time-field form-required form-field-start_time-wrap">
+                </fieldset>
+                <fieldset class="form-field row">
+                    <div class="form-field form-required form-field-weekday-wrap col-6">
+                        <label for="wcs4_lesson_weekday"><?php _e('Weekday', 'wcs4'); ?></label>
+                        <?php echo wcs4_generate_weekday_select_list('wcs4_lesson_weekday', ['required' => true]); ?>
+                    </div>
+                    <div class="form-field form-time-field form-required form-field-start_time-wrap col-3">
                         <label for="wcs4_lesson_start_time"><?php _e('Start Time', 'wcs4'); ?></label>
                         <?php echo wcs4_generate_time_select_list('wcs4_lesson_start_time', 'wcs4_lesson_start_time', ['default' => '09:00', 'required' => true, 'step' => 300]); ?>
                     </div>
-                    <div class="form-field form-time-field form-required form-field-end_time-wrap">
+                    <div class="form-field form-time-field form-required form-field-end_time-wrap col-3">
                         <label for="wcs4_lesson_end_time"><?php _e('End Time', 'wcs4'); ?></label>
                         <?php echo wcs4_generate_time_select_list('wcs4_lesson_end_time', 'wcs4_lesson_end_time', ['default' => '10:00', 'required' => true, 'step' => 300]); ?>
                     </div>
-                </div>
-                <div class="form-field form-required form-field-visibility-wrap">
+                </fieldset>
+                <fieldset class="form-field form-required form-field-visibility-wrap">
                     <label for="wcs4_lesson_visibility"><?php _e('Visibility', 'wcs4'); ?></label>
                     <?php echo wcs4_generate_visibility_select_list('wcs4_lesson_visibility', 'visible', true); ?>
-                </div>
-                <div class="form-field form-required form-field-notes-wrap">
+                </fieldset>
+                <fieldset class="form-field form-required form-field-notes-wrap">
                     <label for="wcs4_lesson_notes"><?php _e('Notes', 'wcs4'); ?></label>
                     <textarea rows="3" id="wcs4_lesson_notes" name="wcs4_lesson_notes"></textarea>
-                </div>
-                <div class="submit" id="wcs4-schedule-buttons-wrapper">
+                </fieldset>
+                <fieldset class="submit" id="wcs4-schedule-buttons-wrapper">
                     <span class="spinner"></span>
                     <input id="wcs4-submit-form" type="submit" class="button-primary wcs4-submit-lesson-form" value="<?php _ex('Add Lesson', 'button text', 'wcs4'); ?>" name="wcs4-submit"/>
                     <button id="wcs4-reset-form" type="reset" class="button-link wcs4-reset-lesson-form"><?php _ex('Reset form', 'button text', 'wcs4'); ?></button>
                     <div id="wcs4-ajax-text-wrapper" class="wcs4-ajax-text"></div>
-                </div>
+                </fieldset>
             </form>
         </div> <!-- /#schedule-management-form-wrapper -->
         <?php
@@ -155,7 +155,7 @@ class Schedule_Management
                             </th>
                         </tr>
                     </thead>
-                    <tbody id="the-list-<?php echo $day; ?>">
+                    <tbody id="the-list-<?php echo $weekday; ?>">
                         <?php
                         /** @var WCS4_Lesson $lesson */
                         foreach ($lessons as $lesson): ?>
@@ -164,7 +164,7 @@ class Schedule_Management
                                     <em class="dashicons dashicons-<?php if ($lesson->isVisible()): ?>visibility<?php else: ?>hidden<?php endif; ?>" title="<?php echo $lesson->getVisibleText(); ?>"></em>
                                 </td>
                                 <td class="start_end_time column-start_end_time column-primary<?php if (current_user_can(WCS4_SCHEDULE_MANAGE_CAPABILITY)) { ?> has-row-actions<?php } ?>">
-                                    <?php echo $lesson->getStartHour(); ?> – <?php echo $lesson->getEndHour(); ?>
+                                    <?php echo $lesson->getStartTime(); ?> – <?php echo $lesson->getEndTime(); ?>
                                     <?php if (current_user_can(WCS4_SCHEDULE_MANAGE_CAPABILITY)) { ?>
                                         <div class="row-actions">
                                                     <span class="edit hide-if-no-js">
@@ -397,64 +397,61 @@ class Schedule_Management
 
             if ($wcs4_settings['classroom_collision'] === 'yes') {
                 # Validate classroom collision (if applicable)
-                $classroom_collision = $wpdb->get_col($wpdb->prepare(
-                    "
-                 SELECT id
-                 FROM $table
-                 WHERE
-                       classroom_id = %d
-                   AND weekday = %d
-                   AND %s < end_time
-                   AND %s > start_time
-                   AND id != %d
-                 ",
+                $classroom_collision = $wpdb->get_col($wpdb->prepare("
+                     SELECT id
+                     FROM $table
+                     WHERE
+                           classroom_id = %d
+                       AND weekday = %d
+                       AND %s < end_time
+                       AND %s > start_time
+                       AND id != %d
+                     ",
                     array($classroom_id, $weekday, $start_time, $end_time, $row_id,)));
+                if (!empty($classroom_collision)) {
+                    $errors['classroom_id'][] = __('Classroom is not available at this time', 'wcs4');
+                }
             }
 
             if ($wcs4_settings['teacher_collision'] === 'yes') {
                 # Validate teacher collision (if applicable)
-                $teacher_collision = $wpdb->get_col($wpdb->prepare(
-                    "
-                SELECT id
-                FROM $table
-                LEFT JOIN $table_teacher USING (id)
-                WHERE
-                      teacher_id IN (%s)
-                  AND weekday = %d
-                  AND %s < end_time
-                  AND %s > start_time
-                  AND id != %d
-                ",
+                $teacher_collision = $wpdb->get_col($wpdb->prepare("
+                    SELECT id
+                    FROM $table
+                    LEFT JOIN $table_teacher USING (id)
+                    WHERE
+                          teacher_id IN (%s)
+                      AND weekday = %d
+                      AND %s < end_time
+                      AND %s > start_time
+                      AND id != %d
+                    ",
                     array(implode(',', $teacher_id), $weekday, $start_time, $end_time, $row_id,)));
+                if (!empty($teacher_collision)) {
+                    $errors['teacher_id'][] = __('Teacher is not available at this time', 'wcs4');
+                }
             }
 
             if ($wcs4_settings['student_collision'] === 'yes') {
                 # Validate student collision (if applicable)
-                $student_collision = $wpdb->get_col($wpdb->prepare(
-                    "
-                SELECT id
-                FROM $table
-                LEFT JOIN $table_student USING (id)
-                WHERE
-                      student_id IN (%s)
-                  AND weekday = %d
-                  AND %s < end_time
-                  AND %s > start_time
-                  AND id != %d
-                ",
+                $student_collision = $wpdb->get_col($wpdb->prepare("
+                        SELECT id
+                        FROM $table
+                        LEFT JOIN $table_student USING (id)
+                        WHERE
+                              student_id IN (%s)
+                          AND weekday = %d
+                          AND %s < end_time
+                          AND %s > start_time
+                          AND id != %d
+                    ",
                     array(implode(',', $student_id), $weekday, $start_time, $end_time, $row_id,)));
+                if (!empty($student_collision)) {
+                    $errors['student_id'][] = __('Student is not available at this time', 'wcs4');
+                }
             }
 
             # Prepare response
-            if (($wcs4_settings['classroom_collision'] === 'yes') && !empty($classroom_collision)) {
-                $errors['classroom_id'][] = __('Classroom is not available at this time', 'wcs4');
-            }
-            if (($wcs4_settings['teacher_collision'] === 'yes') && !empty($teacher_collision)) {
-                $errors['teacher_id'][] = __('Teacher is not available at this time', 'wcs4');
-            }
-            if (($wcs4_settings['student_collision'] === 'yes') && !empty($student_collision)) {
-                $errors['student_id'][] = __('Student is not available at this time', 'wcs4');
-            }
             if ($start_dt >= $end_dt) {
                 # Invalid subject time
                 $errors['start_time'][] = __('A class cannot start before it ends', 'wcs4');

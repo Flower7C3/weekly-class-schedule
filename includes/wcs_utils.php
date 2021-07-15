@@ -9,7 +9,7 @@
  * @param string $type : e.g. subject, teacher, student, etc.
  * @return
  */
-function wcs4_get_posts_of_type($type)
+function wcs4_get_posts_of_type($type,array $include_ids = [])
 {
     $args = array(
         'orderby' => 'post_title',
@@ -18,6 +18,9 @@ function wcs4_get_posts_of_type($type)
         'post_status' => array('publish', 'private',),
         'posts_per_page' => -1,
     );
+    if(!empty($include_ids)){
+        $args['include'] = $include_ids;
+    }
 
     return get_posts($args);
 }

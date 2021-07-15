@@ -82,7 +82,7 @@ class WCS4_TodayClassesWidget extends WP_Widget
         $max_lessons = (isset($instance['max_lessons'])) ? $instance['max_lessons'] : 5;
         $classroom = (isset($instance['classroom'])) ? $instance['classroom'] : 'all';
         $no_entries_text = (isset($instance['no_entries_text'])) ? $instance['no_entries_text'] : _x('No lessons today', 'widget settings', 'wcs4');
-        $template = (isset($instance['template'])) ? $instance['template'] : _x('{start hour}: {subject link} @{classroom link}', 'widget template', 'wcs4');
+        $template = (isset($instance['template'])) ? $instance['template'] : _x('{start time}: {subject link} @{classroom link}', 'widget template', 'wcs4');
 
         /* Print Form */
         ?>

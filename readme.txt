@@ -39,6 +39,13 @@ You will find a 'Schedule' menu item as well as 'Classes', 'Teachers', 'Students
 
 == Changelog ==
 
+= Version 4.23 =
+* report form layout updates
+* report export as CSV
+* refactor method names
+* change `{start hour}` to `{start time}`
+* change `{end hour}` to `{end time}`
+
 = Version 4.22 =
 * report of lessons taken
 * refactor code

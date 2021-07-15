@@ -23,13 +23,11 @@
     }
 }
 
-#wcs4-management-form-wrapper .form-field select {
-    width: 100%;
-}
-
+#wcs4-management-form-wrapper .form-field select,
 #wcs4-management-form-wrapper .form-field input,
 #wcs4-management-form-wrapper .form-field textarea {
-    width: 95%;
+    width: 100%;
+    max-width: 100%;
 }
 
 @media screen and (max-width: 782px) {
@@ -42,27 +40,31 @@
     text-align: right;
 }
 
-.form-2-columns {
+.form-field.row {
     display: flex;
     flex-wrap: wrap;
+    margin-right: -5px;
+    margin-left: -5px;
+    align-items: flex-end;
 }
 
-.form-2-columns .form-field {
-    flex: 1;
+.form-field.row .col-3,
+.form-field.row .col-6 {
+    position: relative;
+    width: 100%;
+    min-height: 1px;
+    padding-right: 5px;
+    padding-left: 5px;
 }
 
-#wcs4-management-form-wrapper .form-2-columns .form-field.form-time-field input {
-    width: 90%;
-}
-#wcs4-management-form-wrapper .form-2-columns .form-field.form-time-field select {
-    width: 56px;
-    display: inline-block;
+.form-field.row .col-6 {
+    flex: 0 0 40%;
+    max-width: 40%;
 }
 
-@media screen and (max-width: 782px) {
-    #wcs4-management-form-wrapper .form-2-columns .form-field.form-time-field select {
-        margin-right: -1px;
-    }
+.form-field.row .col-3 {
+    flex: 0 0 25%;
+    max-width: 25%;
 }
 
 .wcs4-ajax-text {

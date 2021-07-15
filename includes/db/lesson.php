@@ -165,14 +165,14 @@ class WCS4_Lesson
      */
     public function getStartMinutes()
     {
-        $time = explode(':', $this->getStartHour());
+        $time = explode(':', $this->getStartTime());
         return $time[0] * 60 + $time[1];
     }
 
     /**
      * @return false|string
      */
-    public function getStartHour()
+    public function getStartTime()
     {
         return $this->start_time;
     }
@@ -182,23 +182,23 @@ class WCS4_Lesson
      */
     public function getEndMinutes()
     {
-        $time = explode(':', $this->getEndHour());
+        $time = explode(':', $this->getEndTime());
         return $time[0] * 60 + $time[1];
     }
 
     /**
      * @return false|string
      */
-    public function getEndHour()
+    public function getEndTime()
     {
         return $this->end_time;
     }
 
-    public function getEndTime()
+    public function getEndDateTime()
     {
         return (new DateTime(
             'last sunday ' .
-            $this->getEndHour()
+            $this->getEndTime()
         ))->add(new DateInterval('P' . $this->getWeekday() . 'D'));
     }
 
@@ -210,11 +210,11 @@ class WCS4_Lesson
         return $this->weekday;
     }
 
-    public function getStartTime()
+    public function getStartDateTime()
     {
         return (new DateTime(
             'last sunday ' .
-            $this->getStartHour()
+            $this->getStartTime()
         ))->add(new DateInterval('P' . $this->getWeekday() . 'D'));
     }
 

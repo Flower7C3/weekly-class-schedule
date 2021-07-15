@@ -24,10 +24,10 @@ function wcs4_render_table_schedule($lessons, $weekdays, $schedule_key, $templat
     $hours = [];
     /** @var WCS4_Lesson $lesson */
     foreach ($lessons as $lesson) {
-        $hourVal = $lesson->getStartHour();
+        $hourVal = $lesson->getStartTime();
         $hourKey = str_replace(':', '-', $hourVal);
         $hours[$hourKey] = $hourVal;
-        $hourVal = $lesson->getEndHour();
+        $hourVal = $lesson->getEndTime();
         $hourKey = str_replace(':', '-', $hourVal);
         $hours[$hourKey] = $hourVal;
         $weekday = $lesson->getWeekday();
@@ -86,7 +86,7 @@ function wcs4_render_table_schedule($lessons, $weekdays, $schedule_key, $templat
         if (null !== $lesson->getColor()) {
             $style = ' style="background-color: #' . $lesson->getColor() . '; "';
         }
-        $output .= '<div class="wcs4-grid-lesson wcs4-grid-weekday-' . $lesson->getWeekday() . '-' . $lesson->getPosition() . ' wcs4-lesson-hour-from-' . str_replace(':', '-', $lesson->getStartHour()) . ' wcs4-lesson-hour-to-' . str_replace(':', '-', $lesson->getEndHour()) . '" ' . $style . '>';
+        $output .= '<div class="wcs4-grid-lesson wcs4-grid-weekday-' . $lesson->getWeekday() . '-' . $lesson->getPosition() . ' wcs4-lesson-hour-from-' . str_replace(':', '-', $lesson->getStartTime()) . ' wcs4-lesson-hour-to-' . str_replace(':', '-', $lesson->getEndTime()) . '" ' . $style . '>';
         $output .= '<div class="wcs4-lesson-name">' . wcs4_process_template($lesson, $template_table_short) . '</div>';
         $output .= '<div class="wcs4-details-box-container">' . wcs4_process_template($lesson, $template_table_details) . '</div>';
         $output .= '</div>';
@@ -159,12 +159,12 @@ function wcs4_render_list_report($reports, $schedule_key, $template_list)
 
     $output = '<div class="wcs4-schedule-list-layout">';
     # Classes are grouped by indexed weekdays.
-    foreach ($dateWithLessons as $date => $reports) {
-        if (!empty($reports)) {
+    foreach ($dateWithLessons as $date => $dayReports) {
+        if (!empty($dayReports)) {
             $output .= '<h3>' . $date . '</h3>';
             $output .= '<ul class="wcs4-grid-date-list wcs4-grid-date-list-' . $date . '">';
             /** @var WCS4_Report $report */
-            foreach ($reports as $report) {
+            foreach ($dayReports as $report) {
                 $output .= '<li class="wcs4-list-item-lesson">';
                 $output .= wcs4_process_template($report, $template_list);
                 $output .= '</li>';
@@ -208,13 +208,13 @@ function wcs4_process_template($item, string $template)
             , $template);
     }
     if ($item instanceof WCS4_Lesson) {
-        $template = str_replace(['{schedule no}', '{start hour}', '{end hour}', '{notes}'],
-            [$item->getId(), $item->getStartHour(), $item->getEndHour(), $item->getNotes()]
+        $template = str_replace(['{schedule no}', '{start time}', '{end time}', '{notes}'],
+            [$item->getId(), $item->getStartTime(), $item->getEndTime(), $item->getNotes()]
             , $template);
     }
     if ($item instanceof WCS4_Report) {
-        $template = str_replace(['{schedule no}', '{start hour}', '{end hour}', '{topic}'],
-            [$item->getId(), $item->getStartHour(), $item->getEndHour(), $item->getTopic()]
+        $template = str_replace(['{schedule no}', '{start time}', '{end time}', '{topic}'],
+            [$item->getId(), $item->getStartTime(), $item->getEndTime(), $item->getTopic()]
             , $template);
     }
     if ($item instanceof WCS4_Lesson) {

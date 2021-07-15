@@ -18,6 +18,9 @@ if (!defined('WCS4_REPORT_VIEW_CAPABILITY')) {
 if (!defined('WCS4_REPORT_MANAGE_CAPABILITY')) {
     define('WCS4_REPORT_MANAGE_CAPABILITY', 'wcs4_schedule_manage');
 }
+if (!defined('WCS4_REPORT_EXPORT_CAPABILITY')) {
+    define('WCS4_REPORT_EXPORT_CAPABILITY', 'wcs4_report_export');
+}
 if (!defined('WCS4_STANDARD_OPTIONS_CAPABILITY')) {
     define('WCS4_STANDARD_OPTIONS_CAPABILITY', 'wcs4_standard_options');
 }
@@ -107,6 +110,7 @@ add_action('init', static function () {
     $role->add_cap(WCS4_SCHEDULE_MANAGE_CAPABILITY, true);
     $role->add_cap(WCS4_REPORT_VIEW_CAPABILITY, true);
     $role->add_cap(WCS4_REPORT_MANAGE_CAPABILITY, true);
+    $role->add_cap(WCS4_REPORT_EXPORT_CAPABILITY, true);
     $role->add_cap(WCS4_STANDARD_OPTIONS_CAPABILITY, true);
     $role->add_cap(WCS4_ADVANCED_OPTIONS_CAPABILITY, true);
     $role = get_role('editor');
@@ -264,7 +268,7 @@ function wcs4_help_placeholders_callback()
     </p>
     <ul>
         <li>
-            <?php printf(_x('Will display general info: <code>%1$s</code>', 'help', 'wcs4'), implode('</code>, <code>', ['{schedule no}', '{date}', '{weekday}', '{start hour}', '{end hour}', '{notes}', '{topic}',])); ?>
+            <?php printf(_x('Will display general info: <code>%1$s</code>', 'help', 'wcs4'), implode('</code>, <code>', ['{schedule no}', '{date}', '{weekday}', '{start time}', '{end time}', '{notes}', '{topic}',])); ?>
         </li>
         <li>
             <?php printf(_x('Will display full name: <code>%1$s</code>', 'help', 'wcs4'), implode('</code>, <code>', ['{subject}', '{teacher}', '{student}', '{classroom}',])); ?>
@@ -300,38 +304,132 @@ function wcs4_help_placeholders_callback()
  * @param string|null $classname
  * @return string
  */
-function wcs4_generate_admin_select_list($key, $id = '', $name = '', $default = NULL, $required = false, $multiple = false, $classname = null)
+function wcs4_generate_admin_select_list($key, $id = '', $name = '', $default = NULL, $required = false, $multiple = false, $classname = null, array $filter = [])
 {
+    global $wpdb;
     $post_type = 'wcs4_' . $key;
     $tax_type = WCS4_POST_TYPES_WHITELIST[$post_type];
-    $posts = wcs4_get_posts_of_type($post_type);
+
+    $table = WCS4_DB::get_schedule_table_name();
+    $table_teacher = WCS4_DB::get_schedule_teacher_table_name();
+    $table_student = WCS4_DB::get_schedule_student_table_name();
+    $include_ids = [];
 
     $values = array();
-    if (!$multiple) {
-        switch ($key) {
-            case 'subject':
+
+    switch ($key) {
+        case 'subject':
+            if (!$multiple) {
                 $values[''] = _x('select subject', 'manage schedule', 'wcs4');
-                break;
-            case 'teacher':
+            }
+            if (!empty($filter['subject'])) {
+                $include_ids = $wpdb->get_col($wpdb->prepare("SELECT DISTINCT subject_id FROM $table LEFT JOIN $table_teacher USING (id) LEFT JOIN $table_student USING (id) WHERE subject_id IN (%s)", array($filter['subject'])));
+            }
+            if (!empty($filter['teacher'])) {
+                $include_ids = $wpdb->get_col($wpdb->prepare("SELECT DISTINCT subject_id FROM $table LEFT JOIN $table_teacher USING (id) LEFT JOIN $table_student USING (id) WHERE teacher_id IN (%s)", array($filter['teacher'])));
+            }
+            if (!empty($filter['student'])) {
+                $include_ids = $wpdb->get_col($wpdb->prepare("SELECT DISTINCT subject_id FROM $table LEFT JOIN $table_teacher USING (id) LEFT JOIN $table_student USING (id) WHERE student_id IN (%s)", array($filter['student'])));
+            }
+            break;
+        case 'teacher':
+            if (!$multiple) {
                 $values[''] = _x('select teacher', 'manage schedule', 'wcs4');
-                break;
-            case 'student':
+            }
+            if (!empty($filter['subject'])) {
+                $include_ids = $wpdb->get_col($wpdb->prepare("SELECT DISTINCT teacher_id FROM $table LEFT JOIN $table_teacher USING (id) LEFT JOIN $table_student USING (id) WHERE subject_id IN (%s)", array($filter['subject'])));
+            }
+            if (!empty($filter['teacher'])) {
+                $include_ids = $wpdb->get_col($wpdb->prepare("SELECT DISTINCT teacher_id FROM $table LEFT JOIN $table_teacher USING (id) LEFT JOIN $table_student USING (id) WHERE teacher_id IN (%s)", array($filter['teacher'])));
+            }
+            if (!empty($filter['student'])) {
+                $include_ids = $wpdb->get_col($wpdb->prepare("SELECT DISTINCT teacher_id FROM $table LEFT JOIN $table_teacher USING (id) LEFT JOIN $table_student USING (id) WHERE student_id IN (%s)", array($filter['student'])));
+            }
+            break;
+        case 'student':
+            if (!$multiple) {
                 $values[''] = _x('select student', 'manage schedule', 'wcs4');
-                break;
-            case 'classroom':
+            }
+            if (!empty($filter['subject'])) {
+                $include_ids = $wpdb->get_col($wpdb->prepare("SELECT DISTINCT student_id FROM $table LEFT JOIN $table_teacher USING (id) LEFT JOIN $table_student USING (id) WHERE subject_id IN (%s)", array($filter['subject'])));
+            }
+            if (!empty($filter['teacher'])) {
+                $include_ids = $wpdb->get_col($wpdb->prepare("SELECT DISTINCT student_id FROM $table LEFT JOIN $table_teacher USING (id) LEFT JOIN $table_student USING (id) WHERE teacher_id IN (%s)", array($filter['teacher'])));
+            }
+            if (!empty($filter['student'])) {
+                $include_ids = $wpdb->get_col($wpdb->prepare("SELECT DISTINCT student_id FROM $table LEFT JOIN $table_teacher USING (id) LEFT JOIN $table_student USING (id) WHERE student_id IN (%s)", array($filter['student'])));
+            }
+            break;
+        case 'classroom':
+            if (!$multiple) {
                 $values[''] = _x('select classroom', 'manage schedule', 'wcs4');
-                break;
-            default:
+            }
+            if (!empty($filter['subject'])) {
+                $include_ids = $wpdb->get_col($wpdb->prepare("SELECT DISTINCT classroom_id FROM $table LEFT JOIN $table_teacher USING (id) LEFT JOIN $table_student USING (id) WHERE subject_id IN (%s)", array($filter['subject'])));
+            }
+            if (!empty($filter['teacher'])) {
+                $include_ids = $wpdb->get_col($wpdb->prepare("SELECT DISTINCT classroom_id FROM $table LEFT JOIN $table_teacher USING (id) LEFT JOIN $table_student USING (id) WHERE teacher_id IN (%s)", array($filter['teacher'])));
+            }
+            if (!empty($filter['student'])) {
+                $include_ids = $wpdb->get_col($wpdb->prepare("SELECT DISTINCT classroom_id FROM $table LEFT JOIN $table_teacher USING (id) LEFT JOIN $table_student USING (id) WHERE student_id IN (%s)", array($filter['student'])));
+            }
+            break;
+        default:
+            if (!$multiple) {
                 $values[''] = _x('select option', 'manage schedule', 'wcs4');
-                break;
-        }
+            }
+            break;
     }
+
+    $posts = wcs4_get_posts_of_type($post_type, $include_ids);
 
     if (!empty($posts)) {
         foreach ($posts as $post) {
-            $values[$post->ID] = get_post_title_with_taxonomy($post, $tax_type);
+            if (isset($post->ID)) {
+                $post_id = $post->ID;
+            } else {
+                $post_id = $post;
+            }
+            $values[$post_id] = get_post_title_with_taxonomy($post, $tax_type);
         }
     }
+
+//    if(isset($filter['subject']))
+//
+//    $classroom_collision = $wpdb->get_col($wpdb->prepare("
+//                     SELECT id
+//                     FROM $table
+//                     WHERE
+//                           classroom_id = %d
+//                       AND weekday = %d
+//                       AND %s < end_time
+//                       AND %s > start_time
+//                       AND id != %d
+//                     ",
+//        array($classroom_id, $weekday, $start_time, $end_time, $row_id,)));
+//    if (!empty($classroom_collision)) {
+//        $errors['classroom_id'][] = __('Classroom is not available at this time', 'wcs4');
+//    }
+//}
+
+
+//if ($wcs4_settings['student_collision'] === 'yes') {
+//    # Validate student collision (if applicable)
+//    $student_collision = $wpdb->get_col($wpdb->prepare("
+//                        SELECT id
+//                        FROM $table
+//                        LEFT JOIN $table_student USING (id)
+//                        WHERE
+//                              student_id IN (%s)
+//                          AND weekday = %d
+//                          AND %s < end_time
+//                          AND %s > start_time
+//                          AND id != %d
+//                    ",
+//        array(implode(',', $student_id), $weekday, $start_time, $end_time, $row_id,)));
+//    if (!empty($student_collision)) {
+//        $errors['student_id'][] = __('Student is not available at this time', 'wcs4');
+//    }
 
     return wcs4_select_list($values, $id, $name, $default, $required, $multiple, $classname, true);
 }

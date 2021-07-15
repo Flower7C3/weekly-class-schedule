@@ -24,7 +24,7 @@ $lessons = Schedule_Management::get_lessons($classroom, $teacher, $student, $sub
 $endline = "\r\n";
 
 header('Content-type: text/calendar; charset=utf-8');
-header('Content-Disposition: inline; filename=calendar-' . $post_type . '-' . $post_id . '.ics');
+header('Content-Disposition: inline; filename=' . $post_type . '-calendar-' . $post_id . '.ics');
 
 echo 'BEGIN:VCALENDAR' . $endline;
 echo 'VERSION:2.0' . $endline;
@@ -39,8 +39,8 @@ foreach ($lessons as $lesson) {
     $description = wordwrap($description, 75, $endline . " ", true);
     echo 'BEGIN:VEVENT' . $endline;
     echo 'CATEGORIES:EDUCATION' . $endline;
-    echo 'DTSTART:' . $lesson->getStartTime()->format('Ymd\THis') . $endline;
-    echo 'DTEND:' . $lesson->getEndTime()->format('Ymd\THis') . $endline;
+    echo 'DTSTART:' . $lesson->getStartDateTime()->format('Ymd\THis') . $endline;
+    echo 'DTEND:' . $lesson->getEndDateTime()->format('Ymd\THis') . $endline;
     echo 'SUMMARY:' . $lesson->getSubject()->getName() . $endline;
     echo 'DESCRIPTION:' . $description . $endline;
     echo 'LOCATION:' . $lesson->getClassroom()->getName() . $endline;

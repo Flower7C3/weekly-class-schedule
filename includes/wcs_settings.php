@@ -69,6 +69,7 @@ function wcs4_standard_options_page_callback()
                 'subject_schedule_template_list' => 'wcs4_validate_html',
                 'subject_report_view' => 'wcs4_validate_yes_no',
                 'subject_schedule_template_report' => 'wcs4_validate_html',
+                'subject_download_report_csv' => 'wcs4_validate_yes_no',
                 'subject_report_create' => 'wcs4_validate_yes_no',
                 'teacher_taxonomy_slug' => 'wcs4_validate_html',
                 'teacher_taxonomy_hierarchical' => 'wcs4_validate_yes_no',
@@ -82,6 +83,7 @@ function wcs4_standard_options_page_callback()
                 'teacher_schedule_template_list' => 'wcs4_validate_html',
                 'teacher_report_view' => 'wcs4_validate_yes_no',
                 'teacher_schedule_template_report' => 'wcs4_validate_html',
+                'teacher_download_report_csv' => 'wcs4_validate_yes_no',
                 'teacher_report_create' => 'wcs4_validate_yes_no',
                 'student_taxonomy_slug' => 'wcs4_validate_html',
                 'student_taxonomy_hierarchical' => 'wcs4_validate_yes_no',
@@ -95,6 +97,7 @@ function wcs4_standard_options_page_callback()
                 'student_schedule_template_list' => 'wcs4_validate_html',
                 'student_report_view' => 'wcs4_validate_yes_no',
                 'student_schedule_template_report' => 'wcs4_validate_html',
+                'student_download_report_csv' => 'wcs4_validate_yes_no',
                 'student_report_create' => 'wcs4_validate_yes_no',
                 'classroom_taxonomy_slug' => 'wcs4_validate_html',
                 'classroom_taxonomy_hierarchical' => 'wcs4_validate_yes_no',
@@ -353,6 +356,20 @@ function wcs4_standard_options_page_callback()
                     </tr>
                     <tr>
                         <th>
+                            <?php _ex('Download report as CSV', 'options general settings', 'wcs4'); ?>
+                            <div class="wcs4-description"><?php _ex('Will display extra link to download report as CSV.', 'options general settings', 'wcs4'); ?></div>
+                        </th>
+                        <?php foreach ($taxonomyTypes as $key => $name): ?>
+                            <td data-key="<?= $key ?>" data-type="wcs4_download_report_csv">
+                                <?php if ($key !== 'classroom'): ?>
+                                <?php echo wcs4_bool_checkbox('wcs4_' . $key . '_download_report_csv', 'wcs4_' . $key . '_download_report_csv',
+                                    $wcs4_options[$key . '_download_report_csv'], __('Yes')); ?>
+                                <?php endif; ?>
+                            </td>
+                        <?php endforeach; ?>
+                    </tr>
+                    <tr>
+                        <th>
                             <?php _ex('Add New Report', 'options general settings', 'wcs4'); ?>
                             <div class="wcs4-description"><?php _ex('Will display form allowing anyone to add new lesson report.', 'options general settings', 'wcs4'); ?></div>
                         </th>
@@ -506,10 +523,10 @@ function wcs4_set_default_settings()
             'teacher_collision' => 'yes',
             'student_collision' => 'yes',
             'open_template_links_in_new_tab' => 'no',
-            'template_table_short' => _x('<small>{start hour}-{end hour}</small><br>{subject} ({tea}/{stu})', 'config template table short', 'wcs4'),
-            'template_table_details' => _x('{teacher link} has {subject link} at {classroom link} from {start hour} to {end hour} for {student link} {notes}', 'config template table details', 'wcs4'),
-            'template_list' => _x('{teacher link} has {subject link} at {classroom link} from {start hour} to {end hour} for {student link} {notes}', 'config template list', 'wcs4'),
-            'template_report' => _x('{teacher link} has {subject link} from {start hour} to {end hour} for {student link} {topic}', 'config template report', 'wcs4'),
+            'template_table_short' => _x('<small>{start time}-{end time}</small><br>{subject} ({tea}/{stu})', 'config template table short', 'wcs4'),
+            'template_table_details' => _x('{teacher link} has {subject link} at {classroom link} from {start time} to {end time} for {student link} {notes}', 'config template table details', 'wcs4'),
+            'template_list' => _x('{teacher link} has {subject link} at {classroom link} from {start time} to {end time} for {student link} {notes}', 'config template list', 'wcs4'),
+            'template_report' => _x('{teacher link} has {subject link} from {start time} to {end time} for {student link} {topic}', 'config template report', 'wcs4'),
             'color_base' => 'DDFFDD',
             'color_details_box' => 'FFDDDD',
             'color_text' => '373737',
@@ -526,11 +543,12 @@ function wcs4_set_default_settings()
             'subject_download_icalendar' => 'no',
             'subject_hashed_slug' => 'no',
             'subject_schedule_layout' => 'table',
-            'subject_schedule_template_table_short' => _x('<small>{start hour}-{end hour}</small><br>{tea}/{stu} @{class}', 'config template table short at subject schedule', 'wcs4'),
-            'subject_schedule_template_table_details' => _x('<small>{start hour}-{end hour}</small><br>{teacher link} at {classroom link} for {student link} {notes}', 'config template table details at subject schedule', 'wcs4'),
-            'subject_schedule_template_list' => _x('<small>{start hour}-{end hour}</small><br>{teacher link} at {classroom link} for {student link} {notes}', 'config template list at subject schedule', 'wcs4'),
+            'subject_schedule_template_table_short' => _x('<small>{start time}-{end time}</small><br>{tea}/{stu} @{class}', 'config template table short at subject schedule', 'wcs4'),
+            'subject_schedule_template_table_details' => _x('<small>{start time}-{end time}</small><br>{teacher link} at {classroom link} for {student link} {notes}', 'config template table details at subject schedule', 'wcs4'),
+            'subject_schedule_template_list' => _x('<small>{start time}-{end time}</small><br>{teacher link} at {classroom link} for {student link} {notes}', 'config template list at subject schedule', 'wcs4'),
             'subject_report_view' => 'no',
-            'subject_schedule_template_report' => _x('<small>{start hour}-{end hour}</small><br>{teacher link} at for {student link} {topic}', 'config template report at subject schedule', 'wcs4'),
+            'subject_schedule_template_report' => _x('<small>{start time}-{end time}</small><br>{teacher link} at for {student link} {topic}', 'config template report at subject schedule', 'wcs4'),
+            'subject_download_report_csv' => 'no',
             'subject_report_create' => 'no',
             'teacher_taxonomy_slug' => _x('specialization', 'config slug for taxonomy', 'wcs4'),
             'teacher_taxonomy_hierarchical' => 'no',
@@ -539,11 +557,12 @@ function wcs4_set_default_settings()
             'teacher_download_icalendar' => 'no',
             'teacher_hashed_slug' => 'no',
             'teacher_schedule_layout' => 'table',
-            'teacher_schedule_template_table_short' => _x('<small>{start hour}-{end hour}</small><br>{subject} @{class} ({stu})', 'config template table short at teacher schedule', 'wcs4'),
-            'teacher_schedule_template_table_details' => _x('<small>{start hour}-{end hour}</small><br>{subject link} at {classroom link} for {student link} {notes}', 'config template table details at teacher schedule', 'wcs4'),
-            'teacher_schedule_template_list' => _x('<small>{start hour}-{end hour}</small><br>{subject link} at {classroom link} for {student link} {notes}', 'config template list at teacher schedule', 'wcs4'),
+            'teacher_schedule_template_table_short' => _x('<small>{start time}-{end time}</small><br>{subject} @{class} ({stu})', 'config template table short at teacher schedule', 'wcs4'),
+            'teacher_schedule_template_table_details' => _x('<small>{start time}-{end time}</small><br>{subject link} at {classroom link} for {student link} {notes}', 'config template table details at teacher schedule', 'wcs4'),
+            'teacher_schedule_template_list' => _x('<small>{start time}-{end time}</small><br>{subject link} at {classroom link} for {student link} {notes}', 'config template list at teacher schedule', 'wcs4'),
             'teacher_report_view' => 'no',
-            'teacher_schedule_template_report' => _x('<small>{start hour}-{end hour}</small><br>{subject link} for {student link} {topic}', 'config template report at teacher schedule', 'wcs4'),
+            'teacher_schedule_template_report' => _x('<small>{start time}-{end time}</small><br>{subject link} for {student link} {topic}', 'config template report at teacher schedule', 'wcs4'),
+            'teacher_download_report_csv' => 'no',
             'teacher_report_create' => 'no',
             'student_taxonomy_slug' => _x('group', 'config slug for taxonomy', 'wcs4'),
             'student_taxonomy_hierarchical' => 'no',
@@ -552,11 +571,12 @@ function wcs4_set_default_settings()
             'student_download_icalendar' => 'no',
             'student_hashed_slug' => 'yes',
             'student_schedule_layout' => 'table',
-            'student_schedule_template_table_short' => _x('<small>{start hour}-{end hour}</small><br>{subject} ({tea}) @{class}', 'config template table short at student schedule', 'wcs4'),
-            'student_schedule_template_table_details' => _x('<small>{start hour}-{end hour}</small><br>{subject link} with {teacher link} at {classroom link}', 'config template table details at student schedule', 'wcs4'),
-            'student_schedule_template_list' => _x('{subject link} with {teacher link} at {classroom link} from {start hour} to {end hour} {notes}', 'config template report at student schedule', 'wcs4'),
+            'student_schedule_template_table_short' => _x('<small>{start time}-{end time}</small><br>{subject} ({tea}) @{class}', 'config template table short at student schedule', 'wcs4'),
+            'student_schedule_template_table_details' => _x('<small>{start time}-{end time}</small><br>{subject link} with {teacher link} at {classroom link}', 'config template table details at student schedule', 'wcs4'),
+            'student_schedule_template_list' => _x('{subject link} with {teacher link} at {classroom link} from {start time} to {end time} {notes}', 'config template report at student schedule', 'wcs4'),
             'student_report_view' => 'no',
-            'student_schedule_template_report' => _x('{subject link} with {teacher link} from {start hour} to {end hour} {topic}', 'config template list at student schedule', 'wcs4'),
+            'student_schedule_template_report' => _x('{subject link} with {teacher link} from {start time} to {end time} {topic}', 'config template list at student schedule', 'wcs4'),
+            'student_download_report_csv' => 'no',
             'student_report_create' => 'no',
             'classroom_taxonomy_slug' => _x('locations', 'config slug for taxonomy', 'wcs4'),
             'classroom_taxonomy_hierarchical' => 'no',
@@ -565,9 +585,9 @@ function wcs4_set_default_settings()
             'classroom_download_icalendar' => 'no',
             'classroom_hashed_slug' => 'no',
             'classroom_schedule_layout' => 'table',
-            'classroom_schedule_template_table_short' => _x('<small>{start hour}-{end hour}</small><br>{subject} ({tea}/{stu})', 'config template table short at classroom schedule', 'wcs4'),
-            'classroom_schedule_template_table_details' => _x('<small>{start hour}-{end hour}</small><br>{subject link} with {teacher link} for {student link} {notes}', 'config template table details at classroom schedule', 'wcs4'),
-            'classroom_schedule_template_list' => _x('{subject link} with {teacher link} from {start hour} to {end hour} for {student link} {notes}', 'config template list at classroom schedule', 'wcs4'),
+            'classroom_schedule_template_table_short' => _x('<small>{start time}-{end time}</small><br>{subject} ({tea}/{stu})', 'config template table short at classroom schedule', 'wcs4'),
+            'classroom_schedule_template_table_details' => _x('<small>{start time}-{end time}</small><br>{subject link} with {teacher link} for {student link} {notes}', 'config template table details at classroom schedule', 'wcs4'),
+            'classroom_schedule_template_list' => _x('{subject link} with {teacher link} from {start time} to {end time} for {student link} {notes}', 'config template list at classroom schedule', 'wcs4'),
         );
         $serialized = serialize($options);
         add_option('wcs4_settings', $serialized);
