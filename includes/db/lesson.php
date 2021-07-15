@@ -30,6 +30,7 @@ class WCS4_Lesson
     private $color;
     /** @var int */
     private $position = 0;
+    use wcs4_loggable;
 
     /**
      * WCS4_Lesson constructor.
@@ -39,6 +40,10 @@ class WCS4_Lesson
     public function __construct($dbrow, $format)
     {
         $this->id = $dbrow->schedule_id;
+        $this->setCreatedAt($dbrow->created_at);
+        $this->setCreatedBy($dbrow->created_by);
+        $this->setUpdatedAt($dbrow->updated_at);
+        $this->setUpdatedBy($dbrow->updated_by);
 
         $this->weekday = $dbrow->weekday;
 

@@ -157,51 +157,55 @@ class Schedule_Management
                     </thead>
                     <tbody id="the-list-<?php echo $weekday; ?>">
                         <?php
-                        /** @var WCS4_Lesson $lesson */
-                        foreach ($lessons as $lesson): ?>
-                            <tr id="lesson-<?php echo $lesson->getId(); ?>" class="<?php if ($lesson->isVisible()) { ?>active<?php } else { ?>inactive<?php } ?>">
+                        /** @var WCS4_Lesson $item */
+                        foreach ($lessons as $item): ?>
+                            <tr id="lesson-<?php echo $item->getId(); ?>" class="<?php if ($item->isVisible()) { ?>active<?php } else { ?>inactive<?php } ?>">
                                 <td class="visibility column-visibility" data-colname="<?php echo __('Visibility', 'wcs4'); ?>">
-                                    <em class="dashicons dashicons-<?php if ($lesson->isVisible()): ?>visibility<?php else: ?>hidden<?php endif; ?>" title="<?php echo $lesson->getVisibleText(); ?>"></em>
+                                    <em class="dashicons dashicons-<?php if ($item->isVisible()): ?>visibility<?php else: ?>hidden<?php endif; ?>" title="<?php echo $item->getVisibleText(); ?>"></em>
                                 </td>
                                 <td class="start_end_time column-start_end_time column-primary<?php if (current_user_can(WCS4_SCHEDULE_MANAGE_CAPABILITY)) { ?> has-row-actions<?php } ?>">
-                                    <?php echo $lesson->getStartTime(); ?> – <?php echo $lesson->getEndTime(); ?>
-                                    <?php if (current_user_can(WCS4_SCHEDULE_MANAGE_CAPABILITY)) { ?>
-                                        <div class="row-actions">
-                                                    <span class="edit hide-if-no-js">
-                                                        <a href="#" class="wcs4-edit-lesson-button" id="wcs4-edit-button-<?php echo $lesson->getId(); ?>" data-lesson-id="<?php echo $lesson->getId(); ?>" data-day="<?php echo $lesson->getWeekday(); ?>">
-                                                            <?php echo __('Edit', 'wcs4'); ?>
-                                                        </a>
-                                                    </span>
+                                    <?php echo $item->getStartTime(); ?> – <?php echo $item->getEndTime(); ?>
+                                    <div class="row-actions">
+                                        <?php if (current_user_can(WCS4_SCHEDULE_MANAGE_CAPABILITY)) { ?>
+                                            <span class="edit hide-if-no-js">
+                                                <a href="#" class="wcs4-edit-lesson-button" id="wcs4-edit-button-<?php echo $item->getId(); ?>" data-lesson-id="<?php echo $item->getId(); ?>" data-day="<?php echo $item->getWeekday(); ?>">
+                                                    <?php echo __('Edit', 'wcs4'); ?>
+                                                </a>
+                                            </span>
                                             |
                                             <span class="copy hide-if-no-js">
-                                                        <a href="#" class="wcs4-copy-lesson-button" id="wcs4-copy-button-<?php echo $lesson->getId(); ?>" data-lesson-id="<?php echo $lesson->getId(); ?>" data-day="<?php echo $lesson->getWeekday(); ?>">
-                                                            <?php echo __('Duplicate', 'wcs4'); ?>
-                                                        </a>
-                                                    </span>
+                                                <a href="#" class="wcs4-copy-lesson-button" id="wcs4-copy-button-<?php echo $item->getId(); ?>" data-lesson-id="<?php echo $item->getId(); ?>" data-day="<?php echo $item->getWeekday(); ?>">
+                                                    <?php echo __('Duplicate', 'wcs4'); ?>
+                                                </a>
+                                            </span>
                                             |
                                             <span class="delete hide-if-no-js">
-                                                        <a href="#delete" class="wcs4-delete-lesson-button" id=wcs4-delete-<?php echo $lesson->getId(); ?>" data-lesson-id="<?php echo $lesson->getId(); ?>" data-day="<?php echo $lesson->getWeekday(); ?>">
-                                                            <?php echo __('Delete', 'wcs4'); ?>
-                                                        </a>
-                                                    </span>
-                                        </div>
-                                    <?php } ?>
+                                                <a href="#delete" class="wcs4-delete-lesson-button" id=wcs4-delete-<?php echo $item->getId(); ?>" data-lesson-id="<?php echo $item->getId(); ?>" data-day="<?php echo $item->getWeekday(); ?>">
+                                                    <?php echo __('Delete', 'wcs4'); ?>
+                                                </a>
+                                            </span>
+                                        <?php } ?>
+                                        <em class="dashicons dashicons-plus-alt" title="<?php printf(__('Created at %s by %s', 'wcs4'), $item->getCreatedAt()->format('Y-m-d H:i:s'), $item->getCreatedBy()->display_name ?: 'nn'); ?>"></em>
+                                        <?php if ($item->getUpdatedAt()): ?>
+                                            <em class="dashicons dashicons-edit" title="<?php printf(__('Updated at %s by %s', 'wcs4'), $item->getUpdatedAt()->format('Y-m-d H:i:s'), $item->getUpdatedBy()->display_name ?: 'nn'); ?>"></em>
+                                        <?php endif; ?>
+                                    </div>
                                     <button type="button" class="toggle-row"><span class="screen-reader-text"><?php _e('Show more details'); ?></span></button>
                                 </td>
                                 <td class="subject column-subject" data-colname="<?php echo __('Subject', 'wcs4'); ?>">
-                                    <?php echo $lesson->getSubject()->getLinkName(); ?>
+                                    <?php echo $item->getSubject()->getLinkName(); ?>
                                 </td>
                                 <td class="teacher column-teacher" data-colname="<?php echo __('Teacher', 'wcs4'); ?>">
-                                    <?php echo $lesson->getTeacher()->getLinkName(); ?>
+                                    <?php echo $item->getTeacher()->getLinkName(); ?>
                                 </td>
                                 <td class="student column-student" data-colname="<?php echo __('Student', 'wcs4'); ?>">
-                                    <?php echo $lesson->getStudent()->getLinkName(); ?>
+                                    <?php echo $item->getStudent()->getLinkName(); ?>
                                 </td>
                                 <td class="classroom column-classroom" data-colname="<?php echo __('Classroom', 'wcs4'); ?>">
-                                    <?php echo $lesson->getClassroom()->getLinkName(); ?>
+                                    <?php echo $item->getClassroom()->getLinkName(); ?>
                                 </td>
                                 <td class="notes column-notes" data-colname="<?php echo __('Notes', 'wcs4'); ?>">
-                                    <?php echo $lesson->getNotes(); ?>
+                                    <?php echo $item->getNotes(); ?>
                                 </td>
                             </tr>
                         <?php endforeach; ?>
@@ -230,7 +234,7 @@ class Schedule_Management
         $table_meta = $wpdb->prefix . 'postmeta';
 
         $query = "SELECT
-                $table.id AS schedule_id,
+                $table.id AS schedule_id, $table.created_at, $table.updated_at, $table.created_by, $table.updated_by,
                 sub.ID AS subject_id, sub.post_title AS subject_name, sub.post_content AS subject_desc,
                 tea.ID AS teacher_id, tea.post_title AS teacher_name, tea.post_content AS teacher_desc,
                 stu.ID AS student_id, stu.post_title AS student_name, stu.post_content AS student_desc,
@@ -481,9 +485,11 @@ class Schedule_Management
                                 $row_id,
                             )));
 
+                        $data_schedule['updated_at'] = date('Y-m-d H:i:s');
+                        $data_schedule['updated_by'] = get_current_user_id();
                         $days_to_update[$old_weekday] = TRUE;
 
-                        $r = $wpdb->update($table, $data_schedule, array('id' => $row_id), array('%d', '%d', '%d', '%s', '%s', '%s', '%d', '%s',), array('%d'));
+                        $r = $wpdb->update($table, $data_schedule, array('id' => $row_id), array('%d', '%d', '%d', '%s', '%s', '%s', '%d', '%s', '%s', '%d'), array('%d'));
                         if (FALSE === $r) {
                             throw new RuntimeException($wpdb->last_error, 1);
                         }
@@ -515,7 +521,8 @@ class Schedule_Management
                         $response = __('Schedule entry updated successfully', 'wcs4');
                         $status = 'updated';
                     } else {
-                        $r = $wpdb->insert($table, $data_schedule, array('%d', '%d', '%d', '%s', '%s', '%s', '%d', '%s',));
+                        $data_schedule['created_by'] = get_current_user_id();
+                        $r = $wpdb->insert($table, $data_schedule, array('%d', '%d', '%d', '%s', '%s', '%s', '%d', '%s', '%d'));
                         if (FALSE === $r) {
                             throw new RuntimeException($wpdb->last_error, 6);
                         }

@@ -7,6 +7,7 @@ require_once WCS4_PLUGIN_DIR . '/includes/wcs_init.php';
 require_once WCS4_PLUGIN_DIR . '/includes/wcs_content.php';
 require_once WCS4_PLUGIN_DIR . '/includes/wcs_post_hook.php';
 require_once WCS4_PLUGIN_DIR . '/includes/wcs_db.php';
+require_once WCS4_PLUGIN_DIR . '/includes/db/loggable_trait.php';
 require_once WCS4_PLUGIN_DIR . '/includes/db/lesson.php';
 require_once WCS4_PLUGIN_DIR . '/includes/db/report.php';
 require_once WCS4_PLUGIN_DIR . '/includes/db/item.php';

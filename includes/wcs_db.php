@@ -80,7 +80,7 @@ class WCS4_DB
     /**
      * Creates the required WCS4 db tables.
      */
-    public static function create_db_tables(): void
+    private static function create_db_tables(): void
     {
         $table_schedule = self::get_schedule_table_name();
         $table_schedule_teacher = self::get_schedule_teacher_table_name();
@@ -99,6 +99,10 @@ class WCS4_DB
             `timezone` varchar(255) NOT NULL DEFAULT 'UTC',
             `visible` tinyint(1) NOT NULL DEFAULT '1',
             `notes` text,
+            `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            `updated_at` DATETIME DEFAULT NULL,
+            `created_by` INT NULL,
+            `updated_by` INT NULL;
             PRIMARY KEY (`id`)
         )";
         $sql_schedule_teacher = "CREATE TABLE `$table_schedule_teacher` (
@@ -118,6 +122,10 @@ class WCS4_DB
             `end_time` time NOT NULL,
             `timezone` varchar(255) NOT NULL DEFAULT 'UTC',
             `topic` text,
+            `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            `updated_at` DATETIME DEFAULT NULL,
+            `created_by` INT NULL,
+            `updated_by` INT NULL;
             PRIMARY KEY (`id`)
         )";
         $sql_report_teacher = "CREATE TABLE `$table_report_teacher` (

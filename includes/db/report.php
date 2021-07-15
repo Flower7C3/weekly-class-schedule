@@ -25,6 +25,8 @@ class WCS4_Report
     /** @var int */
     private $position = 0;
 
+    use wcs4_loggable;
+
     /**
      * WCS4_Lesson constructor.
      * @param array $dbrow
@@ -33,6 +35,10 @@ class WCS4_Report
     public function __construct($dbrow, $format)
     {
         $this->id = $dbrow->report_id;
+        $this->setCreatedAt($dbrow->created_at);
+        $this->setCreatedBy($dbrow->created_by);
+        $this->setUpdatedAt($dbrow->updated_at);
+        $this->setUpdatedBy($dbrow->updated_by);
 
         $this->date = $dbrow->date;
 
@@ -137,6 +143,16 @@ class WCS4_Report
     public function getDate()
     {
         return $this->date;
+    }
+
+    public function getStartDateTime(): DateTime
+    {
+        return new DateTime($this->getDate() . ' ' . $this->getStartTime());
+    }
+
+    public function getEndDateTime(): DateTime
+    {
+        return new DateTime($this->getDate() . ' ' . $this->getEndTime());
     }
 
     /**

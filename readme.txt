@@ -39,6 +39,9 @@ You will find a 'Schedule' menu item as well as 'Classes', 'Teachers', 'Students
 
 == Changelog ==
 
+= Version 4.24 =
+* save created at, updated at, created by and updated by
+
 = Version 4.23 =
 * report form layout updates
 * report export as CSV
