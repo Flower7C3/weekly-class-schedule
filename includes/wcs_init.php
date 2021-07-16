@@ -4,7 +4,7 @@
  * Create the subject, teacher, student, and classroom post types.
  */
 add_action('init', static function () {
-    $wcs4_settings = wcs4_load_settings();
+    $wcs4_settings = WCS_Settings::load_settings();
 
     # Register subject
     if (!empty($wcs4_settings['subject_taxonomy_slug'])) {
@@ -269,7 +269,7 @@ register_activation_hook(__FILE__, static function () {
 add_action('wcs4_activate_action', static function () {
     $version = get_option('wcs4_version');
     if (FALSE === $version) {
-        WCS4_DB::create_schema();
+        WCS_DB::create_schema();
     }
 });
 

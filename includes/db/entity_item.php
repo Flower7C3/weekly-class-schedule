@@ -1,6 +1,6 @@
 <?php
 
-class WCS4_Item
+class WCS_DB_Item
 {
     private $id;
     private $name;
@@ -38,7 +38,7 @@ class WCS4_Item
             }
             if (empty($this->link_name)) {
                 $a_target = '';
-                if ('yes' === wcs4_get_option('open_template_links_in_new_tab')) {
+                if ('yes' === WCS_Settings::get_option('open_template_links_in_new_tab')) {
                     $a_target = 'target=_blank';
 
                 }
@@ -46,7 +46,7 @@ class WCS4_Item
             }
             if (empty($this->link_short)) {
                 $a_target = '';
-                if ('yes' === wcs4_get_option('open_template_links_in_new_tab')) {
+                if ('yes' === WCS_Settings::get_option('open_template_links_in_new_tab')) {
                     $a_target = 'target=_blank';
 
                 }
@@ -84,7 +84,7 @@ class WCS4_Item
 
     /**
      * @param string $name
-     * @return WCS4_Item
+     * @return WCS_DB_Item
      */
     public function setName($name)
     {
@@ -102,7 +102,7 @@ class WCS4_Item
 
     /**
      * @param string $short
-     * @return WCS4_Item
+     * @return WCS_DB_Item
      */
     public function setShort($short)
     {
@@ -128,7 +128,7 @@ class WCS4_Item
 
     /**
      * @param string $description
-     * @return WCS4_Item
+     * @return WCS_DB_Item
      */
     public function setDescription($description)
     {
@@ -146,7 +146,7 @@ class WCS4_Item
 
     /**
      * @param string $link_name
-     * @return WCS4_Item
+     * @return WCS_DB_Item
      */
     public function setLinkName($link_name)
     {
@@ -164,9 +164,9 @@ class WCS4_Item
 
     /**
      * @param string $link_short
-     * @return WCS4_Item
+     * @return WCS_DB_Item
      */
-    public function setLinkShort($link_short): WCS4_Item
+    public function setLinkShort($link_short): WCS_DB_Item
     {
         $this->link_short = $link_short;
         return $this;
@@ -182,7 +182,7 @@ class WCS4_Item
 
     /**
      * @param string|null $info
-     * @return WCS4_Item
+     * @return WCS_DB_Item
      */
     public function setInfo($info)
     {

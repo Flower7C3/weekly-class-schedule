@@ -3,12 +3,12 @@
  * Schedule specific functions.
  */
 
-class Schedule_Management
+class WCS_Schedule
 {
     /**
      * Callback for generating the schedule management page.
      */
-    public static function management_page_callback(): void
+    public static function callback_of_management_page(): void
     {
         ?>
         <div class="wrap wcs-management-page-callback">
@@ -16,16 +16,21 @@ class Schedule_Management
             <a href="#" class="page-title-action" id="wcs4-show-form"><?php _ex('Add Lesson', 'button text', 'wcs4'); ?></a>
             <hr class="wp-header-end">
             <div id="ajax-response"></div>
-            <?php self::draw_search_form(); ?>
             <div id="col-container" class="wp-clearfix">
                 <?php if (current_user_can(WCS4_SCHEDULE_MANAGE_CAPABILITY)) { ?>
                     <div id="col-left">
                         <div class="col-wrap">
-                            <?php self::draw_manage_form(); ?>
+                            <?php echo self::get_html_of_manage_form(); ?>
                         </div>
                     </div><!-- /col-left -->
                 <?php } ?>
                 <div id="col-right">
+                    <div class="tablenav top">
+                        <div class="alignleft actions">
+                            <?php echo self::get_html_of_search_form(); ?>
+                        </div>
+                        <br class="clear">
+                    </div>
                     <div class="col-wrap" id="wcs4-schedule-events-list-wrapper">
                         <?php $days = wcs4_get_weekdays(); ?>
                         <?php foreach ($days as $key => $day): ?>
@@ -34,7 +39,7 @@ class Schedule_Management
                                     <?php echo $day; ?>
                                     <span class="spinner"></span>
                                 </h2>
-                                <?php echo self::get_admin_html_table(
+                                <?php echo self::get_html_of_admin_table(
                                     $_GET['classroom'] ? '#' . $_GET['classroom'] : null,
                                     $_GET['teacher'] ? '#' . $_GET['teacher'] : null,
                                     $_GET['student'] ? '#' . $_GET['student'] : null,
@@ -52,7 +57,7 @@ class Schedule_Management
     /**
      * Callback for generating the calendar page.
      */
-    public static function calendar_page_callback()
+    public static function callback_of_calendar_page()
     {
         # get user data
         $classroom = sanitize_text_field($_GET['classroom'] ? '#' . $_GET['classroom'] : null);
@@ -75,7 +80,7 @@ class Schedule_Management
         }
 
         # get lessons
-        $lessons = self::get_lessons($classroom, $teacher, $student, $subject, null, null, 1);
+        $lessons = self::get_items($classroom, $teacher, $student, $subject, null, null, 1);
 
         # build filename
         $filename_params = [];
@@ -109,7 +114,7 @@ class Schedule_Management
         echo 'BEGIN:VCALENDAR' . $endline;
         echo 'VERSION:2.0' . $endline;
         echo 'PRODID:-//hacksw/handcal//NONSGML v1.0//EN' . $endline . $endline;
-        /** @var WCS4_Lesson $lesson */
+        /** @var WCS_DB_Lesson_Item $lesson */
         foreach ($lessons as $lesson) {
             $description = '';
             $description .= __('Teacher', 'wcs4') . ': ';
@@ -130,65 +135,69 @@ class Schedule_Management
         exit;
     }
 
-    private static function draw_search_form(): void
+    private static function get_html_of_search_form(): string
     {
+        ob_start();
         ?>
-        <form id="wcs-lessons-filter" method="get" action="admin.php">
+        <form id="wcs-lessons-filter" class="results-filter" method="get" action="admin.php">
             <input id="search_wcs4_page" type="hidden" name="page" value="<?php echo $_GET['page']; ?>"/>
             <p class="search-box">
                 <label class="screen-reader-text" for="search_wcs4_lesson_subject_id"><?php _e('Subject', 'wcs4'); ?></label>
-                <?php echo wcs4_generate_admin_select_list('subject', 'search_wcs4_lesson_subject_id', 'subject', (int)$_GET['subject']); ?>
+                <?php echo WCS_Admin::generate_admin_select_list('subject', 'search_wcs4_lesson_subject_id', 'subject', (int)$_GET['subject']); ?>
                 <label class="screen-reader-text" for="search_wcs4_lesson_teacher_id"><?php _e('Teacher', 'wcs4'); ?></label>
-                <?php echo wcs4_generate_admin_select_list('teacher', 'search_wcs4_lesson_teacher_id', 'teacher', (int)$_GET['teacher']); ?>
+                <?php echo WCS_Admin::generate_admin_select_list('teacher', 'search_wcs4_lesson_teacher_id', 'teacher', (int)$_GET['teacher']); ?>
                 <label class="screen-reader-text" for="search_wcs4_lesson_student_id"><?php _e('Student', 'wcs4'); ?></label>
-                <?php echo wcs4_generate_admin_select_list('student', 'search_wcs4_lesson_student_id', 'student', (int)$_GET['student']); ?>
+                <?php echo WCS_Admin::generate_admin_select_list('student', 'search_wcs4_lesson_student_id', 'student', (int)$_GET['student']); ?>
                 <label class="screen-reader-text" for="search_wcs4_lesson_classroom_id"><?php _e('Classroom', 'wcs4'); ?></label>
-                <?php echo wcs4_generate_admin_select_list('classroom', 'search_wcs4_lesson_classroom_id', 'classroom', (int)$_GET['classroom']); ?>
+                <?php echo WCS_Admin::generate_admin_select_list('classroom', 'search_wcs4_lesson_classroom_id', 'classroom', (int)$_GET['classroom']); ?>
                 <input type="submit" id="wcs-search-submit" class="button" value="<?php _e('Search lessons', 'wcs4'); ?>">
             </p>
         </form>
         <?php
+        $result = ob_get_clean();
+        return trim($result);
     }
 
-    private static function draw_manage_form(): void
+    private static function get_html_of_manage_form(): string
     {
+        ob_start();
         ?>
         <div class="form-wrap" id="wcs4-management-form-wrapper">
             <h2 id="wcs4-management-form-title"><?php _ex('Add New Lesson', 'page title', 'wcs4'); ?></h2>
             <form id="wcs4-schedule-management-form" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
                 <fieldset class="form-field form-required form-field-subject_id-wrap">
                     <label for="wcs4_lesson_subject_id"><?php _e('Subject', 'wcs4'); ?></label>
-                    <?php echo wcs4_generate_admin_select_list('subject', 'wcs4_lesson_subject', 'wcs4_lesson_subject', null, true); ?>
+                    <?php echo WCS_Admin::generate_admin_select_list('subject', 'wcs4_lesson_subject', 'wcs4_lesson_subject', null, true); ?>
                 </fieldset>
                 <fieldset class="form-field form-required form-field-teacher_id-wrap">
                     <label for="wcs4_lesson_teacher_id"><?php _e('Teacher', 'wcs4'); ?></label>
-                    <?php echo wcs4_generate_admin_select_list('teacher', 'wcs4_lesson_teacher', 'wcs4_lesson_teacher', null, true, true); ?>
+                    <?php echo WCS_Admin::generate_admin_select_list('teacher', 'wcs4_lesson_teacher', 'wcs4_lesson_teacher', null, true, true); ?>
                 </fieldset>
                 <fieldset class="form-field form-required form-field-student_id-wrap">
                     <label for="wcs4_lesson_student_id"><?php _e('Student', 'wcs4'); ?></label>
-                    <?php echo wcs4_generate_admin_select_list('student', 'wcs4_lesson_student', 'wcs4_lesson_student', null, true, true); ?>
+                    <?php echo WCS_Admin::generate_admin_select_list('student', 'wcs4_lesson_student', 'wcs4_lesson_student', null, true, true); ?>
                 </fieldset>
                 <fieldset class="form-field form-required form-field-classroom_id-wrap">
                     <label for="wcs4_lesson_classroom_id"><?php _e('Classroom', 'wcs4'); ?></label>
-                    <?php echo wcs4_generate_admin_select_list('classroom', 'wcs4_lesson_classroom', 'wcs4_lesson_classroom', null, true); ?>
+                    <?php echo WCS_Admin::generate_admin_select_list('classroom', 'wcs4_lesson_classroom', 'wcs4_lesson_classroom', null, true); ?>
                 </fieldset>
                 <fieldset class="form-field row">
                     <div class="form-field form-required form-field-weekday-wrap col-6">
                         <label for="wcs4_lesson_weekday"><?php _e('Weekday', 'wcs4'); ?></label>
-                        <?php echo wcs4_generate_weekday_select_list('wcs4_lesson_weekday', ['required' => true]); ?>
+                        <?php echo WCS_Admin::generate_weekday_select_list('wcs4_lesson_weekday', ['required' => true]); ?>
                     </div>
                     <div class="form-field form-time-field form-required form-field-start_time-wrap col-3">
                         <label for="wcs4_lesson_start_time"><?php _e('Start Time', 'wcs4'); ?></label>
-                        <?php echo wcs4_generate_time_select_list('wcs4_lesson_start_time', 'wcs4_lesson_start_time', ['default' => '09:00', 'required' => true, 'step' => 300]); ?>
+                        <?php echo WCS_Admin::generate_time_select_list('wcs4_lesson_start_time', 'wcs4_lesson_start_time', ['default' => '09:00', 'required' => true, 'step' => 300]); ?>
                     </div>
                     <div class="form-field form-time-field form-required form-field-end_time-wrap col-3">
                         <label for="wcs4_lesson_end_time"><?php _e('End Time', 'wcs4'); ?></label>
-                        <?php echo wcs4_generate_time_select_list('wcs4_lesson_end_time', 'wcs4_lesson_end_time', ['default' => '10:00', 'required' => true, 'step' => 300]); ?>
+                        <?php echo WCS_Admin::generate_time_select_list('wcs4_lesson_end_time', 'wcs4_lesson_end_time', ['default' => '10:00', 'required' => true, 'step' => 300]); ?>
                     </div>
                 </fieldset>
                 <fieldset class="form-field form-required form-field-visibility-wrap">
                     <label for="wcs4_lesson_visibility"><?php _e('Visibility', 'wcs4'); ?></label>
-                    <?php echo wcs4_generate_visibility_select_list('wcs4_lesson_visibility', 'visible', true); ?>
+                    <?php echo WCS_Admin::generate_visibility_select_list('wcs4_lesson_visibility', 'visible', true); ?>
                 </fieldset>
                 <fieldset class="form-field form-required form-field-notes-wrap">
                     <label for="wcs4_lesson_notes"><?php _e('Notes', 'wcs4'); ?></label>
@@ -203,12 +212,14 @@ class Schedule_Management
             </form>
         </div> <!-- /#schedule-management-form-wrapper -->
         <?php
+        $result = ob_get_clean();
+        return trim($result);
     }
 
-    public static function get_admin_html_table($classroom = null, $teacher = 'all', $student = 'all', $subject = 'all', $weekday = null): string
+    public static function get_html_of_admin_table($classroom = null, $teacher = 'all', $student = 'all', $subject = 'all', $weekday = null): string
     {
         ob_start();
-        $lessons = self::get_lessons($classroom, $teacher, $student, $subject, $weekday, null, null);
+        $lessons = self::get_items($classroom, $teacher, $student, $subject, $weekday, null, null);
         ?>
         <div class="wcs4-day-content-wrapper" data-hash="<?php echo md5(serialize($lessons)) ?>">
             <?php if ($lessons): ?>
@@ -241,7 +252,7 @@ class Schedule_Management
                     </thead>
                     <tbody id="the-list-<?php echo $weekday; ?>">
                         <?php
-                        /** @var WCS4_Lesson $item */
+                        /** @var WCS_DB_Lesson_Item $item */
                         foreach ($lessons as $item): ?>
                             <tr id="lesson-<?php echo $item->getId(); ?>" class="<?php if ($item->isVisible()) { ?>active<?php } else { ?>inactive<?php } ?>">
                                 <th scope="row" class="check-column">
@@ -255,14 +266,14 @@ class Schedule_Management
                                                 <a href="#" class="wcs4-edit-lesson-button" id="wcs4-edit-button-<?php echo $item->getId(); ?>" data-lesson-id="<?php echo $item->getId(); ?>" data-day="<?php echo $item->getWeekday(); ?>">
                                                     <?php echo __('Edit', 'wcs4'); ?>
                                                 </a>
+                                                |
                                             </span>
-                                            |
                                             <span class="copy hide-if-no-js">
                                                 <a href="#" class="wcs4-copy-lesson-button" id="wcs4-copy-button-<?php echo $item->getId(); ?>" data-lesson-id="<?php echo $item->getId(); ?>" data-day="<?php echo $item->getWeekday(); ?>">
                                                     <?php echo __('Duplicate', 'wcs4'); ?>
                                                 </a>
+                                                |
                                             </span>
-                                            |
                                             <span class="delete hide-if-no-js">
                                                 <a href="#delete" class="wcs4-delete-lesson-button" id=wcs4-delete-<?php echo $item->getId(); ?>" data-lesson-id="<?php echo $item->getId(); ?>" data-day="<?php echo $item->getWeekday(); ?>">
                                                     <?php echo __('Delete', 'wcs4'); ?>
@@ -289,15 +300,15 @@ class Schedule_Management
                                 </td>
                                 <td data-colname="<?php echo __('Updated at', 'wcs4'); ?>">
                                     <?php if ($item->getUpdatedAt()): ?>
-                                        <small title="<?php printf(__('Updated at %s by %s', 'wcs4'), $item->getUpdatedAt()->format('Y-m-d H:i:s'), $item->getUpdatedBy()->display_name ?: 'nn'); ?>">
+                                        <span title="<?php printf(__('Updated at %s by %s', 'wcs4'), $item->getUpdatedAt()->format('Y-m-d H:i:s'), $item->getUpdatedBy()->display_name ?: 'nn'); ?>">
                                             <?php echo $item->getUpdatedAt()->format('Y-m-d H:i:s'); ?>
                                             <?php echo $item->getUpdatedBy()->display_name; ?>
-                                        </small>
+                                        </span>
                                     <?php else: ?>
-                                        <small title="<?php printf(__('Created at %s by %s', 'wcs4'), $item->getCreatedAt()->format('Y-m-d H:i:s'), $item->getCreatedBy()->display_name ?: 'nn'); ?>">
+                                        <span title="<?php printf(__('Created at %s by %s', 'wcs4'), $item->getCreatedAt()->format('Y-m-d H:i:s'), $item->getCreatedBy()->display_name ?: 'nn'); ?>">
                                             <?php echo $item->getCreatedAt()->format('Y-m-d H:i:s'); ?>
                                             <?php echo $item->getCreatedBy()->display_name; ?>
-                                        </small>
+                                        </span>
                                     <?php endif; ?>
                                 </td>
                             </tr>
@@ -316,13 +327,13 @@ class Schedule_Management
     /**
      * Gets all the visible subjects from the database including teachers, students and classrooms.
      */
-    public static function get_lessons($classroom, $teacher = 'all', $student = 'all', $subject = 'all', int $weekday = NULL, int $time = NULL, ?int $visible = 1, string $limit = NULL, string $page = NULL): array
+    public static function get_items($classroom, $teacher = 'all', $student = 'all', $subject = 'all', int $weekday = NULL, int $time = NULL, ?int $visible = 1, string $limit = NULL, string $paged = NULL): array
     {
         global $wpdb;
 
-        $table = WCS4_DB::get_schedule_table_name();
-        $table_teacher = WCS4_DB::get_schedule_teacher_table_name();
-        $table_student = WCS4_DB::get_schedule_student_table_name();
+        $table = WCS_DB::get_schedule_table_name();
+        $table_teacher = WCS_DB::get_schedule_teacher_table_name();
+        $table_student = WCS_DB::get_schedule_student_table_name();
         $table_posts = $wpdb->prefix . 'posts';
         $table_meta = $wpdb->prefix . 'postmeta';
 
@@ -392,13 +403,13 @@ class Schedule_Management
         if (!empty($where)) {
             $query .= ' WHERE ' . implode(' AND ', $where);
         }
-        $query .= ' ORDER BY start_time ';
+        $query .= ' ORDER BY weekday, start_time ';
         if (NULL !== $limit) {
             $query .= ' LIMIT %d';
             $query_arr[] = $limit;
-            if (NULL !== $page) {
+            if (NULL !== $paged) {
                 $query .= ' OFFSET %d';
-                $query_arr[] = $limit * ($page - 1);
+                $query_arr[] = $limit * ($paged - 1);
             }
         }
         $query = $wpdb->prepare($query, $query_arr);
@@ -412,12 +423,12 @@ class Schedule_Management
         $lessons = array();
         if ($results) {
             foreach ($results as $row) {
-                $lesson = new WCS4_Lesson($row, $format);
+                $lesson = new WCS_DB_Lesson_Item($row, $format);
                 $lesson = apply_filters('wcs4_format_class', $lesson);
                 if (!isset($lessons[$lesson->getId()])) {
                     $lessons[$lesson->getId()] = $lesson;
                 } else {
-                    /** @var WCS4_Lesson $_lesson */
+                    /** @var WCS_DB_Lesson_Item $_lesson */
                     $_lesson = $lessons[$lesson->getId()];
                     $_lesson->addTeachers($lesson->getTeachers());
                     $_lesson->addStudents($lesson->getStudents());
@@ -427,7 +438,7 @@ class Schedule_Management
         return $lessons;
     }
 
-    public static function save_schedule($force_insert = false): void
+    public static function save_item($force_insert = false): void
     {
         $response = __('You are no allowed to run this action', 'wcs4');
         $errors = [];
@@ -442,9 +453,9 @@ class Schedule_Management
 
             $update_request = FALSE;
             $row_id = NULL;
-            $table = WCS4_DB::get_schedule_table_name();
-            $table_teacher = WCS4_DB::get_schedule_teacher_table_name();
-            $table_student = WCS4_DB::get_schedule_student_table_name();
+            $table = WCS_DB::get_schedule_table_name();
+            $table_teacher = WCS_DB::get_schedule_teacher_table_name();
+            $table_student = WCS_DB::get_schedule_student_table_name();
 
             $required = array(
                 'subject_id' => __('Subject', 'wcs4'),
@@ -490,7 +501,7 @@ class Schedule_Management
             $start_dt = new DateTime(WCS4_BASE_DATE . ' ' . $start_time, $tz);
             $end_dt = new DateTime(WCS4_BASE_DATE . ' ' . $end_time, $tz);
 
-            $wcs4_settings = wcs4_load_settings();
+            $wcs4_settings = WCS_Settings::load_settings();
 
             if ($wcs4_settings['classroom_collision'] === 'yes') {
                 # Validate classroom collision (if applicable)
@@ -657,50 +668,7 @@ class Schedule_Management
         die();
     }
 
-    public static function delete_schedule(): void
-    {
-        $errors = [];
-        $response = __('You are no allowed to run this action', 'wcs4');
-        if (current_user_can(WCS4_SCHEDULE_MANAGE_CAPABILITY)) {
-
-            wcs4_verify_nonce();
-
-            global $wpdb;
-
-            $table = WCS4_DB::get_schedule_table_name();
-            $table_teacher = WCS4_DB::get_schedule_teacher_table_name();
-            $table_student = WCS4_DB::get_schedule_student_table_name();
-
-            $required = array(
-                'row_id' => __('Row ID'),
-            );
-
-            $errors = wcs4_verify_required_fields($required);
-            if (empty($errors)) {
-
-                $row_id = sanitize_text_field($_POST['row_id']);
-
-                $result = $wpdb->delete($table, array('id' => $row_id), array('%d'));
-                $result_teacher = $wpdb->delete($table_teacher, array('id' => $row_id), array('%d'));
-                $result_student = $wpdb->delete($table_student, array('id' => $row_id), array('%d'));
-
-                if (0 === $result || 0 === $result_teacher || 0 === $result_student) {
-                    $response = __('Failed to delete entry', 'wcs4');
-                    $errors = true;
-                } else {
-                    $response = __('Schedule entry deleted successfully', 'wcs4');
-                }
-            }
-        }
-        wcs4_json_response([
-            'response' => $response,
-            'errors' => $errors,
-            'result' => $errors ? 'error' : 'updated',
-        ]);
-        die();
-    }
-
-    public static function get_lesson(): void
+    public static function get_item(): void
     {
         $errors = [];
         $response = __('You are no allowed to run this action', 'wcs4');
@@ -710,9 +678,9 @@ class Schedule_Management
             global $wpdb;
             $response = new stdClass();
 
-            $table = WCS4_DB::get_schedule_table_name();
-            $table_teacher = WCS4_DB::get_schedule_teacher_table_name();
-            $table_student = WCS4_DB::get_schedule_student_table_name();
+            $table = WCS_DB::get_schedule_table_name();
+            $table_teacher = WCS_DB::get_schedule_teacher_table_name();
+            $table_student = WCS_DB::get_schedule_student_table_name();
 
             $required = array(
                 'row_id' => __('Row ID'),
@@ -744,7 +712,50 @@ class Schedule_Management
         die();
     }
 
-    public static function get_schedules_html(): void
+    public static function delete_item(): void
+    {
+        $errors = [];
+        $response = __('You are no allowed to run this action', 'wcs4');
+        if (current_user_can(WCS4_SCHEDULE_MANAGE_CAPABILITY)) {
+
+            wcs4_verify_nonce();
+
+            global $wpdb;
+
+            $table = WCS_DB::get_schedule_table_name();
+            $table_teacher = WCS_DB::get_schedule_teacher_table_name();
+            $table_student = WCS_DB::get_schedule_student_table_name();
+
+            $required = array(
+                'row_id' => __('Row ID'),
+            );
+
+            $errors = wcs4_verify_required_fields($required);
+            if (empty($errors)) {
+
+                $row_id = sanitize_text_field($_POST['row_id']);
+
+                $result = $wpdb->delete($table, array('id' => $row_id), array('%d'));
+                $result_teacher = $wpdb->delete($table_teacher, array('id' => $row_id), array('%d'));
+                $result_student = $wpdb->delete($table_student, array('id' => $row_id), array('%d'));
+
+                if (0 === $result || 0 === $result_teacher || 0 === $result_student) {
+                    $response = __('Failed to delete entry', 'wcs4');
+                    $errors = true;
+                } else {
+                    $response = __('Schedule entry deleted successfully', 'wcs4');
+                }
+            }
+        }
+        wcs4_json_response([
+            'response' => $response,
+            'errors' => $errors,
+            'result' => $errors ? 'error' : 'updated',
+        ]);
+        die();
+    }
+
+    public static function get_ajax_html_with_schedules(): void
     {
         $html = __('You are no allowed to run this action', 'wcs4');
         if (current_user_can(WCS4_SCHEDULE_MANAGE_CAPABILITY)) {
@@ -761,11 +772,143 @@ class Schedule_Management
                 $student = sanitize_text_field($_POST['student']);
                 $subject = sanitize_text_field($_POST['subject']);
                 $weekday = sanitize_text_field($_POST['weekday']);
-                $html = self::get_admin_html_table($classroom, $teacher, $student, $subject, $weekday);
+                $html = self::get_html_of_admin_table($classroom, $teacher, $student, $subject, $weekday);
             }
         }
         wcs4_json_response(['html' => $html,]);
         die();
+    }
+
+    /**
+     * Renders list layout
+     *
+     * @param array $lessons : lessons array as returned by wcs4_get_lessons().
+     * @param array $weekdays : indexed weekday array.
+     * @param string $schedule_key
+     * @param string $template_list
+     * @return string
+     */
+    public static function get_html_of_schedule_list(array $lessons, array $weekdays, string $schedule_key, string $template_list): string
+    {
+        if (empty($lessons)) {
+            return '<div class="wcs4-no-lessons-message">' . __('No lessons scheduled', 'wcs4') . '</div>';
+        }
+
+        $weekdaysWithLessons = [];
+        /** @var WCS_DB_Lesson_Item $lesson */
+        foreach ($lessons as $lesson) {
+            $weekdaysWithLessons[$lesson->getWeekday()][] = $lesson;
+        }
+
+        $output = '<div class="wcs4-schedule-list-layout">';
+        # Classes are grouped by indexed weekdays.
+        foreach ($weekdays as $dayIndex => $dayName) {
+            $lessons = $weekdaysWithLessons[$dayIndex];
+            if (!empty($lessons)) {
+                $output .= '<h3>' . $dayName . '</h3>';
+                $output .= '<ul class="wcs4-grid-weekday-list wcs4-grid-weekday-list-' . $dayIndex . '">';
+                /** @var WCS_DB_Lesson_Item $lesson */
+                foreach ($lessons as $lesson) {
+                    $output .= '<li class="wcs4-list-item-lesson">';
+                    $output .= WCS_Output::process_template($lesson, $template_list);
+                    $output .= '</li>';
+                }
+                $output .= '</ul>';
+            }
+        }
+        $output .= '</div>';
+        return $output;
+    }
+
+    /**
+     * Renders table layout
+     *
+     * @param array $lessons : lessons array as returned by wcs4_get_lessons().
+     * @param array $weekdays : indexed weekday array.
+     * @param string $schedule_key
+     * @param string $template_table_short
+     * @param string $template_table_details
+     * @return string
+     */
+    public static function get_html_of_schedule_table(array $lessons, array $weekdays, string $schedule_key, string $template_table_short, string $template_table_details): string
+    {
+        if (empty($lessons)) {
+            return '<div class="wcs4-no-lessons-message">' . __('No lessons scheduled', 'wcs4') . '</div>';
+        }
+
+        $weekMinutes = [];
+        $hours = [];
+        /** @var WCS_DB_Lesson_Item $lesson */
+        foreach ($lessons as $lesson) {
+            $hourVal = $lesson->getStartTime();
+            $hourKey = str_replace(':', '-', $hourVal);
+            $hours[$hourKey] = $hourVal;
+            $hourVal = $lesson->getEndTime();
+            $hourKey = str_replace(':', '-', $hourVal);
+            $hours[$hourKey] = $hourVal;
+            $weekday = $lesson->getWeekday();
+            foreach ($lesson->getAllMinutes() as $timeHM) {
+                if (!isset($weekMinutes[$weekday][$timeHM])) {
+                    $weekMinutes[$weekday][$timeHM] = 1;
+                } else {
+                    if (!$lesson->getPosition()) {
+                        $lesson->setPosition($weekMinutes[$weekday][$timeHM]);
+                    }
+                    $weekMinutes[$weekday][$timeHM]++;
+                }
+            }
+        }
+        echo '<style type="text/css">';
+        $endCol = 2;
+        foreach ($weekdays as $dayName => $dayIndex) {
+            $weekdayColumns = empty($weekMinutes[$dayIndex]) ? 1 : max($weekMinutes[$dayIndex]);
+            $startCol = $endCol;
+            $endCol = $startCol + $weekdayColumns;
+            ?>
+            #<?php echo $schedule_key; ?> .wcs4-grid-weekday-<?php echo $dayIndex ?>{
+            grid-column: <?php echo $startCol; ?> / <?php echo $endCol ?>;
+            }
+            <?php for ($position = 0; $position < $weekdayColumns; $position++) { ?>
+                #<?php echo $schedule_key; ?> .wcs4-grid-weekday-<?php echo $dayIndex ?>-<?php echo $position; ?>{
+                grid-column: <?php echo $startCol + $position; ?>;
+                }
+            <?php } ?>
+            <?php
+        }
+        ksort($hours);
+        foreach (array_keys($hours) as $index => $hourKey) {
+            ?>
+            #<?php echo $schedule_key; ?> .wcs4-grid-hour-<?php echo $hourKey ?> {
+            grid-row: <?php echo($index + 2) ?>;
+            }
+            #<?php echo $schedule_key; ?> .wcs4-lesson-hour-from-<?php echo $hourKey ?> {
+            grid-row-start: <?php echo($index + 2) ?>;
+            }
+            #<?php echo $schedule_key; ?> .wcs4-lesson-hour-to-<?php echo $hourKey ?> {
+            grid-row-end: <?php echo($index + 2) ?>;
+            }
+        <?php }
+        echo '</style>';
+        $output = '<div class="wcs4-schedule-grid">';
+        foreach ($weekdays as $dayName => $dayIndex) {
+            $output .= '<div class="wcs4-grid-weekday wcs4-grid-weekday-' . $dayIndex . '">' . $dayName . '</div>';
+        }
+        foreach ($hours as $hourKey => $hourValue) {
+            $output .= '<div class="wcs4-grid-hour wcs4-grid-hour-' . $hourKey . '">' . $hourValue . '</div>';
+        }
+        /** @var WCS_DB_Lesson_Item $lesson */
+        foreach ($lessons as $lesson) {
+            $style = null;
+            if (null !== $lesson->getColor()) {
+                $style = ' style="background-color: #' . $lesson->getColor() . '; "';
+            }
+            $output .= '<div class="wcs4-grid-lesson wcs4-grid-weekday-' . $lesson->getWeekday() . '-' . $lesson->getPosition() . ' wcs4-lesson-hour-from-' . str_replace(':', '-', $lesson->getStartTime()) . ' wcs4-lesson-hour-to-' . str_replace(':', '-', $lesson->getEndTime()) . '" ' . $style . '>';
+            $output .= '<div class="wcs4-lesson-name">' . WCS_Output::process_template($lesson, $template_table_short) . '</div>';
+            $output .= '<div class="wcs4-details-box-container">' . WCS_Output::process_template($lesson, $template_table_details) . '</div>';
+            $output .= '</div>';
+        }
+        $output .= '</div>';
+        return $output;
     }
 
 }
@@ -774,27 +917,19 @@ class Schedule_Management
 /**
  * Add or update schedule entry handler.
  */
-add_action('wp_ajax_add_or_update_schedule_entry', static function () {
-    Schedule_Management::save_schedule(false);
-});
+add_action('wp_ajax_add_or_update_schedule_entry', [WCS_Schedule::class, 'save_item']);
 
 /**
  * Schedule entry delete handler.
  */
-add_action('wp_ajax_delete_schedule_entry', static function () {
-    Schedule_Management::delete_schedule();
-});
+add_action('wp_ajax_delete_schedule_entry', [WCS_Schedule::class, 'delete_item']);
 
 /**
  * Schedule entry edit handler.
  */
-add_action('wp_ajax_get_lesson', static function () {
-    Schedule_Management::get_lesson();
-});
+add_action('wp_ajax_get_lesson', [WCS_Schedule::class, 'get_item']);
 
 /**
  * Returns the schedule for a specific day.
  */
-add_action('wp_ajax_get_day_schedules_html', static function () {
-    Schedule_Management::get_schedules_html();
-});
+add_action('wp_ajax_get_day_schedules_html', [WCS_Schedule::class, 'get_ajax_html_with_schedules']);

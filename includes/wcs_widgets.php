@@ -51,7 +51,7 @@ class WCS4_TodayClassesWidget extends WP_Widget
         $no_entries_msg = ($instance['no_entries_text'] !== '') ? $instance['no_entries_text'] : _x('No lessons today', 'widget settings', 'wcs4');
         $template = $instance['template'];
 
-        $lessons = Schedule_Management::get_lessons($classroom_ids, 'all', 'all', 'all', $today, $time, 1, $limit);
+        $lessons = WCS_Schedule::get_items($classroom_ids, 'all', 'all', 'all', $today, $time, 1, $limit);
 
         if (empty($lessons)) {
             $output .= '<div class="wcs4-no-lessons">' . $no_entries_msg . '</div>';
@@ -61,7 +61,7 @@ class WCS4_TodayClassesWidget extends WP_Widget
 
         $output .= '<ul class="wcs4-today-lessons-widget-list">';
         foreach ($lessons as $lesson) {
-            $output .= '<li>' . wcs4_process_template($lesson, $template) . '</li>';
+            $output .= '<li>' . WCS_Output::process_template($lesson, $template) . '</li>';
         }
 
         $output .= '</ul>';
@@ -99,7 +99,7 @@ class WCS4_TodayClassesWidget extends WP_Widget
 
         <p>
             <label for="<?php echo $this->get_field_id('classroom'); ?>"><?php _ex('Classrooms to display', 'widget settings', 'wcs4'); ?>:</label>
-            <?php echo wcs4_generate_admin_select_list('classroom', $this->get_field_id('classroom'), $this->get_field_name('classroom') . '[]', $classroom, null, true, 'widefat'); ?>
+            <?php echo WCS_Admin::generate_admin_select_list('classroom', $this->get_field_id('classroom'), $this->get_field_name('classroom') . '[]', $classroom, null, true, 'widefat'); ?>
         </p>
 
         <p>

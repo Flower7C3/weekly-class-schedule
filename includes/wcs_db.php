@@ -4,7 +4,7 @@
  * WCS4 Database operations
  */
 
-class WCS4_DB
+class WCS_DB
 {
     /**
      * Since all three custom post types are in the same table, we can assume the the ID will be unique so there's no need to check for post type.
@@ -231,6 +231,15 @@ class WCS4_DB
     }
 
     /**
+     * Reset settings
+     */
+    public static function reset_settings(): void
+    {
+        delete_option('wcs4_settings');
+        do_action('wcs4_default_settings');
+    }
+
+    /**
      * Deletes all the data after wcs4
      */
     public static function delete_everything(): void
@@ -289,3 +298,124 @@ class WCS4_DB
         $wpdb->query('TRUNCATE ' . self::get_report_table_name());
     }
 }
+
+/**
+ * Handle install schema
+ */
+add_action('wp_ajax_create_schema', static function () {
+    $response = __('You are no allowed to run this action', 'wcs4');
+    $status = 'error';
+    if (current_user_can(WCS4_ADVANCED_OPTIONS_CAPABILITY)) {
+        wcs4_verify_nonce();
+        WCS_DB::create_schema();
+        $response = __('Weekly Class Schedule installed successfully.', 'wcs4');
+        $status = 'updated';
+    }
+    wcs4_json_response([
+        'response' => $response,
+        'result' => $status,
+    ]);
+    die();
+});
+
+/**
+ * Handle load example data
+ */
+add_action('wp_ajax_load_example_data', static function () {
+    $response = __('You are no allowed to run this action', 'wcs4');
+    $status = 'error';
+    if (current_user_can(WCS4_ADVANCED_OPTIONS_CAPABILITY)) {
+        wcs4_verify_nonce();
+        WCS_DB::load_example_data();
+        $response = __('Weekly Class Schedule example data loaded successfully.', 'wcs4');
+        $status = 'updated';
+    }
+    wcs4_json_response([
+        'response' => $response,
+        'result' => $status,
+    ]);
+    die();
+});
+
+/**
+ * Handle delete all
+ */
+add_action('wp_ajax_delete_everything', static function () {
+    $response = __('You are no allowed to run this action', 'wcs4');
+    $status = 'error';
+    if (current_user_can(WCS4_ADVANCED_OPTIONS_CAPABILITY)) {
+        wcs4_verify_nonce();
+        WCS_DB::delete_everything();
+        $response = __('Weekly Class Schedule deleted successfully.', 'wcs4');
+        $status = 'updated';
+    }
+    wcs4_json_response([
+        'response' => $response,
+        'result' => $status,
+    ]);
+    die();
+});
+
+/**
+ * Handle reset settings
+ */
+add_action('wp_ajax_reset_settings', static function () {
+    $response = __('You are no allowed to run this action', 'wcs4');
+    $status = 'error';
+    if (current_user_can(WCS4_ADVANCED_OPTIONS_CAPABILITY)) {
+        wcs4_verify_nonce();
+        WCS_DB::reset_settings();
+        $response = __('Weekly Class Schedule settings resetted.', 'wcs4');
+        $status = 'updated';
+    }
+    wcs4_json_response([
+        'response' => $response,
+        'result' => $status,
+    ]);
+    die();
+});
+
+/**
+ * Handle clear schedule
+ */
+add_action('wp_ajax_clear_schedule', static function () {
+    $response = __('You are no allowed to run this action', 'wcs4');
+    $status = 'error';
+    if (current_user_can(WCS4_ADVANCED_OPTIONS_CAPABILITY)) {
+        wcs4_verify_nonce();
+        WCS_DB::delete_schedules();
+        $response = __('Weekly Class Schedule truncated successfully.', 'wcs4');
+        $status = 'cleared';
+    }
+    wcs4_json_response([
+        'response' => $response,
+        'result' => $status,
+    ]);
+    die();
+});
+
+/**
+ * Handle clear report
+ */
+add_action('wp_ajax_clear_report', static function () {
+    $response = __('You are no allowed to run this action', 'wcs4');
+    $status = 'error';
+    if (current_user_can(WCS4_ADVANCED_OPTIONS_CAPABILITY)) {
+        wcs4_verify_nonce();
+        WCS_DB::delete_reports();
+        $response = __('Weekly Class Report truncated successfully.', 'wcs4');
+        $status = 'cleared';
+    }
+    wcs4_json_response([
+        'response' => $response,
+        'result' => $status,
+    ]);
+    die();
+});
+
+
+/**
+ * Delete schedule entries when subject, teacher, student, or classroom gets deleted.
+ * @param $post_id
+ */
+add_action('delete_post', ['WCS_DB', 'delete_item_when_delete_post'], 10);

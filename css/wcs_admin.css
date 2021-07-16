@@ -43,6 +43,7 @@
 tr {
     transition: all 0.2s ease-out 0s;
 }
+
 tr.is-active {
     background-color: silver !important;
     transition: all 0.2s ease-in 0s;
@@ -137,11 +138,13 @@ tr.is-active {
     vertical-align: top;
 }
 
+.form-table td[data-type="wcs4_taxonomy_slug"] input,
 .form-table td[data-type="wcs4_post_slug"] input,
 .form-table td[data-type="wcs4_archive_slug"] input {
     width: 100%;
 }
 
+.form-table td[data-type="wcs4_taxonomy_slug"] input,
 .form-table td[data-type="wcs4_post_slug"] input {
     padding-left: 10px;
     padding-right: 10px;
@@ -186,9 +189,16 @@ tr.is-active {
     font-style: italic;
 }
 
-#wcs-lessons-filter select,
-#wcs-reports-filter select {
-    max-width: 200px;
+.tablenav {
+    height: inherit;
+}
+
+.results-filter input[type=date] {
+    width: 140px;
+}
+
+.results-filter select {
+    max-width: 160px !important;
 }
 
 form.readonly input, form[readonly] input, input.readonly, input[readonly],

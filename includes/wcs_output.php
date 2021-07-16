@@ -1,268 +1,99 @@
 <?php
-opcache_reset();
+
 /**
  * Shortcodes for WCS4 (standard)
  */
 
-/**
- * Renders table layout
- *
- * @param array $lessons : lessons array as returned by wcs4_get_lessons().
- * @param array $weekdays : indexed weekday array.
- * @param string $schedule_key
- * @param string $template_table_short
- * @param string $template_table_details
- * @return string
- */
-function wcs4_render_table_schedule($lessons, $weekdays, $schedule_key, $template_table_short, $template_table_details)
-{
-    if (empty($lessons)) {
-        return '<div class="wcs4-no-lessons-message">' . __('No lessons scheduled', 'wcs4') . '</div>';
-    }
+class WCS_Output {
 
-    $weekMinutes = [];
-    $hours = [];
-    /** @var WCS4_Lesson $lesson */
-    foreach ($lessons as $lesson) {
-        $hourVal = $lesson->getStartTime();
-        $hourKey = str_replace(':', '-', $hourVal);
-        $hours[$hourKey] = $hourVal;
-        $hourVal = $lesson->getEndTime();
-        $hourKey = str_replace(':', '-', $hourVal);
-        $hours[$hourKey] = $hourVal;
-        $weekday = $lesson->getWeekday();
-        foreach ($lesson->getAllMinutes() as $timeHM) {
-            if (!isset($weekMinutes[$weekday][$timeHM])) {
-                $weekMinutes[$weekday][$timeHM] = 1;
-            } else {
-                if (!$lesson->getPosition()) {
-                    $lesson->setPosition($weekMinutes[$weekday][$timeHM]);
-                }
-                $weekMinutes[$weekday][$timeHM]++;
-            }
+    /**
+     * Processes a template (replace placeholder, apply plugins).
+     *
+     * @param WCS_DB_Lesson_Item|WCS_DB_Report_Item $item : subject object with all required data.
+     * @param string $template : user defined template from settings.
+     * @return string|string[]
+     */
+    public static function process_template($item, string $template)
+    {
+        if ($item instanceof WCS_DB_Lesson_Item || $item instanceof WCS_DB_Report_Item) {
+            $template = str_replace(
+                ['{subject}', '{subject info}', '{sub}', '{subject link}', '{sub link}'],
+                [$item->getSubject()->getName(), $item->getSubject()->getInfo(), $item->getSubject()->getShort(), $item->getSubject()->getLinkName(), $item->getSubject()->getLinkShort()]
+                , $template);
         }
-    }
-    echo '<style type="text/css">';
-    $endCol = 2;
-    foreach ($weekdays as $dayName => $dayIndex) {
-        $weekdayColumns = empty($weekMinutes[$dayIndex]) ? 1 : max($weekMinutes[$dayIndex]);
-        $startCol = $endCol;
-        $endCol = $startCol + $weekdayColumns;
-        ?>
-        #<?php echo $schedule_key; ?> .wcs4-grid-weekday-<?php echo $dayIndex ?>{
-        grid-column: <?php echo $startCol; ?> / <?php echo $endCol ?>;
+        if ($item instanceof WCS_DB_Lesson_Item || $item instanceof WCS_DB_Report_Item) {
+            $template = str_replace(
+                ['{teacher}', '{teacher info}', '{tea}', '{teacher link}', '{tea link}'],
+                [$item->getTeacher()->getName(), $item->getTeacher()->getInfo(), $item->getTeacher()->getShort(), $item->getTeacher()->getLinkName(), $item->getTeacher()->getLinkShort()]
+                , $template);
         }
-        <?php for ($position = 0; $position < $weekdayColumns; $position++) { ?>
-            #<?php echo $schedule_key; ?> .wcs4-grid-weekday-<?php echo $dayIndex ?>-<?php echo $position; ?>{
-            grid-column: <?php echo $startCol + $position; ?>;
-            }
-        <?php } ?>
-        <?php
-    }
-    ksort($hours);
-    foreach (array_keys($hours) as $index => $hourKey) {
-        ?>
-        #<?php echo $schedule_key; ?> .wcs4-grid-hour-<?php echo $hourKey ?> {
-        grid-row: <?php echo($index + 2) ?>;
+        if ($item instanceof WCS_DB_Lesson_Item || $item instanceof WCS_DB_Report_Item) {
+            $template = str_replace(['{student}', '{student info}', '{stu}', '{student link}', '{stu link}'],
+                [$item->getStudent()->getName(), $item->getStudent()->getInfo(), $item->getStudent()->getShort(), $item->getStudent()->getLinkName(), $item->getStudent()->getLinkShort()]
+                , $template);
         }
-        #<?php echo $schedule_key; ?> .wcs4-lesson-hour-from-<?php echo $hourKey ?> {
-        grid-row-start: <?php echo($index + 2) ?>;
+        if ($item instanceof WCS_DB_Lesson_Item) {
+            $template = str_replace(['{classroom}', '{classroom info}', '{class}', '{classroom link}', '{class link}'],
+                [$item->getClassroom()->getName(), $item->getClassroom()->getInfo(), $item->getClassroom()->getShort(), $item->getClassroom()->getLinkName(), $item->getClassroom()->getLinkShort()]
+                , $template);
         }
-        #<?php echo $schedule_key; ?> .wcs4-lesson-hour-to-<?php echo $hourKey ?> {
-        grid-row-end: <?php echo($index + 2) ?>;
+        if ($item instanceof WCS_DB_Lesson_Item) {
+            $template = str_replace(['{schedule no}', '{start time}', '{end time}', '{notes}'],
+                [$item->getId(), $item->getStartTime(), $item->getEndTime(), $item->getNotes()]
+                , $template);
         }
-    <?php }
-    echo '</style>';
-    $output = '<div class="wcs4-schedule-grid">';
-    foreach ($weekdays as $dayName => $dayIndex) {
-        $output .= '<div class="wcs4-grid-weekday wcs4-grid-weekday-' . $dayIndex . '">' . $dayName . '</div>';
-    }
-    foreach ($hours as $hourKey => $hourValue) {
-        $output .= '<div class="wcs4-grid-hour wcs4-grid-hour-' . $hourKey . '">' . $hourValue . '</div>';
-    }
-    /** @var WCS4_Lesson $lesson */
-    foreach ($lessons as $lesson) {
-        $style = null;
-        if (null !== $lesson->getColor()) {
-            $style = ' style="background-color: #' . $lesson->getColor() . '; "';
+        if ($item instanceof WCS_DB_Report_Item) {
+            $template = str_replace(['{schedule no}', '{start time}', '{end time}', '{topic}'],
+                [$item->getId(), $item->getStartTime(), $item->getEndTime(), $item->getTopic()]
+                , $template);
         }
-        $output .= '<div class="wcs4-grid-lesson wcs4-grid-weekday-' . $lesson->getWeekday() . '-' . $lesson->getPosition() . ' wcs4-lesson-hour-from-' . str_replace(':', '-', $lesson->getStartTime()) . ' wcs4-lesson-hour-to-' . str_replace(':', '-', $lesson->getEndTime()) . '" ' . $style . '>';
-        $output .= '<div class="wcs4-lesson-name">' . wcs4_process_template($lesson, $template_table_short) . '</div>';
-        $output .= '<div class="wcs4-details-box-container">' . wcs4_process_template($lesson, $template_table_details) . '</div>';
-        $output .= '</div>';
-    }
-    $output .= '</div>';
-    return $output;
-}
-
-/**
- * Renders list layout
- *
- * @param array $lessons : lessons array as returned by wcs4_get_lessons().
- * @param array $weekdays : indexed weekday array.
- * @param string $schedule_key
- * @param string $template_list
- * @return string
- */
-function wcs4_render_list_schedule($lessons, $weekdays, $schedule_key, $template_list)
-{
-    if (empty($lessons)) {
-        return '<div class="wcs4-no-lessons-message">' . __('No lessons scheduled', 'wcs4') . '</div>';
-    }
-
-    $weekdaysWithLessons = [];
-    /** @var WCS4_Lesson $lesson */
-    foreach ($lessons as $lesson) {
-        $weekdaysWithLessons[$lesson->getWeekday()][] = $lesson;
-    }
-
-    $output = '<div class="wcs4-schedule-list-layout">';
-    # Classes are grouped by indexed weekdays.
-    foreach ($weekdays as $dayIndex => $dayName) {
-        $lessons = $weekdaysWithLessons[$dayIndex];
-        if (!empty($lessons)) {
-            $output .= '<h3>' . $dayName . '</h3>';
-            $output .= '<ul class="wcs4-grid-weekday-list wcs4-grid-weekday-list-' . $dayIndex . '">';
-            /** @var WCS4_Lesson $lesson */
-            foreach ($lessons as $lesson) {
-                $output .= '<li class="wcs4-list-item-lesson">';
-                $output .= wcs4_process_template($lesson, $template_list);
-                $output .= '</li>';
-            }
-            $output .= '</ul>';
+        if ($item instanceof WCS_DB_Lesson_Item) {
+            $template = str_replace(['{weekday}'],
+                [$item->getWeekday()]
+                , $template);
         }
-    }
-    $output .= '</div>';
-    return $output;
-}
-
-/**
- * Renders list layout
- *
- * @param array $reports : lessons array as returned by wcs4_get_lessons().
- * @param string $schedule_key
- * @param string $template_list
- * @return string
- */
-function wcs4_render_list_report($reports, $schedule_key, $template_list)
-{
-    if (empty($reports)) {
-        return '<div class="wcs4-no-lessons-message">' . __('No lessons reported', 'wcs4') . '</div>';
-    }
-
-    $dateWithLessons = [];
-    /** @var WCS4_Report $report */
-    foreach ($reports as $report) {
-        $dateWithLessons[$report->getDate()][] = $report;
-    }
-    krsort($dateWithLessons);
-
-    $output = '<div class="wcs4-schedule-list-layout">';
-    # Classes are grouped by indexed weekdays.
-    foreach ($dateWithLessons as $date => $dayReports) {
-        if (!empty($dayReports)) {
-            $output .= '<h3>' . $date . '</h3>';
-            $output .= '<ul class="wcs4-grid-date-list wcs4-grid-date-list-' . $date . '">';
-            /** @var WCS4_Report $report */
-            foreach ($dayReports as $report) {
-                $output .= '<li class="wcs4-list-item-lesson">';
-                $output .= wcs4_process_template($report, $template_list);
-                $output .= '</li>';
-            }
-            $output .= '</ul>';
+        if ($item instanceof WCS_DB_Report_Item) {
+            $template = str_replace(['{date}'],
+                [$item->getDate()]
+                , $template);
         }
+        return $template;
     }
-    $output .= '</div>';
-    return $output;
-}
 
-/**
- * Processes a template (replace placeholder, apply plugins).
- *
- * @param WCS4_Lesson|WCS4_Report $item : subject object with all required data.
- * @param string $template : user defined template from settings.
- * @return string|string[]
- */
-function wcs4_process_template($item, string $template)
-{
-    if ($item instanceof WCS4_Lesson || $item instanceof WCS4_Report) {
-        $template = str_replace(
-            ['{subject}', '{subject info}', '{sub}', '{subject link}', '{sub link}'],
-            [$item->getSubject()->getName(), $item->getSubject()->getInfo(), $item->getSubject()->getShort(), $item->getSubject()->getLinkName(), $item->getSubject()->getLinkShort()]
-            , $template);
+    /**
+     * Enqueue and localize styles and scripts for WCS4 front end.
+     * @param array $js_data
+     */
+    public static function load_frontend_scripts($js_data = array()): void
+    {
+        # Load qTip plugin
+        wp_register_style('wcs4_qtip_css', WCS4_PLUGIN_URL . '/plugins/qtip/jquery.qtip.min.css', false, WCS4_VERSION);
+        wp_enqueue_style('wcs4_qtip_css');
+
+        wp_register_script('wcs4_qtip_js', WCS4_PLUGIN_URL . '/plugins/qtip/jquery.qtip.min.js', array('jquery'), WCS4_VERSION);
+        wp_enqueue_script('wcs4_qtip_js');
+
+        wp_register_script('wcs4_qtip_images_js', WCS4_PLUGIN_URL . '/plugins/qtip/imagesloaded.pkg.min.js', array('jquery'), WCS4_VERSION);
+        wp_enqueue_script('wcs4_qtip_images_js');
+
+        # Load hoverintent
+        wp_register_script('wcs4_hoverintent_js', WCS4_PLUGIN_URL . '/plugins/hoverintent/jquery.hoverIntent.minified.js', array('jquery'), WCS4_VERSION);
+        wp_enqueue_script('wcs4_hoverintent_js');
+
+        # Load common WCS4 JS
+        wp_register_script('wcs4_common_js', WCS4_PLUGIN_URL . '/js/wcs_common.js', array('jquery'), WCS4_VERSION);
+        wp_enqueue_script('wcs4_common_js');
+
+        # Load custom scripts
+        wp_register_style('wcs4_front_css', WCS4_PLUGIN_URL . '/css/wcs_front.css', false, WCS4_VERSION);
+        wp_enqueue_style('wcs4_front_css');
+
+        wp_register_script('wcs4_front_js', WCS4_PLUGIN_URL . '/js/wcs_front.js', array('jquery'), WCS4_VERSION);
+        wp_enqueue_script('wcs4_front_js');
+
+        # Localize script
+        wp_localize_script('wcs4_front_js', 'WCS4_DATA', $js_data);
+
+        wcs4_js_i18n('wcs4_front_js');
     }
-    if ($item instanceof WCS4_Lesson || $item instanceof WCS4_Report) {
-        $template = str_replace(
-            ['{teacher}', '{teacher info}', '{tea}', '{teacher link}', '{tea link}'],
-            [$item->getTeacher()->getName(), $item->getTeacher()->getInfo(), $item->getTeacher()->getShort(), $item->getTeacher()->getLinkName(), $item->getTeacher()->getLinkShort()]
-            , $template);
-    }
-    if ($item instanceof WCS4_Lesson || $item instanceof WCS4_Report) {
-        $template = str_replace(['{student}', '{student info}', '{stu}', '{student link}', '{stu link}'],
-            [$item->getStudent()->getName(), $item->getStudent()->getInfo(), $item->getStudent()->getShort(), $item->getStudent()->getLinkName(), $item->getStudent()->getLinkShort()]
-            , $template);
-    }
-    if ($item instanceof WCS4_Lesson) {
-        $template = str_replace(['{classroom}', '{classroom info}', '{class}', '{classroom link}', '{class link}'],
-            [$item->getClassroom()->getName(), $item->getClassroom()->getInfo(), $item->getClassroom()->getShort(), $item->getClassroom()->getLinkName(), $item->getClassroom()->getLinkShort()]
-            , $template);
-    }
-    if ($item instanceof WCS4_Lesson) {
-        $template = str_replace(['{schedule no}', '{start time}', '{end time}', '{notes}'],
-            [$item->getId(), $item->getStartTime(), $item->getEndTime(), $item->getNotes()]
-            , $template);
-    }
-    if ($item instanceof WCS4_Report) {
-        $template = str_replace(['{schedule no}', '{start time}', '{end time}', '{topic}'],
-            [$item->getId(), $item->getStartTime(), $item->getEndTime(), $item->getTopic()]
-            , $template);
-    }
-    if ($item instanceof WCS4_Lesson) {
-        $template = str_replace(['{weekday}'],
-            [$item->getWeekday()]
-            , $template);
-    }
-    if ($item instanceof WCS4_Report) {
-        $template = str_replace(['{date}'],
-            [$item->getDate()]
-            , $template);
-    }
-    return $template;
-}
-
-/**
- * Enqueue and localize styles and scripts for WCS4 front end.
- * @param array $js_data
- */
-function wcs4_load_frontend_scripts($js_data = array())
-{
-    # Load qTip plugin
-    wp_register_style('wcs4_qtip_css', WCS4_PLUGIN_URL . '/plugins/qtip/jquery.qtip.min.css', false, WCS4_VERSION);
-    wp_enqueue_style('wcs4_qtip_css');
-
-    wp_register_script('wcs4_qtip_js', WCS4_PLUGIN_URL . '/plugins/qtip/jquery.qtip.min.js', array('jquery'), WCS4_VERSION);
-    wp_enqueue_script('wcs4_qtip_js');
-
-    wp_register_script('wcs4_qtip_images_js', WCS4_PLUGIN_URL . '/plugins/qtip/imagesloaded.pkg.min.js', array('jquery'), WCS4_VERSION);
-    wp_enqueue_script('wcs4_qtip_images_js');
-
-    # Load hoverintent
-    wp_register_script('wcs4_hoverintent_js', WCS4_PLUGIN_URL . '/plugins/hoverintent/jquery.hoverIntent.minified.js', array('jquery'), WCS4_VERSION);
-    wp_enqueue_script('wcs4_hoverintent_js');
-
-    # Load common WCS4 JS
-    wp_register_script('wcs4_common_js', WCS4_PLUGIN_URL . '/js/wcs_common.js', array('jquery'), WCS4_VERSION);
-    wp_enqueue_script('wcs4_common_js');
-
-    # Load custom scripts
-    wp_register_style('wcs4_front_css', WCS4_PLUGIN_URL . '/css/wcs_front.css', false, WCS4_VERSION);
-    wp_enqueue_style('wcs4_front_css');
-
-    wp_register_script('wcs4_front_js', WCS4_PLUGIN_URL . '/js/wcs_front.js', array('jquery'), WCS4_VERSION);
-    wp_enqueue_script('wcs4_front_js');
-
-    # Localize script
-    wp_localize_script('wcs4_front_js', 'WCS4_DATA', $js_data);
-
-    wcs4_js_i18n('wcs4_front_js');
 }

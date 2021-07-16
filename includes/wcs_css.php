@@ -4,7 +4,7 @@
  * Injecting our custom CSS
  */
 add_action('wp_head', static function () {
-    $wcs4_options = wcs4_load_settings();
+    $wcs4_options = WCS_Settings::load_settings();
 
     $base_color = $wcs4_options['color_base'];
     $details_box = $wcs4_options['color_details_box'];

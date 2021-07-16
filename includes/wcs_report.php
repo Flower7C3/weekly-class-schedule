@@ -3,12 +3,12 @@
  * Report specific functions.
  */
 
-class Report_Management
+class WCS_Report
 {
     /**
      * Callback for generating the report management page.
      */
-    public static function management_page_callback(): void
+    public static function callback_of_management_page(): void
     {
         ?>
         <div class="wrap wcs-management-page-callback">
@@ -16,18 +16,23 @@ class Report_Management
             <a href="#" class="page-title-action" id="wcs4-show-form"><?php _ex('Add Report', 'button text', 'wcs4'); ?></a>
             <hr class="wp-header-end">
             <div id="ajax-response"></div>
-            <?php self::draw_search_form(); ?>
             <div id="col-container" class="wp-clearfix">
                 <?php if (current_user_can(WCS4_REPORT_MANAGE_CAPABILITY)) { ?>
                     <div id="col-left">
                         <div class="col-wrap">
-                            <?php self::draw_manage_form(); ?>
+                            <?php echo self::get_html_of_manage_form(); ?>
                         </div>
                     </div><!-- /col-left -->
                 <?php } ?>
                 <div id="col-right">
+                    <div class="tablenav top">
+                        <div class="alignleft actions">
+                            <?php echo self::get_html_of_search_form(); ?>
+                        </div>
+                        <br class="clear">
+                    </div>
                     <div class="col-wrap" id="wcs4-report-events-list-wrapper">
-                        <?php echo self::get_admin_html_table(
+                        <?php echo self::get_html_of_admin_table(
                             $_GET['teacher'] ? '#' . $_GET['teacher'] : null,
                             $_GET['student'] ? '#' . $_GET['student'] : null,
                             $_GET['subject'] ? '#' . $_GET['subject'] : null,
@@ -46,7 +51,7 @@ class Report_Management
     /**
      * Callback for generating the report management page.
      */
-    public static function export_page_callback(): void
+    public static function callback_of_export_page(): void
     {
         if (!current_user_can(WCS4_REPORT_EXPORT_CAPABILITY)) {
             header('HTTP/1.0 403 Forbidden');
@@ -72,7 +77,7 @@ class Report_Management
         }
 
         # get reports
-        $reports = Report_Management::get_reports($teacher, $student, $subject, $date_from, $date_upto);
+        $reports = WCS_Report::get_items($teacher, $student, $subject, $date_from, $date_upto);
 
         # build filename
         $filename_params = [];
@@ -122,7 +127,7 @@ class Report_Management
         fputcsv($handle, $header, $delimiter);
 
         # build csv content
-        /** @var WCS4_Report $report */
+        /** @var WCS_DB_Report_Item $report */
         foreach ($reports as $report) {
             $line = [];
             $line[] = $report->getId();
@@ -147,22 +152,23 @@ class Report_Management
         exit;
     }
 
-    private static function draw_search_form(): void
+    private static function get_html_of_search_form(): string
     {
+        ob_start();
         ?>
-        <form id="wcs-reports-filter" method="get" action="admin.php">
+        <form id="wcs-reports-filter" class="results-filter" method="get" action="admin.php">
             <input id="search_wcs4_page" type="hidden" name="page" value="<?php echo $_GET['page']; ?>"/>
             <p class="search-box">
                 <label class="screen-reader-text" for="search_wcs4_report_subject_id"><?php _e('Subject', 'wcs4'); ?></label>
-                <?php echo wcs4_generate_admin_select_list('subject', 'search_wcs4_report_subject_id', 'subject', (int)$_GET['subject']); ?>
+                <?php echo WCS_Admin::generate_admin_select_list('subject', 'search_wcs4_report_subject_id', 'subject', (int)$_GET['subject']); ?>
                 <label class="screen-reader-text" for="search_wcs4_report_teacher_id"><?php _e('Teacher', 'wcs4'); ?></label>
-                <?php echo wcs4_generate_admin_select_list('teacher', 'search_wcs4_report_teacher_id', 'teacher', (int)$_GET['teacher']); ?>
+                <?php echo WCS_Admin::generate_admin_select_list('teacher', 'search_wcs4_report_teacher_id', 'teacher', (int)$_GET['teacher']); ?>
                 <label class="screen-reader-text" for="search_wcs4_report_student_id"><?php _e('Student', 'wcs4'); ?></label>
-                <?php echo wcs4_generate_admin_select_list('student', 'search_wcs4_report_student_id', 'student', (int)$_GET['student']); ?>
+                <?php echo WCS_Admin::generate_admin_select_list('student', 'search_wcs4_report_student_id', 'student', (int)$_GET['student']); ?>
                 <label class="screen-reader-text" for="search_wcs4_report_date_from"><?php _e('Date from', 'wcs4'); ?></label>
-                <?php echo wcs4_generate_date_select_list('search_wcs4_report_date_from', 'wcs4_report_date_from', ['default' => date('Y-m-01')]); ?>
+                <?php echo WCS_Admin::generate_date_select_list('search_wcs4_report_date_from', 'wcs4_report_date_from', ['default' => date('Y-m-01')]); ?>
                 <label class="screen-reader-text" for="search_wcs4_report_date_upto"><?php _e('Date to', 'wcs4'); ?></label>
-                <?php echo wcs4_generate_date_select_list('search_wcs4_report_date_upto', 'wcs4_report_date_upto', ['default' => date('Y-m-d')]); ?>
+                <?php echo WCS_Admin::generate_date_select_list('search_wcs4_report_date_upto', 'wcs4_report_date_upto', ['default' => date('Y-m-d')]); ?>
                 <input type="submit" id="wcs-search-submit" class="button" value="<?php _e('Search reports', 'wcs4'); ?>">
                 <?php if (current_user_can(WCS4_REPORT_EXPORT_CAPABILITY)): ?>
                     <button type="submit" id="wcs-search-download" name="page" value="class-schedule-report-download" class="button"><?php _e('Download report as CSV', 'wcs4'); ?></button>
@@ -170,10 +176,13 @@ class Report_Management
             </p>
         </form>
         <?php
+        $result = ob_get_clean();
+        return trim($result);
     }
 
-    public static function draw_manage_form($subject = null, $teacher = null, $student = null): void
+    public static function get_html_of_manage_form($subject = null, $teacher = null, $student = null): string
     {
+        ob_start();
         ?>
         <div class="form-wrap" id="wcs4-management-form-wrapper">
             <h2 id="wcs4-management-form-title"><?php _ex('Add New Report', 'page title', 'wcs4'); ?></h2>
@@ -181,7 +190,7 @@ class Report_Management
                 <?php if (empty($subject)): ?>
                     <fieldset class="form-field form-required form-field-subject_id-wrap">
                         <label for="wcs4_report_subject_id"><?php _e('Subject', 'wcs4'); ?></label>
-                        <?php echo wcs4_generate_admin_select_list('subject', 'wcs4_report_subject', 'wcs4_report_subject', $subject, true, false, null, ['subject' => $subject, 'teacher' => $teacher, 'student' => $student]); ?>
+                        <?php echo WCS_Admin::generate_admin_select_list('subject', 'wcs4_report_subject', 'wcs4_report_subject', $subject, true, false, null, ['subject' => $subject, 'teacher' => $teacher, 'student' => $student]); ?>
                     </fieldset>
                 <?php else: ?>
                     <input type="hidden" id="wcs4_report_subject" name="wcs4_report_subject" value="<?php echo $subject; ?>"/>
@@ -189,7 +198,7 @@ class Report_Management
                 <?php if (empty($teacher)): ?>
                     <fieldset class="form-field form-required form-field-teacher_id-wrap">
                         <label for="wcs4_report_teacher_id"><?php _e('Teacher', 'wcs4'); ?></label>
-                        <?php echo wcs4_generate_admin_select_list('teacher', 'wcs4_report_teacher', 'wcs4_report_teacher', $teacher, true, true, null, ['subject' => $subject, 'teacher' => $teacher, 'student' => $student]); ?>
+                        <?php echo WCS_Admin::generate_admin_select_list('teacher', 'wcs4_report_teacher', 'wcs4_report_teacher', $teacher, true, true, null, ['subject' => $subject, 'teacher' => $teacher, 'student' => $student]); ?>
                     </fieldset>
                 <?php else: ?>
                     <input type="hidden" id="wcs4_report_teacher" name="wcs4_report_teacher[]" value="<?php echo $teacher; ?>"/>
@@ -197,7 +206,7 @@ class Report_Management
                 <?php if (empty($student)): ?>
                     <fieldset class="form-field form-required form-field-student_id-wrap">
                         <label for="wcs4_report_student_id"><?php _e('Student', 'wcs4'); ?></label>
-                        <?php echo wcs4_generate_admin_select_list('student', 'wcs4_report_student', 'wcs4_report_student', $student, true, true, null, ['subject' => $subject, 'teacher' => $teacher, 'student' => $student]); ?>
+                        <?php echo WCS_Admin::generate_admin_select_list('student', 'wcs4_report_student', 'wcs4_report_student', $student, true, true, null, ['subject' => $subject, 'teacher' => $teacher, 'student' => $student]); ?>
                     </fieldset>
                 <?php else: ?>
                     <input type="hidden" id="wcs4_report_student" name="wcs4_report_student[]" value="<?php echo $student; ?>"/>
@@ -205,15 +214,15 @@ class Report_Management
                 <fieldset class="form-field row">
                     <div class="form-field form-required form-field-date-wrap col-6">
                         <label for="wcs4_report_date"><?php _e('Date', 'wcs4'); ?></label>
-                        <?php echo wcs4_generate_date_select_list('wcs4_report_date', 'wcs4_report_date', ['default' => date('Y-m-d'), 'required' => true]); ?>
+                        <?php echo WCS_Admin::generate_date_select_list('wcs4_report_date', 'wcs4_report_date', ['default' => date('Y-m-d'), 'required' => true]); ?>
                     </div>
                     <div class="form-field form-time-field form-required form-field-start_time-wrap col-3">
                         <label for="wcs4_report_start_time"><?php _e('Start Time', 'wcs4'); ?></label>
-                        <?php echo wcs4_generate_time_select_list('wcs4_report_start_time', 'wcs4_report_start_time', ['default' => date('H:00', strtotime('-1 hour')), 'required' => true, 'step' => 300]); ?>
+                        <?php echo WCS_Admin::generate_time_select_list('wcs4_report_start_time', 'wcs4_report_start_time', ['default' => date('H:00', strtotime('-1 hour')), 'required' => true, 'step' => 300]); ?>
                     </div>
                     <div class="form-field form-time-field form-required form-field-end_time-wrap col-3">
                         <label for="wcs4_report_end_time"><?php _e('End Time', 'wcs4'); ?></label>
-                        <?php echo wcs4_generate_time_select_list('wcs4_report_end_time', 'wcs4_report_end_time', ['default' => date('H:00'), 'required' => true, 'step' => 300]); ?>
+                        <?php echo WCS_Admin::generate_time_select_list('wcs4_report_end_time', 'wcs4_report_end_time', ['default' => date('H:00'), 'required' => true, 'step' => 300]); ?>
                     </div>
                 </fieldset>
                 <fieldset class="form-field form-required form-field-topic-wrap">
@@ -229,18 +238,20 @@ class Report_Management
             </form>
         </div> <!-- /#report-management-form-wrapper -->
         <?php
+        $result = ob_get_clean();
+        return trim($result);
     }
 
-    public static function get_admin_html_table($teacher = 'all', $student = 'all', $subject = 'all', $date_from = null, $date_upto = null, $orderby = null, $order = null): string
+    public static function get_html_of_admin_table($teacher = 'all', $student = 'all', $subject = 'all', $date_from = null, $date_upto = null, $orderby = null, $order = null): string
     {
         ob_start();
-        $reports = self::get_reports($teacher, $student, $subject, $date_from, $date_upto, $orderby, $order);
+        $reports = self::get_items($teacher, $student, $subject, $date_from, $date_upto, $orderby, $order);
         ?>
         <div class="wcs4-day-content-wrapper" data-hash="<?php echo md5(serialize($reports)) ?>">
             <?php if ($reports): ?>
                 <?php
                 $days = [];
-                /** @var WCS4_Report $report */
+                /** @var WCS_DB_Report_Item $report */
                 foreach ($reports as $report) {
                     $days[$report->getDate()][] = $report;
                 }
@@ -282,7 +293,7 @@ class Report_Management
                             </thead>
                             <tbody id="the-list-<?php echo $day; ?>">
                                 <?php
-                                /** @var WCS4_Report $item */
+                                /** @var WCS_DB_Report_Item $item */
                                 foreach ($dayData as $item): ?>
                                     <tr id="report-<?php echo $item->getId(); ?>">
                                         <td class="column-primary<?php if (current_user_can(WCS4_REPORT_MANAGE_CAPABILITY)) { ?> has-row-actions<?php } ?>">
@@ -293,14 +304,14 @@ class Report_Management
                                                         <a href="#" class="wcs4-edit-report-button" id="wcs4-edit-button-<?php echo $item->getId(); ?>" data-report-id="<?php echo $item->getId(); ?>">
                                                             <?php echo __('Edit', 'wcs4'); ?>
                                                         </a>
+                                                        |
                                                     </span>
-                                                    |
                                                     <span class="copy hide-if-no-js">
                                                         <a href="#" class="wcs4-copy-report-button" id="wcs4-copy-button-<?php echo $item->getId(); ?>" data-report-id="<?php echo $item->getId(); ?>">
                                                             <?php echo __('Duplicate', 'wcs4'); ?>
                                                         </a>
+                                                        |
                                                     </span>
-                                                    |
                                                     <span class="delete hide-if-no-js">
                                                         <a href="#delete" class="wcs4-delete-report-button" id=wcs4-delete-<?php echo $item->getId(); ?>" data-report-id="<?php echo $item->getId(); ?>" data-date="<?php echo $item->getDate(); ?>">
                                                             <?php echo __('Delete', 'wcs4'); ?>
@@ -324,15 +335,15 @@ class Report_Management
                                         </td>
                                         <td data-colname="<?php echo __('Updated at', 'wcs4'); ?>">
                                             <?php if ($item->getUpdatedAt()): ?>
-                                                <small title="<?php printf(__('Updated at %s by %s', 'wcs4'), $item->getUpdatedAt()->format('Y-m-d H:i:s'), $item->getUpdatedBy()->display_name ?: 'nn'); ?>">
+                                                <span title="<?php printf(__('Updated at %s by %s', 'wcs4'), $item->getUpdatedAt()->format('Y-m-d H:i:s'), $item->getUpdatedBy()->display_name ?: 'nn'); ?>">
                                                     <?php echo $item->getUpdatedAt()->format('Y-m-d H:i:s'); ?>
                                                     <?php echo $item->getUpdatedBy()->display_name; ?>
-                                                </small>
+                                                </span>
                                             <?php else: ?>
-                                                <small title="<?php printf(__('Created at %s by %s', 'wcs4'), $item->getCreatedAt()->format('Y-m-d H:i:s'), $item->getCreatedBy()->display_name ?: 'nn'); ?>">
+                                                <span title="<?php printf(__('Created at %s by %s', 'wcs4'), $item->getCreatedAt()->format('Y-m-d H:i:s'), $item->getCreatedBy()->display_name ?: 'nn'); ?>">
                                                     <?php echo $item->getCreatedAt()->format('Y-m-d H:i:s'); ?>
                                                     <?php echo $item->getCreatedBy()->display_name; ?>
-                                                </small>
+                                                </span>
                                             <?php endif; ?>
                                         </td>
                                     </tr>
@@ -353,13 +364,13 @@ class Report_Management
     /**
      * Gets all the visible subjects from the database including teachers, students and classrooms.
      */
-    public static function get_reports($teacher = 'all', $student = 'all', $subject = 'all', $date_from = NULL, $date_upto = NULL, $orderby = null, $order = null, $limit = NULL, $paged = NULL): array
+    public static function get_items($teacher = 'all', $student = 'all', $subject = 'all', $date_from = NULL, $date_upto = NULL, $orderby = null, $order = null, $limit = NULL, $paged = NULL): array
     {
         global $wpdb;
 
-        $table = WCS4_DB::get_report_table_name();
-        $table_teacher = WCS4_DB::get_report_teacher_table_name();
-        $table_student = WCS4_DB::get_report_student_table_name();
+        $table = WCS_DB::get_report_table_name();
+        $table_teacher = WCS_DB::get_report_teacher_table_name();
+        $table_student = WCS_DB::get_report_student_table_name();
         $table_posts = $wpdb->prefix . 'posts';
         $table_meta = $wpdb->prefix . 'postmeta';
 
@@ -453,12 +464,12 @@ class Report_Management
         $reports = array();
         if ($results) {
             foreach ($results as $row) {
-                $report = new WCS4_Report($row, $format);
+                $report = new WCS_DB_Report_Item($row, $format);
                 $report = apply_filters('wcs4_format_class', $report);
                 if (!isset($reports[$report->getId()])) {
                     $reports[$report->getId()] = $report;
                 } else {
-                    /** @var WCS4_Report $_report */
+                    /** @var WCS_DB_Report_Item $_report */
                     $_report = $reports[$report->getId()];
                     $_report->addTeachers($report->getTeachers());
                     $_report->addStudents($report->getStudents());
@@ -468,7 +479,12 @@ class Report_Management
         return $reports;
     }
 
-    public static function save_report($force_insert = false): void
+    public static function creatre_item(): void
+    {
+        self::save_item(true);
+    }
+
+    public static function save_item($force_insert = false): void
     {
         $response = __('You are no allowed to run this action', 'wcs4');
         $errors = [];
@@ -483,9 +499,9 @@ class Report_Management
 
             $update_request = FALSE;
             $row_id = NULL;
-            $table = WCS4_DB::get_report_table_name();
-            $table_teacher = WCS4_DB::get_report_teacher_table_name();
-            $table_student = WCS4_DB::get_report_student_table_name();
+            $table = WCS_DB::get_report_table_name();
+            $table_teacher = WCS_DB::get_report_teacher_table_name();
+            $table_student = WCS_DB::get_report_student_table_name();
 
             $required = array(
                 'subject_id' => __('Subject', 'wcs4'),
@@ -528,7 +544,7 @@ class Report_Management
             $start_dt = new DateTime(WCS4_BASE_DATE . ' ' . $start_time, $tz);
             $end_dt = new DateTime(WCS4_BASE_DATE . ' ' . $end_time, $tz);
 
-            $wcs4_settings = wcs4_load_settings();
+            $wcs4_settings = WCS_Settings::load_settings();
 
             if ($wcs4_settings['teacher_collision'] === 'yes') {
                 # Validate teacher collision (if applicable)
@@ -673,49 +689,7 @@ class Report_Management
         die();
     }
 
-    public static function delete_report(): void
-    {
-        $errors = [];
-        $response = __('You are no allowed to run this action', 'wcs4');
-        if (current_user_can(WCS4_REPORT_MANAGE_CAPABILITY)) {
-
-            wcs4_verify_nonce();
-
-            global $wpdb;
-
-            $table = WCS4_DB::get_report_table_name();
-            $table_teacher = WCS4_DB::get_report_teacher_table_name();
-            $table_student = WCS4_DB::get_report_student_table_name();
-
-            $required = array(
-                'row_id' => __('Row ID'),
-            );
-
-            $errors = wcs4_verify_required_fields($required);
-            if (empty($errors)) {
-
-                $row_id = sanitize_text_field($_POST['row_id']);
-
-                $result = $wpdb->delete($table, array('id' => $row_id), array('%d'));
-                $result_teacher = $wpdb->delete($table_teacher, array('id' => $row_id), array('%d'));
-                $result_student = $wpdb->delete($table_student, array('id' => $row_id), array('%d'));
-                if (0 === $result || 0 === $result_teacher || 0 === $result_student) {
-                    $response = __('Failed to delete entry', 'wcs4');
-                    $errors = true;
-                } else {
-                    $response = __('Report entry deleted successfully', 'wcs4');
-                }
-            }
-        }
-        wcs4_json_response([
-            'response' => $response,
-            'errors' => $errors,
-            'result' => $errors ? 'error' : 'updated',
-        ]);
-        die();
-    }
-
-    public static function get_report(): void
+    public static function get_item(): void
     {
         $errors = [];
         $response = __('You are no allowed to run this action', 'wcs4');
@@ -725,9 +699,9 @@ class Report_Management
             global $wpdb;
             $response = new stdClass();
 
-            $table = WCS4_DB::get_report_table_name();
-            $table_teacher = WCS4_DB::get_report_teacher_table_name();
-            $table_student = WCS4_DB::get_report_student_table_name();
+            $table = WCS_DB::get_report_table_name();
+            $table_teacher = WCS_DB::get_report_teacher_table_name();
+            $table_student = WCS_DB::get_report_student_table_name();
 
             $required = array(
                 'row_id' => __('Row ID'),
@@ -758,7 +732,49 @@ class Report_Management
         die();
     }
 
-    public static function get_reports_html(): void
+    public static function delete_item(): void
+    {
+        $errors = [];
+        $response = __('You are no allowed to run this action', 'wcs4');
+        if (current_user_can(WCS4_REPORT_MANAGE_CAPABILITY)) {
+
+            wcs4_verify_nonce();
+
+            global $wpdb;
+
+            $table = WCS_DB::get_report_table_name();
+            $table_teacher = WCS_DB::get_report_teacher_table_name();
+            $table_student = WCS_DB::get_report_student_table_name();
+
+            $required = array(
+                'row_id' => __('Row ID'),
+            );
+
+            $errors = wcs4_verify_required_fields($required);
+            if (empty($errors)) {
+
+                $row_id = sanitize_text_field($_POST['row_id']);
+
+                $result = $wpdb->delete($table, array('id' => $row_id), array('%d'));
+                $result_teacher = $wpdb->delete($table_teacher, array('id' => $row_id), array('%d'));
+                $result_student = $wpdb->delete($table_student, array('id' => $row_id), array('%d'));
+                if (0 === $result || 0 === $result_teacher || 0 === $result_student) {
+                    $response = __('Failed to delete entry', 'wcs4');
+                    $errors = true;
+                } else {
+                    $response = __('Report entry deleted successfully', 'wcs4');
+                }
+            }
+        }
+        wcs4_json_response([
+            'response' => $response,
+            'errors' => $errors,
+            'result' => $errors ? 'error' : 'updated',
+        ]);
+        die();
+    }
+
+    public static function get_ajax_html_with_reports(): void
     {
         $html = __('You are no allowed to run this action', 'wcs4');
         if (current_user_can(WCS4_REPORT_MANAGE_CAPABILITY)) {
@@ -770,44 +786,72 @@ class Report_Management
             $date_upto = sanitize_text_field($_POST['date_upto']);
             $orderby = sanitize_text_field($_POST['orderby']);
             $order = sanitize_text_field($_POST['order']);
-            $html = self::get_admin_html_table($teacher, $student, $subject, $date_from, $date_upto, $orderby, $order);
+            $html = self::get_html_of_admin_table($teacher, $student, $subject, $date_from, $date_upto, $orderby, $order);
         }
         wcs4_json_response(['html' => $html,]);
         die();
+    }
+
+    /**
+     * Renders list layout
+     *
+     * @param array $reports : lessons array as returned by wcs4_get_lessons().
+     * @param string $schedule_key
+     * @param string $template_list
+     * @return string
+     */
+    public static function get_html_of_report_list(array $reports, string $schedule_key, string $template_list): string
+    {
+        if (empty($reports)) {
+            return '<div class="wcs4-no-lessons-message">' . __('No lessons reported', 'wcs4') . '</div>';
+        }
+
+        $dateWithLessons = [];
+        /** @var WCS_DB_Report_Item $report */
+        foreach ($reports as $report) {
+            $dateWithLessons[$report->getDate()][] = $report;
+        }
+        krsort($dateWithLessons);
+
+        $output = '<div class="wcs4-schedule-list-layout">';
+        # Classes are grouped by indexed weekdays.
+        foreach ($dateWithLessons as $date => $dayReports) {
+            if (!empty($dayReports)) {
+                $output .= '<h3>' . $date . '</h3>';
+                $output .= '<ul class="wcs4-grid-date-list wcs4-grid-date-list-' . $date . '">';
+                /** @var WCS_DB_Report_Item $report */
+                foreach ($dayReports as $report) {
+                    $output .= '<li class="wcs4-list-item-lesson">';
+                    $output .= WCS_Output::process_template($report, $template_list);
+                    $output .= '</li>';
+                }
+                $output .= '</ul>';
+            }
+        }
+        $output .= '</div>';
+        return $output;
     }
 }
 
 /**
  * Add or update report entry handler.
  */
-add_action('wp_ajax_add_or_update_report_entry', static function () {
-    Report_Management::save_report(false);
-});
-add_action('wp_ajax_nopriv_add_or_update_report_entry', static function () {
-    Report_Management::save_report(true);
-});
+add_action('wp_ajax_add_or_update_report_entry', [WCS_Report::class, 'save_item']);
+add_action('wp_ajax_nopriv_add_or_update_report_entry', [WCS_Report::class, 'creatre_item']);
 
 /**
  * Report entry delete handler.
  */
-add_action('wp_ajax_delete_report_entry', static function () {
-    Report_Management::delete_report();
-});
+add_action('wp_ajax_delete_report_entry', [WCS_Report::class, 'delete_item']);
 
 /**
  * Schedule entry edit handler.
  */
-add_action('wp_ajax_get_report', static function () {
-    Report_Management::get_report();
-});
+add_action('wp_ajax_get_report', [WCS_Report::class, 'get_item']);
 
 /**
  * Returns the report.
  */
-add_action('wp_ajax_get_reports_html', static function () {
-    Report_Management::get_reports_html();
-});
+add_action('wp_ajax_get_reports_html', [WCS_Report::class, 'get_ajax_html_with_reports']);
 
-add_action('wp_ajax_download_report_csv', static function () {
-    Report_Management::export_page_callback();
-});
+add_action('wp_ajax_download_report_csv', [WCS_Report::class, 'callback_of_export_page']);

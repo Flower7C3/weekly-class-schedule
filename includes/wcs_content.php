@@ -9,7 +9,7 @@ add_filter('the_content', static function ($content) {
     if (is_single() && array_key_exists($post_type, WCS4_POST_TYPES_WHITELIST)) {
         $post_id = get_the_id();
         $post_type_key = str_replace('wcs4_', '', $post_type);
-        $wcs4_settings = wcs4_load_settings();
+        $wcs4_settings = WCS_Settings::load_settings();
         $layout = $wcs4_settings[$post_type_key . '_schedule_layout'];
         if ('none' !== $layout && NULL !== $layout && !post_password_required($post_id)) {
             $content .= '<h2>' . __('Schedule', 'wcs4') . '</h2>';
@@ -55,13 +55,13 @@ add_filter('single_template', static function ($single) {
     global $post;
     $post_type = $post->post_type;
     $post_type_key = str_replace('wcs4_', '', $post_type);
-    $wcs4_settings = wcs4_load_settings();
+    $wcs4_settings = WCS_Settings::load_settings();
     if (isset($post_type, $_GET['format']) && array_key_exists($post_type, WCS4_POST_TYPES_WHITELIST)) {
         if ('ical' === $_GET['format'] && 'yes' === $wcs4_settings[$post_type_key . '_download_icalendar']) {
-            Schedule_Management::calendar_page_callback();
+            WCS_Schedule::callback_of_calendar_page();
         }
         if ('csv' === $_GET['format'] && 'yes' === $wcs4_settings[$post_type_key . '_download_report_csv'] && current_user_can(WCS4_REPORT_EXPORT_CAPABILITY)) {
-            Report_Management::export_page_callback();
+            WCS_Report::callback_of_export_page();
         }
     }
     return $single;

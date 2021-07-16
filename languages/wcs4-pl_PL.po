@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: Weekly Class Schedule\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-09-04 11:57+0000\n"
-"PO-Revision-Date: 2021-07-15 21:36+0000\n"
+"PO-Revision-Date: 2021-07-16 07:38+0000\n"
 "Last-Translator: Bartłomiej Kwiatek\n"
 "Language-Team: Polski\n"
 "Language: pl_PL\n"
@@ -441,7 +441,7 @@ msgstr "Pobierz kalendarz (iCal)"
 
 #: includes/wcs_content.php:39
 msgid "Download report as CSV"
-msgstr "Pobierz raport jako plik CSV"
+msgstr "Pobierz raporty (CSV)"
 
 #: includes/wcs_schedule.php:178 includes/wcs_report.php:183
 msgid "Duplicate"
@@ -1088,7 +1088,7 @@ msgstr "Pobierz kalendarz (iCal)"
 #: includes/wcs_settings.php:359
 msgctxt "options general settings"
 msgid "Download report as CSV"
-msgstr "Pobierz raport jako plik CSV"
+msgstr "Pobierz raporty (CSV)"
 
 #: includes/wcs_settings.php:225
 msgctxt "options general settings"

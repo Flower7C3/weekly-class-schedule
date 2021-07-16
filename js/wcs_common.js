@@ -96,6 +96,7 @@ var WCS4_LIB = (function ($) {
         if (scope !== 'lesson' && scope !== 'report') {
             show_message(WCS4_AJAX_OBJECT.ajax_error, 'error');
         } else {
+            $('tr.is-active').removeClass('is-active');
             $('tr#' + scope + '-' + row_id).addClass('is-active');
             var get_report_query;
             get_report_query = {

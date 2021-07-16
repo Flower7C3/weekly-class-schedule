@@ -4,6 +4,39 @@
  */
 
 /**
+ * Performs standard AJAX nonce verification.
+ */
+function wcs4_verify_nonce()
+{
+    $valid = check_ajax_referer('wcs4-ajax-nonce', 'security', FALSE);
+    if (!$valid) {
+        $response = __('Nonce verification failed', 'wcs4');
+        $status = 'error';
+        wcs4_json_response([
+            'response' => $response,
+            'result' => $status,
+        ]);
+        die();
+    }
+}
+
+/**
+ * Verifies all required fields are available.
+ *
+ * @param array $data : list of required fields ( field_name => Field Name ).
+ */
+function wcs4_verify_required_fields(array $data): array
+{
+    $errors = [];
+    foreach ($data as $k => $v) {
+        if (!isset($_POST[$k]) || '' === $_POST[$k] || '_none' === $_POST[$k]) {
+            $errors[$k][] = sprintf(_x('Field "%s" is required', 'validation', 'wcs4'), $v);
+        }
+    }
+    return $errors;
+}
+
+/**
  * Returns all post of the specified type.
  *
  * @param string $type : e.g. subject, teacher, student, etc.
@@ -132,7 +165,7 @@ function wcs4_select_list($values, $id = '', $name = '', $default = NULL, $requi
         $params['required'] = 'required="required"';
     }
     if (true === $multiple) {
-        $params['multiple'] = 'multiple="multiple" size="5"';
+        $params['multiple'] = 'multiple="multiple" size="6"';
     }
     $output = '<select ' . implode(' ', $params) . '>';
 
