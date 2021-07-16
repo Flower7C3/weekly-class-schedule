@@ -250,11 +250,40 @@ add_action('init', static function () {
         'menu_icon' => 'dashicons-building',
     ));
     add_theme_support('post-thumbnails');
-    add_post_type_support(WCS4_POST_TYPE_SUBJECT, 'thumbnail');
-    add_post_type_support(WCS4_POST_TYPE_TEACHER, 'thumbnail');
-    add_post_type_support(WCS4_POST_TYPE_STUDENT, 'thumbnail');
-    add_post_type_support(WCS4_POST_TYPE_CLASSROOM, 'thumbnail');
+    $post_types = array(
+        WCS4_POST_TYPE_SUBJECT,
+        WCS4_POST_TYPE_TEACHER,
+        WCS4_POST_TYPE_STUDENT,
+        WCS4_POST_TYPE_CLASSROOM,
+    );
+    foreach ($post_types as $post_type) {
+        add_post_type_support($post_type, 'thumbnail');
+    }
 });
+
+$post_types = array(
+    WCS4_POST_TYPE_SUBJECT,
+    WCS4_POST_TYPE_TEACHER,
+    WCS4_POST_TYPE_STUDENT,
+    WCS4_POST_TYPE_CLASSROOM,
+);
+foreach ($post_types as $post_type) {
+    add_filter('manage_' . $post_type . '_posts_columns', function ($columns) {
+        $offset = array_search('date', array_keys($columns), true);
+        $new_columns = ['password' => __('Password')];
+        return array_merge(array_slice($columns, 0, $offset), $new_columns, array_slice($columns, $offset, null));
+    });
+    add_action('manage_' . $post_type . '_posts_custom_column', function ($column_key, $post_id) {
+        if ($column_key == 'password') {
+            $the_post = get_post($post_id);
+            if ($the_post->post_password) {
+                echo '<code>' . $the_post->post_password . '</code>';
+            } else {
+                echo '---';
+            }
+        }
+    }, 10, 2);
+}
 
 /**
  * Register activation hook
