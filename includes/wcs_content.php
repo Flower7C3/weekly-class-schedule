@@ -26,13 +26,13 @@ add_filter('the_content', static function ($content) {
             if ('yes' === $wcs4_settings[$post_type_key . '_download_icalendar']) {
                 $content .= '<a href="?format=ical">' . __('Download iCal', 'wcs4') . '</a>';
             }
-            if ('yes' === $wcs4_settings[$post_type_key . '_report_view']) {
+            if (!empty($wcs4_settings[$post_type_key . '_report_view'])) {
                 $content .= '<h2>' . __('Report', 'wcs4') . '</h2>';
                 $template_report = $wcs4_settings[$post_type_key . '_schedule_template_report'];
                 $params = [];
                 $params[] = '' . $post_type_key . '="#' . $post_id . '"';
                 $params[] = 'template_report="' . $template_report . '"';
-                $params[] = 'limit=10';
+                $params[] = 'limit=' . $wcs4_settings[$post_type_key . '_report_view'];
                 $content .= '[wcr  ' . implode(' ', $params) . ']';
             }
             if ('yes' === $wcs4_settings[$post_type_key . '_download_report_csv']) {

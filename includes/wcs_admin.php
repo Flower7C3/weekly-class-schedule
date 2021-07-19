@@ -309,7 +309,7 @@ class WCS_Admin
         $table = WCS_DB::get_schedule_table_name();
         $table_teacher = WCS_DB::get_schedule_teacher_table_name();
         $table_student = WCS_DB::get_schedule_student_table_name();
-        $include_ids = [];
+        $include_ids = null;
 
         $values = array();
 
@@ -377,7 +377,11 @@ class WCS_Admin
                 break;
         }
 
-        $posts = wcs4_get_posts_of_type($post_type, $include_ids);
+        if ($include_ids === null || (is_array($include_ids) && !empty($include_ids))) {
+            $posts = wcs4_get_posts_of_type($post_type, $include_ids);
+        } else {
+            $posts = [];
+        }
 
         if (!empty($posts)) {
             foreach ($posts as $post) {

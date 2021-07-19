@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: Weekly Class Schedule\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-09-04 11:57+0000\n"
-"PO-Revision-Date: 2021-07-16 07:38+0000\n"
+"PO-Revision-Date: 2021-07-19 12:00+0000\n"
 "Last-Translator: Bartłomiej Kwiatek\n"
 "Language-Team: Polski\n"
 "Language: pl_PL\n"
@@ -1033,7 +1033,7 @@ msgstr ""
 #: includes/wcs_settings.php:373
 msgctxt "options general settings"
 msgid "Add New Report"
-msgstr "Dodaj nowe raport"
+msgstr "Dodaj nowy raport"
 
 #: includes/wcs_settings.php:138 includes/wcs_settings.php:321
 msgctxt "options general settings"

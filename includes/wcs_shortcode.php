@@ -116,7 +116,7 @@ add_shortcode('wcr', static function ($atts) {
     ), $atts), EXTR_OVERWRITE);
 
     # Get reports
-    $reports = WCS_Report::get_items($teacher, $student, $subject, $date_from, $date_upto, $limit, null, null, $paged);
+    $reports = WCS_Report::get_items($teacher, $student, $subject, $date_from, $date_upto, null, null, $limit, $paged);
 
     # Classroom
     $schedule_key = 'wcs4-key-' . preg_replace('/[^A-Za-z0-9]/', '-', implode('-', [$teacher, $student, $subject, $date_from, $date_upto, $limit, $page]));

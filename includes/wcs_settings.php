@@ -3,7 +3,8 @@
  * Settings page.
  */
 
-class WCS_Settings {
+class WCS_Settings
+{
     public static function standard_options_page_callback(): void
     {
         $taxonomyTypes = array(
@@ -68,7 +69,7 @@ class WCS_Settings {
                     'subject_schedule_template_table_short' => 'wcs4_validate_html',
                     'subject_schedule_template_table_details' => 'wcs4_validate_html',
                     'subject_schedule_template_list' => 'wcs4_validate_html',
-                    'subject_report_view' => 'wcs4_validate_yes_no',
+                    'subject_report_view' => 'wcs4_validate_is_numeric',
                     'subject_schedule_template_report' => 'wcs4_validate_html',
                     'subject_download_report_csv' => 'wcs4_validate_yes_no',
                     'subject_report_create' => 'wcs4_validate_yes_no',
@@ -82,7 +83,7 @@ class WCS_Settings {
                     'teacher_schedule_template_table_short' => 'wcs4_validate_html',
                     'teacher_schedule_template_table_details' => 'wcs4_validate_html',
                     'teacher_schedule_template_list' => 'wcs4_validate_html',
-                    'teacher_report_view' => 'wcs4_validate_yes_no',
+                    'teacher_report_view' => 'wcs4_validate_is_numeric',
                     'teacher_schedule_template_report' => 'wcs4_validate_html',
                     'teacher_download_report_csv' => 'wcs4_validate_yes_no',
                     'teacher_report_create' => 'wcs4_validate_yes_no',
@@ -96,7 +97,7 @@ class WCS_Settings {
                     'student_schedule_template_table_short' => 'wcs4_validate_html',
                     'student_schedule_template_table_details' => 'wcs4_validate_html',
                     'student_schedule_template_list' => 'wcs4_validate_html',
-                    'student_report_view' => 'wcs4_validate_yes_no',
+                    'student_report_view' => 'wcs4_validate_is_numeric',
                     'student_schedule_template_report' => 'wcs4_validate_html',
                     'student_download_report_csv' => 'wcs4_validate_yes_no',
                     'student_report_create' => 'wcs4_validate_yes_no',
@@ -272,18 +273,20 @@ class WCS_Settings {
                                 </td>
                             <?php endforeach; ?>
                         </tr>
+                    </tbody>
+                    <thead>
                         <tr>
                             <th>
-                                <?php _ex('Download iCalendar', 'options general settings', 'wcs4'); ?>
-                                <div class="wcs4-description"><?php _ex('Will display extra link to download schedule as iCalendar.', 'options general settings', 'wcs4'); ?></div>
+                                <h2><?php _e('Schedule', 'wcs4') ?></h2>
                             </th>
                             <?php foreach ($taxonomyTypes as $key => $name): ?>
-                                <td data-key="<?= $key ?>" data-type="wcs4_download_icalendar">
-                                    <?php echo wcs4_bool_checkbox('wcs4_' . $key . '_download_icalendar', 'wcs4_' . $key . '_download_icalendar',
-                                        $wcs4_options[$key . '_download_icalendar'], __('Yes')); ?>
-                                </td>
+                                <th>
+                                    <h4><?php echo $name['post']; ?></h4>
+                                </th>
                             <?php endforeach; ?>
                         </tr>
+                    </thead>
+                    <tbody>
                         <tr>
                             <th>
                                 <?php _ex('Single page schedule layout', 'options general settings', 'wcs4'); ?>
@@ -330,14 +333,42 @@ class WCS_Settings {
                         </tr>
                         <tr>
                             <th>
+                                <?php _ex('Download iCalendar', 'options general settings', 'wcs4'); ?>
+                                <div class="wcs4-description"><?php _ex('Will display extra link to download schedule as iCalendar.', 'options general settings', 'wcs4'); ?></div>
+                            </th>
+                            <?php foreach ($taxonomyTypes as $key => $name): ?>
+                                <td data-key="<?= $key ?>" data-type="wcs4_download_icalendar">
+                                    <?php echo wcs4_bool_checkbox('wcs4_' . $key . '_download_icalendar', 'wcs4_' . $key . '_download_icalendar',
+                                        $wcs4_options[$key . '_download_icalendar'], __('Yes')); ?>
+                                </td>
+                            <?php endforeach; ?>
+                        </tr>
+                    </tbody>
+                    <thead>
+                        <tr>
+                            <th>
+                                <h2><?php _e('Report', 'wcs4') ?></h2>
+                            </th>
+                            <?php foreach ($taxonomyTypes as $key => $name): ?>
+                                <th>
+                                    <?php if ($key !== 'classroom'): ?>
+                                        <h4><?php echo $name['post']; ?></h4>
+                                    <?php endif; ?>
+                                </th>
+                            <?php endforeach; ?>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <th>
                                 <?php _ex('Display Reports', 'options general settings', 'wcs4'); ?>
                                 <div class="wcs4-description"><?php _ex('Will display reported lessons.', 'options general settings', 'wcs4'); ?></div>
                             </th>
                             <?php foreach ($taxonomyTypes as $key => $name): ?>
                             <td data-key="<?= $key ?>" data-type="wcs4_report_view">
                                 <?php if ($key !== 'classroom'): ?>
-                                    <?php echo wcs4_bool_checkbox('wcs4_' . $key . '_report_view', 'wcs4_' . $key . '_report_view',
-                                        $wcs4_options[$key . '_report_view'], __('Yes')); ?>
+                                    <?php echo wcs4_textfield('wcs4_' . $key . '_report_view', 'wcs4_' . $key . '_report_view',
+                                        $wcs4_options[$key . '_report_view'], 20); ?>
                                     </td>
                                 <?php endif; ?>
                             <?php endforeach; ?>
@@ -547,7 +578,7 @@ class WCS_Settings {
                 'subject_schedule_template_table_short' => _x('<small>{start time}-{end time}</small><br>{tea}/{stu} @{class}', 'config template table short at subject schedule', 'wcs4'),
                 'subject_schedule_template_table_details' => _x('<small>{start time}-{end time}</small><br>{teacher link} at {classroom link} for {student link} {notes}', 'config template table details at subject schedule', 'wcs4'),
                 'subject_schedule_template_list' => _x('<small>{start time}-{end time}</small><br>{teacher link} at {classroom link} for {student link} {notes}', 'config template list at subject schedule', 'wcs4'),
-                'subject_report_view' => 'no',
+                'subject_report_view' => 0,
                 'subject_schedule_template_report' => _x('<small>{start time}-{end time}</small><br>{teacher link} at for {student link} {topic}', 'config template report at subject schedule', 'wcs4'),
                 'subject_download_report_csv' => 'no',
                 'subject_report_create' => 'no',
@@ -561,7 +592,7 @@ class WCS_Settings {
                 'teacher_schedule_template_table_short' => _x('<small>{start time}-{end time}</small><br>{subject} @{class} ({stu})', 'config template table short at teacher schedule', 'wcs4'),
                 'teacher_schedule_template_table_details' => _x('<small>{start time}-{end time}</small><br>{subject link} at {classroom link} for {student link} {notes}', 'config template table details at teacher schedule', 'wcs4'),
                 'teacher_schedule_template_list' => _x('<small>{start time}-{end time}</small><br>{subject link} at {classroom link} for {student link} {notes}', 'config template list at teacher schedule', 'wcs4'),
-                'teacher_report_view' => 'no',
+                'teacher_report_view' => 0,
                 'teacher_schedule_template_report' => _x('<small>{start time}-{end time}</small><br>{subject link} for {student link} {topic}', 'config template report at teacher schedule', 'wcs4'),
                 'teacher_download_report_csv' => 'no',
                 'teacher_report_create' => 'no',
@@ -575,7 +606,7 @@ class WCS_Settings {
                 'student_schedule_template_table_short' => _x('<small>{start time}-{end time}</small><br>{subject} ({tea}) @{class}', 'config template table short at student schedule', 'wcs4'),
                 'student_schedule_template_table_details' => _x('<small>{start time}-{end time}</small><br>{subject link} with {teacher link} at {classroom link}', 'config template table details at student schedule', 'wcs4'),
                 'student_schedule_template_list' => _x('{subject link} with {teacher link} at {classroom link} from {start time} to {end time} {notes}', 'config template report at student schedule', 'wcs4'),
-                'student_report_view' => 'no',
+                'student_report_view' => 0,
                 'student_schedule_template_report' => _x('{subject link} with {teacher link} from {start time} to {end time} {topic}', 'config template list at student schedule', 'wcs4'),
                 'student_download_report_csv' => 'no',
                 'student_report_create' => 'no',
