@@ -99,7 +99,7 @@ class WCS4_TodayClassesWidget extends WP_Widget
 
         <p>
             <label for="<?php echo $this->get_field_id('classroom'); ?>"><?php _ex('Classrooms to display', 'widget settings', 'wcs4'); ?>:</label>
-            <?php echo WCS_Admin::generate_admin_select_list('classroom', $this->get_field_id('classroom'), $this->get_field_name('classroom') . '[]', $classroom, null, true, 'widefat'); ?>
+            <?php echo WCS_Admin::generate_admin_select_list('classroom', $this->get_field_id('classroom'), $this->get_field_name('classroom') . '[]', $classroom, false, true, 'widefat'); ?>
         </p>
 
         <p>
