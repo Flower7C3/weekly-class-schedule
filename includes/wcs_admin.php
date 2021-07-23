@@ -458,4 +458,65 @@ class WCS_Admin
         );
         return wcs4_select_list($values, $name, $name, $default, $required);
     }
+
+    public static function share_wcs4_form($post_id): void
+    {
+        $post = get_post($post_id);
+        if (!in_array($post->post_type, WCS4_POST_TYPES, true)) {
+            echo("<script>location.href = '" . admin_url() . "'</script>");
+            exit;
+        }
+        $tax = get_post_type_object($post->post_type);
+        $tax_name = $tax->labels->singular_name;
+        $link = sprintf('<a href="%1$s">%2$s</a>',
+            get_edit_post_link($post_id),
+            wp_html_excerpt(_draft_or_post_title($post_id), 50, '&hellip;')
+        );
+        $name = sprintf(__('Share %s &#8220;%s&#8221;', 'wcs4'), $tax_name, '%s');
+        $title = sprintf($name, $link);
+        ?>
+        <div class="wrap">
+            <h1 class="wp-heading-inline"><?php echo $title ?></h1>
+            <form method="post" class="form-wrap" action="<?php echo str_replace('%7E', '~', $_SERVER['REQUEST_URI']); ?>" enctype="multipart/form-data">
+                <fieldset style="border: 1px solid;margin: 10px 0;padding: 10px;">
+                    <input type="email" name="email" placeholder="<?php _e('Recipient email', 'wcs4'); ?>"/>
+                    <input type="hidden" name="_wpnonce" value="<?php echo wp_create_nonce('share') ?>"/>
+                    <input type="submit" value="<?php _e('Submit', 'wcs4') ?>" class="button-primary"/>
+                </fieldset>
+            </form>
+            <?php
+            if ('POST' === $_SERVER['REQUEST_METHOD']
+                &&
+                check_ajax_referer('share', '_wpnonce', FALSE)
+                &&
+                isset($_POST['email'])
+                &&
+                !empty($_POST['email'])
+            ) {
+                $subject = __('Visit page', 'wcs4');
+                if ($post->post_password) {
+                    $message = sprintf(__('Visit page %s at %s url with %s password', 'wcs4'), $post->post_title, get_permalink($post->ID), $post->post_password);
+                } else {
+                    $message = sprintf(__('Visit page %s at %s url', 'wcs4'), $post->post_title, get_permalink($post->ID));
+                }
+                $headers = array('Content-Type: text/html; charset=UTF-8');
+                if (wp_mail($_POST['email'], $subject, $message, $headers)) {
+                    echo '<p class="notice notice-success">' . __('Message send', 'wcs4') . '</p>';
+                } else {
+                    echo '<p class="notice notice-error">' . __('Message not send', 'wcs4') . '</p>';
+                }
+            }
+            ?>
+        </div>
+        <?php
+    }
+
+    public static function object_row_actions($actions, $post)
+    {
+        if (in_array($post->post_type, WCS4_POST_TYPES, true)) {
+            $link = admin_url('edit.php') . '?post_type=' . $post->post_type . '&post=' . $post->ID . '&page=share';
+            $actions[] = '<a href="' . $link . '" class="share_action" data-nonce="' . wp_create_nonce('share') . '">' . __('Share', 'wcs4') . '</a>';
+        }
+        return $actions;
+    }
 }

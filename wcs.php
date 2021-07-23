@@ -27,7 +27,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 //opcache_reset();
 
-define('WCS4_VERSION', '4.31');
+define('WCS4_VERSION', '4.32');
 
 define('WCS4_REQUIRED_WP_VERSION', '4.0');
 
@@ -86,6 +86,14 @@ if (!defined('WCS4_TAXONOMY_TYPES_WHITELIST')) {
         WCS4_TAXONOMY_TYPE_SPECIALIZATION => [WCS4_POST_TYPE_TEACHER],
         WCS4_TAXONOMY_TYPE_GROUP => [WCS4_POST_TYPE_STUDENT],
         WCS4_TAXONOMY_TYPE_LOCATION => [WCS4_POST_TYPE_CLASSROOM, WCS4_POST_TYPE_TEACHER],
+    ]);
+}
+if (!defined('WCS4_POST_TYPES')) {
+    define('WCS4_POST_TYPES', [
+        WCS4_POST_TYPE_SUBJECT,
+        WCS4_POST_TYPE_TEACHER,
+        WCS4_POST_TYPE_STUDENT,
+        WCS4_POST_TYPE_CLASSROOM,
     ]);
 }
 $_WCS4_POST_TYPES_WHITELIST = [];

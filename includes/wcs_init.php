@@ -250,31 +250,24 @@ add_action('init', static function () {
         'menu_icon' => 'dashicons-building',
     ));
     add_theme_support('post-thumbnails');
-    $post_types = array(
-        WCS4_POST_TYPE_SUBJECT,
-        WCS4_POST_TYPE_TEACHER,
-        WCS4_POST_TYPE_STUDENT,
-        WCS4_POST_TYPE_CLASSROOM,
-    );
-    foreach ($post_types as $post_type) {
+    foreach (WCS4_POST_TYPES as $post_type) {
         add_post_type_support($post_type, 'thumbnail');
     }
+    add_submenu_page(null, __('Share', 'wcs4'), null, 'edit_pages', 'share', static function () {
+        $post_id = (int)$_GET['post'];
+        WCS_Admin::share_wcs4_form($post_id);
+    });
+    add_filter('post_row_actions', [WCS_Admin::class, 'object_row_actions'], 10, 2);
 });
 
-$post_types = array(
-    WCS4_POST_TYPE_SUBJECT,
-    WCS4_POST_TYPE_TEACHER,
-    WCS4_POST_TYPE_STUDENT,
-    WCS4_POST_TYPE_CLASSROOM,
-);
-foreach ($post_types as $post_type) {
+foreach (WCS4_POST_TYPES as $post_type) {
     add_filter('manage_' . $post_type . '_posts_columns', function ($columns) {
         $offset = array_search('date', array_keys($columns), true);
         $new_columns = ['password' => __('Password')];
         return array_merge(array_slice($columns, 0, $offset), $new_columns, array_slice($columns, $offset, null));
     });
     add_action('manage_' . $post_type . '_posts_custom_column', function ($column_key, $post_id) {
-        if ($column_key == 'password') {
+        if ('password' === $column_key) {
             $the_post = get_post($post_id);
             if ($the_post->post_password) {
                 echo '<code>' . $the_post->post_password . '</code>';
