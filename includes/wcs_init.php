@@ -253,11 +253,6 @@ add_action('init', static function () {
     foreach (WCS4_POST_TYPES as $post_type) {
         add_post_type_support($post_type, 'thumbnail');
     }
-    add_submenu_page(null, __('Share', 'wcs4'), null, 'edit_pages', 'share', static function () {
-        $post_id = (int)$_GET['post'];
-        WCS_Admin::share_wcs4_form($post_id);
-    });
-    add_filter('post_row_actions', [WCS_Admin::class, 'object_row_actions'], 10, 2);
 });
 
 foreach (WCS4_POST_TYPES as $post_type) {

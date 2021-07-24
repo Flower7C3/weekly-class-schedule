@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: Weekly Class Schedule\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-09-04 11:57+0000\n"
-"PO-Revision-Date: 2021-07-23 22:08+0000\n"
+"PO-Revision-Date: 2021-07-24 14:02+0000\n"
 "Last-Translator: Bartłomiej Kwiatek\n"
 "Language-Team: Polski\n"
 "Language: pl_PL\n"
@@ -829,14 +829,6 @@ msgctxt "menu"
 msgid "Teachers"
 msgstr "Pedagodzy"
 
-#: includes/wcs_admin.php:490
-msgid "Message not send"
-msgstr "Wiadomość nie została wysłana"
-
-#: includes/wcs_admin.php:488
-msgid "Message send"
-msgstr "Wiadomość została wysłana"
-
 #: includes/wcs_init.php:21
 msgid "New Branch Name"
 msgstr "Nazwa nowej dziedziny"
@@ -1348,10 +1340,6 @@ msgctxt "post type singular name"
 msgid "Teacher"
 msgstr "Pedagog"
 
-#: includes/wcs_admin.php:499
-msgid "Recipient email"
-msgstr "Adres e-mail odbiorcy"
-
 #: includes/wcs_admin.php:39 includes/wcs_admin.php:40
 #: includes/wcs_settings.php:350 includes/wcs_content.php:30
 msgid "Report"
@@ -1502,15 +1490,6 @@ msgstr "Oddziel lokalizacje za pomocą przecinka"
 msgid "Separate specializations with commas"
 msgstr "Oddziel specjalizacje za pomocą przecinka"
 
-#: includes/wcs_init.php:262 includes/wcs_init.php:269
-msgid "Share"
-msgstr "Udostępnij"
-
-#: includes/wcs_admin.php:471
-#, php-format
-msgid "Share %s &#8220;%s&#8221;"
-msgstr "Udostępnij %s &#8220;%s&#8221;"
-
 #: includes/wcs_init.php:76
 msgid "Specializations"
 msgstr "Specjalizacje"
@@ -1550,10 +1529,6 @@ msgstr "Uczeń jest w tej chwili niedostępny"
 #: includes/wcs_report.php:507
 msgid "Subject"
 msgstr "Przedmiot"
-
-#: includes/wcs_admin.php:503
-msgid "Submit"
-msgstr "Wyślij"
 
 #: includes/wcs_init.php:13 includes/wcs_settings.php:12
 msgctxt "taxonomy general name"
@@ -1656,24 +1631,6 @@ msgstr "Widoczne"
 msgid "Visible"
 msgstr "Widoczne"
 
-#: includes/wcs_admin.php:481
-msgid "Visit page"
-msgstr "Zobacz stronę"
-
-#: includes/wcs_admin.php:485
-#, php-format
-msgid "Visit page %s at %s url"
-msgstr ""
-"<p>Zobacz stronę <strong>%1$s</strong> pod adresem <a href=\"%2$s\">%2$s</a>."
-"</p>"
-
-#: includes/wcs_admin.php:483
-#, php-format
-msgid "Visit page %s at %s url with %s password"
-msgstr ""
-"<p>Zobacz stronę <strong>%1$s</strong> pod adresem <a href=\"%2$s\">%2$s</a> "
-"zabezpieczoną hasłem <code>%3$s</code>.</p>"
-
 #: includes/wcs_schedule.php:186 includes/wcs_schedule.php:465
 msgid "Weekday"
 msgstr "Dzień"
@@ -1774,6 +1731,5 @@ msgstr "{start hour}: {subject link} @{classroom link}"
 #: includes/wcs_report.php:738 includes/wcs_report.php:779
 #: includes/wcs_db.php:306 includes/wcs_db.php:325 includes/wcs_db.php:344
 #: includes/wcs_db.php:363 includes/wcs_db.php:382 includes/wcs_db.php:401
-#: includes/wcs_admin.php:512
 msgid "You are no allowed to run this action"
 msgstr "Nie masz uprawnień do wykonania tej akcji"

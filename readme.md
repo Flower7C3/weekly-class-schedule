@@ -3,8 +3,7 @@
 - Contributors: flower7c3, ty_pwd
 - Tags: schedule, weekly schedule, report, subjects, teachers, students, classes, lessons
 - Requires at least: 4.0
-- Tested up to: 5.4
-- Stable tag: 4.02
+- Tested up to: 5.8
 - License: GPLv2 or later
 
 Generate a weekly schedule of subjects.
