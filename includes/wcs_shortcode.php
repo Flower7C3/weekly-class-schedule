@@ -180,9 +180,11 @@ add_shortcode('wp_query', static function (array $options = []) {
         'posts_per_page' => '10',
         'paged' => '1',
         'display_link' => 'yes',
+        'display_excerpt' => 'no',
         'display_taxonomy' => '',
         'display_taxonomy_pattern' => ' – %s',
         'display_empty_message' => 'yes',
+        'layout' => 'ul',
         'empty_message' => __('No posts found.'),
     ], $options);
 
@@ -228,17 +230,27 @@ add_shortcode('wp_query', static function (array $options = []) {
     $the_query = new WP_Query($args);
     $response = [];
     if ($the_query->have_posts()) {
-        $response[] = '<ul>';
+        switch ($shortcode_atts['layout']) {
+            default:
+            case 'ul';
+                $response[] = '<ul>';
+                break;
+            case 'ol';
+                $response[] = '<ol>';
+                break;
+            case 'details';
+                break;
+        }
         while ($the_query->have_posts()) {
             $the_query->the_post();
-            $link = null;
+            $post = get_post();
+            $row_value = [];
+            $row_value['title'] = $post->post_title;
             if (in_array($shortcode_atts['display_link'], [true, 'true', 1, '1', 'yes'], true)) {
-                if (('publish' === get_post_status() && !post_password_required()) || is_user_logged_in()) {
-                    $link = get_permalink();
+                if (('publish' === get_post_status($post) && !post_password_required($post)) || is_user_logged_in()) {
+                    $row_value['title'] = sprintf('<a href="%s">%s</a>', get_permalink($post), $post->post_title);
                 }
             }
-            global $post;
-            $postName = $post->post_title;
             if (!empty($display_taxonomies)) {
                 foreach ($display_taxonomies as $display_taxonomy) {
                     $terms = wp_get_post_terms(get_the_ID(), $display_taxonomy);
@@ -252,19 +264,48 @@ add_shortcode('wp_query', static function (array $options = []) {
                         }
                         if (!empty($termNames)) {
                             sort($termNames);
-                            $postName .= sprintf($shortcode_atts['display_taxonomy_pattern'], implode(', ', $termNames));
+                            $row_value['taxonomy'] = sprintf($shortcode_atts['display_taxonomy_pattern'], implode(', ', $termNames));
                         }
                     }
                 }
             }
-            if (null === $link) {
-                $response[] = sprintf('<li>%s</li>', $postName);
-            } else {
-                $response[] = sprintf('<li><a href="%s">%s</a></li>', $link, $postName);
+            $excerpt = null;
+            if (in_array($shortcode_atts['display_excerpt'], [true, 'true', 1, '1', 'yes'], true)) {
+                $content_arr = get_extended($post->post_content);
+                $excerpt = apply_filters('the_content', apply_filters('the_content', $content_arr['main']));
+            }
+            switch ($shortcode_atts['layout']) {
+                default:
+                case 'ul';
+                case 'ol';
+                    if (isset($excerpt)) {
+                        $row_value[''] = '<br>';
+                        $row_value['excerpt'] = $excerpt;
+                    }
+                    $response[] = sprintf('<li>%s</li>', implode('', $row_value));
+                    break;
+                case 'details';
+                    $response[] = '<details>';
+                    $response[] = sprintf('<summary>%s</summary>', implode('', $row_value));
+                    if (isset($excerpt)) {
+                        $response[] = sprintf('<div>%s</div>', $excerpt);
+                    }
+                    $response[] = '</details>';
+                    break;
             }
         }
         wp_reset_postdata();
-        $response[] = '</ul>';
+        switch ($shortcode_atts['layout']) {
+            default:
+            case 'ul';
+                $response[] = '</ul>';
+                break;
+            case 'ol';
+                $response[] = '</ol>';
+                break;
+            case 'details';
+                break;
+        }
     } else if (in_array($shortcode_atts['display_empty_message'], [true, 'true', 1, '1', 'yes'], true)) {
         $response[] = '<p>' . $shortcode_atts['empty_message'] . '</p>';
     }
