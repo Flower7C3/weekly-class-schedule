@@ -24,7 +24,10 @@ add_filter('the_content', static function ($content) {
             $params[] = 'template_list="' . $template_list . '"';
             $content .= '[wcs  ' . implode(' ', $params) . ']';
             if ('yes' === $wcs4_settings[$post_type_key . '_download_icalendar']) {
-                $content .= '<a href="?format=ical">' . __('Download iCal', 'wcs4') . '</a>';
+                $content .= __('Download iCal:', 'wcs4') . ' ';
+                $content .= '<a href="?format=ical">' . __('Download iCal for current week', 'wcs4') . '</a>';
+                $content .= ', ';
+                $content .= '<a href="?format=ical&week=1">' . __('Download iCal for next week', 'wcs4') . '</a>';
             }
             if (!empty($wcs4_settings[$post_type_key . '_report_view'])) {
                 $content .= '<h2>' . __('Report', 'wcs4') . '</h2>';

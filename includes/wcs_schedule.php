@@ -78,6 +78,7 @@ class WCS_Schedule
                 $subject = '#' . get_the_id();
                 break;
         }
+        $shiftDays = (int)abs($_GET['week'] ?: 0) * 7;
 
         # get lessons
         $lessons = self::get_items($classroom, $teacher, $student, $subject, null, null, 1);
@@ -86,6 +87,8 @@ class WCS_Schedule
         $filename_params = [];
         $filename_params[] = 'at';
         $filename_params[] = date('YmdHis');
+        $filename_params[] = 'week';
+        $filename_params[] = str_replace('#', '', $shiftDays / 7);
         if ($classroom) {
             $filename_params[] = 'cls';
             $filename_params[] = str_replace('#', '', $classroom);
@@ -109,29 +112,30 @@ class WCS_Schedule
         header('Content-type: text/calendar; charset=utf-8');
         header('Content-Disposition: inline; filename=' . $filename_key);
 
-        $endline = "\r\n";
-
-        echo 'BEGIN:VCALENDAR' . $endline;
-        echo 'VERSION:2.0' . $endline;
-        echo 'PRODID:-//hacksw/handcal//NONSGML v1.0//EN' . $endline . $endline;
+        $line = [];
+        $line[] = 'BEGIN:VCALENDAR';
+        $line[] = 'VERSION:2.0';
+        $line[] = 'PRODID:-//hacksw/handcal//NONSGML v1.0//EN';
+        $line[] = '';
         /** @var WCS_DB_Lesson_Item $lesson */
         foreach ($lessons as $lesson) {
-            $description = '';
-            $description .= __('Teacher', 'wcs4') . ': ';
-            $description .= $lesson->getTeacher()->getName() . '. ';
-            $description .= __('Student', 'wcs4') . ': ';
-            $description .= $lesson->getStudent()->getName() . '.';
-            $description = wordwrap($description, 75, $endline . " ", true);
-            echo 'BEGIN:VEVENT' . $endline;
-            echo 'CATEGORIES:EDUCATION' . $endline;
-            echo 'DTSTART:' . $lesson->getStartDateTime()->format('Ymd\THis') . $endline;
-            echo 'DTEND:' . $lesson->getEndDateTime()->format('Ymd\THis') . $endline;
-            echo 'SUMMARY:' . $lesson->getSubject()->getName() . $endline;
-            echo 'DESCRIPTION:' . $description . $endline;
-            echo 'LOCATION:' . $lesson->getClassroom()->getName() . $endline;
-            echo 'END:VEVENT' . $endline . $endline;
+            $description = [];
+            $description[] = __('Teacher', 'wcs4') . ':';
+            $description[] = $lesson->getTeacher()->getName() . ',';
+            $description[] = __('Student', 'wcs4') . ':';
+            $description[] = $lesson->getStudent()->getName() . '';
+            $line[] = 'BEGIN:VEVENT';
+            $line[] = 'CATEGORIES:EDUCATION';
+            $line[] = 'DTSTART:' . $lesson->getStartDateTime($shiftDays)->format('Ymd\THis');
+            $line[] = 'DTEND:' . $lesson->getEndDateTime($shiftDays)->format('Ymd\THis');
+            $line[] = 'SUMMARY:' . wordwrap($lesson->getSubject()->getName(), 75, " ", true);
+            $line[] = 'DESCRIPTION:' . wordwrap(implode(' ', $description), 75, " ", true);
+            $line[] = 'LOCATION:' . wordwrap($lesson->getClassroom()->getName(), 75, " ", true);
+            $line[] = 'END:VEVENT';
+            $line[] = '';
         }
-        echo 'END:VCALENDAR' . $endline;
+        $line[] = 'END:VCALENDAR';
+        echo implode("\r\n", $line);
         exit;
     }
 
@@ -263,19 +267,22 @@ class WCS_Schedule
                                     <?php if (current_user_can(WCS4_SCHEDULE_MANAGE_CAPABILITY)): ?>
                                         <div class="row-actions">
                                             <span class="edit hide-if-no-js">
-                                                <a href="#" class="wcs4-edit-lesson-button" id="wcs4-edit-button-<?php echo $item->getId(); ?>" data-lesson-id="<?php echo $item->getId(); ?>" data-day="<?php echo $item->getWeekday(); ?>">
+                                                <a href="#" class="wcs4-edit-lesson-button" id="wcs4-edit-button-<?php echo $item->getId(); ?>" data-lesson-id="<?php echo $item->getId(); ?>"
+                                                   data-day="<?php echo $item->getWeekday(); ?>">
                                                     <?php echo __('Edit', 'wcs4'); ?>
                                                 </a>
                                                 |
                                             </span>
                                             <span class="copy hide-if-no-js">
-                                                <a href="#" class="wcs4-copy-lesson-button" id="wcs4-copy-button-<?php echo $item->getId(); ?>" data-lesson-id="<?php echo $item->getId(); ?>" data-day="<?php echo $item->getWeekday(); ?>">
+                                                <a href="#" class="wcs4-copy-lesson-button" id="wcs4-copy-button-<?php echo $item->getId(); ?>" data-lesson-id="<?php echo $item->getId(); ?>"
+                                                   data-day="<?php echo $item->getWeekday(); ?>">
                                                     <?php echo __('Duplicate', 'wcs4'); ?>
                                                 </a>
                                                 |
                                             </span>
                                             <span class="delete hide-if-no-js">
-                                                <a href="#delete" class="wcs4-delete-lesson-button" id=wcs4-delete-<?php echo $item->getId(); ?>" data-lesson-id="<?php echo $item->getId(); ?>" data-day="<?php echo $item->getWeekday(); ?>">
+                                                <a href="#delete" class="wcs4-delete-lesson-button" id=wcs4-delete-<?php echo $item->getId(); ?>" data-lesson-id="<?php echo $item->getId(); ?>"
+                                                   data-day="<?php echo $item->getWeekday(); ?>">
                                                     <?php echo __('Delete', 'wcs4'); ?>
                                                 </a>
                                             </span>

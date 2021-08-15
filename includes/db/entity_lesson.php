@@ -201,12 +201,12 @@ class WCS_DB_Lesson_Item
         return $this->end_time;
     }
 
-    public function getEndDateTime()
+    public function getEndDateTime(int $shiftDays = 0): DateTime
     {
         return (new DateTime(
             'last sunday ' .
             $this->getEndTime()
-        ))->add(new DateInterval('P' . $this->getWeekday() . 'D'));
+        ))->add(new DateInterval('P' . ($this->getWeekday() + $shiftDays) . 'D'));
     }
 
     /**
@@ -217,12 +217,12 @@ class WCS_DB_Lesson_Item
         return $this->weekday;
     }
 
-    public function getStartDateTime()
+    public function getStartDateTime(int $shiftDays = 0): DateTime
     {
         return (new DateTime(
             'last sunday ' .
             $this->getStartTime()
-        ))->add(new DateInterval('P' . $this->getWeekday() . 'D'));
+        ))->add(new DateInterval('P' . ($this->getWeekday() + $shiftDays) . 'D'));
     }
 
     /**

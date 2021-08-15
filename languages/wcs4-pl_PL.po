@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: Weekly Class Schedule\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-09-04 11:57+0000\n"
-"PO-Revision-Date: 2021-07-24 14:02+0000\n"
+"PO-Revision-Date: 2021-08-15 18:29+0000\n"
 "Last-Translator: Bartłomiej Kwiatek\n"
 "Language-Team: Polski\n"
 "Language: pl_PL\n"
@@ -15,7 +15,7 @@ msgstr ""
 "X-Generator: Loco https://localise.biz/\n"
 "X-Loco-Version: 2.5.3; wp-5.8"
 
-#: includes/wcs_schedule.php:565 includes/wcs_report.php:592
+#: includes/wcs_schedule.php:568 includes/wcs_report.php:592
 msgid "A class cannot start before it ends"
 msgstr "Zajęcia nie mogą zacząć się przed końcem"
 
@@ -139,12 +139,12 @@ msgid "Choose from the most used specializations"
 msgstr "Wybierz spośród najczęściej używanych specjalizacji"
 
 #: includes/wcs_schedule.php:151 includes/wcs_schedule.php:181
-#: includes/wcs_schedule.php:243 includes/wcs_schedule.php:295
-#: includes/wcs_schedule.php:464
+#: includes/wcs_schedule.php:243 includes/wcs_schedule.php:298
+#: includes/wcs_schedule.php:467
 msgid "Classroom"
 msgstr "Sala"
 
-#: includes/wcs_schedule.php:520
+#: includes/wcs_schedule.php:523
 msgid "Classroom is not available at this time"
 msgstr "Sala jest w tej chwili niedostępna"
 
@@ -406,7 +406,7 @@ msgstr "<small>{start time}-{end time}</small><br>{subject} @{class} ({stu})"
 msgid "Created at"
 msgstr "Utworzono"
 
-#: includes/wcs_schedule.php:308 includes/wcs_report.php:343
+#: includes/wcs_schedule.php:311 includes/wcs_report.php:343
 #, php-format
 msgid "Created at %s by %s"
 msgstr "Utworzono %s przez %s"
@@ -428,23 +428,31 @@ msgstr "Data od"
 msgid "Date to"
 msgstr "Data do"
 
-#: includes/wcs_schedule.php:279 includes/wcs_report.php:317
+#: includes/wcs_schedule.php:282 includes/wcs_report.php:317
 msgid "Delete"
 msgstr "Usuń"
 
-#: includes/wcs_content.php:27
-msgid "Download iCal"
-msgstr "Pobierz kalendarz (iCal)"
+#: includes/wcs_content.php:28
+msgid "Download iCal for current week"
+msgstr "ten tydzień"
 
-#: includes/wcs_report.php:174 includes/wcs_content.php:39
+#: includes/wcs_content.php:30
+msgid "Download iCal for next week"
+msgstr "następny tydzień"
+
+#: includes/wcs_content.php:27
+msgid "Download iCal:"
+msgstr "🗓Pobierz w formacie iCal:"
+
+#: includes/wcs_report.php:174 includes/wcs_content.php:42
 msgid "Download report as CSV"
 msgstr "Pobierz raporty (CSV)"
 
-#: includes/wcs_schedule.php:273 includes/wcs_report.php:311
+#: includes/wcs_schedule.php:275 includes/wcs_report.php:311
 msgid "Duplicate"
 msgstr "Kopiuj"
 
-#: includes/wcs_schedule.php:267 includes/wcs_report.php:305
+#: includes/wcs_schedule.php:268 includes/wcs_report.php:305
 msgid "Edit"
 msgstr "Edytuj"
 
@@ -468,7 +476,7 @@ msgstr "Edytuj specjalizację"
 msgid "End"
 msgstr "Koniec"
 
-#: includes/wcs_schedule.php:194 includes/wcs_schedule.php:467
+#: includes/wcs_schedule.php:194 includes/wcs_schedule.php:470
 #: includes/wcs_report.php:118 includes/wcs_report.php:224
 #: includes/wcs_report.php:512
 msgid "End Time"
@@ -478,7 +486,7 @@ msgstr "Czas zakończenia"
 msgid "Error"
 msgstr "Błąd"
 
-#: includes/wcs_schedule.php:743 includes/wcs_report.php:762
+#: includes/wcs_schedule.php:746 includes/wcs_report.php:762
 msgid "Failed to delete entry"
 msgstr "Nie udało się usunąć wpisu"
 
@@ -861,7 +869,7 @@ msgstr "Nie znaleziono grup."
 msgid "No groups."
 msgstr "Brak grup."
 
-#: includes/wcs_schedule.php:319
+#: includes/wcs_schedule.php:322
 msgid "No lessons"
 msgstr "Brak lekcji"
 
@@ -869,7 +877,7 @@ msgstr "Brak lekcji"
 msgid "No lessons reported"
 msgstr "Brak zaraportowanych zajęć"
 
-#: includes/wcs_schedule.php:794 includes/wcs_schedule.php:836
+#: includes/wcs_schedule.php:797 includes/wcs_schedule.php:839
 msgid "No lessons scheduled"
 msgstr "Brak zaplanowanych zajęć"
 
@@ -908,7 +916,7 @@ msgid "Not found in Trash"
 msgstr "Nie znaleziono w Koszu"
 
 #: includes/wcs_schedule.php:203 includes/wcs_schedule.php:246
-#: includes/wcs_schedule.php:298
+#: includes/wcs_schedule.php:301
 msgid "Notes"
 msgstr "Notatka"
 
@@ -1341,7 +1349,7 @@ msgid "Teacher"
 msgstr "Pedagog"
 
 #: includes/wcs_admin.php:39 includes/wcs_admin.php:40
-#: includes/wcs_settings.php:350 includes/wcs_content.php:30
+#: includes/wcs_settings.php:350 includes/wcs_content.php:33
 msgid "Report"
 msgstr "Raport"
 
@@ -1403,15 +1411,15 @@ msgstr "⚙️Zresetuj ustawienia"
 msgid "Schedule"
 msgstr "Plan zajęć"
 
-#: includes/wcs_schedule.php:649
+#: includes/wcs_schedule.php:652
 msgid "Schedule entry added successfully"
 msgstr "Pomyślnie dodano nową lekcję"
 
-#: includes/wcs_schedule.php:746
+#: includes/wcs_schedule.php:749
 msgid "Schedule entry deleted successfully"
 msgstr "Pomyślnie usunięto lekcję"
 
-#: includes/wcs_schedule.php:625
+#: includes/wcs_schedule.php:628
 msgid "Schedule entry updated successfully"
 msgstr "Pomyślnie zaktualizowano lekcję"
 
@@ -1502,28 +1510,28 @@ msgstr "Konfiguracja"
 msgid "Start"
 msgstr "Początek"
 
-#: includes/wcs_schedule.php:190 includes/wcs_schedule.php:466
+#: includes/wcs_schedule.php:190 includes/wcs_schedule.php:469
 #: includes/wcs_report.php:117 includes/wcs_report.php:220
 #: includes/wcs_report.php:511
 msgid "Start Time"
 msgstr "Czas początku"
 
-#: includes/wcs_schedule.php:122 includes/wcs_schedule.php:149
+#: includes/wcs_schedule.php:123 includes/wcs_schedule.php:149
 #: includes/wcs_schedule.php:177 includes/wcs_schedule.php:240
-#: includes/wcs_schedule.php:292 includes/wcs_schedule.php:463
+#: includes/wcs_schedule.php:295 includes/wcs_schedule.php:466
 #: includes/wcs_report.php:121 includes/wcs_report.php:166
 #: includes/wcs_report.php:208 includes/wcs_report.php:281
 #: includes/wcs_report.php:330 includes/wcs_report.php:509
 msgid "Student"
 msgstr "Uczeń"
 
-#: includes/wcs_schedule.php:558 includes/wcs_report.php:588
+#: includes/wcs_schedule.php:561 includes/wcs_report.php:588
 msgid "Student is not available at this time"
 msgstr "Uczeń jest w tej chwili niedostępny"
 
 #: includes/wcs_schedule.php:145 includes/wcs_schedule.php:169
-#: includes/wcs_schedule.php:234 includes/wcs_schedule.php:286
-#: includes/wcs_schedule.php:461 includes/wcs_report.php:119
+#: includes/wcs_schedule.php:234 includes/wcs_schedule.php:289
+#: includes/wcs_schedule.php:464 includes/wcs_report.php:119
 #: includes/wcs_report.php:162 includes/wcs_report.php:192
 #: includes/wcs_report.php:275 includes/wcs_report.php:324
 #: includes/wcs_report.php:507
@@ -1570,16 +1578,16 @@ msgctxt "taxonomy singular name"
 msgid "Specialization"
 msgstr "Specjalizacja"
 
-#: includes/wcs_schedule.php:120 includes/wcs_schedule.php:147
+#: includes/wcs_schedule.php:121 includes/wcs_schedule.php:147
 #: includes/wcs_schedule.php:173 includes/wcs_schedule.php:237
-#: includes/wcs_schedule.php:289 includes/wcs_schedule.php:462
+#: includes/wcs_schedule.php:292 includes/wcs_schedule.php:465
 #: includes/wcs_report.php:120 includes/wcs_report.php:164
 #: includes/wcs_report.php:200 includes/wcs_report.php:278
 #: includes/wcs_report.php:327 includes/wcs_report.php:508
 msgid "Teacher"
 msgstr "Pedagog"
 
-#: includes/wcs_schedule.php:539 includes/wcs_report.php:585
+#: includes/wcs_schedule.php:542 includes/wcs_report.php:585
 msgid "Teacher is not available at this time"
 msgstr "Pedagog jest w tej chwili niedostępny"
 
@@ -1593,12 +1601,12 @@ msgstr "Temat"
 msgid "Unsupported layout"
 msgstr "Nieobsługiwany układ"
 
-#: includes/wcs_schedule.php:301 includes/wcs_report.php:125
+#: includes/wcs_schedule.php:304 includes/wcs_report.php:125
 #: includes/wcs_report.php:336
 msgid "Updated at"
 msgstr "Zaktualizowano"
 
-#: includes/wcs_schedule.php:303 includes/wcs_report.php:338
+#: includes/wcs_schedule.php:306 includes/wcs_report.php:338
 #, php-format
 msgid "Updated at %s by %s"
 msgstr "Zaktualizowano %s przez %s"
@@ -1627,11 +1635,11 @@ msgctxt "visibility"
 msgid "Visible"
 msgstr "Widoczne"
 
-#: includes/wcs_schedule.php:468 includes/db/entity_lesson.php:68
+#: includes/wcs_schedule.php:471 includes/db/entity_lesson.php:68
 msgid "Visible"
 msgstr "Widoczne"
 
-#: includes/wcs_schedule.php:186 includes/wcs_schedule.php:465
+#: includes/wcs_schedule.php:186 includes/wcs_schedule.php:468
 msgid "Weekday"
 msgstr "Dzień"
 
@@ -1725,8 +1733,8 @@ msgctxt "widget template"
 msgid "{start time}: {subject link} @{classroom link}"
 msgstr "{start hour}: {subject link} @{classroom link}"
 
-#: includes/wcs_schedule.php:443 includes/wcs_schedule.php:674
-#: includes/wcs_schedule.php:718 includes/wcs_schedule.php:760
+#: includes/wcs_schedule.php:446 includes/wcs_schedule.php:677
+#: includes/wcs_schedule.php:721 includes/wcs_schedule.php:763
 #: includes/wcs_report.php:489 includes/wcs_report.php:695
 #: includes/wcs_report.php:738 includes/wcs_report.php:779
 #: includes/wcs_db.php:306 includes/wcs_db.php:325 includes/wcs_db.php:344

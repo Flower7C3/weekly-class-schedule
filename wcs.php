@@ -27,7 +27,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 //opcache_reset();
 
-define('WCS4_VERSION', '4.34');
+define('WCS4_VERSION', '4.35');
 
 define('WCS4_REQUIRED_WP_VERSION', '4.0');
 
@@ -40,7 +40,7 @@ if (!defined('WCS4_PLUGIN_NAME')) {
 }
 
 if (!defined('WCS4_PLUGIN_DIR')) {
-    define('WCS4_PLUGIN_DIR', untrailingslashit(dirname(__FILE__)));
+    define('WCS4_PLUGIN_DIR', untrailingslashit(__DIR__));
 }
 
 if (!defined('WCS4_PLUGIN_URL')) {
