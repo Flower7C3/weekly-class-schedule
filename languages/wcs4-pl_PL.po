@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: Weekly Class Schedule\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-09-04 11:57+0000\n"
-"PO-Revision-Date: 2021-08-15 18:29+0000\n"
+"PO-Revision-Date: 2021-08-25 22:17+0000\n"
 "Last-Translator: Bartłomiej Kwiatek\n"
 "Language-Team: Polski\n"
 "Language: pl_PL\n"
@@ -480,7 +480,7 @@ msgstr "Koniec"
 #: includes/wcs_report.php:118 includes/wcs_report.php:224
 #: includes/wcs_report.php:512
 msgid "End Time"
-msgstr "Czas zakończenia"
+msgstr "Koniec"
 
 #: includes/wcs_utils.php:343
 msgid "Error"
@@ -1514,7 +1514,7 @@ msgstr "Początek"
 #: includes/wcs_report.php:117 includes/wcs_report.php:220
 #: includes/wcs_report.php:511
 msgid "Start Time"
-msgstr "Czas początku"
+msgstr "Początek"
 
 #: includes/wcs_schedule.php:123 includes/wcs_schedule.php:149
 #: includes/wcs_schedule.php:177 includes/wcs_schedule.php:240

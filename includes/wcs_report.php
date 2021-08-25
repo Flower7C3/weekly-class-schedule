@@ -313,7 +313,8 @@ class WCS_Report
                                                         |
                                                     </span>
                                                     <span class="delete hide-if-no-js">
-                                                        <a href="#delete" class="wcs4-delete-report-button" id=wcs4-delete-<?php echo $item->getId(); ?>" data-report-id="<?php echo $item->getId(); ?>" data-date="<?php echo $item->getDate(); ?>">
+                                                        <a href="#delete" class="wcs4-delete-report-button" id=wcs4-delete-<?php echo $item->getId(); ?>" data-report-id="<?php echo $item->getId(); ?>"
+                                                           data-date="<?php echo $item->getDate(); ?>">
                                                             <?php echo __('Delete', 'wcs4'); ?>
                                                         </a>
                                                     </span>
@@ -813,11 +814,14 @@ class WCS_Report
         }
         krsort($dateWithLessons);
 
+        $weekdays = wcs4_get_weekdays();
         $output = '<div class="wcs4-schedule-list-layout">';
         # Classes are grouped by indexed weekdays.
         foreach ($dateWithLessons as $date => $dayReports) {
             if (!empty($dayReports)) {
-                $output .= '<h3>' . $date . '</h3>';
+                $time = strtotime($date);
+                $weekday = strftime('%w', $time);
+                $output .= '<h3>' . strftime('%x', $time) . ' (' . $weekdays[$weekday] . ')' . '</h3>';
                 $output .= '<ul class="wcs4-grid-date-list wcs4-grid-date-list-' . $date . '">';
                 /** @var WCS_DB_Report_Item $report */
                 foreach ($dayReports as $report) {
