@@ -91,6 +91,26 @@
      * Handles the edit button click event.
      */
     var bind_edit_handler = function () {
+        $(document).on('click.wcs4-visibility-lesson-button', '.wcs4-visibility-lesson-button', function (e) {
+            var entry = {
+                action: 'toggle_visibility_schedule_entry',
+                security: WCS4_AJAX_OBJECT.ajax_nonce,
+                visible: 'true' === $(this).attr('data-visible') ? '0' : '1',
+                row_id: $(this).attr('data-lesson-id')
+            };
+            WCS4_LIB.modify_entry('lesson', entry, function (data) {
+                const elem = '#' + data.scope + '-' + data.id;
+                const day = $(elem).data('day');
+                if (day !== false) {
+                    const classroom = $('#search_wcs4_lesson_classroom_id').val();
+                    const teacher = $('#search_wcs4_lesson_teacher_id').val();
+                    const student = $('#search_wcs4_lesson_student_id').val();
+                    const subject = $('#search_wcs4_lesson_subject_id').val();
+                    // Let's refresh the day
+                    reload_html_view(classroom, teacher, student, subject, day, 'fade');
+                }
+            });
+        });
         $(document).on('click.wcs4-edit-lesson-button', '.wcs4-edit-lesson-button', function (e) {
             WCS4_LIB.fetch_entry_data_to_form('lesson', $(this).attr('data-lesson-id'), set_entry_data_to_form, WCS4_LIB.reset_to_edit_mode);
         });
@@ -110,29 +130,23 @@
      */
     var bind_delete_handler = function () {
         $(document).on('click.wcs4-delete-lesson-button', '.wcs4-delete-lesson-button', function (e) {
-            var entry = {
+            let entry = {
                 action: 'delete_schedule_entry',
                 security: WCS4_AJAX_OBJECT.ajax_nonce,
                 row_id: $(this).attr('data-lesson-id')
             };
-            WCS4_LIB.delete_entry('lesson', entry, function (data) {
-                var day,
-                    elem;
-                if (typeof (e.target) != 'undefined') {
-                    elem = e.target;
-                } else {
-                    elem = e.srcElement;
-                }
-                day = $(elem).data('day');
+            WCS4_LIB.modify_entry('lesson', entry, function (data) {
+                const elem = '#' + data.scope + '-' + data.id;
+                const day = $(elem).data('day');
                 if (day !== false) {
-                    var classroom = $('#search_wcs4_lesson_classroom_id').val();
-                    var teacher = $('#search_wcs4_lesson_teacher_id').val();
-                    var student = $('#search_wcs4_lesson_student_id').val();
-                    var subject = $('#search_wcs4_lesson_subject_id').val();
+                    const classroom = $('#search_wcs4_lesson_classroom_id').val();
+                    const teacher = $('#search_wcs4_lesson_teacher_id').val();
+                    const student = $('#search_wcs4_lesson_student_id').val();
+                    const subject = $('#search_wcs4_lesson_subject_id').val();
                     // Let's refresh the day
                     reload_html_view(classroom, teacher, student, subject, day, 'remove');
                 }
-            });
+            }, WCS4_AJAX_OBJECT['lesson'].delete_warning);
         });
     }
 
@@ -175,7 +189,7 @@
                 visibility = 'hidden';
             }
 
-            $('#wcs4_lesson_visibility').val(visibility);
+            $('#wcs4_lesson_visibility-' + visibility).prop('checked', true);
             $('#wcs4_lesson_notes').val(entry.notes);
         } else {
             WCS4_LIB.show_message(WCS4_AJAX_OBJECT.ajax_error, 'error');

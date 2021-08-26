@@ -232,7 +232,7 @@ class WCS_Report
                 <fieldset class="submit" id="wcs4-report-buttons-wrapper">
                     <span class="spinner"></span>
                     <input id="wcs4-submit-form" type="submit" class="button-primary wcs4-submit-report-form" value="<?php _ex('Add Report', 'button text', 'wcs4'); ?>" name="wcs4-submit"/>
-                    <button id="wcs4-reset-form" type="reset" class="button-link wcs4-reset-report-form"><?php _ex('Reset form', 'button text', 'wcs4'); ?></button>
+                    <button id="wcs4-reset-form" type="reset" class="button-link wcs4-reset-report-form" style="display: none;"><?php _ex('Reset form', 'button text', 'wcs4'); ?></button>
                     <div id="wcs4-ajax-text-wrapper" class="wcs4-ajax-text"></div>
                 </fieldset>
             </form>
@@ -313,7 +313,7 @@ class WCS_Report
                                                         |
                                                     </span>
                                                     <span class="delete hide-if-no-js">
-                                                        <a href="#delete" class="wcs4-delete-report-button" id=wcs4-delete-<?php echo $item->getId(); ?>" data-report-id="<?php echo $item->getId(); ?>"
+                                                        <a href="#" class="wcs4-delete-report-button" id=wcs4-delete-<?php echo $item->getId(); ?>" data-report-id="<?php echo $item->getId(); ?>"
                                                            data-date="<?php echo $item->getDate(); ?>">
                                                             <?php echo __('Delete', 'wcs4'); ?>
                                                         </a>

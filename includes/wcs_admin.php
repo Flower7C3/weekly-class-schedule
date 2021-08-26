@@ -450,12 +450,12 @@ class WCS_Admin
      * @param bool $required
      * @return string
      */
-    public static function generate_visibility_select_list(string $name = '', $default = NULL, bool $required = false): string
+    public static function generate_visibility_fields(string $name = '', $default = NULL, bool $required = false): string
     {
         $values = array(
-            'hidden' => _x('Hidden', 'visibility', 'wcs4'),
             'visible' => _x('Visible', 'visibility', 'wcs4'),
+            'hidden' => _x('Hidden', 'visibility', 'wcs4'),
         );
-        return wcs4_select_list($values, $name, $name, $default, $required);
+        return wcs4_select_radio($values, $name, $name, $default, $required);
     }
 }

@@ -21,6 +21,13 @@
         $('#wcs4-reset-form').click(function () {
             $('#wcs4-management-form-wrapper').removeClass('is-open');
             WCS4_LIB.remove_message();
+            $('#wcs4-reset-form').hide();
+            $('#wcs4-management-form-wrapper form').one('change.reset', function () {
+                $('#wcs4-reset-form').show();
+            });
+        });
+        $('#wcs4-management-form-wrapper form').one('change.reset', function () {
+            $('#wcs4-reset-form').show();
         });
     };
 

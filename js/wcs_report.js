@@ -120,14 +120,7 @@
                 security: WCS4_AJAX_OBJECT.ajax_nonce,
                 row_id: $(this).attr('data-report-id')
             };
-            WCS4_LIB.delete_entry('report', entry, function (data) {
-                var date,
-                    elem;
-                if (typeof (e.target) != 'undefined') {
-                    elem = e.target;
-                } else {
-                    elem = e.srcElement;
-                }
+            WCS4_LIB.modify_entry('report', entry, function (data) {
                 // Let's refresh the date
                 reload_html_view(
                     $('#search_wcs4_report_teacher_id').val(),
@@ -136,7 +129,7 @@
                     $('#search_wcs4_report_date_from').val(),
                     $('#search_wcs4_report_date_upto').val(),
                     null, null, 'remove');
-            });
+            }, WCS4_AJAX_OBJECT['report'].delete_warning);
         });
     }
 

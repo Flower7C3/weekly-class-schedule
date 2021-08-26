@@ -201,7 +201,7 @@ class WCS_Schedule
                 </fieldset>
                 <fieldset class="form-field form-required form-field-visibility-wrap">
                     <label for="wcs4_lesson_visibility"><?php _e('Visibility', 'wcs4'); ?></label>
-                    <?php echo WCS_Admin::generate_visibility_select_list('wcs4_lesson_visibility', 'visible', true); ?>
+                    <?php echo WCS_Admin::generate_visibility_fields('wcs4_lesson_visibility', 'visible', true); ?>
                 </fieldset>
                 <fieldset class="form-field form-required form-field-notes-wrap">
                     <label for="wcs4_lesson_notes"><?php _e('Notes', 'wcs4'); ?></label>
@@ -210,7 +210,7 @@ class WCS_Schedule
                 <fieldset class="submit" id="wcs4-schedule-buttons-wrapper">
                     <span class="spinner"></span>
                     <input id="wcs4-submit-form" type="submit" class="button-primary wcs4-submit-lesson-form" value="<?php _ex('Add Lesson', 'button text', 'wcs4'); ?>" name="wcs4-submit"/>
-                    <button id="wcs4-reset-form" type="reset" class="button-link wcs4-reset-lesson-form"><?php _ex('Reset form', 'button text', 'wcs4'); ?></button>
+                    <button id="wcs4-reset-form" type="reset" class="button-link wcs4-reset-lesson-form" style="display: none;"><?php _ex('Reset form', 'button text', 'wcs4'); ?></button>
                     <div id="wcs4-ajax-text-wrapper" class="wcs4-ajax-text"></div>
                 </fieldset>
             </form>
@@ -258,9 +258,18 @@ class WCS_Schedule
                         <?php
                         /** @var WCS_DB_Lesson_Item $item */
                         foreach ($lessons as $item): ?>
-                            <tr id="lesson-<?php echo $item->getId(); ?>" class="<?php if ($item->isVisible()) { ?>active<?php } else { ?>inactive<?php } ?>">
+                            <tr id="lesson-<?php echo $item->getId(); ?>"
+                                data-day="<?php echo $item->getWeekday(); ?>"
+                                class="<?php if ($item->isVisible()) { ?>active<?php } else { ?>inactive<?php } ?>">
                                 <th scope="row" class="check-column">
-                                    <em class="dashicons dashicons-<?php if ($item->isVisible()): ?>visibility<?php else: ?>hidden<?php endif; ?>" title="<?php echo $item->getVisibleText(); ?>"></em>
+                                    <a href="#" class="wcs4-visibility-lesson-button"
+                                       id="wcs4-<?php if ($item->isVisible()): ?>hide<?php else: ?>show<?php endif; ?>-button-<?php echo $item->getId(); ?>"
+                                       data-visible="<?php if ($item->isVisible()): ?>true<?php else: ?>false<?php endif; ?>"
+                                       data-lesson-id="<?php echo $item->getId(); ?>"
+                                       data-day="<?php echo $item->getWeekday(); ?>">
+                                        <em class="dashicons dashicons-<?php if ($item->isVisible()): ?>visibility<?php else: ?>hidden<?php endif; ?>"
+                                            title="<?php echo $item->getVisibleText(); ?>"></em>
+                                    </a>
                                 </th>
                                 <td class="column-primary<?php if (current_user_can(WCS4_SCHEDULE_MANAGE_CAPABILITY)) { ?> has-row-actions<?php } ?>">
                                     <?php echo $item->getStartTime(); ?> – <?php echo $item->getEndTime(); ?>
@@ -281,7 +290,7 @@ class WCS_Schedule
                                                 |
                                             </span>
                                             <span class="delete hide-if-no-js">
-                                                <a href="#delete" class="wcs4-delete-lesson-button" id=wcs4-delete-<?php echo $item->getId(); ?>" data-lesson-id="<?php echo $item->getId(); ?>"
+                                                <a href="#" class="wcs4-delete-lesson-button" id=wcs4-delete-<?php echo $item->getId(); ?>" data-lesson-id="<?php echo $item->getId(); ?>"
                                                    data-day="<?php echo $item->getWeekday(); ?>">
                                                     <?php echo __('Delete', 'wcs4'); ?>
                                                 </a>
@@ -758,6 +767,51 @@ class WCS_Schedule
             'response' => $response,
             'errors' => $errors,
             'result' => $errors ? 'error' : 'updated',
+            'scope' => 'lesson',
+            'id' => $row_id ?? null,
+        ]);
+        die();
+    }
+
+    public static function toggle_visibility_item(): void
+    {
+        $errors = [];
+        $response = __('You are no allowed to run this action', 'wcs4');
+        if (current_user_can(WCS4_SCHEDULE_MANAGE_CAPABILITY)) {
+
+            wcs4_verify_nonce();
+
+            global $wpdb;
+
+            $table = WCS_DB::get_schedule_table_name();
+
+            $required = array(
+                'row_id' => __('Row ID'),
+                'visible' => __('Visibility'),
+            );
+
+            $errors = wcs4_verify_required_fields($required);
+            if (empty($errors)) {
+
+                $row_id = (int)sanitize_text_field($_POST['row_id']);
+                $visible = sanitize_text_field($_POST['visible']);
+
+                $result = $wpdb->update($table, array('visible' => $visible), array('id' => $row_id));
+
+                if (0 === $result) {
+                    $response = __('Failed to toggle visibility for entry', 'wcs4');
+                    $errors = true;
+                } else {
+                    $response = __('Schedule entry visibility toggled successfully', 'wcs4');
+                }
+            }
+        }
+        wcs4_json_response([
+            'response' => $response,
+            'errors' => $errors,
+            'result' => $errors ? 'error' : 'updated',
+            'scope' => 'lesson',
+            'id' => $row_id ?? null,
         ]);
         die();
     }
@@ -930,6 +984,11 @@ add_action('wp_ajax_add_or_update_schedule_entry', [WCS_Schedule::class, 'save_i
  * Schedule entry delete handler.
  */
 add_action('wp_ajax_delete_schedule_entry', [WCS_Schedule::class, 'delete_item']);
+
+/**
+ * Schedule entry toggle visibility handler.
+ */
+add_action('wp_ajax_toggle_visibility_schedule_entry', [WCS_Schedule::class, 'toggle_visibility_item']);
 
 /**
  * Schedule entry edit handler.

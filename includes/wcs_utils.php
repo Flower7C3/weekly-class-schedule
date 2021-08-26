@@ -42,7 +42,7 @@ function wcs4_verify_required_fields(array $data): array
  * @param string $type : e.g. subject, teacher, student, etc.
  * @return
  */
-function wcs4_get_posts_of_type($type,array $include_ids = [])
+function wcs4_get_posts_of_type($type, array $include_ids = [])
 {
     $args = array(
         'orderby' => 'post_title',
@@ -51,7 +51,7 @@ function wcs4_get_posts_of_type($type,array $include_ids = [])
         'post_status' => array('publish', 'private',),
         'posts_per_page' => -1,
     );
-    if(!empty($include_ids)){
+    if (!empty($include_ids)) {
         $args['include'] = $include_ids;
     }
 
@@ -134,6 +134,32 @@ function wcs4_bool_checkbox($id, $name, $checked = 'yes', $text = '')
 
     return '<input type="hidden" name="' . $name . '" id="' . $id . '_yes" value="no">'
         . '<input type="checkbox" name="' . $name . '" id="' . $id . '_no" value="yes" ' . $check . '><span class="wcs4-checkbox-text">' . $text . '</span>';
+}
+
+function wcs4_select_radio($values, $id = '', $name = '', $default = NULL, $required = false, $classname = null)
+{
+    $output = [];
+    foreach ($values as $key => $value) {
+        $params = [];
+        if ('' !== $id) {
+            $params['id'] = 'id="' . $id . '-' . $key . '"';
+        }
+        if ('' !== $name) {
+            $params['name'] = 'name="' . $name . '"';
+        }
+        if ('' !== $classname) {
+            $params['classname'] = 'class="' . $classname . '"';
+        }
+        if (true === $required) {
+            $params['required'] = 'required="required"';
+        }
+        if ((!is_array($default) && $key === $default) || (is_array($default) && in_array($key, $default, true))) {
+            $params['checked'] = 'checked="checked"';
+        }
+
+        $output[] = '<label class="wcs4-radio-text"><input type="radio" ' . implode(' ', $params) . '>' . $value . '</label>';
+    }
+    return implode('', $output);
 }
 
 /**

@@ -24,7 +24,10 @@
 }
 
 #wcs4-management-form-wrapper .form-field select,
-#wcs4-management-form-wrapper .form-field input,
+#wcs4-management-form-wrapper .form-field input[type=text],
+#wcs4-management-form-wrapper .form-field input[type=tel],
+#wcs4-management-form-wrapper .form-field input[type=date],
+#wcs4-management-form-wrapper .form-field input[type=email],
 #wcs4-management-form-wrapper .form-field textarea {
     width: 95%;
     max-width: 95%;

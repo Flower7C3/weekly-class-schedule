@@ -65,29 +65,31 @@ var WCS4_LIB = (function ($) {
         });
     }
 
-    var delete_entry = function (scope, entry, callback) {
+    var modify_entry = function (scope, entry, callback, confirm_message) {
         if (scope !== 'lesson' && scope !== 'report') {
             show_message(WCS4_AJAX_OBJECT.ajax_error, 'error');
-        } else {
-            // Confirm delete operation.
-            var confirm = window.confirm(WCS4_AJAX_OBJECT[scope].delete_warning);
+            return;
+        }
+        // Confirm delete operation.
+        if ('undefined' !== typeof confirm_message && '' !== confirm_message) {
+            var confirm = window.confirm(confirm_message);
             if (!confirm) {
                 reset_to_add_mode(scope)
                 return;
             }
-
-            $('#wcs4-management-form-wrapper .spinner').addClass('is-active');
-
-            jQuery.post(WCS4_AJAX_OBJECT.ajax_url, entry, function (data) {
-                callback(data);
-            }).fail(function (err) {
-                // Failed
-                console.error(err);
-                WCS4_LIB.show_message(WCS4_AJAX_OBJECT.ajax_error, 'error');
-            }).always(function () {
-                $('#wcs4-management-form-wrapper .spinner').removeClass('is-active');
-            });
         }
+
+        $('#wcs4-management-form-wrapper .spinner').addClass('is-active');
+
+        jQuery.post(WCS4_AJAX_OBJECT.ajax_url, entry, function (data) {
+            callback(data);
+        }).fail(function (err) {
+            // Failed
+            console.error(err);
+            WCS4_LIB.show_message(WCS4_AJAX_OBJECT.ajax_error, 'error');
+        }).always(function () {
+            $('#wcs4-management-form-wrapper .spinner').removeClass('is-active');
+        });
     }
     /**
      * Fetch entry data for form
@@ -95,28 +97,28 @@ var WCS4_LIB = (function ($) {
     var fetch_entry_data_to_form = function (scope, row_id, set_entry_data_to_form, reset_callback) {
         if (scope !== 'lesson' && scope !== 'report') {
             show_message(WCS4_AJAX_OBJECT.ajax_error, 'error');
-        } else {
-            $('tr.is-active').removeClass('is-active');
-            $('tr#' + scope + '-' + row_id).addClass('is-active');
-            var get_report_query;
-            get_report_query = {
-                action: 'get_' + scope,
-                security: WCS4_AJAX_OBJECT.ajax_nonce,
-                row_id: row_id
-            };
-            $('#wcs4-management-form-wrapper .spinner').addClass('is-active');
-            $('#wcs4-management-form-wrapper input,#wcs4-management-form-wrapper select,#wcs4-management-form-wrapper textarea').attr('readonly', true);
-            jQuery.post(WCS4_AJAX_OBJECT.ajax_url, get_report_query, function (data) {
-                set_entry_data_to_form(data.response)
-                reset_callback(scope, data.response)
-            }).fail(function (err) {
-                console.error(err);
-                show_message(WCS4_AJAX_OBJECT.ajax_error, 'error');
-            }).always(function () {
-                $('#wcs4-management-form-wrapper .spinner').removeClass('is-active');
-                $('#wcs4-management-form-wrapper input,#wcs4-management-form-wrapper select,#wcs4-management-form-wrapper textarea').attr('readonly', null);
-            });
+            return;
         }
+        reset_to_add_mode(scope)
+        $('tr#' + scope + '-' + row_id).addClass('is-active');
+        var get_report_query;
+        get_report_query = {
+            action: 'get_' + scope,
+            security: WCS4_AJAX_OBJECT.ajax_nonce,
+            row_id: row_id
+        };
+        $('#wcs4-management-form-wrapper .spinner').addClass('is-active');
+        $('#wcs4-management-form-wrapper input,#wcs4-management-form-wrapper select,#wcs4-management-form-wrapper textarea').attr('readonly', true);
+        jQuery.post(WCS4_AJAX_OBJECT.ajax_url, get_report_query, function (data) {
+            set_entry_data_to_form(data.response)
+            reset_callback(scope, data.response)
+        }).fail(function (err) {
+            console.error(err);
+            show_message(WCS4_AJAX_OBJECT.ajax_error, 'error');
+        }).always(function () {
+            $('#wcs4-management-form-wrapper .spinner').removeClass('is-active');
+            $('#wcs4-management-form-wrapper input,#wcs4-management-form-wrapper select,#wcs4-management-form-wrapper textarea').attr('readonly', null);
+        });
     };
     var update_view = function ($parent, entry, action) {
         $parent.find('.spinner').addClass('is-active');
@@ -149,6 +151,7 @@ var WCS4_LIB = (function ($) {
      * Enter edit mode
      */
     var reset_to_edit_mode = function (scope, entry) {
+        $('#wcs4-management-form-wrapper form').unbind('change.reset');
         // Add editing mode message
         $('#wcs4-management-form-title').text(WCS4_AJAX_OBJECT[scope].edit_mode)
         $('#wcs4-reset-form').hide();
@@ -178,6 +181,7 @@ var WCS4_LIB = (function ($) {
      * Enter copy mode.
      */
     var reset_to_copy_mode = function (scope) {
+        $('#wcs4-management-form-wrapper form').unbind('change.reset');
         // Add copying mode message
         $('#wcs4-management-form-title').text(WCS4_AJAX_OBJECT[scope].copy_mode)
         $('#wcs4-reset-form').hide();
@@ -198,14 +202,17 @@ var WCS4_LIB = (function ($) {
      * Exit edit mode.
      */
     var reset_to_add_mode = function (scope) {
-        console.log('reset_to_add_mode', scope)
-        $('#wcs4-management-form-wrapper form').get(0).reset();
+        $('#wcs4-management-form-wrapper form')
+            .one('change.reset', function () {
+                $('#wcs4-reset-form').show();
+            })
+            .get(0).reset();
+        $('#wcs4-management-form-wrapper form select').scrollTop(0);
         $('#wcs4-management-form-title').text(WCS4_AJAX_OBJECT[scope].add_mode);
         $('#wcs4-row-id').remove();
         $('#wcs4-cancel-copying-wrapper').remove();
         $('#wcs4-cancel-editing-wrapper').remove();
         $('#wcs4-submit-form').val(WCS4_AJAX_OBJECT[scope].add_item);
-        $('#wcs4-reset-form').show();
         $('#wcs4-management-form-wrapper').removeClass('is-open');
         $('tr.is-active').removeClass('is-active');
     }
@@ -247,7 +254,7 @@ var WCS4_LIB = (function ($) {
         find_get_parameter,
         // form
         submit_entry,
-        delete_entry,
+        modify_entry,
         fetch_entry_data_to_form,
         // view
         reset_to_add_mode,
