@@ -794,9 +794,12 @@ class WCS_Schedule
             if (empty($errors)) {
 
                 $row_id = (int)sanitize_text_field($_POST['row_id']);
-                $visible = sanitize_text_field($_POST['visible']);
+                $data_schedule = [];
+                $data_schedule['updated_at'] = date('Y-m-d H:i:s');
+                $data_schedule['updated_by'] = get_current_user_id();
+                $data_schedule['visible'] = sanitize_text_field($_POST['visible']);
 
-                $result = $wpdb->update($table, array('visible' => $visible), array('id' => $row_id));
+                $result = $wpdb->update($table, $data_schedule, array('id' => $row_id), array('%s', '%d', '%d'), array('%d'));
 
                 if (0 === $result) {
                     $response = __('Failed to toggle visibility for entry', 'wcs4');
