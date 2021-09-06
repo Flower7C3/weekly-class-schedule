@@ -141,6 +141,7 @@ function wcs4_select_radio($values, $id = '', $name = '', $default = NULL, $requ
     $output = [];
     foreach ($values as $key => $value) {
         $params = [];
+        $params['value'] = 'value="' . $key . '"';
         if ('' !== $id) {
             $params['id'] = 'id="' . $id . '-' . $key . '"';
         }

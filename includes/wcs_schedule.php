@@ -199,7 +199,7 @@ class WCS_Schedule
                         <?php echo WCS_Admin::generate_time_select_list('wcs4_lesson_end_time', 'wcs4_lesson_end_time', ['default' => '10:00', 'required' => true, 'step' => 300]); ?>
                     </div>
                 </fieldset>
-                <fieldset class="form-field form-required form-field-visibility-wrap">
+                <fieldset class="form-field form-required form-field-visibility-wrap" id="wcs4_lesson_visibility">
                     <label for="wcs4_lesson_visibility"><?php _e('Visibility', 'wcs4'); ?></label>
                     <?php echo WCS_Admin::generate_visibility_fields('wcs4_lesson_visibility', 'visible', true); ?>
                 </fieldset>

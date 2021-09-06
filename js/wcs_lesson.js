@@ -64,7 +64,7 @@
                 weekday: $('#wcs4_lesson_weekday option:selected').val(),
                 start_time: $('#wcs4_lesson_start_time').val(),
                 end_time: $('#wcs4_lesson_end_time').val(),
-                visible: $('#wcs4_lesson_visibility option:selected').val(),
+                visible: $('#wcs4_lesson_visibility :checked').val(),
                 notes: $('#wcs4_lesson_notes').val()
             };
 
