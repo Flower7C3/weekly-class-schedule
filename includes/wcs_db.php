@@ -1,5 +1,7 @@
 <?php
 
+/** @noinspection SqlNoDataSourceInspection */
+
 /**
  * WCS4 Database operations
  */
@@ -198,7 +200,12 @@ class WCS_DB
             'Room 5',
         ];
         $subjects = [
-            'Math', 'Physics', 'Chemistry', 'Geography', 'Biology', 'English',
+            'Math',
+            'Physics',
+            'Chemistry',
+            'Geography',
+            'Biology',
+            'English',
         ];
         foreach ($subjects as $subject) {
             wp_insert_post([
@@ -261,7 +268,8 @@ class WCS_DB
             $posts = get_posts(array(
                 'numberposts' => -1,
                 'post_type' => $type,
-                'post_status' => 'any'));
+                'post_status' => 'any'
+            ));
 
             foreach ($posts as $post) {
                 wp_delete_post($post->ID, true);
@@ -296,6 +304,29 @@ class WCS_DB
         $wpdb->query('TRUNCATE ' . self::get_report_teacher_table_name());
         $wpdb->query('TRUNCATE ' . self::get_report_student_table_name());
         $wpdb->query('TRUNCATE ' . self::get_report_table_name());
+    }
+
+    public static function get_item($id)
+    {
+        if(empty($id)){
+            return null;
+        }
+        global $wpdb;
+        $table_posts = $wpdb->prefix . 'posts';
+        $query = "
+            SELECT
+              item.ID AS item_id, item.post_title AS item_name, item.post_content AS item_desc
+            FROM $table_posts item
+            WHERE item.ID = %d
+        ";
+        $query_arr = [];
+        $query_arr[] = str_replace('#', '', $id);
+        $query = $wpdb->prepare($query, $query_arr);
+        $dbrow = $wpdb->get_row($query);
+        if(null === $dbrow){
+            return null;
+        }
+        return new WCS_DB_Item($dbrow->item_id, $dbrow->item_name, $dbrow->item_desc);
     }
 }
 

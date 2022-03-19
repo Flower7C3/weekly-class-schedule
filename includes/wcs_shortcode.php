@@ -85,7 +85,7 @@ add_shortcode('wcs', static function ($atts) {
  * Standard [wcr] shortcode
  *
  * Default:
- *     [wcr subject="all" teacher="all" student="all" date_from="" date_upto="" template_report="" limit="" paged=""]
+ *     [wcr subject="all" teacher="all" student="all" date_from="" date_upto="" template="" limit="" paged=""]
  * @param $atts
  * @return string
  */
@@ -100,7 +100,7 @@ add_shortcode('wcr', static function ($atts) {
     $style = '';
     $limit = null;
     $paged = null;
-    $template_report = '';
+    $template = '';
     $wcs4_options = WCS_Settings::load_settings();
 
     extract(shortcode_atts(array(
@@ -112,7 +112,7 @@ add_shortcode('wcr', static function ($atts) {
         'date_upto' => null,
         'limit' => null,
         'paged' => null,
-        'template_report' => $wcs4_options['template_report'],
+        'template' => $wcs4_options['report_shortcode_template'],
     ), $atts), EXTR_OVERWRITE);
 
     # Get reports
@@ -126,7 +126,7 @@ add_shortcode('wcr', static function ($atts) {
 
     # Render list layout
     $output .= '<div class="wcs4-schedule-wrapper" id="' . $schedule_key . '">';
-    $output .= WCS_Report::get_html_of_report_list($reports, $schedule_key, $template_report);
+    $output .= WCS_Report::get_html_of_report_list($reports, $schedule_key, $template);
     $output .= '</div>';
 
     $output = apply_filters('wcs4_post_render', $output, $style, $teacher, $student, $subject, $date_from, $date_upto);

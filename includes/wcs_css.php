@@ -10,7 +10,7 @@ add_action('wp_head', static function () {
     $details_box = $wcs4_options['color_details_box'];
     $text = $wcs4_options['color_text'];
     $border = $wcs4_options['color_border'];
-    $heading_text = $wcs4_options['color_heading_text'];
+    $heading_text = $wcs4_options['color_headings_text'];
     $heading_bg = $wcs4_options['color_headings_background'];
     $bg = $wcs4_options['color_background'];
     $qtip_bg = $wcs4_options['color_qtip_background'];

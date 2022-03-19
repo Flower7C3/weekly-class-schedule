@@ -19,10 +19,20 @@
      * Handles the search button click event.
      */
     var bind_search_handler = function () {
-        $(document).on('click.wcs-reports-download', '#wcs-search-download', function (e) {
+        $(document).on('click.wcs-reports-download-csv', '#wcs-search-download-csv', function (e) {
             e.preventDefault();
             window.location = WCS4_AJAX_OBJECT.ajax_url
                 + '?action=download_report_csv'
+                + '&teacher=' + $('#search_wcs4_report_teacher_id').val()
+                + '&student=' + $('#search_wcs4_report_student_id').val()
+                + '&subject=' + $('#search_wcs4_report_subject_id').val()
+                + '&date_from=' + $('#search_wcs4_report_date_from').val()
+                + '&date_upto=' + $('#search_wcs4_report_date_upto').val();
+        });
+        $(document).on('click.wcs-reports-download-html', '#wcs-search-download-html', function (e) {
+            e.preventDefault();
+            window.location = WCS4_AJAX_OBJECT.ajax_url
+                + '?action=download_report_html'
                 + '&teacher=' + $('#search_wcs4_report_teacher_id').val()
                 + '&student=' + $('#search_wcs4_report_student_id').val()
                 + '&subject=' + $('#search_wcs4_report_subject_id').val()

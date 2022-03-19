@@ -8,7 +8,7 @@
  */
 function wcs4_verify_nonce()
 {
-    $valid = check_ajax_referer('wcs4-ajax-nonce', 'security', FALSE);
+    $valid = check_ajax_referer('wcs4-ajax-nonce', 'security', false);
     if (!$valid) {
         $response = __('Nonce verification failed', 'wcs4');
         $status = 'error';
@@ -75,7 +75,7 @@ function wcs4_json_response($data)
  * @param bool $abbr : if TRUE returns abbreviated weekday names.
  * @return array
  */
-function wcs4_get_weekdays($abbr = FALSE)
+function wcs4_get_weekdays($abbr = false)
 {
     global $wp_locale;
 
@@ -108,7 +108,7 @@ function wcs4_get_weekdays($abbr = FALSE)
  * @param bool $abbr : if TRUE returns abbreviated weekday names.
  * @return array
  */
-function wcs4_get_indexed_weekdays($abbr = FALSE)
+function wcs4_get_indexed_weekdays($abbr = false)
 {
     $weekdays = wcs4_get_weekdays($abbr);
     $weekdays = array_flip($weekdays);
@@ -136,7 +136,7 @@ function wcs4_bool_checkbox($id, $name, $checked = 'yes', $text = '')
         . '<input type="checkbox" name="' . $name . '" id="' . $id . '_no" value="yes" ' . $check . '><span class="wcs4-checkbox-text">' . $text . '</span>';
 }
 
-function wcs4_select_radio($values, $id = '', $name = '', $default = NULL, $required = false, $classname = null)
+function wcs4_select_radio($values, $id = '', $name = '', $default = null, $required = false, $classname = null)
 {
     $output = [];
     foreach ($values as $key => $value) {
@@ -158,7 +158,10 @@ function wcs4_select_radio($values, $id = '', $name = '', $default = NULL, $requ
             $params['checked'] = 'checked="checked"';
         }
 
-        $output[] = '<label class="wcs4-radio-text"><input type="radio" ' . implode(' ', $params) . '>' . $value . '</label>';
+        $output[] = '<label class="wcs4-radio-text"><input type="radio" ' . implode(
+                ' ',
+                $params
+            ) . '>' . $value . '</label>';
     }
     return implode('', $output);
 }
@@ -176,8 +179,16 @@ function wcs4_select_radio($values, $id = '', $name = '', $default = NULL, $requ
  * @param bool $optgroup
  * @return string
  */
-function wcs4_select_list($values, $id = '', $name = '', $default = NULL, $required = false, $multiple = false, $classname = null, $optgroup = false)
-{
+function wcs4_select_list(
+    $values,
+    $id = '',
+    $name = '',
+    $default = null,
+    $required = false,
+    $multiple = false,
+    $classname = null,
+    $optgroup = false
+) {
     $params = [];
     if ('' !== $id) {
         $params['id'] = 'id="' . $id . '"';
@@ -238,16 +249,16 @@ function wcs4_textfield($id, $name, $default = '', $size = 8)
 
 function wcs4_datefield($id, $name, array $options = [])
 {
-    return '<input type="date" id="' . $id . '" name="' . $name . '" value="' . ($options['default'] ?: null) . '" size="' . ($options['size'] ?: 8) . '"
-     ' . ($options['required'] ? ' required' : '') . '
+    return '<input type="date" id="' . $id . '" name="' . $name . '" value="' . ($options['default'] ?? null) . '" size="' . ($options['size'] ?? 8) . '"
+     ' . (isset($options['required']) ? ' required' : '') . '
      >';
 }
 
 function wcs4_timefield($id, $name, array $options = [])
 {
-    return '<input type="time" id="' . $id . '" name="' . $name . '" value="' . ($options['default'] ?: null) . '" size="' . ($options['size'] ?: 8) . '" 
+    return '<input type="time" id="' . $id . '" name="' . $name . '" value="' . ($options['default'] ?? null) . '" size="' . ($options['size'] ?? 8) . '" 
     ' . ($options['step'] ? ' step="' . $options['step'] . '"' : '') . '
-    ' . ($options['required'] ? ' required' : '') . '
+    ' . (isset($options['required']) ? ' required' : '') . '
     >';
 }
 
@@ -259,7 +270,6 @@ function wcs4_timefield($id, $name, array $options = [])
  */
 function wcs4_get_system_timezone()
 {
-
     $php_timezone = (ini_get('date.timezone')) ? ini_get('date.timezone') : 'UTC';
     $wp_timezone = get_option('timezone_string');
 
@@ -285,8 +295,10 @@ function wcs4_options_message($message, $type = 'updated')
 {
     ?>
     <div id="wcs4-options-message">
-        <div class="<?php echo $type; ?>">
-            <p><?php echo $message; ?></p>
+        <div class="<?php
+        echo $type; ?>">
+            <p><?php
+                echo $message; ?></p>
         </div>
     </div>
     <?php
@@ -309,8 +321,8 @@ function wcs4_perform_validation($fields, $options, $prefix = 'wcs4_')
 {
     $new_options = array();
     foreach ($fields as $id => $callback) {
-        $value = call_user_func($callback, $_POST[$prefix . $id]);
-        if ($value !== FALSE) {
+        $value = $callback($_POST[$prefix . $id]);
+        if ($value !== false) {
             $new_options[$id] = $value;
         }
     }
@@ -321,9 +333,8 @@ function wcs4_validate_yes_no($data)
 {
     if ($data === 'yes' || $data === 'no') {
         return $data;
-    } else {
-        return FALSE;
     }
+    return false;
 }
 
 function wcs4_validate_color($data)
@@ -333,9 +344,8 @@ function wcs4_validate_color($data)
 
     if (!empty($matches)) {
         return sanitize_text_field($data);
-    } else {
-        return FALSE;
     }
+    return false;
 }
 
 function wcs4_validate_is_numeric($data)
@@ -346,7 +356,7 @@ function wcs4_validate_is_numeric($data)
             return sanitize_text_field($data);
         }
     }
-    return FALSE;
+    return false;
 }
 
 /**
@@ -359,8 +369,19 @@ function wcs4_validate_is_numeric($data)
 function wcs4_validate_html($data)
 {
     global $wcs4_allowed_html;
+    return wp_kses($data, $wcs4_allowed_html);
+}
 
-    $data = wp_kses($data, $wcs4_allowed_html);
+function wcs4_validate_slug($data)
+{
+//    if (filter_var($data, FILTER_VALIDATE_URL)) {
+        return $data;
+//    }
+//    return false;
+}
+
+function wcs4_validate_mock($data)
+{
     return $data;
 }
 

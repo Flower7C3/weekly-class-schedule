@@ -6,10 +6,26 @@
     // WCS4_AJAX_OBJECT available
 
     $(document).ready(function () {
+        bind_filter_handler();
         bind_show_hide_handler();
         bind_colorpickers();
         bind_reset_settings();
+        load_editor();
     });
+
+    var bind_filter_handler = function () {
+        $(document).on('click.wcs-lessons-item', '.search-filter', function (e) {
+            var select_id = $(this).data('select-id');
+            var value = $(this).data('option-val');
+            $('#' + select_id).val(value).change();
+            $('.results-filter').submit();
+        });
+        $('.results-filter [type=reset]').click(function (e) {
+            setTimeout(function () {
+                $('.results-filter').submit();
+            }, 500);
+        });
+    }
 
     /**
      * Handles the Show form button click event.
@@ -70,4 +86,22 @@
             });
         });
     };
+
+
+    var load_editor = function () {
+        if ($('.css_editor').length) {
+            var editorSettings = wp.codeEditor.defaultSettings ? _.clone(wp.codeEditor.defaultSettings) : {};
+            editorSettings.codemirror = _.extend(
+                {},
+                editorSettings.codemirror,
+                {
+                    indentUnit: 2,
+                    tabSize: 2,
+                    mode: 'css',
+                }
+            );
+            var editor = wp.codeEditor.initialize($('.css_editor'), editorSettings);
+        }
+    };
+
 })(jQuery);

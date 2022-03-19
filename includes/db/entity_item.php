@@ -25,32 +25,35 @@ class WCS_DB_Item
             $this->description = $description;
             $this->permalink = get_permalink($this->id);
             $this->short = $this->convert_sentence_to_initials($this->name);
-            if (!(('publish' === get_post_status($this->id) && !post_password_required($this->id)) || is_user_logged_in())) {
+            if (!(('publish' === get_post_status($this->id) && !post_password_required($this->id))
+                || is_user_logged_in())) {
                 $this->short = $this->convert_sentence_to_initials($this->name, true);
                 $this->name = $this->short;
                 $this->description = null;
                 $this->permalink = null;
             }
             if (!empty($this->description)) {
-                $this->info = '<span class="wcs4-qtip-box"><a href="#qtip" class="wcs4-qtip">' . $this->name . '</a><span class="wcs4-qtip-data">' . $this->description . '</span></span>';
+                $this->info = '<span class="wcs4-qtip-box"><a href="#qtip" class="wcs4-qtip">' . $this->name . '</a><span class="wcs4-qtip-data">' . $this->getDescription() . '</span></span>';
             } else {
-                $this->info = $this->name;
+                $this->info = $this->getName();
             }
             if (empty($this->link_name)) {
                 $a_target = '';
                 if ('yes' === WCS_Settings::get_option('open_template_links_in_new_tab')) {
                     $a_target = 'target=_blank';
-
                 }
-                $this->link_name = empty($this->permalink) ? $this->getName() : '<a href="' . $this->permalink . '" ' . $a_target . '>' . $this->getName() . '</a>';
+                $this->link_name = !$this->hasPermalink()
+                    ? $this->getName()
+                    : '<a href="' . $this->permalink . '" ' . $a_target . '>' . $this->getName() . '</a>';
             }
             if (empty($this->link_short)) {
                 $a_target = '';
                 if ('yes' === WCS_Settings::get_option('open_template_links_in_new_tab')) {
                     $a_target = 'target=_blank';
-
                 }
-                $this->link_short = empty($this->permalink) ? $this->getShort() : '<a href="' . $this->permalink . '" ' . $a_target . '>' . $this->getShort() . '</a>';
+                $this->link_short = !$this->hasPermalink()
+                    ? $this->getShort()
+                    : '<a href="' . $this->getPermalink() . '" ' . $a_target . '>' . $this->getShort() . '</a>';
             }
         }
     }
@@ -170,6 +173,19 @@ class WCS_DB_Item
     {
         $this->link_short = $link_short;
         return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getPermalink(): ?string
+    {
+        return $this->permalink;
+    }
+
+    public function hasPermalink(): ?bool
+    {
+        return !(null === $this->getPermalink());
     }
 
     /**

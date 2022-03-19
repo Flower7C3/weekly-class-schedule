@@ -45,14 +45,17 @@ add_filter('the_content', static function ($content) {
             }
             if (!empty($wcs4_settings[$post_type_key . '_report_view'])) {
                 $content .= '<h2>' . __('Report', 'wcs4') . '</h2>';
-                $template_report = $wcs4_settings[$post_type_key . '_schedule_template_report'];
+                $template = $wcs4_settings[$post_type_key . '_report_shortcode_template'];
                 $params = [];
                 $params[] = '' . $post_type_key . '="#' . $post_id . '"';
-                $params[] = 'template_report="' . $template_report . '"';
+                $params[] = 'template="' . $template . '"';
                 $params[] = 'limit=' . $wcs4_settings[$post_type_key . '_report_view'];
                 $content .= '[wcr  ' . implode(' ', $params) . ']';
                 if ('yes' === $wcs4_settings[$post_type_key . '_download_report_csv']) {
                     $content .= '<a href="?format=csv">' . __('Download report as CSV', 'wcs4') . '</a>';
+                }
+                if ('yes' === $wcs4_settings[$post_type_key . '_download_report_html']) {
+                    $content .= '<a href="?format=html">' . __('Download report as HTML', 'wcs4') . '</a>';
                 }
             }
             if ('yes' === $wcs4_settings[$post_type_key . '_report_create']) {
@@ -77,8 +80,13 @@ add_filter('single_template', static function ($single) {
         if ('ical' === $_GET['format'] && 'yes' === $wcs4_settings[$post_type_key . '_download_icalendar']) {
             WCS_Schedule::callback_of_calendar_page();
         }
-        if ('csv' === $_GET['format'] && 'yes' === $wcs4_settings[$post_type_key . '_download_report_csv'] && current_user_can(WCS4_REPORT_EXPORT_CAPABILITY)) {
-            WCS_Report::callback_of_export_page();
+        if ('csv' === $_GET['format'] && 'yes' === $wcs4_settings[$post_type_key . '_download_report_csv']
+            && current_user_can(WCS4_REPORT_EXPORT_CAPABILITY)) {
+            WCS_Report::callback_of_export_csv_page();
+        }
+        if ('html' === $_GET['format'] && 'yes' === $wcs4_settings[$post_type_key . '_download_report_html']
+            && current_user_can(WCS4_REPORT_EXPORT_CAPABILITY)) {
+            WCS_Report::callback_of_export_html_page();
         }
     }
     return $single;
