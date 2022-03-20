@@ -42,9 +42,11 @@ class WCS_Settings
                 # Create a validataion fields array:
                 # id_of_field => validation_function_callback
                 $fields = array(
-                    'classroom_collision' => 'wcs4_validate_yes_no',
-                    'teacher_collision' => 'wcs4_validate_yes_no',
-                    'student_collision' => 'wcs4_validate_yes_no',
+                    'schedule_classroom_collision' => 'wcs4_validate_yes_no',
+                    'schedule_teacher_collision' => 'wcs4_validate_yes_no',
+                    'schedule_student_collision' => 'wcs4_validate_yes_no',
+                    'report_teacher_collision' => 'wcs4_validate_yes_no',
+                    'report_student_collision' => 'wcs4_validate_yes_no',
                     'open_template_links_in_new_tab' => 'wcs4_validate_yes_no',
                     'template_table_short' => 'wcs4_validate_mock',
                     'template_table_details' => 'wcs4_validate_mock',
@@ -195,7 +197,7 @@ class WCS_Settings
                             <?php
                             foreach ($taxonomyTypes as $key => $name): ?>
                                 <td data-key="<?php
-                                echo $key ?>" data-type="wcs4_collision">
+                                echo $key ?>" data-type="wcs4_taxonomy_hierarchical">
                                     <?php
                                     echo wcs4_bool_checkbox(
                                         'wcs4_' . $key . '_taxonomy_hierarchical',
@@ -309,41 +311,6 @@ class WCS_Settings
                             <?php
                             endforeach; ?>
                         </tr>
-                        <tr>
-                            <th>
-                                <?php
-                                _ex('Detect lesson collisions', 'options general settings', 'wcs4'); ?>
-                                <div class="wcs4-description">
-                                    <?php
-                                    _ex(
-                                        'Enabling this feature will prevent scheduling of multiple subjects at the same classroom, with same teacher or student at the same time.',
-                                        'options general settings',
-                                        'wcs4'
-                                    ) ?>
-                                </div>
-                            </th>
-                            <?php
-                            foreach ($taxonomyTypes as $key => $name): ?>
-                                <td data-key="<?php
-                                echo $key ?>" data-type="wcs4_collision">
-                                    <?php
-                                    if ($key !== 'subject') { ?>
-                                        <?php
-                                        echo wcs4_bool_checkbox(
-                                            'wcs4_' . $key . '_collision',
-                                            'wcs4_' . $key . '_collision',
-                                            $wcs4_options[$key . '_collision'],
-                                            __('Yes')
-                                        ); ?>
-                                        <?php
-                                    } else { ?>
-
-                                        <?php
-                                    } ?>
-                                </td>
-                            <?php
-                            endforeach; ?>
-                        </tr>
                     </tbody>
                 </table>
                 <hr>
@@ -364,6 +331,38 @@ class WCS_Settings
                         </tr>
                     </thead>
                     <tbody>
+                        <tr>
+                            <th>
+                                <?php
+                                _ex('Detect lesson collisions', 'options general settings', 'wcs4'); ?>
+                                <div class="wcs4-description">
+                                    <?php
+                                    _ex(
+                                        'Enabling this feature will prevent scheduling of multiple subjects at the same classroom, with same teacher or student at the same time.',
+                                        'options general settings',
+                                        'wcs4'
+                                    ) ?>
+                                </div>
+                            </th>
+                            <?php
+                            foreach ($taxonomyTypes as $key => $name): ?>
+                                <td data-key="<?php
+                                echo $key ?>" data-type="wcs4_schedule_collision">
+                                    <?php
+                                    if ($key !== 'subject'): ?>
+                                        <?php
+                                        echo wcs4_bool_checkbox(
+                                            'wcs4_schedule_' . $key . '_collision',
+                                            'wcs4_schedule_' . $key . '_collision',
+                                            $wcs4_options['schedule_' . $key . '_collision'],
+                                            __('Yes')
+                                        ); ?>
+                                    <?php
+                                    endif; ?>
+                                </td>
+                            <?php
+                            endforeach; ?>
+                        </tr>
                         <tr>
                             <th>
                                 <?php
@@ -607,6 +606,38 @@ class WCS_Settings
                                     </td>
                                 <?php
                                 endif;
+                            endforeach; ?>
+                        </tr>
+                        <tr>
+                            <th>
+                                <?php
+                                _ex('Detect report collisions', 'options general settings', 'wcs4'); ?>
+                                <div class="wcs4-description">
+                                    <?php
+                                    _ex(
+                                        'Enabling this feature will prevent reporting of multiple events, with same teacher or student at the same time.',
+                                        'options general settings',
+                                        'wcs4'
+                                    ) ?>
+                                </div>
+                            </th>
+                            <?php
+                            foreach ($taxonomyTypes as $key => $name): ?>
+                                <td data-key="<?php
+                                echo $key ?>" data-type="wcs4_report_collision">
+                                    <?php
+                                    if ($key !== 'subject' && $key !== 'classroom'): ?>
+                                        <?php
+                                        echo wcs4_bool_checkbox(
+                                            'wcs4_report_' . $key . '_collision',
+                                            'wcs4_report_' . $key . '_collision',
+                                            $wcs4_options['report_' . $key . '_collision'],
+                                            __('Yes')
+                                        ); ?>
+                                    <?php
+                                    endif; ?>
+                                </td>
+                            <?php
                             endforeach; ?>
                         </tr>
                         <tr>
@@ -1177,9 +1208,11 @@ class WCS_Settings
         if ($settings === false) {
             # No settings yet, let's load up the default.
             $options = array(
-                'classroom_collision' => 'yes',
-                'teacher_collision' => 'yes',
-                'student_collision' => 'yes',
+                'schedule_classroom_collision' => 'yes',
+                'schedule_teacher_collision' => 'yes',
+                'schedule_student_collision' => 'yes',
+                'report_teacher_collision' => 'yes',
+                'report_student_collision' => 'yes',
                 'open_template_links_in_new_tab' => 'no',
                 'template_table_short' => _x(
                     '<small>{start time}-{end time}</small><br>{subject} ({tea}/{stu})',

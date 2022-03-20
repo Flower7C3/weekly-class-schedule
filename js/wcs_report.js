@@ -47,7 +47,10 @@
                 $('#search_wcs4_report_subject_id').val(),
                 $('#search_wcs4_report_date_from').val(),
                 $('#search_wcs4_report_date_upto').val(),
-                null, null, 'fade');
+                null,
+                null,
+                'fade'
+            );
         });
     };
 
@@ -62,7 +65,10 @@
                 $('#search_wcs4_report_subject_id').val(),
                 $('#search_wcs4_report_date_from').val(),
                 $('#search_wcs4_report_date_upto').val(),
-                $(this).data('orderby'), $(this).data('order'), 'fade');
+                $(this).data('orderby'),
+                $(this).data('order'),
+                'fade')
+            ;
         });
     };
 
@@ -93,7 +99,10 @@
                         $('#search_wcs4_report_subject_id').val(),
                         $('#search_wcs4_report_date_from').val(),
                         $('#search_wcs4_report_date_upto').val(),
-                        null, null, 'fade');
+                        null,
+                        null,
+                        'fade'
+                    );
                     // Clear topic.
                     $('#wcs4_report_topic').val('');
                     WCS4_LIB.reset_to_add_mode('report');
@@ -138,7 +147,10 @@
                     $('#search_wcs4_report_subject_id').val(),
                     $('#search_wcs4_report_date_from').val(),
                     $('#search_wcs4_report_date_upto').val(),
-                    null, null, 'remove');
+                    null,
+                    null,
+                    'remove'
+                );
             }, WCS4_AJAX_OBJECT['report'].delete_warning);
         });
     }
@@ -155,6 +167,8 @@
             'subject': subject,
             'date_from': date_from,
             'date_upto': date_upto,
+            'orderby': orderby,
+            'order': order,
         };
         var url = $('#wcs-reports-filter').attr('action')
             + '?page=' + page
@@ -162,7 +176,10 @@
             + '&student=' + student
             + '&subject=' + subject
             + '&date_from=' + date_from
-            + '&date_upto=' + date_upto;
+            + '&date_upto=' + date_upto
+            + '&orderby=' + orderby
+            + '&order=' + order
+        ;
         history.pushState(state, $('title').text(), url);
         entry = {
             action: 'get_reports_html',

@@ -1,13 +1,13 @@
 <?php
 
 /** @noinspection SqlCheckUsingColumns */
+
 /** @noinspection SqlResolve */
 /** @noinspection SqlNoDataSourceInspection */
 
 /**
  * Report specific functions.
  */
-
 class WCS_Report
 {
     /**
@@ -180,6 +180,8 @@ class WCS_Report
         $subject = sanitize_text_field($_GET['subject'] ? '#' . $_GET['subject'] : null);
         $date_from = sanitize_text_field($_GET['date_from']);
         $date_upto = sanitize_text_field($_GET['date_upto']);
+        $orderby = !empty($_GET['orderby']) ? sanitize_text_field($_GET['orderby']) : 'time';
+        $order = !empty($_GET['order']) ? sanitize_text_field($_GET['order']) : 'asc';
         switch (get_post_type()) {
             case 'wcs4_teacher':
                 $teacher = '#' . get_the_id();
@@ -193,7 +195,7 @@ class WCS_Report
         }
 
         # get reports
-        $reports = WCS_Report::get_items($teacher, $student, $subject, $date_from, $date_upto);
+        $reports = WCS_Report::get_items($teacher, $student, $subject, $date_from, $date_upto, $orderby, $order);
 
         $wcs4_options = WCS_Settings::load_settings();
 
@@ -317,7 +319,7 @@ class WCS_Report
                     <br>
                     <button type="submit" id="wcs-search-download-csv"
                             name="page"
-                            value="class-schedule-report-download"
+                            value="class-report-download"
                             class="button button-secondary">
                         <span class="dashicons dashicons-download"></span>
                         <?php
@@ -325,7 +327,7 @@ class WCS_Report
                     </button>
                     <button type="submit" id="wcs-search-download-html"
                             name="page"
-                            value="class-schedule-report-download"
+                            value="class-report-download"
                             class="button button-secondary">
                         <span class="dashicons dashicons-download"></span>
                         <?php
@@ -510,7 +512,10 @@ class WCS_Report
                             <thead>
                                 <tr>
                                     <th class="column-primary sortable <?php
-                                    echo ($order === 'asc') ? 'asc' : 'desc'; ?>">
+                                    echo ($order === 'asc') ? 'asc' : 'desc'; ?><?php
+                                    if ('time' === $orderby): ?>
+                                    sorted<?php
+                                    endif; ?>">
                                         <a href="#" data-orderby="time" data-order="<?php
                                         echo ($order === 'desc') ? 'asc' : 'desc'; ?>">
                                             <span><?php
@@ -536,7 +541,10 @@ class WCS_Report
                                             echo __('Topic', 'wcs4'); ?></span>
                                     </th>
                                     <th scope="col" class="sortable <?php
-                                    echo ($order === 'asc') ? 'asc' : 'desc'; ?>">
+                                    echo ($order === 'asc') ? 'asc' : 'desc'; ?><?php
+                                    if ('updated-at' === $orderby): ?>
+                                    sorted<?php
+                                    endif; ?>">
                                         <a href="#" data-orderby="updated-at" data-order="<?php
                                         echo ($order === 'desc') ? 'asc' : 'desc'; ?>">
                                             <span><?php
@@ -890,9 +898,9 @@ class WCS_Report
 
             $wcs4_settings = WCS_Settings::load_settings();
 
-            if ($wcs4_settings['teacher_collision'] === 'yes') {
+            if ($wcs4_settings['report_teacher_collision'] === 'yes') {
                 # Validate teacher collision (if applicable)
-                $teacher_collision = $wpdb->get_col(
+                $report_teacher_collision = $wpdb->get_col(
                     $wpdb->prepare(
                         "
                 SELECT id
@@ -910,9 +918,9 @@ class WCS_Report
                 );
             }
 
-            if ($wcs4_settings['student_collision'] === 'yes') {
+            if ($wcs4_settings['report_student_collision'] === 'yes') {
                 # Validate student collision (if applicable)
-                $student_collision = $wpdb->get_col(
+                $report_student_collision = $wpdb->get_col(
                     $wpdb->prepare(
                         "
                 SELECT id
@@ -931,10 +939,10 @@ class WCS_Report
             }
 
             # Prepare response
-            if (($wcs4_settings['teacher_collision'] === 'yes') && !empty($teacher_collision)) {
+            if (($wcs4_settings['report_teacher_collision'] === 'yes') && !empty($report_teacher_collision)) {
                 $errors['teacher_id'][] = __('Teacher is not available at this time', 'wcs4');
             }
-            if (($wcs4_settings['student_collision'] === 'yes') && !empty($student_collision)) {
+            if (($wcs4_settings['report_student_collision'] === 'yes') && !empty($report_student_collision)) {
                 $errors['student_id'][] = __('Student is not available at this time', 'wcs4');
             }
             if ($start_dt >= $end_dt) {
@@ -1167,11 +1175,11 @@ class WCS_Report
      * Renders list layout
      *
      * @param array $reports : lessons array as returned by wcs4_get_lessons().
-     * @param string $schedule_key
+     * @param string $report_key
      * @param string $template_list
      * @return string
      */
-    public static function get_html_of_report_list(array $reports, string $schedule_key, string $template_list): string
+    public static function get_html_of_report_list(array $reports, string $report_key, string $template_list): string
     {
         if (empty($reports)) {
             return '<div class="wcs4-no-lessons-message">' . __('No lessons reported', 'wcs4') . '</div>';
@@ -1185,7 +1193,7 @@ class WCS_Report
         krsort($dateWithLessons);
 
         $weekdays = wcs4_get_weekdays();
-        $output = '<div class="wcs4-schedule-list-layout">';
+        $output = '<div class="wcs4-report-list-layout">';
         # Classes are grouped by indexed weekdays.
         foreach ($dateWithLessons as $date => $dayReports) {
             if (!empty($dayReports)) {

@@ -1,13 +1,13 @@
 <?php
 
 /** @noinspection SqlCheckUsingColumns */
+
 /** @noinspection SqlResolve */
 /** @noinspection SqlNoDataSourceInspection */
 
 /**
  * Schedule specific functions.
  */
-
 class WCS_Schedule
 {
     /**
@@ -203,11 +203,13 @@ class WCS_Schedule
                 ); ?>
                 <button type="submit" class="button button-primary">
                     <span class="dashicons dashicons-filter"></span>
-                    <?php echo __('Search lessons', 'wcs4') ?>
+                    <?php
+                    echo __('Search lessons', 'wcs4') ?>
                 </button>
                 <button type="reset" class="button button-secondary">
                     <span class="dashicons dashicons-no"></span>
-                    <?php echo __('Reset form', 'wcs4') ?>
+                    <?php
+                    echo __('Reset form', 'wcs4') ?>
                 </button>
             </p>
         </form>
@@ -317,10 +319,12 @@ class WCS_Schedule
                 <fieldset class="submit" id="wcs4-schedule-buttons-wrapper">
                     <span class="spinner"></span>
                     <input id="wcs4-submit-form" type="submit" class="button-primary wcs4-submit-lesson-form"
-                           value="<?php _ex('Add Lesson', 'button text', 'wcs4') ?>" name="wcs4-submit"/>
+                           value="<?php
+                           _ex('Add Lesson', 'button text', 'wcs4') ?>" name="wcs4-submit"/>
                     <button id="wcs4-reset-form" type="reset" class="button-link wcs4-reset-lesson-form"
                             style="display: none;">
-                        <?php _ex('Reset form', 'button text', 'wcs4') ?>
+                        <?php
+                        _ex('Reset form', 'button text', 'wcs4') ?>
                     </button>
                     <div id="wcs4-ajax-text-wrapper" class="wcs4-ajax-text"></div>
                 </fieldset>
@@ -758,9 +762,9 @@ class WCS_Schedule
 
             $wcs4_settings = WCS_Settings::load_settings();
 
-            if ($wcs4_settings['classroom_collision'] === 'yes') {
+            if ($wcs4_settings['schedule_classroom_collision'] === 'yes') {
                 # Validate classroom collision (if applicable)
-                $classroom_collision = $wpdb->get_col(
+                $schedule_classroom_collision = $wpdb->get_col(
                     $wpdb->prepare(
                         "
                      SELECT id
@@ -775,14 +779,14 @@ class WCS_Schedule
                         array($classroom_id, $weekday, $start_time, $end_time, $row_id,)
                     )
                 );
-                if (!empty($classroom_collision)) {
+                if (!empty($schedule_classroom_collision)) {
                     $errors['classroom_id'][] = __('Classroom is not available at this time', 'wcs4');
                 }
             }
 
-            if ($wcs4_settings['teacher_collision'] === 'yes') {
+            if ($wcs4_settings['schedule_teacher_collision'] === 'yes') {
                 # Validate teacher collision (if applicable)
-                $teacher_collision = $wpdb->get_col(
+                $schedule_teacher_collision = $wpdb->get_col(
                     $wpdb->prepare(
                         "
                     SELECT id
@@ -798,14 +802,14 @@ class WCS_Schedule
                         array(implode(',', $teacher_id), $weekday, $start_time, $end_time, $row_id,)
                     )
                 );
-                if (!empty($teacher_collision)) {
+                if (!empty($schedule_teacher_collision)) {
                     $errors['teacher_id'][] = __('Teacher is not available at this time', 'wcs4');
                 }
             }
 
-            if ($wcs4_settings['student_collision'] === 'yes') {
+            if ($wcs4_settings['schedule_student_collision'] === 'yes') {
                 # Validate student collision (if applicable)
-                $student_collision = $wpdb->get_col(
+                $schedule_student_collision = $wpdb->get_col(
                     $wpdb->prepare(
                         "
                         SELECT id
@@ -821,7 +825,7 @@ class WCS_Schedule
                         array(implode(',', $student_id), $weekday, $start_time, $end_time, $row_id,)
                     )
                 );
-                if (!empty($student_collision)) {
+                if (!empty($schedule_student_collision)) {
                     $errors['student_id'][] = __('Student is not available at this time', 'wcs4');
                 }
             }

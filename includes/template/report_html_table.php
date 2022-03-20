@@ -4,6 +4,7 @@
  * @var array $tbody_columns
  * @var array $reports
  */
+
 ?>
 <table>
     <thead>
@@ -36,11 +37,11 @@
                         echo $row;
                         ?>
                     </td>
-                    <?php
-                    $index++;
+                <?php
                 endforeach; ?>
             </tr>
-        <?php
+            <?php
+            $index++;
         endforeach; ?>
     </tbody>
 </table>
