@@ -175,19 +175,19 @@ function wcs4_select_radio($values, $id = '', $name = '', $default = null, $requ
  * @param array|string|null $default
  * @param bool $required
  * @param bool $multiple
- * @param string $classname
+ * @param string|null $classname
  * @param bool $optgroup
  * @return string
  */
 function wcs4_select_list(
-    $values,
-    $id = '',
-    $name = '',
+    array $values,
+    string $id = '',
+    string $name = '',
     $default = null,
-    $required = false,
-    $multiple = false,
-    $classname = null,
-    $optgroup = false
+    bool $required = false,
+    bool $multiple = false,
+    string $classname = null,
+    bool $optgroup = false
 ) {
     $params = [];
     if ('' !== $id) {
@@ -231,7 +231,6 @@ function wcs4_select_list(
     } else {
         $output .= '<option value="">---</option>';
     }
-
     $output .= '</select>';
     return $output;
 }

@@ -559,7 +559,7 @@ class WCS_Settings
                 </table>
                 <hr>
                 <h2><?php
-                    echo __('Report', 'wcs4') ?></h2>
+                    echo __('Reports', 'wcs4') ?></h2>
                 <table class="form-table">
                     <thead>
                         <tr>

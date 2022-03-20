@@ -44,7 +44,7 @@ add_filter('the_content', static function ($content) {
                 }
             }
             if (!empty($wcs4_settings[$post_type_key . '_report_view'])) {
-                $content .= '<h2>' . __('Report', 'wcs4') . '</h2>';
+                $content .= '<h2>' . __('Reports', 'wcs4') . '</h2>';
                 $template = $wcs4_settings[$post_type_key . '_report_shortcode_template'];
                 $params = [];
                 $params[] = '' . $post_type_key . '="#' . $post_id . '"';

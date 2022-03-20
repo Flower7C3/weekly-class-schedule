@@ -44,8 +44,8 @@ add_action('admin_menu', static function () {
 
     $page_report = add_submenu_page(
         'weekly-class-schedule',
-        __('Report', 'wcs4'),
-        __('Report', 'wcs4'),
+        __('Reports', 'wcs4'),
+        __('Reports', 'wcs4'),
         WCS4_REPORT_VIEW_CAPABILITY,
         'class-schedule-report',
         array(WCS_Report::class, "callback_of_management_page")
@@ -479,7 +479,7 @@ class WCS_Admin
         string $key,
         string $id = '',
         string $name = '',
-        string $default = null,
+        $default = null,
         bool $required = false,
         bool $multiple = false,
         string $classname = null,

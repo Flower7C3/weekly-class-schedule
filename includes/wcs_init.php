@@ -60,7 +60,8 @@ add_action('init', static function () {
             'pages' => true,
         ),
         'supports' => array(
-            'title', 'editor',
+            'title',
+            'editor',
             'thumbnail',
             'author',
         ),
@@ -69,31 +70,35 @@ add_action('init', static function () {
 
     # Register teacher
     if (!empty($wcs4_settings['teacher_taxonomy_slug'])) {
-        register_taxonomy(WCS4_TAXONOMY_TYPE_SPECIALIZATION, WCS4_TAXONOMY_TYPES_WHITELIST[WCS4_TAXONOMY_TYPE_SPECIALIZATION], array(
-            'labels' => array(
-                'name' => _x('Specializations', 'taxonomy general name', 'wcs4'),
-                'singular_name' => _x('Specialization', 'taxonomy singular name', 'wcs4'),
-                'menu_name' => __('Specializations', 'wcs4'),
-                'all_items' => __('All Specializations', 'wcs4'),
-                'parent_item' => null,
-                'parent_item_colon' => null,
-                'add_new_item' => __('Add New Specialization', 'wcs4'),
-                'edit_item' => __('Edit Specialization', 'wcs4'),
-                'new_item_name' => __('New Specialization Name', 'wcs4'),
-                'separate_items_with_commas' => __('Separate specializations with commas', 'wcs4'),
-                'add_or_remove_items' => __('Add or remove specializations', 'wcs4'),
-                'choose_from_most_used' => __('Choose from the most used specializations', 'wcs4'),
-                'search_items' => __('Search Specializations', 'wcs4'),
-                'not_found' => __('No specializations found.', 'wcs4'),
-                'no_terms' => __('No specializations.', 'wcs4'),
-            ),
-            'hierarchical' => ('yes' === $wcs4_settings['teacher_taxonomy_hierarchical']),
-            'public' => true,
-            'show_admin_column' => true,
-            'update_count_callback' => '_update_post_term_count',
-            'query_var' => true,
-            'rewrite' => array('slug' => $wcs4_settings['teacher_taxonomy_slug']),
-        ));
+        register_taxonomy(
+            WCS4_TAXONOMY_TYPE_SPECIALIZATION,
+            WCS4_TAXONOMY_TYPES_WHITELIST[WCS4_TAXONOMY_TYPE_SPECIALIZATION],
+            array(
+                'labels' => array(
+                    'name' => _x('Specializations', 'taxonomy general name', 'wcs4'),
+                    'singular_name' => _x('Specialization', 'taxonomy singular name', 'wcs4'),
+                    'menu_name' => __('Specializations', 'wcs4'),
+                    'all_items' => __('All Specializations', 'wcs4'),
+                    'parent_item' => null,
+                    'parent_item_colon' => null,
+                    'add_new_item' => __('Add New Specialization', 'wcs4'),
+                    'edit_item' => __('Edit Specialization', 'wcs4'),
+                    'new_item_name' => __('New Specialization Name', 'wcs4'),
+                    'separate_items_with_commas' => __('Separate specializations with commas', 'wcs4'),
+                    'add_or_remove_items' => __('Add or remove specializations', 'wcs4'),
+                    'choose_from_most_used' => __('Choose from the most used specializations', 'wcs4'),
+                    'search_items' => __('Search Specializations', 'wcs4'),
+                    'not_found' => __('No specializations found.', 'wcs4'),
+                    'no_terms' => __('No specializations.', 'wcs4'),
+                ),
+                'hierarchical' => ('yes' === $wcs4_settings['teacher_taxonomy_hierarchical']),
+                'public' => true,
+                'show_admin_column' => true,
+                'update_count_callback' => '_update_post_term_count',
+                'query_var' => true,
+                'rewrite' => array('slug' => $wcs4_settings['teacher_taxonomy_slug']),
+            )
+        );
     }
     register_post_type(WCS4_POST_TYPE_TEACHER, array(
         'labels' => array(
@@ -121,7 +126,8 @@ add_action('init', static function () {
             'pages' => true,
         ),
         'supports' => array(
-            'title', 'editor',
+            'title',
+            'editor',
             'thumbnail',
             'author',
         ),
@@ -182,7 +188,8 @@ add_action('init', static function () {
             'pages' => true,
         ),
         'supports' => array(
-            'title', 'editor',
+            'title',
+            'editor',
             'thumbnail',
             'author',
         ),
@@ -191,31 +198,35 @@ add_action('init', static function () {
 
     # Register classroom
     if (!empty($wcs4_settings['classroom_taxonomy_slug'])) {
-        register_taxonomy(WCS4_TAXONOMY_TYPE_LOCATION, WCS4_TAXONOMY_TYPES_WHITELIST[WCS4_TAXONOMY_TYPE_LOCATION], array(
-            'labels' => array(
-                'name' => _x('Locations', 'taxonomy general name', 'wcs4'),
-                'singular_name' => _x('Location', 'taxonomy singular name', 'wcs4'),
-                'menu_name' => __('Locations', 'wcs4'),
-                'all_items' => __('All Locations', 'wcs4'),
-                'parent_item' => null,
-                'parent_item_colon' => null,
-                'add_new_item' => __('Add New Location', 'wcs4'),
-                'edit_item' => __('Edit Location', 'wcs4'),
-                'new_item_name' => __('New Location Name', 'wcs4'),
-                'separate_items_with_commas' => __('Separate locations with commas', 'wcs4'),
-                'add_or_remove_items' => __('Add or remove locations', 'wcs4'),
-                'choose_from_most_used' => __('Choose from the most used locations', 'wcs4'),
-                'search_items' => __('Search Locations', 'wcs4'),
-                'not_found' => __('No locations found.', 'wcs4'),
-                'no_terms' => __('No locations.', 'wcs4'),
-            ),
-            'hierarchical' => ('yes' === $wcs4_settings['classroom_taxonomy_hierarchical']),
-            'public' => true,
-            'show_admin_column' => true,
-            'update_count_callback' => '_update_post_term_count',
-            'query_var' => true,
-            'rewrite' => array('slug' => $wcs4_settings['classroom_taxonomy_slug']),
-        ));
+        register_taxonomy(
+            WCS4_TAXONOMY_TYPE_LOCATION,
+            WCS4_TAXONOMY_TYPES_WHITELIST[WCS4_TAXONOMY_TYPE_LOCATION],
+            array(
+                'labels' => array(
+                    'name' => _x('Locations', 'taxonomy general name', 'wcs4'),
+                    'singular_name' => _x('Location', 'taxonomy singular name', 'wcs4'),
+                    'menu_name' => __('Locations', 'wcs4'),
+                    'all_items' => __('All Locations', 'wcs4'),
+                    'parent_item' => null,
+                    'parent_item_colon' => null,
+                    'add_new_item' => __('Add New Location', 'wcs4'),
+                    'edit_item' => __('Edit Location', 'wcs4'),
+                    'new_item_name' => __('New Location Name', 'wcs4'),
+                    'separate_items_with_commas' => __('Separate locations with commas', 'wcs4'),
+                    'add_or_remove_items' => __('Add or remove locations', 'wcs4'),
+                    'choose_from_most_used' => __('Choose from the most used locations', 'wcs4'),
+                    'search_items' => __('Search Locations', 'wcs4'),
+                    'not_found' => __('No locations found.', 'wcs4'),
+                    'no_terms' => __('No locations.', 'wcs4'),
+                ),
+                'hierarchical' => ('yes' === $wcs4_settings['classroom_taxonomy_hierarchical']),
+                'public' => true,
+                'show_admin_column' => true,
+                'update_count_callback' => '_update_post_term_count',
+                'query_var' => true,
+                'rewrite' => array('slug' => $wcs4_settings['classroom_taxonomy_slug']),
+            )
+        );
     }
     register_post_type(WCS4_POST_TYPE_CLASSROOM, array(
         'labels' => array(
@@ -243,7 +254,8 @@ add_action('init', static function () {
             'pages' => true,
         ),
         'supports' => array(
-            'title', 'editor',
+            'title',
+            'editor',
             'thumbnail',
             'author',
         ),
@@ -258,7 +270,8 @@ add_action('init', static function () {
 foreach (WCS4_POST_TYPES as $post_type) {
     add_filter('manage_' . $post_type . '_posts_columns', function ($columns) {
         $offset = array_search('date', array_keys($columns), true);
-        $new_columns = ['password' => __('Password')];
+        $new_columns = [];
+        $new_columns['password'] = __('Password');
         return array_merge(array_slice($columns, 0, $offset), $new_columns, array_slice($columns, $offset, null));
     });
     add_action('manage_' . $post_type . '_posts_custom_column', function ($column_key, $post_id) {
@@ -272,6 +285,61 @@ foreach (WCS4_POST_TYPES as $post_type) {
         }
     }, 10, 2);
 }
+add_action('add_meta_boxes', static function () {
+    add_meta_box(
+        'links',
+        __('Links'),
+        static function ($post) {
+            echo '<ul>';
+            foreach (wcs4_actions([], $post) as $action) {
+                echo '<li>' . $action . '</li>';
+            }
+            echo '</ul>';
+        },
+        null,
+        'side',
+        'high'
+    );
+});
+add_filter('post_row_actions', 'wcs4_actions', 10, 2);
+
+function wcs4_actions($actions, $the_post)
+{
+    if (!in_array($the_post->post_type, WCS4_POST_TYPES, true)) {
+        return $actions;
+    }
+    $type = str_replace('wcs4_', '', $the_post->post_type);
+    $actions[] = sprintf(
+        '<a href="%s">%s</a>',
+        'admin.php?' . http_build_query([
+            'page' => 'weekly-class-schedule',
+            $type => $the_post->ID,
+        ]),
+        __('Schedule', 'wcs4')
+    );
+    $actions[] = sprintf(
+        '<a href="%s">%s</a>',
+        'admin.php?' . http_build_query([
+            'page' => 'class-schedule-report',
+            $type => $the_post->ID,
+            'date_from' => date('Y-m-01'),
+            'date_upto' => date('Y-m-d'),
+        ]),
+        __('Reports', 'wcs4')
+    );
+    $actions[] = sprintf(
+        '<a href="%s">%s</a>',
+        'admin-ajax.php?' . http_build_query([
+            'action' => 'download_report_html',
+            $type => $the_post->ID,
+            'date_from' => date('Y-m-01'),
+            'date_upto' => date('Y-m-d'),
+        ]),
+        __('Download report as HTML', 'wcs4')
+    );
+    return $actions;
+}
+
 
 /**
  * Register activation hook
@@ -285,7 +353,7 @@ register_activation_hook(__FILE__, static function () {
  */
 add_action('wcs4_activate_action', static function () {
     $version = get_option('wcs4_version');
-    if (FALSE === $version) {
+    if (false === $version) {
         WCS_DB::create_schema();
     }
 });
