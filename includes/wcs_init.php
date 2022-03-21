@@ -320,7 +320,7 @@ function wcs4_actions($actions, $the_post)
     $actions[] = sprintf(
         '<a href="%s">%s</a>',
         'admin.php?' . http_build_query([
-            'page' => 'class-schedule-report',
+            'page' => 'class-report',
             $type => $the_post->ID,
             'date_from' => date('Y-m-01'),
             'date_upto' => date('Y-m-d'),
@@ -330,7 +330,7 @@ function wcs4_actions($actions, $the_post)
     $actions[] = sprintf(
         '<a href="%s">%s</a>',
         'admin-ajax.php?' . http_build_query([
-            'action' => 'download_report_html',
+            'action' => 'download_class_report_html',
             $type => $the_post->ID,
             'date_from' => date('Y-m-01'),
             'date_upto' => date('Y-m-d'),

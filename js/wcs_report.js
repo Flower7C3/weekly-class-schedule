@@ -22,7 +22,7 @@
         $(document).on('click.wcs-reports-download-csv', '#wcs-search-download-csv', function (e) {
             e.preventDefault();
             window.location = WCS4_AJAX_OBJECT.ajax_url
-                + '?action=download_report_csv'
+                + '?action=download_class_report_csv'
                 + '&teacher=' + $('#search_wcs4_report_teacher_id').val()
                 + '&student=' + $('#search_wcs4_report_student_id').val()
                 + '&subject=' + $('#search_wcs4_report_subject_id').val()
@@ -32,7 +32,7 @@
         $(document).on('click.wcs-reports-download-html', '#wcs-search-download-html', function (e) {
             e.preventDefault();
             window.location = WCS4_AJAX_OBJECT.ajax_url
-                + '?action=download_report_html'
+                + '?action=download_class_report_html'
                 + '&teacher=' + $('#search_wcs4_report_teacher_id').val()
                 + '&student=' + $('#search_wcs4_report_student_id').val()
                 + '&subject=' + $('#search_wcs4_report_subject_id').val()

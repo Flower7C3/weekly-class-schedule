@@ -47,7 +47,7 @@ add_action('admin_menu', static function () {
         __('Reports', 'wcs4'),
         __('Reports', 'wcs4'),
         WCS4_REPORT_VIEW_CAPABILITY,
-        'class-schedule-report',
+        'class-report',
         array(WCS_Report::class, "callback_of_management_page")
     );
 
@@ -75,10 +75,10 @@ add_action('admin_menu', static function () {
         'title' => _x('Using shortcode', 'help title', 'wcs4'),
         'callback' => 'wcs4_help_wcs_shortcode_callback',
     ];
-    $help_tabs['wcr_shortcode'] = [
+    $help_tabs['class_report_shortcode'] = [
         'id' => 'wcs4_help_shortcode',
         'title' => _x('Using shortcode', 'help title', 'wcs4'),
-        'callback' => 'wcs4_help_wcr_shortcode_callback',
+        'callback' => 'wcs4_help_class_report_shortcode_callback',
     ];
     $help_tabs['placeholders'] = [
         'id' => 'wcs4_help_placeholders',
@@ -102,7 +102,7 @@ add_action('admin_menu', static function () {
     add_action('load-' . $page_report, static function () use ($help_tabs) {
         $screen = get_current_screen();
         if (null !== $screen) {
-            $tabs = array($help_tabs['wcr_shortcode'], $help_tabs['placeholders']);
+            $tabs = array($help_tabs['class_report_shortcode'], $help_tabs['placeholders']);
             foreach ($tabs as $tab) {
                 $screen->add_help_tab($tab);
             }
@@ -294,7 +294,7 @@ function wcs4_help_wcs_shortcode_callback()
     <?php
 }
 
-function wcs4_help_wcr_shortcode_callback()
+function wcs4_help_class_report_shortcode_callback()
 {
     ?>
     <h3>
@@ -305,7 +305,7 @@ function wcs4_help_wcr_shortcode_callback()
                 'help',
                 'wcs4'
             ),
-            '[wcr]'
+            '[class_report]'
         ); ?>
     </h3>
     <hr>
@@ -319,7 +319,7 @@ function wcs4_help_wcr_shortcode_callback()
         <li><?php
             printf(
                 _x('Custom template for report layout: <code>%1$s</code>', 'help', 'wcs4'),
-                '[wcr template="CODE"]'
+                '[class_report template="CODE"]'
             ); ?></li>
     </ul>
     <p>
@@ -345,31 +345,31 @@ function wcs4_help_wcr_shortcode_callback()
         <li><?php
             printf(
                 _x('Only display reports of "%2$s" subject: <code>%1$s</code>', 'help', 'wcs4'),
-                '[wcr subject="Yoga"]',
+                '[class_report subject="Yoga"]',
                 'Yoga'
             ); ?></li>
         <li><?php
             printf(
                 _x('Only display reports by "%2$s" teacher: <code>%1$s</code>', 'help', 'wcs4'),
-                '[wcr teacher="John Doe"]',
+                '[class_report teacher="John Doe"]',
                 'John Doe'
             ); ?></li>
         <li><?php
             printf(
                 _x('Only display reports for "%2$s" student: <code>%1$s</code>', 'help', 'wcs4'),
-                '[wcr student="Jane Doe"]',
+                '[class_report student="Jane Doe"]',
                 'Jane Doe'
             ); ?></li>
         <li><?php
             printf(
                 _x('Only display reports in "%2$s" date from: <code>%1$s</code>', 'help', 'wcs4'),
-                '[wcr date_from="2020-01-01"]',
+                '[class_report date_from="2020-01-01"]',
                 '2020-01-01'
             ); ?></li>
         <li><?php
             printf(
                 _x('Only display reports in "%2$s" date upto: <code>%1$s</code>', 'help', 'wcs4'),
-                '[wcr date_upto="2020-01-31"]',
+                '[class_report date_upto="2020-01-31"]',
                 '2020-01-31'
             ); ?></li>
     </ul>
@@ -378,7 +378,7 @@ function wcs4_help_wcr_shortcode_callback()
         <?php
         printf(
             _x('A finalized shortcode may look something like <code>%1$s</code>', 'help', 'wcs4'),
-            '[wcr classroom="Classroom A" limit="" paged=""]'
+            '[class_report classroom="Classroom A" limit="" paged=""]'
         ); ?>
     </p>
     <?php

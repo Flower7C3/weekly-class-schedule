@@ -10,7 +10,11 @@ add_filter('the_password_form', static function ($form) {
         $post_id = get_the_id();
         $post = get_post($post_id);
         if (is_user_logged_in() && post_password_required($post_id)) {
-            $form = str_replace('name="post_password"', 'name="post_password" value="' . $post->post_password . '"', $form);
+            $form = str_replace(
+                'name="post_password"',
+                'name="post_password" value="' . $post->post_password . '"',
+                $form
+            );
             $post->post_password = null;
         }
     }
@@ -24,7 +28,7 @@ add_filter('the_content', static function ($content) {
         $wcs4_settings = WCS_Settings::load_settings();
         $layout = $wcs4_settings[$post_type_key . '_schedule_layout'];
         if (!post_password_required($post_id)) {
-            if ('none' !== $layout && NULL !== $layout) {
+            if ('none' !== $layout && null !== $layout) {
                 $content .= '<h2>' . __('Schedule', 'wcs4') . '</h2>';
                 $template_table_short = $wcs4_settings[$post_type_key . '_schedule_template_table_short'];
                 $template_table_details = $wcs4_settings[$post_type_key . '_schedule_template_table_details'];
@@ -36,7 +40,7 @@ add_filter('the_content', static function ($content) {
                 $params[] = 'template_table_details="' . $template_table_details . '"';
                 $params[] = 'template_list="' . $template_list . '"';
                 $content .= '[wcs  ' . implode(' ', $params) . ']';
-                if ('yes' === $wcs4_settings[$post_type_key . '_download_icalendar']) {
+                if ('yes' === $wcs4_settings[$post_type_key . '_download_schedule_icalendar']) {
                     $content .= __('Download iCal:', 'wcs4') . ' ';
                     $content .= '<a href="?format=ical">' . __('Download iCal for current week', 'wcs4') . '</a>';
                     $content .= ', ';
@@ -50,18 +54,18 @@ add_filter('the_content', static function ($content) {
                 $params[] = '' . $post_type_key . '="#' . $post_id . '"';
                 $params[] = 'template="' . $template . '"';
                 $params[] = 'limit=' . $wcs4_settings[$post_type_key . '_report_view'];
-                $content .= '[wcr  ' . implode(' ', $params) . ']';
-                if ('yes' === $wcs4_settings[$post_type_key . '_download_report_csv']) {
+                $content .= '[class_report  ' . implode(' ', $params) . ']';
+                if ('yes' === $wcs4_settings[$post_type_key . '_download_class_report_csv']) {
                     $content .= '<a href="?format=csv">' . __('Download report as CSV', 'wcs4') . '</a>';
                 }
-                if ('yes' === $wcs4_settings[$post_type_key . '_download_report_html']) {
+                if ('yes' === $wcs4_settings[$post_type_key . '_download_class_report_html']) {
                     $content .= '<a href="?format=html">' . __('Download report as HTML', 'wcs4') . '</a>';
                 }
             }
             if ('yes' === $wcs4_settings[$post_type_key . '_report_create']) {
                 $params = [];
                 $params[] = '' . $post_type_key . '="' . $post_id . '"';
-                $content .= '[wcr_create  ' . implode(' ', $params) . ']';
+                $content .= '[class_report_create  ' . implode(' ', $params) . ']';
             }
         }
     }
@@ -77,14 +81,14 @@ add_filter('single_template', static function ($single) {
     $post_type_key = str_replace('wcs4_', '', $post_type);
     $wcs4_settings = WCS_Settings::load_settings();
     if (isset($post_type, $_GET['format']) && array_key_exists($post_type, WCS4_POST_TYPES_WHITELIST)) {
-        if ('ical' === $_GET['format'] && 'yes' === $wcs4_settings[$post_type_key . '_download_icalendar']) {
+        if ('ical' === $_GET['format'] && 'yes' === $wcs4_settings[$post_type_key . '_download_schedule_icalendar']) {
             WCS_Schedule::callback_of_calendar_page();
         }
-        if ('csv' === $_GET['format'] && 'yes' === $wcs4_settings[$post_type_key . '_download_report_csv']
+        if ('csv' === $_GET['format'] && 'yes' === $wcs4_settings[$post_type_key . '_download_class_report_csv']
             && current_user_can(WCS4_REPORT_EXPORT_CAPABILITY)) {
             WCS_Report::callback_of_export_csv_page();
         }
-        if ('html' === $_GET['format'] && 'yes' === $wcs4_settings[$post_type_key . '_download_report_html']
+        if ('html' === $_GET['format'] && 'yes' === $wcs4_settings[$post_type_key . '_download_class_report_html']
             && current_user_can(WCS4_REPORT_EXPORT_CAPABILITY)) {
             WCS_Report::callback_of_export_html_page();
         }
@@ -98,9 +102,15 @@ add_filter('single_template', static function ($single) {
 add_action('pre_get_posts', static function ($query) {
     if (isset($query->query_vars['post_type'])
         && (
-            (!is_array($query->query_vars['post_type']) && array_key_exists($query->query_vars['post_type'], WCS4_POST_TYPES_WHITELIST))
+            (!is_array($query->query_vars['post_type']) && array_key_exists(
+                    $query->query_vars['post_type'],
+                    WCS4_POST_TYPES_WHITELIST
+                ))
             ||
-            (is_array($query->query_vars['post_type']) && array_intersect($query->query_vars['post_type'], array_keys(WCS4_POST_TYPES_WHITELIST)))
+            (is_array($query->query_vars['post_type']) && array_intersect(
+                    $query->query_vars['post_type'],
+                    array_keys(WCS4_POST_TYPES_WHITELIST)
+                ))
         )
     ) {
         $query->set('orderby', 'title');

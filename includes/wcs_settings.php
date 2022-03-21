@@ -69,7 +69,7 @@ class WCS_Settings
                     'subject_taxonomy_hierarchical' => 'wcs4_validate_yes_no',
                     'subject_archive_slug' => 'wcs4_validate_slug',
                     'subject_post_slug' => 'wcs4_validate_slug',
-                    'subject_download_icalendar' => 'wcs4_validate_yes_no',
+                    'subject_download_schedule_icalendar' => 'wcs4_validate_yes_no',
                     'subject_hashed_slug' => 'wcs4_validate_yes_no',
                     'subject_schedule_layout' => 'wcs4_validate_mock',
                     'subject_schedule_template_table_short' => 'wcs4_validate_mock',
@@ -78,8 +78,8 @@ class WCS_Settings
                     'subject_report_view' => 'wcs4_validate_is_numeric',
                     'subject_report_create' => 'wcs4_validate_yes_no',
                     'subject_report_shortcode_template' => 'wcs4_validate_mock',
-                    'subject_download_report_csv' => 'wcs4_validate_yes_no',
-                    'subject_download_report_html' => 'wcs4_validate_yes_no',
+                    'subject_download_class_report_csv' => 'wcs4_validate_yes_no',
+                    'subject_download_class_report_html' => 'wcs4_validate_yes_no',
                     'subject_report_html_template_code' => 'wcs4_validate_mock',
                     'subject_report_html_thead_columns' => 'wcs4_validate_html',
                     'subject_report_html_tbody_columns' => 'wcs4_validate_html',
@@ -87,7 +87,7 @@ class WCS_Settings
                     'teacher_taxonomy_hierarchical' => 'wcs4_validate_yes_no',
                     'teacher_archive_slug' => 'wcs4_validate_slug',
                     'teacher_post_slug' => 'wcs4_validate_slug',
-                    'teacher_download_icalendar' => 'wcs4_validate_yes_no',
+                    'teacher_download_schedule_icalendar' => 'wcs4_validate_yes_no',
                     'teacher_hashed_slug' => 'wcs4_validate_yes_no',
                     'teacher_schedule_layout' => 'wcs4_validate_mock',
                     'teacher_schedule_template_table_short' => 'wcs4_validate_mock',
@@ -96,8 +96,8 @@ class WCS_Settings
                     'teacher_report_create' => 'wcs4_validate_yes_no',
                     'teacher_report_view' => 'wcs4_validate_is_numeric',
                     'teacher_report_shortcode_template' => 'wcs4_validate_mock',
-                    'teacher_download_report_csv' => 'wcs4_validate_yes_no',
-                    'teacher_download_report_html' => 'wcs4_validate_yes_no',
+                    'teacher_download_class_report_csv' => 'wcs4_validate_yes_no',
+                    'teacher_download_class_report_html' => 'wcs4_validate_yes_no',
                     'teacher_report_html_template_code' => 'wcs4_validate_mock',
                     'teacher_report_html_thead_columns' => 'wcs4_validate_html',
                     'teacher_report_html_tbody_columns' => 'wcs4_validate_html',
@@ -105,7 +105,7 @@ class WCS_Settings
                     'student_taxonomy_hierarchical' => 'wcs4_validate_yes_no',
                     'student_archive_slug' => 'wcs4_validate_slug',
                     'student_post_slug' => 'wcs4_validate_slug',
-                    'student_download_icalendar' => 'wcs4_validate_yes_no',
+                    'student_download_schedule_icalendar' => 'wcs4_validate_yes_no',
                     'student_hashed_slug' => 'wcs4_validate_yes_no',
                     'student_schedule_layout' => 'wcs4_validate_mock',
                     'student_schedule_template_table_short' => 'wcs4_validate_mock',
@@ -114,8 +114,8 @@ class WCS_Settings
                     'student_report_create' => 'wcs4_validate_yes_no',
                     'student_report_view' => 'wcs4_validate_is_numeric',
                     'student_report_shortcode_template' => 'wcs4_validate_mock',
-                    'student_download_report_csv' => 'wcs4_validate_yes_no',
-                    'student_download_report_html' => 'wcs4_validate_yes_no',
+                    'student_download_class_report_csv' => 'wcs4_validate_yes_no',
+                    'student_download_class_report_html' => 'wcs4_validate_yes_no',
                     'student_report_html_template_code' => 'wcs4_validate_mock',
                     'student_report_html_thead_columns' => 'wcs4_validate_html',
                     'student_report_html_tbody_columns' => 'wcs4_validate_html',
@@ -123,7 +123,7 @@ class WCS_Settings
                     'classroom_taxonomy_hierarchical' => 'wcs4_validate_yes_no',
                     'classroom_archive_slug' => 'wcs4_validate_slug',
                     'classroom_post_slug' => 'wcs4_validate_slug',
-                    'classroom_download_icalendar' => 'wcs4_validate_yes_no',
+                    'classroom_download_schedule_icalendar' => 'wcs4_validate_yes_no',
                     'classroom_hashed_slug' => 'wcs4_validate_yes_no',
                     'classroom_schedule_layout' => 'wcs4_validate_mock',
                     'classroom_schedule_template_table_short' => 'wcs4_validate_mock',
@@ -543,12 +543,12 @@ class WCS_Settings
                             <?php
                             foreach ($taxonomyTypes as $key => $name): ?>
                                 <td data-key="<?php
-                                echo $key ?>" data-type="wcs4_download_icalendar">
+                                echo $key ?>" data-type="wcs4_download_schedule_icalendar">
                                     <?php
                                     echo wcs4_bool_checkbox(
-                                        'wcs4_' . $key . '_download_icalendar',
-                                        'wcs4_' . $key . '_download_icalendar',
-                                        $wcs4_options[$key . '_download_icalendar'],
+                                        'wcs4_' . $key . '_download_schedule_icalendar',
+                                        'wcs4_' . $key . '_download_schedule_icalendar',
+                                        $wcs4_options[$key . '_download_schedule_icalendar'],
                                         __('Yes')
                                     ); ?>
                                 </td>
@@ -729,12 +729,12 @@ class WCS_Settings
                             foreach ($taxonomyTypes as $key => $name):
                                 if ($key !== 'classroom'): ?>
                                     <td data-key="<?php
-                                    echo $key ?>" data-type="wcs4_download_report_csv">
+                                    echo $key ?>" data-type="wcs4_download_class_report_csv">
                                         <?php
                                         echo wcs4_bool_checkbox(
-                                            'wcs4_' . $key . '_download_report_csv',
-                                            'wcs4_' . $key . '_download_report_csv',
-                                            $wcs4_options[$key . '_download_report_csv'],
+                                            'wcs4_' . $key . '_download_class_report_csv',
+                                            'wcs4_' . $key . '_download_class_report_csv',
+                                            $wcs4_options[$key . '_download_class_report_csv'],
                                             __('Yes')
                                         );
                                         ?>
@@ -760,12 +760,12 @@ class WCS_Settings
                             foreach ($taxonomyTypes as $key => $name):
                                 if ($key !== 'classroom'): ?>
                                     <td data-key="<?php
-                                    echo $key ?>" data-type="wcs4_download_report_html">
+                                    echo $key ?>" data-type="wcs4_download_class_report_html">
                                         <?php
                                         echo wcs4_bool_checkbox(
-                                            'wcs4_' . $key . '_download_report_html',
-                                            'wcs4_' . $key . '_download_report_html',
-                                            $wcs4_options[$key . '_download_report_html'],
+                                            'wcs4_' . $key . '_download_class_report_html',
+                                            'wcs4_' . $key . '_download_class_report_html',
+                                            $wcs4_options[$key . '_download_class_report_html'],
                                             __('Yes')
                                         );
                                         ?>
@@ -1272,7 +1272,7 @@ class WCS_Settings
                 'subject_taxonomy_hierarchical' => 'no',
                 'subject_archive_slug' => _x('subjects', 'config slug for archive', 'wcs4'),
                 'subject_post_slug' => _x('subject', 'config slug for item', 'wcs4'),
-                'subject_download_icalendar' => 'no',
+                'subject_download_schedule_icalendar' => 'no',
                 'subject_hashed_slug' => 'no',
                 'subject_schedule_layout' => 'table',
                 'subject_schedule_template_table_short' => _x(
@@ -1296,14 +1296,14 @@ class WCS_Settings
                     'config template report at subject schedule',
                     'wcs4'
                 ),
-                'subject_download_report_csv' => 'no',
-                'subject_download_report_html' => 'no',
+                'subject_download_class_report_csv' => 'no',
+                'subject_download_class_report_html' => 'no',
                 'subject_report_create' => 'no',
                 'teacher_taxonomy_slug' => _x('specialization', 'config slug for taxonomy', 'wcs4'),
                 'teacher_taxonomy_hierarchical' => 'no',
                 'teacher_archive_slug' => _x('teachers', 'config slug for archive', 'wcs4'),
                 'teacher_post_slug' => _x('teacher', 'config slug for item', 'wcs4'),
-                'teacher_download_icalendar' => 'no',
+                'teacher_download_schedule_icalendar' => 'no',
                 'teacher_hashed_slug' => 'no',
                 'teacher_schedule_layout' => 'table',
                 'teacher_schedule_template_table_short' => _x(
@@ -1327,14 +1327,14 @@ class WCS_Settings
                     'config template report at teacher schedule',
                     'wcs4'
                 ),
-                'teacher_download_report_csv' => 'no',
-                'teacher_download_report_html' => 'no',
+                'teacher_download_class_report_csv' => 'no',
+                'teacher_download_class_report_html' => 'no',
                 'teacher_report_create' => 'no',
                 'student_taxonomy_slug' => _x('group', 'config slug for taxonomy', 'wcs4'),
                 'student_taxonomy_hierarchical' => 'no',
                 'student_archive_slug' => _x('students', 'config slug for archive', 'wcs4'),
                 'student_post_slug' => _x('student', 'config slug for item', 'wcs4'),
-                'student_download_icalendar' => 'no',
+                'student_download_schedule_icalendar' => 'no',
                 'student_hashed_slug' => 'yes',
                 'student_schedule_layout' => 'table',
                 'student_schedule_template_table_short' => _x(
@@ -1358,14 +1358,14 @@ class WCS_Settings
                     'config template list at student schedule',
                     'wcs4'
                 ),
-                'student_download_report_csv' => 'no',
-                'student_download_report_html' => 'no',
+                'student_download_class_report_csv' => 'no',
+                'student_download_class_report_html' => 'no',
                 'student_report_create' => 'no',
                 'classroom_taxonomy_slug' => _x('locations', 'config slug for taxonomy', 'wcs4'),
                 'classroom_taxonomy_hierarchical' => 'no',
                 'classroom_archive_slug' => _x('classrooms', 'config slug for archive', 'wcs4'),
                 'classroom_post_slug' => _x('classroom', 'config slug for item', 'wcs4'),
-                'classroom_download_icalendar' => 'no',
+                'classroom_download_schedule_icalendar' => 'no',
                 'classroom_hashed_slug' => 'no',
                 'classroom_schedule_layout' => 'table',
                 'classroom_schedule_template_table_short' => _x(

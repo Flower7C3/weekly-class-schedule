@@ -1236,5 +1236,5 @@ add_action('wp_ajax_get_report', [WCS_Report::class, 'get_item']);
  */
 add_action('wp_ajax_get_reports_html', [WCS_Report::class, 'get_ajax_html_with_reports']);
 
-add_action('wp_ajax_download_report_csv', [WCS_Report::class, 'callback_of_export_csv_page']);
-add_action('wp_ajax_download_report_html', [WCS_Report::class, 'callback_of_export_html_page']);
+add_action('wp_ajax_download_class_report_csv', [WCS_Report::class, 'callback_of_export_csv_page']);
+add_action('wp_ajax_download_class_report_html', [WCS_Report::class, 'callback_of_export_html_page']);

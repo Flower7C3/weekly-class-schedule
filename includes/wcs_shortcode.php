@@ -82,14 +82,14 @@ add_shortcode('wcs', static function ($atts) {
 });
 
 /**
- * Standard [wcr] shortcode
+ * Standard [class_report] shortcode
  *
  * Default:
- *     [wcr subject="all" teacher="all" student="all" date_from="" date_upto="" template="" limit="" paged=""]
+ *     [class_report subject="all" teacher="all" student="all" date_from="" date_upto="" template="" limit="" paged=""]
  * @param $atts
  * @return string
  */
-add_shortcode('wcr', static function ($atts) {
+add_shortcode('class_report', static function ($atts) {
     $output = '';
     $buffer = '';
     $subject = '';
@@ -142,7 +142,7 @@ add_shortcode('wcr', static function ($atts) {
     return $output;
 });
 
-add_shortcode('wcr_create', static function ($atts) {
+add_shortcode('class_report_create', static function ($atts) {
     $subject = '';
     $teacher = '';
     $student = '';
