@@ -199,36 +199,42 @@ class WCS_Report
 
         $wcs4_options = WCS_Settings::load_settings();
 
-        $prefix = '';
-        $item = '';
-        if (!empty($subject)) {
-            $prefix = 'subject_';
-            $item = WCS_DB::get_item($subject);
-        }
-        if (!empty($student)) {
-            $prefix = 'student_';
-            $item = WCS_DB::get_item($student);
-        }
-        if (!empty($teacher)) {
-            $prefix = 'teacher_';
-            $item = WCS_DB::get_item($teacher);
+        $thead_columns = [];
+        $tbody_columns = [];
+        $table_columns = explode(PHP_EOL, $wcs4_options['report_html_table_columns']);
+        foreach ($table_columns as $table_column) {
+            [$key, $thead, $tbody] = explode(',', $table_column);
+            $thead_columns[trim($key)] = trim($thead);
+            $tbody_columns[trim($key)] = trim($tbody);
         }
 
-        $thead_columns = array_map(static function ($item) {
-            return trim($item);
-        }, explode(',', $wcs4_options[$prefix . 'report_html_thead_columns']));
-        $tbody_columns = array_map(static function ($item) {
-            return trim($item);
-        }, explode(',', $wcs4_options[$prefix . 'report_html_tbody_columns']));
+        $subject_item = '';
+        $student_item = '';
+        $teacher_item = '';
+        if (!empty($subject)) {
+            $subject_item = WCS_DB::get_item($subject);
+            unset($thead_columns['subject'], $tbody_columns['subject']);
+        }
+        if (!empty($student)) {
+            $student_item = WCS_DB::get_item($student);
+            unset($thead_columns['student'], $tbody_columns['student']);
+        }
+        if (!empty($teacher)) {
+            $teacher_item = WCS_DB::get_item($teacher);
+            unset($thead_columns['teacher'], $tbody_columns['teacher']);
+        }
+
+        ob_start();
+        include 'template/report_html_heading.php';
+        $heading = ob_get_clean();
+
         ob_start();
         include 'template/report_html_table.php';
         $table = ob_get_clean();
 
-        $template_style = wp_unslash(
-            $wcs4_options['report_html_template_style']
-        );
+        $template_style = wp_unslash($wcs4_options['report_html_template_style']);
 
-        $template_code = $wcs4_options[$prefix . 'report_html_template_code'];
+        $template_code = $wcs4_options['report_html_template_code'];
         $template_code = WCS_Output::process_template($item, $template_code);
         $template_code = str_replace([
             '{date from}',
@@ -236,6 +242,7 @@ class WCS_Report
             '{current datetime}',
             '{current date}',
             '{current time}',
+            '{heading}',
             '{table}',
         ], [
             $date_from,
@@ -243,6 +250,7 @@ class WCS_Report
             date('Y-m-d H:i:s'),
             date('Y-m-d'),
             date('H:i:s'),
+            $heading,
             $table,
         ], $template_code);
 

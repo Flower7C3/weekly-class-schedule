@@ -54,8 +54,7 @@ class WCS_Settings
                     'report_shortcode_template' => 'wcs4_validate_mock',
                     'report_html_template_style' => 'wcs4_validate_mock',
                     'report_html_template_code' => 'wcs4_validate_mock',
-                    'report_html_thead_columns' => 'wcs4_validate_html',
-                    'report_html_tbody_columns' => 'wcs4_validate_html',
+                    'report_html_table_columns' => 'wcs4_validate_html',
                     'color_base' => 'wcs4_validate_color',
                     'color_details_box' => 'wcs4_validate_color',
                     'color_text' => 'wcs4_validate_color',
@@ -80,9 +79,6 @@ class WCS_Settings
                     'subject_report_shortcode_template' => 'wcs4_validate_mock',
                     'subject_download_class_report_csv' => 'wcs4_validate_yes_no',
                     'subject_download_class_report_html' => 'wcs4_validate_yes_no',
-                    'subject_report_html_template_code' => 'wcs4_validate_mock',
-                    'subject_report_html_thead_columns' => 'wcs4_validate_html',
-                    'subject_report_html_tbody_columns' => 'wcs4_validate_html',
                     'teacher_taxonomy_slug' => 'wcs4_validate_slug',
                     'teacher_taxonomy_hierarchical' => 'wcs4_validate_yes_no',
                     'teacher_archive_slug' => 'wcs4_validate_slug',
@@ -98,9 +94,6 @@ class WCS_Settings
                     'teacher_report_shortcode_template' => 'wcs4_validate_mock',
                     'teacher_download_class_report_csv' => 'wcs4_validate_yes_no',
                     'teacher_download_class_report_html' => 'wcs4_validate_yes_no',
-                    'teacher_report_html_template_code' => 'wcs4_validate_mock',
-                    'teacher_report_html_thead_columns' => 'wcs4_validate_html',
-                    'teacher_report_html_tbody_columns' => 'wcs4_validate_html',
                     'student_taxonomy_slug' => 'wcs4_validate_slug',
                     'student_taxonomy_hierarchical' => 'wcs4_validate_yes_no',
                     'student_archive_slug' => 'wcs4_validate_slug',
@@ -116,9 +109,6 @@ class WCS_Settings
                     'student_report_shortcode_template' => 'wcs4_validate_mock',
                     'student_download_class_report_csv' => 'wcs4_validate_yes_no',
                     'student_download_class_report_html' => 'wcs4_validate_yes_no',
-                    'student_report_html_template_code' => 'wcs4_validate_mock',
-                    'student_report_html_thead_columns' => 'wcs4_validate_html',
-                    'student_report_html_tbody_columns' => 'wcs4_validate_html',
                     'classroom_taxonomy_slug' => 'wcs4_validate_slug',
                     'classroom_taxonomy_hierarchical' => 'wcs4_validate_yes_no',
                     'classroom_archive_slug' => 'wcs4_validate_slug',
@@ -782,48 +772,12 @@ class WCS_Settings
                     _ex('HTML report template', 'options general settings', 'wcs4') ?>
                 </h2>
                 <table class="form-table">
-                    <thead>
-                        <tr>
-                            <th></th>
-                            <?php
-                            foreach ($taxonomyTypes as $key => $name):
-                                if ($key !== 'classroom'):?>
-                                    <th style="width:18%"><?php
-                                        echo $name['post'] ?></th>
-                                <?php
-                                endif;
-                            endforeach; ?>
-                            <th style="width:18%"><?php
-                                echo __('Common', 'wcs4') ?></th>
-                        </tr>
-                    </thead>
                     <tbody>
                         <tr>
                             <th>
                                 <?php
                                 _ex('HTML code', 'options general settings', 'wcs4') ?>
                             </th>
-                            <?php
-                            foreach ($taxonomyTypes as $key => $name):
-                                if ($key !== 'classroom'): ?>
-                                    <td data-key="<?php
-                                    echo $key ?>" data-type="wcs4_report_html_template_code">
-                                        <?php
-                                        wp_editor(
-                                            $wcs4_options[$key . '_report_html_template_code'],
-                                            'wcs4_' . $key . '_report_html_template_code',
-                                            [
-                                                'wpautop' => true,
-                                                'media_buttons' => false,
-                                                'textarea_name' => 'wcs4_' . $key . '_report_html_template_code',
-                                                'textarea_rows' => 14,
-                                            ]
-                                        );
-                                        ?>
-                                    </td>
-                                <?php
-                                endif;
-                            endforeach; ?>
                             <td data-type="wcs4_report_html_template_code">
                                 <?php
                                 wp_editor(
@@ -842,65 +796,9 @@ class WCS_Settings
                         <tr>
                             <th>
                                 <?php
-                                _ex(
-                                    'Table head columns',
-                                    'options general settings',
-                                    'wcs4'
-                                ) ?>
-                            </th>
-                            <?php
-                            foreach ($taxonomyTypes as $key => $name):
-                                if ($key !== 'classroom'): ?>
-                                    <td data-key="<?php
-                                    echo $key ?>" data-type="wcs4_report_html_thead_columns">
-                                    <textarea name="wcs4_<?php
-                                    echo $key ?>_report_html_thead_columns" cols="30"
-                                              rows="4"><?php
-                                        echo $wcs4_options[$key .
-                                        '_report_html_thead_columns'] ?></textarea>
-                                    </td>
-                                <?php
-                                endif;
-                            endforeach; ?>
-                            <td data-type="wcs4_report_html_thead_columns">
-                                <textarea name="wcs4_report_html_thead_columns" cols="30" rows="4"><?php
-                                    echo $wcs4_options['report_html_thead_columns']; ?></textarea>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th>
-                                <?php
-                                _ex(
-                                    'Table body columns',
-                                    'options general settings',
-                                    'wcs4'
-                                ) ?>
-                            </th>
-                            <?php
-                            foreach ($taxonomyTypes as $key => $name):
-                                if ($key !== 'classroom'): ?>
-                                    <td data-key="<?php
-                                    echo $key ?>" data-type="wcs4_report_html_tbody_columns">
-                                    <textarea name="wcs4_<?php
-                                    echo $key ?>_report_html_tbody_columns" cols="30"
-                                              rows="4"><?php
-                                        echo $wcs4_options[$key .
-                                        '_report_html_tbody_columns'] ?></textarea>
-                                    </td>
-                                <?php
-                                endif;
-                            endforeach; ?>
-                            <td data-type="wcs4_report_html_tbody_columns">
-                                <textarea name="wcs4_report_html_tbody_columns" cols="30" rows="4"><?php
-                                    echo $wcs4_options['report_html_tbody_columns']; ?></textarea>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th>
-                                <?php
                                 _ex('CSS code', 'options general settings', 'wcs4') ?>
                             </th>
-                            <td colspan="4">
+                            <td>
                                 <textarea id="report_html_template_style" rows="5"
                                           name="wcs4_report_html_template_style"
                                           class="widefat textarea css_editor"><?php
@@ -914,6 +812,20 @@ class WCS_Settings
                                     ],
                                 ]);
                                 ?>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>
+                                <?php
+                                _ex(
+                                    'Table columns',
+                                    'options general settings',
+                                    'wcs4'
+                                ) ?>
+                            </th>
+                            <td data-type="wcs4_report_html_table_columns">
+                                <textarea name="wcs4_report_html_table_columns" cols="150" rows="10"><?php
+                                    echo $wcs4_options['report_html_table_columns']; ?></textarea>
                             </td>
                         </tr>
                     </tbody>
@@ -1236,29 +1148,16 @@ class WCS_Settings
                 ),
                 'report_html_template_style' => '',
                 'report_html_template_code' =>
-                    '<header><h1>Report</h1></header>' .
+                    '<header><h1>Report</h1><h2>{heading}</h2></header>' .
                     '<main>{table}</main>' .
                     '<footer><p>Generated at {current datetime}</p></footer>',
-                'report_html_thead_columns' => 'ID,Teacher,Subject,Student,Date,Topic,Signature',
-                'report_html_tbody_columns' => '{index}, {teacher}, {subject}, {student}, {date}: {start time} - {end time}, {topic}',
-                'subject_report_html_template_code' =>
-                    '<header><h1>Report</h1></header>' .
-                    '<main>{table}</main>' .
-                    '<footer><p>Generated at {current datetime}</p></footer>',
-                'subject_report_html_thead_columns' => 'ID,Teacher,Student,Date,Topic,Signature',
-                'subject_report_html_tbody_columns' => '{index}, {teacher}, {student}, {date}: {start time} - {end time}, {topic}',
-                'teacher_report_html_template_code' =>
-                    '<header><h1>Report</h1></header>' .
-                    '<main>{table}</main>' .
-                    '<footer><p>Generated at {current datetime}</p></footer>',
-                'teacher_report_html_thead_columns' => 'ID,Subject,Student,Date,Topic,Signature',
-                'teacher_report_html_tbody_columns' => '{index}, {subject}, {student}, {date}: {start time} - {end time}, {topic}',
-                'student_report_html_template_code' =>
-                    '<header><h1>Report</h1></header>' .
-                    '<main>{table}</main>' .
-                    '<footer><p>Generated at {current datetime}</p></footer>',
-                'student_report_html_thead_columns' => 'ID,Teacher,Subject,Date,Topic,Signature',
-                'student_report_html_tbody_columns' => '{index}, {teacher}, {subject}, {date}: {start time} - {end time}, {topic}',
+                'report_html_table_columns' => 'id, ID, {index}' . PHP_EOL .
+                    'teacher, Pedagog, {teacher}' . PHP_EOL .
+                    'subject, Przedmiot, {subject}' . PHP_EOL .
+                    'student, Uczeń, {student}' . PHP_EOL .
+                    'date, Data, {date}: {start time} - {end time}' . PHP_EOL .
+                    'topic, Temat, {topic}' . PHP_EOL .
+                    'signature, Podpis, ' . PHP_EOL,
                 'color_base' => 'DDFFDD',
                 'color_details_box' => 'FFDDDD',
                 'color_text' => '373737',
