@@ -127,7 +127,7 @@
      */
     var bind_edit_handler = function () {
         $(document).on('click.wcs4-edit-progress-button', '.wcs4-edit-progress-button', function (e) {
-            WCS4_LIB.fetch_entry_data_to_form('progress', $(this).attr('data-progress-id'), set_entry_data_to_form, WCS4_LIB.reset_to_edit_mode);
+            WCS4_LIB.fetch_entry_data_to_form('progress', $(this).closest('tr').data('id'), set_entry_data_to_form, WCS4_LIB.reset_to_edit_mode);
         });
     }
 
@@ -136,7 +136,7 @@
      */
     var bind_copy_handler = function () {
         $(document).on('click.wcs4-copy-progress-button', '.wcs4-copy-progress-button', function (e) {
-            WCS4_LIB.fetch_entry_data_to_form('progress', $(this).attr('data-progress-id'), set_entry_data_to_form, WCS4_LIB.reset_to_copy_mode)
+            WCS4_LIB.fetch_entry_data_to_form('progress', $(this).closest('tr').data('id'), set_entry_data_to_form, WCS4_LIB.reset_to_copy_mode)
         });
     }
 
@@ -144,7 +144,7 @@
         $(document).on('click.wcs4-create-progress-button', '#wcs-progresses-create', function (e) {
             var ids = [];
             jQuery('tr[id]').each(function (k, v) {
-                ids.push(jQuery(v).attr('id').replace('progress-', ''));
+                ids.push(jQuery(v).data('id'));
             });
             WCS4_LIB.fetch_entry_data_to_form('progress', ids, set_entry_data_to_form, WCS4_LIB.reset_to_create_mode)
         });
@@ -158,7 +158,7 @@
             var entry = {
                 action: 'wcs_delete_progress_entry',
                 security: WCS4_AJAX_OBJECT.ajax_nonce,
-                row_id: $(this).attr('data-progress-id')
+                row_id: $(this).closest('tr').data('id')
             };
             WCS4_LIB.modify_entry('progress', entry, function (data) {
                 // Let's refresh the date
@@ -229,8 +229,8 @@
             $('#wcs4_progress_type').val('type.periodic').change();
             let teacher_ids = [];
             let student_id = null;
-            let improvements = null;
-            let indications = null;
+            let improvements = '';
+            let indications = '';
             entry.forEach(function (item) {
                 if (Array.isArray(item.teacher_id)) {
                     item.teacher_id.forEach(function (id) {

@@ -112,7 +112,7 @@
             >
                 <span class="dashicons dashicons-plus-alt"></span>
                 <?php
-                echo __('Generate Progress', 'wcs4') ?>
+                echo __('Generate Periodic Progress', 'wcs4') ?>
             </button>
         <?php
         endif; ?>

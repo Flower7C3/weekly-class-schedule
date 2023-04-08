@@ -13,11 +13,11 @@
             <th style="width:20%"></th>
             <?php
             foreach ($taxonomyTypes as $name): ?>
-                <th style="width:18%"><?php
+                <th style="width:15%"><?php
                     echo $name['post'] ?></th>
             <?php
             endforeach; ?>
-            <th style="width:18%"><?php
+            <th style="width:15%"><?php
                 echo __('Common', 'wcs4') ?></th>
         </tr>
         </thead>
@@ -115,11 +115,11 @@
                 <?php
                 wp_editor(
                     $wcs4_options['schedule_template_table_short'],
-                    'wcs4_template_table_short',
+                    'wcs4_schedule_template_table_short',
                     [
                         'wpautop' => true,
                         'media_buttons' => false,
-                        'textarea_name' => 'wcs4_template_table_short',
+                        'textarea_name' => 'wcs4_schedule_template_table_short',
                         'textarea_rows' => 6,
                     ]
                 );
@@ -161,11 +161,11 @@
                 <?php
                 wp_editor(
                     $wcs4_options['schedule_template_table_details'],
-                    'wcs4_template_table_details',
+                    'wcs4_schedule_template_table_details',
                     [
                         'wpautop' => true,
                         'media_buttons' => false,
-                        'textarea_name' => 'wcs4_template_table_details',
+                        'textarea_name' => 'wcs4_schedule_template_table_details',
                         'textarea_rows' => 6,
                     ]
                 );
@@ -207,11 +207,11 @@
                 <?php
                 wp_editor(
                     $wcs4_options['schedule_template_list'],
-                    'wcs4_template_list',
+                    'wcs4_schedule_template_list',
                     [
                         'wpautop' => true,
                         'media_buttons' => false,
-                        'textarea_name' => 'wcs4_template_list',
+                        'textarea_name' => 'wcs4_schedule_template_list',
                         'textarea_rows' => 6,
                     ]
                 );

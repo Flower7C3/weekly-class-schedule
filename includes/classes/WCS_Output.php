@@ -100,7 +100,7 @@ class WCS_Output
                 $item->getId(),
                 $item->getStartTime(),
                 $item->getEndTime(),
-                $item->getNotes(),
+                nl2br($item->getNotes()),
             ], $template);
         }
         if ($item instanceof WCS_DB_Journal_Item) {
@@ -121,7 +121,7 @@ class WCS_Output
                 $item->getStartTime(),
                 $item->getEndTime(),
                 $item->getDurationTime(),
-                $item->getTopic(),
+                nl2br($item->getTopic()),
                 $item->getCreatedAt() ? $item->getCreatedAt()->format('Y-m-d H:i:s') : null,
                 $item->getCreatedBy() ? $item->getCreatedBy()->display_name : null,
                 $item->getUpdatedAt() ? $item->getUpdatedAt()->format('Y-m-d H:i:s') : null,
@@ -146,8 +146,8 @@ class WCS_Output
                 $item->getId(),
                 $item->getStartDate(),
                 $item->getEndDate(),
-                $item->getImprovements(),
-                $item->getIndications(),
+                nl2br($item->getImprovements()),
+                nl2br($item->getIndications()),
                 ($item->isTypePeriodic()
                     ? _x('Periodic', 'item type', 'wcs4')
                     : ($item->isTypePartial()
@@ -176,7 +176,7 @@ class WCS_Output
                 $item->getDate(),
             ], $template);
         }
-        return nl2br($template);
+        return $template;
     }
 
     /**

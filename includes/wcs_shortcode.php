@@ -32,12 +32,11 @@ add_shortcode('wcs', static function ($atts) {
         'style' => 'normal',
         'limit' => null,
         'paged' => null,
-        'schedule_template_table_short' => $wcs4_options['schedule_template_table_short'],
-        'schedule_template_table_details' => $wcs4_options['schedule_template_table_details'],
-        'schedule_template_list' => $wcs4_options['schedule_template_list'],
+        'template_table_short' => $wcs4_options['schedule_template_table_short'],
+        'template_table_details' => $wcs4_options['schedule_template_table_details'],
+        'template_list' => $wcs4_options['schedule_template_list'],
     ), $atts), EXTR_OVERWRITE);
-
-    # Get lesssons
+    # Get lessons
     $lessons = WCS_Schedule::get_items($classroom, $teacher, $student, $subject, null, null, 1, $limit, $paged);
 
     # Classroom
@@ -175,7 +174,7 @@ add_shortcode('student_progress', static function ($atts) {
     $limit = null;
     $paged = null;
     $template_partial = '';
-    $template_full = '';
+    $template_periodic = '';
     $wcs4_options = WCS_Settings::load_settings();
 
     extract(shortcode_atts(array(
@@ -187,8 +186,8 @@ add_shortcode('student_progress', static function ($atts) {
         'date_upto' => null,
         'limit' => null,
         'paged' => null,
-        'template_partial' => $wcs4_options['progress_shortcode_template_partial'],
-        'template_full' => $wcs4_options['progress_shortcode_template_full'],
+        'template_partial' => $wcs4_options['progress_shortcode_template_partial_type'],
+        'template_periodic' => $wcs4_options['progress_shortcode_template_periodic_type'],
     ), $atts), EXTR_OVERWRITE);
 
     # Get progresss
@@ -202,7 +201,7 @@ add_shortcode('student_progress', static function ($atts) {
 
     # Render list layout
     $output .= '<div class="wcs4-schedule-wrapper" id="' . $schedule_key . '">';
-    $output .= WCS_Progress::get_html_of_progress_list_for_shortcode($progresses, $schedule_key, $template_partial, $template_full);
+    $output .= WCS_Progress::get_html_of_progress_list_for_shortcode($progresses, $schedule_key, $template_partial, $template_periodic);
     $output .= '</div>';
 
     $output = apply_filters('wcs4_post_render', $output, $style, $teacher, $student, $subject, $date_from, $date_upto);

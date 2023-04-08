@@ -309,8 +309,7 @@ class WCS_Schedule
 
             # Check if we need to sanitize the notes or leave as is.
             if ($_POST['notes'] !== null) {
-                global $wcs4_allowed_html;
-                $notes = wp_kses($_POST['notes'], $wcs4_allowed_html);
+                $notes = sanitize_textarea_field($_POST['notes']);
             }
 
             $days_to_update[$weekday] = true;
@@ -828,20 +827,19 @@ class WCS_Schedule
             if (null !== $lesson->getColor()) {
                 $style = ' style="background-color: #' . $lesson->getColor() . '; "';
             }
-            $output .= '<div class="wcs4-grid-lesson wcs4-grid-weekday-' . $lesson->getWeekday(
-                ) . '-' . $lesson->getPosition() . ' wcs4-lesson-hour-from-' . str_replace(
-                    ':',
-                    '-',
-                    $lesson->getStartTime()
-                ) . ' wcs4-lesson-hour-to-' . str_replace(':', '-', $lesson->getEndTime()) . '" ' . $style . '>';
-            $output .= '<div class="wcs4-lesson-name">' . WCS_Output::process_template(
-                    $lesson,
-                    $template_table_short
-                ) . '</div>';
-            $output .= '<div class="wcs4-details-box-container">' . WCS_Output::process_template(
-                    $lesson,
-                    $template_table_details
-                ) . '</div>';
+            $output .= '<div class="wcs4-grid-lesson wcs4-grid-weekday-'
+                . $lesson->getWeekday() . '-' . $lesson->getPosition()
+                . ' wcs4-lesson-hour-from-'
+                . str_replace(':', '-', $lesson->getStartTime())
+                . ' wcs4-lesson-hour-to-'
+                . str_replace(':', '-', $lesson->getEndTime())
+                . '" ' . $style . '>';
+            $output .= '<div class="wcs4-lesson-name">'
+                . WCS_Output::process_template($lesson, $template_table_short)
+                . '</div>';
+            $output .= '<div class="wcs4-details-box-container">'
+                . WCS_Output::process_template($lesson, $template_table_details)
+                . '</div>';
             $output .= '</div>';
         }
         $output .= '</div>';

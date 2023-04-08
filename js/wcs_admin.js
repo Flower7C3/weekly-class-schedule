@@ -68,7 +68,7 @@
     };
 
     var bind_reset_settings = function () {
-        $('#wcs4-reset-database input').click(function (e) {
+        $('#wcs4-reset-database button').click(function (e) {
             e.preventDefault();
             entry = {
                 action: $(this).attr('name'),

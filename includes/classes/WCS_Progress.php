@@ -158,8 +158,8 @@ class WCS_Progress
         $item = $items[$id];
         if (!empty($id) && $item->isTypePeriodic()) {
             $template_style = wp_unslash($wcs4_options['progress_html_template_style']);
-            $template_code = $wcs4_options['progress_html_template_code_full_type'];
-            include self::TEMPLATE_DIR . 'export_single.html.php';
+            $template_code = wp_kses_stripslashes($wcs4_options['progress_html_template_code_periodic_type']);
+            include self::TEMPLATE_DIR . 'export_type_periodic.html.php';
             exit;
         }
 
@@ -198,7 +198,7 @@ class WCS_Progress
         $table = ob_get_clean();
 
         $template_style = wp_unslash($wcs4_options['progress_html_template_style']);
-        $template_code = $wcs4_options['progress_html_template_code_partial_type'];
+        $template_code = wp_kses_stripslashes($wcs4_options['progress_html_template_code_partial_type']);
         $template_code = WCS_Output::process_template(null, $template_code);
         $template_code = str_replace([
             '{date from}',
@@ -218,7 +218,7 @@ class WCS_Progress
             $table,
         ], $template_code);
 
-        include self::TEMPLATE_DIR . 'export.html.php';
+        include self::TEMPLATE_DIR . 'export_type_partial.html.php';
         exit;
     }
 
@@ -409,8 +409,8 @@ class WCS_Progress
             $student_id = ($_POST['student_id']);
             $start_date = sanitize_text_field($_POST['start_date']);
             $end_date = sanitize_text_field($_POST['end_date']);
-            $improvements = sanitize_text_field($_POST['improvements']);
-            $indications = sanitize_text_field($_POST['indications']);
+            $improvements = sanitize_textarea_field($_POST['improvements']);
+            $indications = sanitize_textarea_field($_POST['indications']);
             $type = sanitize_text_field($_POST['type']);
 
             $required = array(
@@ -674,14 +674,14 @@ class WCS_Progress
      * @param array $progresses : lessons array as returned by wcs4_get_lessons().
      * @param string $progress_key
      * @param string $template_partial
-     * @param string $template_full
+     * @param string $template_periodic
      * @return string
      */
     public static function get_html_of_progress_list_for_shortcode(
         array $progresses,
         string $progress_key,
         string $template_partial,
-        string $template_full
+        string $template_periodic
     ): string {
         if (empty($progresses)) {
             return '<div class="wcs4-no-lessons-message">' . __('No progresses', 'wcs4') . '</div>';
@@ -707,7 +707,7 @@ class WCS_Progress
                 foreach ($dayProgresses as $progress) {
                     $output .= '<li class="wcs4-list-item-progress">';
                     if ($progress->isTypePeriodic()) {
-                        $output .= WCS_Output::process_template($progress, $template_full);
+                        $output .= WCS_Output::process_template($progress, $template_periodic);
                     } elseif ($progress->isTypePartial()) {
                         $output .= WCS_Output::process_template($progress, $template_partial);
                     }

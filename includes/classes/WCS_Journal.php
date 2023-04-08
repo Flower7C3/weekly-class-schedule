@@ -186,7 +186,7 @@ class WCS_Journal
 
         $template_style = wp_unslash($wcs4_options['journal_html_template_style']);
 
-        $template_code = $wcs4_options['journal_html_template_code'];
+        $template_code = wp_kses_stripslashes($wcs4_options['journal_html_template_code']);
         $template_code = WCS_Output::process_template(null, $template_code);
         $template_code = str_replace([
             '{date from}',
@@ -412,8 +412,7 @@ class WCS_Journal
 
             # Check if we need to sanitize the topic or leave as is.
             if ($_POST['topic'] !== null) {
-                global $wcs4_allowed_html;
-                $topic = wp_kses($_POST['topic'], $wcs4_allowed_html);
+                $topic = sanitize_textarea_field($_POST['topic']);
             }
 
             $days_to_update[$date] = true;

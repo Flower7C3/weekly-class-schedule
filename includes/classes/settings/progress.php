@@ -122,12 +122,12 @@
             <td>
                 <?php
                 wp_editor(
-                    $wcs4_options['progress_shortcode_template_partial'],
-                    'wcs4_progress_shortcode_template_partial',
+                    $wcs4_options['progress_shortcode_template_partial_type'],
+                    'wcs4_progress_shortcode_template_partial_type',
                     [
                         'wpautop' => true,
                         'media_buttons' => false,
-                        'textarea_name' => 'wcs4_progress_shortcode_template_partial',
+                        'textarea_name' => 'wcs4_progress_shortcode_template_partial_type',
                         'textarea_rows' => 6,
                     ]
                 );
@@ -136,12 +136,12 @@
             <td>
                 <?php
                 wp_editor(
-                    $wcs4_options['progress_shortcode_template_full'],
-                    'wcs4_progress_shortcode_template_full',
+                    $wcs4_options['progress_shortcode_template_periodic_type'],
+                    'wcs4_progress_shortcode_template_periodic_type',
                     [
                         'wpautop' => true,
                         'media_buttons' => false,
-                        'textarea_name' => 'wcs4_progress_shortcode_template_full',
+                        'textarea_name' => 'wcs4_progress_shortcode_template_periodic_type',
                         'textarea_rows' => 6,
                     ]
                 );
@@ -186,11 +186,11 @@
             <td>
                 <?php
                 wp_editor(
-                    $wcs4_options['progress_html_template_code_partial_type'],
+                    wp_unslash($wcs4_options['progress_html_template_code_partial_type']),
                     'wcs4_progress_html_template_code_partial_type',
                     [
                         'wpautop' => true,
-                        'media_buttons' => false,
+                        'media_buttons' => true,
                         'textarea_name' => 'wcs4_progress_html_template_code_partial_type',
                         'textarea_rows' => 14,
                     ]
@@ -200,12 +200,12 @@
             <td>
                 <?php
                 wp_editor(
-                    $wcs4_options['progress_html_template_code_full_type'],
-                    'wcs4_progress_html_template_code_full_type',
+                    wp_unslash($wcs4_options['progress_html_template_code_periodic_type']),
+                    'wcs4_progress_html_template_code_periodic_type',
                     [
                         'wpautop' => true,
-                        'media_buttons' => false,
-                        'textarea_name' => 'wcs4_progress_html_template_code_full_type',
+                        'media_buttons' => true,
+                        'textarea_name' => 'wcs4_progress_html_template_code_periodic_type',
                         'textarea_rows' => 14,
                     ]
                 );
@@ -260,7 +260,7 @@
         <tbody>
         <tr>
             <th style="width:20%">
-            <?php
+                <?php
                 _ex(
                     'Table columns',
                     'options general settings',

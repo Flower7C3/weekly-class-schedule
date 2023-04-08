@@ -239,7 +239,7 @@
             <td data-type="wcs4_journal_html_template_code">
                 <?php
                 wp_editor(
-                    $wcs4_options['journal_html_template_code'],
+                    wp_kses_stripslashes($wcs4_options['journal_html_template_code']),
                     'wcs4_journal_html_template_code',
                     [
                         'wpautop' => true,

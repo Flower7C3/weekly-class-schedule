@@ -39,7 +39,7 @@ class WCS_Settings
             } else {
                 wcs4_options_message(__('Options updated', 'wcs4'));
 
-                # Create a validataion fields array:
+                # Create a validation fields array:
                 # id_of_field => validation_function_callback
                 $fields = array(
                     'open_template_links_in_new_tab' => 'wcs4_validate_yes_no',
@@ -54,19 +54,19 @@ class WCS_Settings
                     'journal_shortcode_template' => 'wcs4_validate_mock',
                     'journal_html_template_style' => 'wcs4_validate_mock',
                     'journal_html_template_code' => 'wcs4_validate_mock',
-                    'journal_html_table_columns' => 'wcs4_validate_html',
-                    'journal_csv_table_columns' => 'wcs4_validate_html',
+                    'journal_html_table_columns' => 'wcs4_validate_mock',
+                    'journal_csv_table_columns' => 'wcs4_validate_mock',
                     'progress_view' => 'wcs4_validate_is_numeric',
                     'progress_view_masters' => 'wcs4_validate_is_numeric',
                     'progress_create' => 'wcs4_validate_yes_no',
                     'progress_create_masters' => 'wcs4_validate_yes_no',
-                    'progress_shortcode_template_partial' => 'wcs4_validate_mock',
-                    'progress_shortcode_template_full' => 'wcs4_validate_mock',
+                    'progress_shortcode_template_partial_type' => 'wcs4_validate_mock',
+                    'progress_shortcode_template_periodic_type' => 'wcs4_validate_mock',
                     'progress_html_template_style' => 'wcs4_validate_mock',
                     'progress_html_template_code_partial_type' => 'wcs4_validate_mock',
-                    'progress_html_template_code_full_type' => 'wcs4_validate_mock',
-                    'progress_html_table_columns' => 'wcs4_validate_html',
-                    'progress_csv_table_columns' => 'wcs4_validate_html',
+                    'progress_html_template_code_periodic_type' => 'wcs4_validate_mock',
+                    'progress_html_table_columns' => 'wcs4_validate_mock',
+                    'progress_csv_table_columns' => 'wcs4_validate_mock',
                     'color_base' => 'wcs4_validate_color',
                     'color_details_box' => 'wcs4_validate_color',
                     'color_text' => 'wcs4_validate_color',
@@ -145,69 +145,12 @@ class WCS_Settings
                 $wp_rewrite->flush_rules(true);
             }
         }
-        ?>
-        <div class="wrap">
-            <h1 class="wp-heading-inline">
-                <?php
-                _ex('Weekly Class Schedule Standard Settings', 'options', 'wcs4') ?>
-            </h1>
-            <form action="" method="post" name="wcs4_general_settings">
-                <?php
-                include 'settings/taxonomies.php';
-                include 'settings/post_types.php';
-                include 'settings/schedule.php';
-                include 'settings/journal.php';
-                include 'settings/progress.php';
-                include 'settings/appearance.php';
-                include 'settings/editor.php';
-                submit_button(_x('Save Settings', 'options', 'wcs4'));
-                wp_nonce_field('wcs4_save_options', 'wcs4_options_nonce'); ?>
-            </form>
-        </div>
-        <?php
+        include 'settings/standard.php';
     }
 
     public static function advanced_options_page_callback(): void
     {
-        ?>
-        <div class="wrap">
-            <h1 class="wp-heading-inline">
-                <?php
-                _ex('Weekly Class Schedule Advanced Settings', 'options', 'wcs4') ?>
-            </h1>
-            <div id="wcs4-reset-database" class="wrap">
-                <p>
-                    <?php
-                    _ex(
-                        'Click the link below to clear the schedule or reset the settings',
-                        'reset database',
-                        'wcs4'
-                    ) ?>
-                </p>
-                <input type="submit" name="wcs_create_schema" id="wcs4_create_schema" class="button-secondary"
-                       value="<?php
-                       _ex('Create DB schema', 'reset database', 'wcs4') ?>">
-                <input type="submit" name="wcs_load_example_data" id="wcs4_load_example_data" class="button-secondary"
-                       value="<?php
-                       _ex('Install example data', 'reset database', 'wcs4') ?>">
-                <br><br>
-                <input type="submit" name="wcs_clear_schedule" id="wcs4_clear_schedule" class="button-secondary"
-                       value="<?php
-                       _ex('Clear schedule', 'reset database', 'wcs4') ?>">
-                <input type="submit" name="wcs_clear_journal" id="wcs4_clear_journal" class="button-secondary"
-                       value="<?php
-                       _ex('Clear journal', 'reset database', 'wcs4') ?>">
-                <input type="submit" name="wcs_reset_settings" id="wcs4_reset_settings" class="button-secondary"
-                       value="<?php
-                       _ex('Reset settings', 'reset database', 'wcs4') ?>">
-                <input type="submit" name="wcs_delete_everything" id="wcs4_delete_everything" class="button-secondary"
-                       value="<?php
-                       _ex('Clear everything', 'reset database', 'wcs4') ?>">
-                <span class="spinner"></span>
-                <div id="wcs4-ajax-text-wrapper" class="wcs4-ajax-text"></div>
-            </div>
-        </div>
-        <?php
+        include 'settings/advanced.php';
     }
 
     /**
@@ -298,12 +241,12 @@ class WCS_Settings
                 'progress_view_masters' => 0,
                 'progress_create' => 'yes',
                 'progress_create_masters' => 'yes',
-                'progress_shortcode_template_partial' => _x(
+                'progress_shortcode_template_partial_type' => _x(
                     '{subject link} with {teacher link}<br>improvements: {improvements}<br>indications: {indications}',
                     'template progress for student',
                     'wcs4'
                 ),
-                'progress_shortcode_template_full' => _x(
+                'progress_shortcode_template_periodic_type' => _x(
                     '<small>{start date} - {end date}</small><br>{subject link} with {teacher link}<br>improvements: {improvements}<br>indications: {indications}',
                     'template progress for student',
                     'wcs4'
@@ -313,7 +256,7 @@ class WCS_Settings
                     '<header><h1>Progress</h1><h2>{heading}</h2></header>' .
                     '<main>{table}</main>' .
                     '<footer><p>Generated at {current datetime}</p></footer>',
-                'progress_html_template_code_full_type' =>
+                'progress_html_template_code_periodic_type' =>
                     '<header><h1>Progress</h1></header>' .
                     '<main><p>Journal for {student} from {start date} to {end date}</p></main>' .
                     '<footer><p>Generated at {current datetime}</p></footer>',

@@ -6,6 +6,7 @@
  */
 const WCS_POST_ACCESS_COOKIE_NAME = 'wp-postpass_' . COOKIEHASH;
 const WCS_SATISFY_COOKIE_NAME = 'wp-postpass_' . COOKIEHASH . '_source';
+const WCS_CHECK_COOKIE_NAME = 'wp-postpass_' . COOKIEHASH . '_check';
 
 function get_wcs_post_pass_satisfy_any(): array
 {
@@ -24,11 +25,36 @@ add_filter('post_password_required', static function ($required, $post) {
     if (empty($post->post_password)) {
         return false;
     }
-    $wcs_post_pass_satisfy_any = get_wcs_post_pass_satisfy_any();
-    # if logged and already authenticated
+    /**
+     * Is access cookie exists
+     * and check cookie exists
+     * then set satisfy any cookie as value from check cookie
+     * and remove check cookie
+     */
+    if (array_key_exists(WCS_POST_ACCESS_COOKIE_NAME, $_COOKIE)
+        && array_key_exists(WCS_CHECK_COOKIE_NAME, $_COOKIE)
+        && false === $required
+    ) {
+        setcookie(
+            WCS_SATISFY_COOKIE_NAME,
+            $_COOKIE[WCS_CHECK_COOKIE_NAME],
+            time() + DAY_IN_SECONDS,
+            COOKIEPATH,
+            COOKIE_DOMAIN,
+            true
+        );
+        setcookie(WCS_CHECK_COOKIE_NAME, '', 1, COOKIEPATH, COOKIE_DOMAIN, true);
+    }
+
+    /**
+     * if cookie access exists to any page
+     * and cookie satisfy exists
+     * and cookie satisfy match to allow list
+     * then do not require password
+     */
     if (array_key_exists(WCS_POST_ACCESS_COOKIE_NAME, $_COOKIE)
         && array_key_exists(WCS_SATISFY_COOKIE_NAME, $_COOKIE)
-        && in_array($_COOKIE[WCS_SATISFY_COOKIE_NAME], $wcs_post_pass_satisfy_any, true)) {
+        && in_array($_COOKIE[WCS_SATISFY_COOKIE_NAME], get_wcs_post_pass_satisfy_any(), true)) {
         return false;
     }
 
@@ -39,12 +65,26 @@ add_filter('the_password_form', static function ($form) {
     if (array_key_exists($post_type, WCS4_POST_TYPES_WHITELIST) && is_single()) {
         $post_id = get_the_id();
         $post = get_post($post_id);
-        $wcs_post_pass_satisfy_any = get_wcs_post_pass_satisfy_any();
-        if (in_array($post->post_type, $wcs_post_pass_satisfy_any, true)) {
-            $expire = apply_filters('post_password_expires', time() + 10 * DAY_IN_SECONDS);
-            setcookie(WCS_SATISFY_COOKIE_NAME, $post->post_type, $expire, COOKIEPATH, COOKIE_DOMAIN, true);
+        /**
+         * if post type match to allow list
+         * then set cookie satisfy to post type
+         */
+        if (in_array($post->post_type, get_wcs_post_pass_satisfy_any(), true)) {
+            setcookie(
+                WCS_CHECK_COOKIE_NAME,
+                $post->post_type,
+                time() + DAY_IN_SECONDS,
+                COOKIEPATH,
+                COOKIE_DOMAIN,
+                true
+            );
         }
-        if (post_password_required($post_id) && array_key_exists(WCS_POST_ACCESS_COOKIE_NAME, $_COOKIE)) {
+        /**
+         * if access cookie exists
+         * and password is required
+         * then remove access cookie
+         */
+        if (array_key_exists(WCS_POST_ACCESS_COOKIE_NAME, $_COOKIE) && post_password_required($post_id)) {
             setcookie(WCS_POST_ACCESS_COOKIE_NAME, '', 1, COOKIEPATH, COOKIE_DOMAIN, true);
         }
         if (is_user_logged_in() && post_password_required($post_id)) {
@@ -68,15 +108,15 @@ add_filter('the_content', static function ($content) {
         if (!post_password_required($post_id)) {
             if ('none' !== $layout && null !== $layout) {
                 $content .= '<h2>' . __('Schedule', 'wcs4') . '</h2>';
-                $template_table_short = $wcs4_settings[$post_type_key . '_schedule_template_table_short'];
-                $template_table_details = $wcs4_settings[$post_type_key . '_schedule_template_table_details'];
-                $template_list = $wcs4_settings[$post_type_key . '_schedule_template_list'];
+                $schedule_template_table_short = $wcs4_settings[$post_type_key . '_schedule_template_table_short'];
+                $schedule_template_table_details = $wcs4_settings[$post_type_key . '_schedule_template_table_details'];
+                $schedule_template_list = $wcs4_settings[$post_type_key . '_schedule_template_list'];
                 $params = [];
                 $params[] = '' . $post_type_key . '="#' . $post_id . '"';
                 $params[] = 'layout="' . $layout . '"';
-                $params[] = 'template_table_short="' . $template_table_short . '"';
-                $params[] = 'template_table_details="' . $template_table_details . '"';
-                $params[] = 'template_list="' . $template_list . '"';
+                $params[] = 'schedule_template_table_short="' . $schedule_template_table_short . '"';
+                $params[] = 'schedule_template_table_details="' . $schedule_template_table_details . '"';
+                $params[] = 'schedule_template_list="' . $schedule_template_list . '"';
                 $content .= '[wcs  ' . implode(' ', $params) . ']';
                 if ('yes' === $wcs4_settings[$post_type_key . '_download_schedule_icalendar']) {
                     $content .= __('Download iCal:', 'wcs4') . ' ';
@@ -120,8 +160,8 @@ add_filter('the_content', static function ($content) {
                     $content .= '<h2>' . __('Progresses', 'wcs4') . '</h2>';
                     $params = [];
                     $params[] = $post_type_key . '="#' . $post_id . '"';
-                    $params[] = 'template_partial="' . $wcs4_settings['progress_shortcode_template_partial'] . '"';
-                    $params[] = 'template_full="' . $wcs4_settings['progress_shortcode_template_full'] . '"';
+                    $params[] = 'template_partial="' . $wcs4_settings['progress_shortcode_template_partial_type'] . '"';
+                    $params[] = 'template_periodic="' . $wcs4_settings['progress_shortcode_template_periodic_type'] . '"';
                     $params[] = 'limit=' . $wcs4_settings['progress_view'];
                     $content .= '[student_progress  ' . implode(' ', $params) . ']';
                 }

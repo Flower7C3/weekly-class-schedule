@@ -330,15 +330,19 @@ class WCS_DB
         $wpdb->query('TRUNCATE ' . self::get_schedule_table_name());
     }
 
-    /**
-     * Truncate all the journal data
-     */
     public static function delete_journals(): void
     {
         global $wpdb;
         $wpdb->query('TRUNCATE ' . self::get_journal_teacher_table_name());
         $wpdb->query('TRUNCATE ' . self::get_journal_student_table_name());
         $wpdb->query('TRUNCATE ' . self::get_journal_table_name());
+    }
+
+    public static function delete_progresses(): void
+    {
+        global $wpdb;
+        $wpdb->query('TRUNCATE ' . self::get_progress_teacher_table_name());
+        $wpdb->query('TRUNCATE ' . self::get_progress_table_name());
     }
 
     public static function get_item($id): ?WCS_DB_Item
@@ -471,9 +475,6 @@ add_action('wp_ajax_wcs_clear_schedule', static function () {
     die();
 });
 
-/**
- * Handle clear journal
- */
 add_action('wp_ajax_wcs_clear_journal', static function () {
     $response = __('You are no allowed to run this action', 'wcs4');
     $status = 'error';
@@ -481,6 +482,22 @@ add_action('wp_ajax_wcs_clear_journal', static function () {
         wcs4_verify_nonce();
         WCS_DB::delete_journals();
         $response = __('Weekly Class Journal truncated successfully.', 'wcs4');
+        $status = 'cleared';
+    }
+    wcs4_json_response([
+        'response' => $response,
+        'result' => $status,
+    ]);
+    die();
+});
+
+add_action('wcs_clear_progress', static function () {
+    $response = __('You are no allowed to run this action', 'wcs4');
+    $status = 'error';
+    if (current_user_can(WCS4_ADVANCED_OPTIONS_CAPABILITY)) {
+        wcs4_verify_nonce();
+        WCS_DB::delete_progresses();
+        $response = __('Weekly Class Progress truncated successfully.', 'wcs4');
         $status = 'cleared';
     }
     wcs4_json_response([

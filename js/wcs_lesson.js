@@ -102,7 +102,7 @@
                 action: 'wcs_toggle_visibility_schedule_entry',
                 security: WCS4_AJAX_OBJECT.ajax_nonce,
                 visible: 'true' === $(this).attr('data-visible') ? '0' : '1',
-                row_id: $(this).attr('data-lesson-id')
+                row_id: $(this).closest('tr').data('id')
             };
             WCS4_LIB.modify_entry('lesson', entry, function (data) {
                 const elem = '#' + data.scope + '-' + data.id;
@@ -118,7 +118,7 @@
             });
         });
         $(document).on('click.wcs4-edit-lesson-button', '.wcs4-edit-lesson-button', function (e) {
-            WCS4_LIB.fetch_entry_data_to_form('lesson', $(this).attr('data-lesson-id'), set_entry_data_to_form, WCS4_LIB.reset_to_edit_mode);
+            WCS4_LIB.fetch_entry_data_to_form('lesson', $(this).closest('tr').data('id'), set_entry_data_to_form, WCS4_LIB.reset_to_edit_mode);
         });
     }
 
@@ -127,7 +127,7 @@
      */
     var bind_copy_handler = function () {
         $(document).on('click.wcs4-copy-lesson-button', '.wcs4-copy-lesson-button', function (e) {
-            WCS4_LIB.fetch_entry_data_to_form('lesson', $(this).attr('data-lesson-id'), set_entry_data_to_form, WCS4_LIB.reset_to_copy_mode)
+            WCS4_LIB.fetch_entry_data_to_form('lesson', $(this).closest('tr').data('id'), set_entry_data_to_form, WCS4_LIB.reset_to_copy_mode)
         });
     }
 
@@ -139,7 +139,7 @@
             let entry = {
                 action: 'wcs_delete_schedule_entry',
                 security: WCS4_AJAX_OBJECT.ajax_nonce,
-                row_id: $(this).attr('data-lesson-id')
+                row_id: $(this).closest('tr').data('id')
             };
             WCS4_LIB.modify_entry('lesson', entry, function (data) {
                 const elem = '#' + data.scope + '-' + data.id;
