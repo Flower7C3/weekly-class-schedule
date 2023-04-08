@@ -81,15 +81,15 @@
         <?php
         endif; ?>
         <input type="hidden" id="wcs4_progress_type" name="wcs4_progress_type" value="<?php echo WCS_DB_Progress_Item::TYPE_PARTIAL; ?>"/>
-        <fieldset class="form-field form-required form-field-improvements-wrap">
-            <label for="wcs4_progress_improvements"><?php
-                _e('Improvements', 'wcs4'); ?></label>
-            <textarea rows="5" id="wcs4_progress_improvements" name="wcs4_progress_improvements"></textarea>
-        </fieldset>
         <fieldset class="form-field form-required form-field-indications-wrap">
             <label for="wcs4_progress_indications"><?php
                 _e('Indications', 'wcs4'); ?></label>
             <textarea rows="5" id="wcs4_progress_indications" name="wcs4_progress_indications"></textarea>
+        </fieldset>
+        <fieldset class="form-field form-required form-field-improvements-wrap">
+            <label for="wcs4_progress_improvements"><?php
+                _e('Improvements', 'wcs4'); ?></label>
+            <textarea rows="5" id="wcs4_progress_improvements" name="wcs4_progress_improvements"></textarea>
         </fieldset>
         <fieldset class="submit" id="wcs4-progress-buttons-wrapper">
             <span class="spinner"></span>

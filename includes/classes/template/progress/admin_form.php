@@ -100,15 +100,15 @@
                 _e('End date', 'wcs4'); ?></label>
             <input type="date" id="wcs4_progress_end_date" name="wcs4_progress_end_date"/>
         </fieldset>
-        <fieldset class="form-field form-required form-field-improvements-wrap">
-            <label for="wcs4_progress_improvements"><?php
-                _e('Improvements', 'wcs4'); ?></label>
-            <textarea rows="6" id="wcs4_progress_improvements" name="wcs4_progress_improvements"></textarea>
-        </fieldset>
         <fieldset class="form-field form-required form-field-indications-wrap">
             <label for="wcs4_progress_indications"><?php
                 _e('Indications', 'wcs4'); ?></label>
             <textarea rows="6" id="wcs4_progress_indications" name="wcs4_progress_indications"></textarea>
+        </fieldset>
+        <fieldset class="form-field form-required form-field-improvements-wrap">
+            <label for="wcs4_progress_improvements"><?php
+                _e('Improvements', 'wcs4'); ?></label>
+            <textarea rows="6" id="wcs4_progress_improvements" name="wcs4_progress_improvements"></textarea>
         </fieldset>
         <fieldset class="submit" id="wcs4-progress-buttons-wrapper">
             <span class="spinner"></span>

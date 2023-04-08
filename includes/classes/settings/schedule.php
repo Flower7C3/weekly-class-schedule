@@ -234,12 +234,12 @@
             <?php
             foreach ($taxonomyTypes as $key => $name): ?>
                 <td data-key="<?php
-                echo $key ?>" data-type="wcs4_download_schedule_icalendar">
+                echo $key ?>" data-type="wcs4_schedule_download_ical">
                     <?php
                     echo wcs4_bool_checkbox(
-                        'wcs4_' . $key . '_download_schedule_icalendar',
-                        'wcs4_' . $key . '_download_schedule_icalendar',
-                        $wcs4_options[$key . '_download_schedule_icalendar'],
+                        'wcs4_' . $key . '_schedule_download_ical',
+                        'wcs4_' . $key . '_schedule_download_ical',
+                        $wcs4_options[$key . '_schedule_download_ical'],
                         __('Yes')
                     ); ?>
                 </td>

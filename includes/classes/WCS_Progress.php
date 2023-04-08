@@ -515,10 +515,12 @@ class WCS_Progress
                         $response = __('Progress entry updated successfully', 'wcs4');
                     } else {
                         $data['created_by'] = get_current_user_id();
+                        $data['updated_at'] = date('Y-m-d H:i:s');
+                        $data['updated_by'] = get_current_user_id();
                         $r = $wpdb->insert(
                             $table,
                             $data,
-                            array('%d', '%d', '%s', '%s', '%s', '%s', '%s', '%d')
+                            array('%d', '%d', '%s', '%s', '%s', '%s', '%s', '%d', '%s', '%d')
                         );
                         if (false === $r) {
                             throw new RuntimeException($wpdb->last_error, 6);
@@ -722,6 +724,7 @@ class WCS_Progress
 }
 
 add_action('wp_ajax_wcs_add_or_update_progress_entry', [WCS_Progress::class, 'save_item']);
+add_action('wp_ajax_wcs_add_progress_entry', [WCS_Progress::class, 'create_item']);
 add_action('wp_ajax_nopriv_wcs_add_progress_entry', [WCS_Progress::class, 'create_item']);
 add_action('wp_ajax_wcs_delete_progress_entry', [WCS_Progress::class, 'delete_item']);
 add_action('wp_ajax_wcs_get_progress', [WCS_Progress::class, 'get_item']);

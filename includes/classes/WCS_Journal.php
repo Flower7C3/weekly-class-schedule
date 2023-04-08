@@ -543,7 +543,9 @@ class WCS_Journal
                         $response = __('Journal entry updated successfully', 'wcs4');
                     } else {
                         $data['created_by'] = get_current_user_id();
-                        $r = $wpdb->insert($table, $data, array('%d', '%s', '%s', '%s', '%s', '%s', '%d'));
+                        $data['updated_at'] = date('Y-m-d H:i:s');
+                        $data['updated_by'] = get_current_user_id();
+                        $r = $wpdb->insert($table, $data, array('%d', '%s', '%s', '%s', '%s', '%s', '%d', '%s', '%d'));
                         if (false === $r) {
                             throw new RuntimeException($wpdb->last_error, 6);
                         }
@@ -732,6 +734,7 @@ class WCS_Journal
 }
 
 add_action('wp_ajax_wcs_add_or_update_journal_entry', [WCS_Journal::class, 'save_item']);
+add_action('wp_ajax_wcs_add_journal_entry', [WCS_Journal::class, 'create_item']);
 add_action('wp_ajax_nopriv_wcs_add_journal_entry', [WCS_Journal::class, 'create_item']);
 add_action('wp_ajax_wcs_delete_journal_entry', [WCS_Journal::class, 'delete_item']);
 add_action('wp_ajax_wcs_get_journal', [WCS_Journal::class, 'get_item']);

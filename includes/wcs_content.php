@@ -5,8 +5,8 @@
  * Append schedule to single page
  */
 const WCS_POST_ACCESS_COOKIE_NAME = 'wp-postpass_' . COOKIEHASH;
-const WCS_SATISFY_COOKIE_NAME = 'wp-postpass_' . COOKIEHASH . '_source';
-const WCS_CHECK_COOKIE_NAME = 'wp-postpass_' . COOKIEHASH . '_check';
+const WCS_SESSION_CHECK_POST = 'check-post';
+const WCS_SESSION_SATISFY_POST = 'satisfy-post';
 
 function get_wcs_post_pass_satisfy_any(): array
 {
@@ -27,34 +27,29 @@ add_filter('post_password_required', static function ($required, $post) {
     }
     /**
      * Is access cookie exists
-     * and check cookie exists
-     * then set satisfy any cookie as value from check cookie
-     * and remove check cookie
+     * and check session exists
+     * then set satisfy session variable
+     * and remove check session variable
      */
     if (array_key_exists(WCS_POST_ACCESS_COOKIE_NAME, $_COOKIE)
-        && array_key_exists(WCS_CHECK_COOKIE_NAME, $_COOKIE)
+        && isset($_SESSION[WCS_SESSION_CHECK_POST])
+        && $_SESSION[WCS_SESSION_CHECK_POST]['type'] === $post->post_type
+        && $_SESSION[WCS_SESSION_CHECK_POST]['ID'] === $post->ID
         && false === $required
     ) {
-        setcookie(
-            WCS_SATISFY_COOKIE_NAME,
-            $_COOKIE[WCS_CHECK_COOKIE_NAME],
-            time() + DAY_IN_SECONDS,
-            COOKIEPATH,
-            COOKIE_DOMAIN,
-            true
-        );
-        setcookie(WCS_CHECK_COOKIE_NAME, '', 1, COOKIEPATH, COOKIE_DOMAIN, true);
+        $_SESSION[WCS_SESSION_SATISFY_POST] = $_SESSION[WCS_SESSION_CHECK_POST];
+        unset($_SESSION[WCS_SESSION_CHECK_POST]);
     }
 
     /**
      * if cookie access exists to any page
-     * and cookie satisfy exists
-     * and cookie satisfy match to allow list
+     * and satisfy session exists
+     * and satisfy session match to allow list
      * then do not require password
      */
     if (array_key_exists(WCS_POST_ACCESS_COOKIE_NAME, $_COOKIE)
-        && array_key_exists(WCS_SATISFY_COOKIE_NAME, $_COOKIE)
-        && in_array($_COOKIE[WCS_SATISFY_COOKIE_NAME], get_wcs_post_pass_satisfy_any(), true)) {
+        && isset($_SESSION[WCS_SESSION_SATISFY_POST])
+        && in_array($_SESSION[WCS_SESSION_SATISFY_POST]['type'], get_wcs_post_pass_satisfy_any(), true)) {
         return false;
     }
 
@@ -66,26 +61,15 @@ add_filter('the_password_form', static function ($form) {
         $post_id = get_the_id();
         $post = get_post($post_id);
         /**
-         * if post type match to allow list
-         * then set cookie satisfy to post type
+         * if password is required
+         * then set check post session variable
          */
-        if (in_array($post->post_type, get_wcs_post_pass_satisfy_any(), true)) {
-            setcookie(
-                WCS_CHECK_COOKIE_NAME,
-                $post->post_type,
-                time() + DAY_IN_SECONDS,
-                COOKIEPATH,
-                COOKIE_DOMAIN,
-                true
-            );
-        }
-        /**
-         * if access cookie exists
-         * and password is required
-         * then remove access cookie
-         */
-        if (array_key_exists(WCS_POST_ACCESS_COOKIE_NAME, $_COOKIE) && post_password_required($post_id)) {
-            setcookie(WCS_POST_ACCESS_COOKIE_NAME, '', 1, COOKIEPATH, COOKIE_DOMAIN, true);
+        if (post_password_required($post_id)) {
+            $_SESSION[WCS_SESSION_CHECK_POST] = [
+                'ID' => $post->ID,
+                'title' => $post->post_title,
+                'type' => $post->post_type,
+            ];
         }
         if (is_user_logged_in() && post_password_required($post_id)) {
             $form = str_replace(
@@ -101,11 +85,25 @@ add_filter('the_password_form', static function ($form) {
 add_filter('the_content', static function ($content) {
     $post_type = get_post_type();
     if (array_key_exists($post_type, WCS4_POST_TYPES_WHITELIST) && is_single()) {
+        if (isset($_GET['logout'])) {
+            setcookie(WCS_POST_ACCESS_COOKIE_NAME, '', 1, COOKIEPATH, COOKIE_DOMAIN, true);
+            unset($_SESSION[WCS_SESSION_SATISFY_POST], $_SESSION[WCS_SESSION_CHECK_POST]);
+            wp_safe_redirect(wp_get_referer());
+            exit;
+        }
         $post_id = get_the_id();
-        $post_type_key = str_replace('wcs4_', '', $post_type);
-        $wcs4_settings = WCS_Settings::load_settings();
-        $layout = $wcs4_settings[$post_type_key . '_schedule_layout'];
+        if (array_key_exists(WCS_POST_ACCESS_COOKIE_NAME, $_COOKIE) || !post_password_required($post_id)) {
+            $content .= '<a href="?logout">'
+                . '<em class="dashicons dashicons-lock"></em>'
+                . __('Log out')
+                . ' ' . $_SESSION[WCS_SESSION_SATISFY_POST]['title']
+                . '</a><br>';
+        }
         if (!post_password_required($post_id)) {
+            $wcs4_settings = WCS_Settings::load_settings();
+            $post_type_key = str_replace('wcs4_', '', $post_type);
+            ### SCHEDULE
+            $layout = $wcs4_settings[$post_type_key . '_schedule_layout'];
             if ('none' !== $layout && null !== $layout) {
                 $content .= '<h2>' . __('Schedule', 'wcs4') . '</h2>';
                 $schedule_template_table_short = $wcs4_settings[$post_type_key . '_schedule_template_table_short'];
@@ -118,18 +116,27 @@ add_filter('the_content', static function ($content) {
                 $params[] = 'schedule_template_table_details="' . $schedule_template_table_details . '"';
                 $params[] = 'schedule_template_list="' . $schedule_template_list . '"';
                 $content .= '[wcs  ' . implode(' ', $params) . ']';
-                if ('yes' === $wcs4_settings[$post_type_key . '_download_schedule_icalendar']) {
+                if ('yes' === $wcs4_settings[$post_type_key . '_schedule_download_ical']) {
                     $content .= __('Download iCal:', 'wcs4') . ' ';
                     $content .= '<a href="?format=ical">' . __('Download iCal for current week', 'wcs4') . '</a>';
                     $content .= ', ';
                     $content .= '<a href="?format=ical&week=1">' . __('Download iCal for next week', 'wcs4') . '</a>';
                 }
             }
+
+            ### JOURNAL VIEW
+            $journal_view_access = false;
             if (!empty($wcs4_settings[$post_type_key . '_journal_view'])) {
+                $journal_view_access = true;
+                if (isset($_SESSION[WCS_SESSION_SATISFY_POST]) && $post_id !== $_SESSION[WCS_SESSION_SATISFY_POST]['ID']) {
+                    $journal_view_access = false;
+                }
+            }
+            if (true === $journal_view_access) {
                 $content .= '<h2>' . __('Journals', 'wcs4') . '</h2>';
                 $template = $wcs4_settings[$post_type_key . '_journal_shortcode_template'];
                 $params = [];
-                $params[] = $post_type_key . '="#' . $post_id . '"';
+                $params[] = $post_type_key . '="' . $post_id . '"';
                 $params[] = 'template="' . $template . '"';
                 $params[] = 'limit=' . $wcs4_settings[$post_type_key . '_journal_view'];
                 $content .= '[class_journal  ' . implode(' ', $params) . ']';
@@ -140,43 +147,55 @@ add_filter('the_content', static function ($content) {
                     $content .= '<a href="?format=html">' . __('Download journals as HTML', 'wcs4') . '</a>';
                 }
             }
+
+            ### JOURNAL CREATE
+            $journal_create_access = false;
             if ('yes' === $wcs4_settings[$post_type_key . '_journal_create']) {
+                $journal_create_access = true;
+                if (isset($_SESSION[WCS_SESSION_SATISFY_POST]) && $post_id !== $_SESSION[WCS_SESSION_SATISFY_POST]['ID']) {
+                    $journal_create_access = false;
+                }
+            }
+            if (true === $journal_create_access) {
                 $params = [];
                 $params[] = $post_type_key . '="' . $post_id . '"';
                 $content .= '[class_journal_create  ' . implode(' ', $params) . ']';
             }
+
             if ('student' === $post_type_key) {
-                $wcs_post_pass_satisfy_any = get_wcs_post_pass_satisfy_any();
+                ### PROGRESS VIEW
                 $progress_view_access = false;
                 if (!empty($wcs4_settings['progress_view'])) {
-                    $progress_view_access = true;
+                    $progress_view_access = $wcs4_settings['progress_view'];
                 }
-                if ('yes' === $wcs4_settings['progress_view_masters']
-                    && array_key_exists(WCS_SATISFY_COOKIE_NAME, $_COOKIE)
-                    && in_array($_COOKIE[WCS_SATISFY_COOKIE_NAME], $wcs_post_pass_satisfy_any, true)) {
-                    $progress_view_access = true;
+                if (!empty($wcs4_settings['progress_view_masters'])
+                    && isset($_SESSION[WCS_SESSION_SATISFY_POST])
+                    && in_array($_SESSION[WCS_SESSION_SATISFY_POST]['type'], get_wcs_post_pass_satisfy_any(), true)) {
+                    $progress_view_access = $wcs4_settings['progress_view_masters'];
                 }
-                if (true === $progress_view_access) {
+                if (!empty($progress_view_access)) {
                     $content .= '<h2>' . __('Progresses', 'wcs4') . '</h2>';
                     $params = [];
-                    $params[] = $post_type_key . '="#' . $post_id . '"';
+                    $params[] = 'student="#' . $post_id . '"';
                     $params[] = 'template_partial="' . $wcs4_settings['progress_shortcode_template_partial_type'] . '"';
                     $params[] = 'template_periodic="' . $wcs4_settings['progress_shortcode_template_periodic_type'] . '"';
-                    $params[] = 'limit=' . $wcs4_settings['progress_view'];
+                    $params[] = 'limit=' . $progress_view_access;
                     $content .= '[student_progress  ' . implode(' ', $params) . ']';
                 }
+
+                ### PROGRESS CREATE
                 $progress_create_access = false;
                 if ('yes' === $wcs4_settings['progress_create']) {
                     $progress_create_access = true;
                 }
                 if ('yes' === $wcs4_settings['progress_create_masters']
-                    && array_key_exists(WCS_SATISFY_COOKIE_NAME, $_COOKIE)
-                    && in_array($_COOKIE[WCS_SATISFY_COOKIE_NAME], $wcs_post_pass_satisfy_any, true)) {
+                    && isset($_SESSION[WCS_SESSION_SATISFY_POST])
+                    && in_array($_SESSION[WCS_SESSION_SATISFY_POST]['type'], get_wcs_post_pass_satisfy_any(), true)) {
                     $progress_create_access = true;
                 }
                 if (true === $progress_create_access) {
                     $params = [];
-                    $params[] = $post_type_key . '="' . $post_id . '"';
+                    $params[] = 'student="' . $post_id . '"';
                     $content .= '[student_progress_create  ' . implode(' ', $params) . ']';
                 }
             }
@@ -194,7 +213,7 @@ add_filter('single_template', static function ($single) {
     $post_type_key = str_replace('wcs4_', '', $post_type);
     $wcs4_settings = WCS_Settings::load_settings();
     if (isset($post_type, $_GET['format']) && array_key_exists($post_type, WCS4_POST_TYPES_WHITELIST)) {
-        if ('ical' === $_GET['format'] && 'yes' === $wcs4_settings[$post_type_key . '_download_schedule_icalendar']) {
+        if ('ical' === $_GET['format'] && 'yes' === $wcs4_settings[$post_type_key . '_schedule_download_ical']) {
             WCS_Schedule::callback_of_calendar_page();
         }
         if ('csv' === $_GET['format'] && 'yes' === $wcs4_settings[$post_type_key . '_journal_download_csv']

@@ -43,7 +43,7 @@
                 subject_id: WCS4_LIB.form_field_value('wcs4_progress_subject'),
                 teacher_id: WCS4_LIB.form_field_value('wcs4_progress_teacher'),
                 student_id: WCS4_LIB.form_field_value('wcs4_progress_student'),
-                type: 'partial',
+                type: 'type.partial',
                 improvements: $('#wcs4_progress_improvements').val(),
                 indications: $('#wcs4_progress_indications').val()
             };

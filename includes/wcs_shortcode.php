@@ -190,8 +190,8 @@ add_shortcode('student_progress', static function ($atts) {
         'template_periodic' => $wcs4_options['progress_shortcode_template_periodic_type'],
     ), $atts), EXTR_OVERWRITE);
 
-    # Get progresss
-    $progresses = WCS_Progress::get_items($teacher, $student, $subject, $date_from, $date_upto, null, null, $limit, $paged);
+    # Get progresses
+    $progresses = WCS_Progress::get_items(null, $teacher, $student, $subject, $date_from, $date_upto, null, null, $limit, $paged);
 
     # Classroom
     $schedule_key = 'wcs4-key-' . preg_replace('/[^A-Za-z0-9]/', '-', implode('-', [$teacher, $student, $subject, $date_from, $date_upto, $limit, $paged]));

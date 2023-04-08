@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: Weekly Class Schedule\n"
 "Journal-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-09-04 11:57+0000\n"
-"PO-Revision-Date: 2023-04-08 16:36+0000\n"
+"PO-Revision-Date: 2023-04-08 19:13+0000\n"
 "Last-Translator: Bartłomiej Kwiatek\n"
 "Language-Team: Polski\n"
 "Language: pl_PL\n"
@@ -721,7 +721,7 @@ msgstr "Okresowy"
 #: includes/classes/template/progress/admin_table.php:79
 msgctxt "item type"
 msgid "undefined"
-msgstr "niezdefiniowayn"
+msgstr "niezdefiniowany"
 
 #: includes/classes/template/journal/report_html.php:12
 msgid "Journal"
