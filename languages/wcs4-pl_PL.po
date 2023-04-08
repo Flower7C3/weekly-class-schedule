@@ -1,9 +1,9 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Weekly Class Schedule\n"
-"Report-Msgid-Bugs-To: \n"
+"Journal-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-09-04 11:57+0000\n"
-"PO-Revision-Date: 2022-03-23 09:37+0000\n"
+"PO-Revision-Date: 2023-04-08 12:13+0000\n"
 "Last-Translator: Bartłomiej Kwiatek\n"
 "Language-Team: Polski\n"
 "Language: pl_PL\n"
@@ -13,11 +13,16 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Loco https://localise.biz/\n"
-"X-Loco-Version: 2.6.1; wp-5.9.2"
+"X-Loco-Version: 2.6.4; wp-6.2\n"
+"Report-Msgid-Bugs-To: "
 
-#: includes/wcs_report.php:958 includes/wcs_schedule.php:836
+#: includes/classes/WCS_Schedule.php:397 includes/classes/WCS_Journal.php:478
 msgid "A class cannot start before it ends"
 msgstr "Zajęcia nie mogą zacząć się przed końcem"
+
+#: includes/classes/WCS_Progress.php:456
+msgid "A progress cannot start before it ends"
+msgstr "Postęp nie może zacząć się po końcu"
 
 #: includes/wcs_init.php:19
 msgid "Add New Branch"
@@ -51,7 +56,7 @@ msgstr "Dodaj lub usuń lokalizacje"
 msgid "Add or remove specializations"
 msgstr "Dodaj lub usuń specjalizacje"
 
-#: includes/wcs_admin.php:65 includes/wcs_admin.php:66
+#: includes/wcs_admin_hooks.php:83 includes/wcs_admin_hooks.php:84
 msgid "Advanced Options"
 msgstr "Ustawienia zaawansowane"
 
@@ -75,26 +80,47 @@ msgstr "Wszystkie specjalizacje"
 msgid "Branches"
 msgstr "Dziedziny"
 
-#: includes/wcs_utils.php:395 includes/wcs_schedule.php:23
-#: includes/wcs_schedule.php:323
+#: includes/wcs_utils.php:405
+#: includes/classes/template/journal/shortcode_form.php:116
+#: includes/classes/template/journal/admin.php:10
+#: includes/classes/template/journal/admin_form.php:116
+msgctxt "button text"
+msgid "Add Journal"
+msgstr "Dodaj dziennik"
+
+#: includes/wcs_utils.php:395
+#: includes/classes/template/schedule/admin_form.php:99
+#: includes/classes/template/schedule/admin.php:10
 msgctxt "button text"
 msgid "Add Lesson"
 msgstr "Dodaj lekcję"
 
-#: includes/wcs_utils.php:405 includes/wcs_report.php:23
-#: includes/wcs_report.php:472
+#: includes/wcs_utils.php:415
+#: includes/classes/template/progress/shortcode_form.php:98
+#: includes/classes/template/progress/admin.php:10
+#: includes/classes/template/progress/admin_form.php:117
 msgctxt "button text"
-msgid "Add Report"
-msgstr "Dodaj raport"
+msgid "Add Progress"
+msgstr "Dodaj postęp"
+
+#: includes/wcs_utils.php:408
+msgctxt "button text"
+msgid "Exit copy journal mode"
+msgstr "Anuluj"
 
 #: includes/wcs_utils.php:398
 msgctxt "button text"
 msgid "Exit copy lesson mode"
 msgstr "Anuluj"
 
-#: includes/wcs_utils.php:408
+#: includes/wcs_utils.php:418
 msgctxt "button text"
-msgid "Exit copy report mode"
+msgid "Exit copy progress mode"
+msgstr "Auluj"
+
+#: includes/wcs_utils.php:407
+msgctxt "button text"
+msgid "Exit edit journal mode"
 msgstr "Anuluj"
 
 #: includes/wcs_utils.php:397
@@ -102,25 +128,34 @@ msgctxt "button text"
 msgid "Exit edit lesson mode"
 msgstr "Anuluj"
 
-#: includes/wcs_utils.php:407
+#: includes/wcs_utils.php:417
 msgctxt "button text"
-msgid "Exit edit report mode"
+msgid "Exit edit progress mode"
 msgstr "Anuluj"
 
-#: includes/wcs_report.php:476 includes/wcs_schedule.php:327
+#: includes/classes/template/journal/shortcode_form.php:120
+#: includes/classes/template/journal/admin_form.php:120
+#: includes/classes/template/schedule/admin_form.php:103
+#: includes/classes/template/progress/shortcode_form.php:102
+#: includes/classes/template/progress/admin_form.php:121
 msgctxt "button text"
 msgid "Reset form"
 msgstr "Resetuj formularz"
+
+#: includes/wcs_utils.php:406
+msgctxt "button text"
+msgid "Save Journal"
+msgstr "Zapisz dziennik"
 
 #: includes/wcs_utils.php:396
 msgctxt "button text"
 msgid "Save Lesson"
 msgstr "Zapisz lekcję"
 
-#: includes/wcs_utils.php:406
+#: includes/wcs_utils.php:416
 msgctxt "button text"
-msgid "Save Report"
-msgstr "Zapisz raport"
+msgid "Save Progress"
+msgstr "Zapisz Postęp"
 
 #: includes/wcs_init.php:24
 msgid "Choose from the most used branches"
@@ -138,81 +173,96 @@ msgstr "Wybierz spośród najczęściej używanych lokalizacji"
 msgid "Choose from the most used specializations"
 msgstr "Wybierz spośród najczęściej używanych specjalizacji"
 
-#: includes/wcs_schedule.php:196 includes/wcs_schedule.php:270
-#: includes/wcs_schedule.php:378 includes/wcs_schedule.php:514
-#: includes/wcs_schedule.php:723
+#: includes/classes/WCS_Schedule.php:284
+#: includes/classes/template/schedule/admin_form.php:46
+#: includes/classes/template/schedule/admin_search.php:33
+#: includes/classes/template/schedule/admin_table.php:40
+#: includes/classes/template/schedule/admin_table.php:176
 msgid "Classroom"
 msgstr "Sala"
 
-#: includes/wcs_schedule.php:783
+#: includes/classes/WCS_Schedule.php:344
 msgid "Classroom is not available at this time"
 msgstr "Sala jest w tej chwili niedostępna"
 
-#: includes/wcs_settings.php:320 includes/wcs_settings.php:566
+#: includes/classes/settings/journal.php:24
+#: includes/classes/settings/schedule.php:21
 msgid "Common"
 msgstr "Wspólne"
 
-#: includes/wcs_settings.php:1265
+#: includes/classes/WCS_Settings.php:444
 msgctxt "config slug for archive"
 msgid "classrooms"
 msgstr "sale"
 
-#: includes/wcs_settings.php:1234
+#: includes/classes/WCS_Settings.php:411
 msgctxt "config slug for archive"
 msgid "students"
 msgstr "uczniowie"
 
-#: includes/wcs_settings.php:1172
+#: includes/classes/WCS_Settings.php:345
 msgctxt "config slug for archive"
 msgid "subjects"
 msgstr "przedmioty"
 
-#: includes/wcs_settings.php:1203
+#: includes/classes/WCS_Settings.php:378
 msgctxt "config slug for archive"
 msgid "teachers"
 msgstr "pedagodzy"
 
-#: includes/wcs_settings.php:1266
+#: includes/classes/WCS_Settings.php:445
 msgctxt "config slug for item"
 msgid "classroom"
 msgstr "sala"
 
-#: includes/wcs_settings.php:1235
+#: includes/classes/WCS_Settings.php:412
 msgctxt "config slug for item"
 msgid "student"
 msgstr "uczen"
 
-#: includes/wcs_settings.php:1173
+#: includes/classes/WCS_Settings.php:346
 msgctxt "config slug for item"
 msgid "subject"
 msgstr "przedmiot"
 
-#: includes/wcs_settings.php:1204
+#: includes/classes/WCS_Settings.php:379
 msgctxt "config slug for item"
 msgid "teacher"
 msgstr "pedagog"
 
-#: includes/wcs_settings.php:1170
+#: includes/classes/WCS_Settings.php:343
 msgctxt "config slug for taxonomy"
 msgid "branch"
 msgstr "dziedzina"
 
-#: includes/wcs_settings.php:1232
+#: includes/classes/WCS_Settings.php:409
 msgctxt "config slug for taxonomy"
 msgid "group"
 msgstr "grupa"
 
-#: includes/wcs_settings.php:1263
+#: includes/classes/WCS_Settings.php:442
 msgctxt "config slug for taxonomy"
 msgid "locations"
 msgstr "lokalizacja"
 
-#: includes/wcs_settings.php:1201
+#: includes/classes/WCS_Settings.php:376
 msgctxt "config slug for taxonomy"
 msgid "specialization"
 msgstr "specjalizacja"
 
-#: includes/wcs_settings.php:1139
+#: includes/classes/WCS_Settings.php:267
+#| msgid ""
+#| "{teacher link} has {subject link} from {start hour} to {end hour} for "
+#| "{student link} {topic}"
+msgctxt "config template journal"
+msgid ""
+"{teacher link} has {subject link} from {start time} to {end time} for "
+"{student link} {topic}"
+msgstr ""
+"{teacher link} prowadzi {subject link} od {start hour} do {end time} z "
+"{student time} {topic}"
+
+#: includes/classes/WCS_Settings.php:259
 #| msgid ""
 #| "{teacher link} has {subject link} at {classroom link} from {start hour} "
 #| "to {end hour} for {student link} {notes}"
@@ -224,99 +274,7 @@ msgstr ""
 "{teacher link} prowadzi {subject link} w {classroom link} od {start time} do "
 "{end time} dla {student link} {notes}"
 
-#: includes/wcs_settings.php:1280
-#| msgid ""
-#| "{subject link} with {teacher link} from {start hour} to {end hour} for "
-#| "{student link} {notes}"
-msgctxt "config template list at classroom schedule"
-msgid ""
-"{subject link} with {teacher link} from {start time} to {end time} for "
-"{student link} {notes}"
-msgstr ""
-"{subject link} z {teacher link} od {start time} do {end time} dla {student "
-"link} {notes}"
-
-#: includes/wcs_settings.php:1255
-#| msgid ""
-#| "{subject link} with {teacher link} from {start hour} to {end hour} {topic}"
-msgctxt "config template list at student schedule"
-msgid ""
-"{subject link} with {teacher link} from {start time} to {end time} {topic}"
-msgstr ""
-"<small>{start time}-{end time}</small><br>{teacher link} dla {student link} "
-"{topic}"
-
-#: includes/wcs_settings.php:1187
-#| msgid ""
-#| "<small>{start hour}-{end hour}</small><br>{teacher link} at {classroom "
-#| "link} for {student link} {notes}"
-msgctxt "config template list at subject schedule"
-msgid ""
-"<small>{start time}-{end time}</small><br>{teacher link} at {classroom link} "
-"for {student link} {notes}"
-msgstr ""
-"<small>{start time}-{end time}</small><br>{teacher link} w {classroom link} "
-"dla {student link} {notes}"
-
-#: includes/wcs_settings.php:1218
-#| msgid ""
-#| "<small>{start hour}-{end hour}</small><br>{subject link} at {classroom "
-#| "link} for {student link} {notes}"
-msgctxt "config template list at teacher schedule"
-msgid ""
-"<small>{start time}-{end time}</small><br>{subject link} at {classroom link} "
-"for {student link} {notes}"
-msgstr ""
-"<small>{start time}-{end time}</small><br>{subject link} w {classroom link} "
-"dla {student link} {notes}"
-
-#: includes/wcs_settings.php:1144
-#| msgid ""
-#| "{teacher link} has {subject link} from {start hour} to {end hour} for "
-#| "{student link} {topic}"
-msgctxt "config template report"
-msgid ""
-"{teacher link} has {subject link} from {start time} to {end time} for "
-"{student link} {topic}"
-msgstr ""
-"{teacher link} prowadzi {subject link} od {start hour} do {end time} z "
-"{student time} {topic}"
-
-#: includes/wcs_settings.php:1249
-#| msgid ""
-#| "{subject link} with {teacher link} at {classroom link} from {start hour} "
-#| "to {end hour} {notes}"
-msgctxt "config template report at student schedule"
-msgid ""
-"{subject link} with {teacher link} at {classroom link} from {start time} to "
-"{end time} {notes}"
-msgstr ""
-"{subject link} z {teacher link} w {classroom link} od {start time} do {end "
-"time} {notes}"
-
-#: includes/wcs_settings.php:1193
-#| msgid ""
-#| "<small>{start hour}-{end hour}</small><br>{teacher link} at for {student "
-#| "link} {topic}"
-msgctxt "config template report at subject schedule"
-msgid ""
-"<small>{start time}-{end time}</small><br>{teacher link} at for {student "
-"link} {topic}"
-msgstr "{teacher link}: {subject link} od {start time} do {end time} {topic}"
-
-#: includes/wcs_settings.php:1224
-#| msgid ""
-#| "<small>{start hour}-{end hour}</small><br>{subject link} for {student "
-#| "link} {topic}"
-msgctxt "config template report at teacher schedule"
-msgid ""
-"<small>{start time}-{end time}</small><br>{subject link} for {student link} "
-"{topic}"
-msgstr ""
-"<small>{start time}-{end time}</small><br>{subject link} dla {student link} "
-"{topic}"
-
-#: includes/wcs_settings.php:1134
+#: includes/classes/WCS_Settings.php:254
 #| msgid ""
 #| "{teacher link} has {subject link} at {classroom link} from {start hour} "
 #| "to {end hour} for {student link} {notes}"
@@ -328,140 +286,91 @@ msgstr ""
 "{teacher link} prowadzi {subject link} w {classroom link} od {start time} do "
 "{end time} dla {student link} {notes}"
 
-#: includes/wcs_settings.php:1275
-#| msgid ""
-#| "<small>{start hour}-{end hour}</small><br>{subject link} with {teacher "
-#| "link} for {student link} {notes}"
-msgctxt "config template table details at classroom schedule"
-msgid ""
-"<small>{start time}-{end time}</small><br>{subject link} with {teacher link} "
-"for {student link} {notes}"
-msgstr ""
-"<small>{start time}-{end time}</small><br>{subject link} z {teacher link} "
-"dla {student link} {notes}"
-
-#: includes/wcs_settings.php:1244
-#| msgid ""
-#| "<small>{start hour}-{end hour}</small><br>{subject link} with {teacher "
-#| "link} at {classroom link}"
-msgctxt "config template table details at student schedule"
-msgid ""
-"<small>{start time}-{end time}</small><br>{subject link} with {teacher link} "
-"at {classroom link}"
-msgstr ""
-"<small>{start time}-{end time}</small><br>{subject link} z {teacher link} w "
-"{classroom link} {notes}"
-
-#: includes/wcs_settings.php:1182
-#| msgid ""
-#| "<small>{start hour}-{end hour}</small><br>{teacher link} at {classroom "
-#| "link} for {student link} {notes}"
-msgctxt "config template table details at subject schedule"
-msgid ""
-"<small>{start time}-{end time}</small><br>{teacher link} at {classroom link} "
-"for {student link} {notes}"
-msgstr ""
-"<small>{start time}-{end time}</small><br>{teacher link} w {classroom link} "
-"dla {student link} {notes}"
-
-#: includes/wcs_settings.php:1213
-#| msgid ""
-#| "<small>{start hour}-{end hour}</small><br>{subject link} at {classroom "
-#| "link} for {student link} {notes}"
-msgctxt "config template table details at teacher schedule"
-msgid ""
-"<small>{start time}-{end time}</small><br>{subject link} at {classroom link} "
-"for {student link} {notes}"
-msgstr ""
-"<small>{start time}-{end time}</small><br>{subject link} w {classroom link} "
-"dla {student link} {notes}"
-
-#: includes/wcs_settings.php:1129
+#: includes/classes/WCS_Settings.php:249
 #| msgid "<small>{start hour}-{end hour}</small><br>{subject} ({tea}/{stu})"
 msgctxt "config template table short"
 msgid "<small>{start time}-{end time}</small><br>{subject} ({tea}/{stu})"
 msgstr "<small>{start time}-{end time}</small><br>{subject} ({tea}/{stu})"
 
-#: includes/wcs_settings.php:1270
-#| msgid "<small>{start hour}-{end hour}</small><br>{subject} ({tea}/{stu})"
-msgctxt "config template table short at classroom schedule"
-msgid "<small>{start time}-{end time}</small><br>{subject} ({tea}/{stu})"
-msgstr "<small>{start time}-{end time}</small><br>{subject} ({tea}/{stu})"
-
-#: includes/wcs_settings.php:1239
-#| msgid "<small>{start hour}-{end hour}</small><br>{subject} ({tea}) @{class}"
-msgctxt "config template table short at student schedule"
-msgid "<small>{start time}-{end time}</small><br>{subject} ({tea}) @{class}"
-msgstr "<small>{start time}-{end time}</small><br>{subject} ({tea}) @{class}"
-
-#: includes/wcs_settings.php:1177
-#| msgid "<small>{start hour}-{end hour}</small><br>{tea}/{stu} @{class}"
-msgctxt "config template table short at subject schedule"
-msgid "<small>{start time}-{end time}</small><br>{tea}/{stu} @{class}"
-msgstr "<small>{start time}-{end time}</small><br>{tea}/{stu} @{class}"
-
-#: includes/wcs_settings.php:1208
-#| msgid "<small>{start hour}-{end hour}</small><br>{subject} @{class} ({stu})"
-msgctxt "config template table short at teacher schedule"
-msgid "<small>{start time}-{end time}</small><br>{subject} @{class} ({stu})"
-msgstr "<small>{start time}-{end time}</small><br>{subject} @{class} ({stu})"
-
-#: includes/wcs_report.php:135
-msgid "Created at"
-msgstr "Utworzono"
-
-#: includes/wcs_report.php:682 includes/wcs_schedule.php:546
+#: includes/classes/template/journal/admin_table.php:192
+#: includes/classes/template/schedule/admin_table.php:208
+#: includes/classes/template/progress/admin_table.php:238
 #, php-format
 msgid "Created at %s by %s"
 msgstr "Utworzono %s przez %s"
 
-#: includes/wcs_report.php:136
-msgid "Created by"
-msgstr "Utworzone przez"
-
-#: includes/wcs_report.php:434 includes/wcs_report.php:559
-#: includes/wcs_report.php:870 includes/wcs_schedule.php:386
+#: includes/classes/WCS_Journal.php:398
+#: includes/classes/template/journal/shortcode_form.php:78
+#: includes/classes/template/journal/admin_table.php:69
+#: includes/classes/template/journal/admin_form.php:78
+#: includes/classes/template/schedule/admin_table.php:48
+#: includes/classes/template/progress/admin_table.php:73
 msgid "Date"
 msgstr "Data"
 
-#: includes/wcs_report.php:297
+#: includes/classes/template/journal/admin_search.php:33
+#: includes/classes/template/progress/admin_search.php:33
 msgid "Date from"
 msgstr "Data od"
 
-#: includes/wcs_report.php:305
+#: includes/classes/template/journal/admin_search.php:41
+#: includes/classes/template/progress/admin_search.php:41
 msgid "Date to"
 msgstr "Data do"
 
-#: includes/wcs_report.php:609 includes/wcs_schedule.php:464
+#: includes/classes/template/journal/admin_table.php:119
+#: includes/classes/template/schedule/admin_table.php:126
+#: includes/classes/template/progress/admin_table.php:161
 msgid "Delete"
 msgstr "Usuń"
 
-#: includes/wcs_content.php:45
+#: includes/wcs_content.php:83
 msgid "Download iCal for current week"
 msgstr "ten tydzień"
 
-#: includes/wcs_content.php:47
+#: includes/wcs_content.php:85
 msgid "Download iCal for next week"
 msgstr "następny tydzień"
 
-#: includes/wcs_content.php:44
+#: includes/wcs_content.php:82
 msgid "Download iCal:"
 msgstr "🗓Pobierz w formacie iCal:"
 
-#: includes/wcs_content.php:59 includes/wcs_report.php:334
-msgid "Download report as CSV"
-msgstr "Pobierz raporty (CSV)"
+#: includes/wcs_content.php:97
+#: includes/classes/template/journal/admin_search.php:74
+#| msgid "Download journal as CSV"
+msgid "Download journals as CSV"
+msgstr "Pobierz dzienniki (CSV)"
 
-#: includes/wcs_content.php:62 includes/wcs_report.php:342
-#: includes/wcs_init.php:338
-msgid "Download report as HTML"
-msgstr "Pobierz raporty (HTML)"
+#: includes/wcs_content.php:100 includes/wcs_init.php:346
+#: includes/classes/template/journal/admin_search.php:85
+#| msgid "Download journal as HTML"
+msgid "Download journals as HTML"
+msgstr "Pobierz dzienniki (HTML)"
 
-#: includes/wcs_report.php:597 includes/wcs_schedule.php:453
+#: includes/classes/template/progress/admin_search.php:84
+#| msgid "Download progresses as CSV"
+msgid "Download Progresses as CSV"
+msgstr "Pobierz postępy (CS)V"
+
+#: includes/classes/template/progress/admin_search.php:96
+msgid "Download Progresses as HTML"
+msgstr "Pobierz postępy (HTML)"
+
+#: includes/classes/template/progress/admin_table.php:127
+#| msgid "Download progress as HTML"
+msgid "Download progresses as HTML"
+msgstr "Pobierz postępy (HTML)"
+
+#: includes/classes/template/journal/admin_table.php:107
+#: includes/classes/template/schedule/admin_table.php:115
+#: includes/classes/template/progress/admin_table.php:149
 msgid "Duplicate"
 msgstr "Kopiuj"
 
-#: includes/wcs_report.php:587 includes/wcs_schedule.php:442
+#: includes/classes/template/journal/admin_table.php:97
+#: includes/classes/template/schedule/admin_table.php:104
+#: includes/classes/template/progress/admin_table.php:139
 msgid "Edit"
 msgstr "Edytuj"
 
@@ -481,13 +390,21 @@ msgstr "Edytuj lokalizację"
 msgid "Edit Specialization"
 msgstr "Edytuj specjalizację"
 
-#: includes/wcs_report.php:531 includes/wcs_schedule.php:362
+#: includes/classes/template/journal/admin_table.php:41
+#: includes/classes/template/schedule/admin_table.php:24
+#: includes/classes/template/progress/admin_table.php:42
 msgid "End"
 msgstr "Koniec"
 
-#: includes/wcs_report.php:130 includes/wcs_report.php:454
-#: includes/wcs_report.php:872 includes/wcs_schedule.php:299
-#: includes/wcs_schedule.php:726
+#: includes/classes/WCS_Progress.php:429
+#: includes/classes/template/progress/admin_form.php:100
+msgid "End date"
+msgstr "Data końcowa"
+
+#: includes/classes/WCS_Schedule.php:287 includes/classes/WCS_Journal.php:400
+#: includes/classes/template/journal/shortcode_form.php:98
+#: includes/classes/template/journal/admin_form.php:98
+#: includes/classes/template/schedule/admin_form.php:75
 msgid "End Time"
 msgstr "Koniec"
 
@@ -495,60 +412,66 @@ msgstr "Koniec"
 msgid "Error"
 msgstr "Błąd"
 
-#: includes/wcs_report.php:1141 includes/wcs_schedule.php:1030
+#: includes/classes/WCS_Schedule.php:587 includes/classes/WCS_Journal.php:657
+#: includes/classes/WCS_Progress.php:636
 msgid "Failed to delete entry"
 msgstr "Nie udało się usunąć wpisu"
 
-#: includes/wcs_schedule.php:1080
+#: includes/classes/WCS_Schedule.php:637
 msgid "Failed to toggle visibility for entry"
 msgstr "Nie udało się przełączyć widoczności wpisu"
+
+#: includes/classes/template/progress/admin_search.php:103
+#| msgid "Create progress"
+msgid "Generate Progress"
+msgstr "Generuj Postęp"
 
 #: includes/wcs_init.php:143
 msgid "Groups"
 msgstr "Grupy"
 
-#: includes/wcs_admin.php:290 includes/wcs_admin.php:380
+#: includes/wcs_admin_hooks.php:324 includes/wcs_admin_hooks.php:414
 #, php-format
 msgctxt "help"
 msgid "A finalized shortcode may look something like <code>%1$s</code>"
 msgstr ""
 "Sfinalizowany shortcode może wyglądać mniej więcej tak <code>%1$s</code>"
 
-#: includes/wcs_admin.php:414
+#: includes/wcs_admin_hooks.php:448
 msgctxt "help"
 msgid "Available placeholders:"
 msgstr "Dostępne symbole zastępcze:"
 
-#: includes/wcs_admin.php:392
+#: includes/wcs_admin_hooks.php:426
 msgctxt "help"
 msgid "Certain HTML tags are allowed in template design:"
 msgstr "W ustawieniach szablonu tylko niektóre tagi HTML są dozwolone:"
 
-#: includes/wcs_admin.php:237
+#: includes/wcs_admin_hooks.php:355
+#, php-format
+msgctxt "help"
+msgid "Custom template for journal layout: <code>%1$s</code>"
+msgstr "Własny szablon dla widoku dziennika: <code>%1$s</code>"
+
+#: includes/wcs_admin_hooks.php:271
 #, php-format
 msgctxt "help"
 msgid "Custom template for list layout: <code>%1$s</code>"
 msgstr "Własny szablon dla widoku listy: <code>%1$s</code>"
 
-#: includes/wcs_admin.php:321
-#, php-format
-msgctxt "help"
-msgid "Custom template for report layout: <code>%1$s</code>"
-msgstr "Własny szablon dla widoku raportu: <code>%1$s</code>"
-
-#: includes/wcs_admin.php:232
+#: includes/wcs_admin_hooks.php:266
 #, php-format
 msgctxt "help"
 msgid "Custom template for table layout: <code>%1$s</code>"
 msgstr "Własny szablon dla widoku tabeli: <code>%1$s</code>"
 
-#: includes/wcs_admin.php:227 includes/wcs_admin.php:258
-#: includes/wcs_admin.php:316 includes/wcs_admin.php:342
+#: includes/wcs_admin_hooks.php:261 includes/wcs_admin_hooks.php:292
+#: includes/wcs_admin_hooks.php:350 includes/wcs_admin_hooks.php:376
 msgctxt "help"
 msgid "For example:"
 msgstr "Na przykład:"
 
-#: includes/wcs_admin.php:465
+#: includes/wcs_admin_hooks.php:514
 msgctxt "help"
 msgid ""
 "If item is private, full and short names will be replaced with item first "
@@ -557,21 +480,21 @@ msgstr ""
 "Jeśli wpis jest prywatny, pełna i krótka nazwa zostaną zastąpione pierwszą "
 "literą nazwy wpisu."
 
-#: includes/wcs_admin.php:336
+#: includes/wcs_admin_hooks.php:370
 #| msgid ""
-#| "In order to filter a report by a specific subject, teacher, student, or "
+#| "In order to filter a journal by a specific subject, teacher, student, or "
 #| "any other combination of the four, use the subject and teacher attributes."
 msgctxt "help"
 msgid ""
-"In order to filter a report by a specific subject, teacher, student, or any "
+"In order to filter a journal by a specific subject, teacher, student, or any "
 "other combination of the three, use the subject, student and teacher "
 "attributes."
 msgstr ""
-"Aby filtrować raport według określonego przedmiotu, nauczyciela, ucznia lub "
-"innej kombinacji tych trzech, użyj atrybutów przedmiotu, studenta i "
+"Aby filtrować dzienniki według określonego przedmiotu, nauczyciela, ucznia "
+"lub innej kombinacji tych trzech, użyj atrybutów przedmiotu, studenta i "
 "nauczyciela."
 
-#: includes/wcs_admin.php:252
+#: includes/wcs_admin_hooks.php:286
 #| msgid ""
 #| "In order to filter a schedule by a specific subject, teacher, student, "
 #| "classroom, or any other combination of the four, use the subject, teacher,"
@@ -586,7 +509,7 @@ msgstr ""
 "ucznia, lokalizacji lub dowolnej innej kombinacji tych czterech elementów, "
 "użyj atrybutów przedmiotu, studenta, nauczyciela i sali."
 
-#: includes/wcs_admin.php:217
+#: includes/wcs_admin_hooks.php:251
 #, php-format
 msgctxt "help"
 msgid ""
@@ -596,70 +519,82 @@ msgstr ""
 "Możliwe jest również wyświetlanie harmonogramu jako listy przy użyciu układu "
 "listy: <code>%1$s</code>."
 
-#: includes/wcs_admin.php:269
+#: includes/wcs_admin_hooks.php:387
+#, php-format
+msgctxt "help"
+msgid "Only display journals by \"%2$s\" teacher: <code>%1$s</code>"
+msgstr ""
+"Pokaż tylko dzienniki lekcji prowadzonych przez \"%2$s\": <code>%1$s</code>"
+
+#: includes/wcs_admin_hooks.php:393
+#, php-format
+msgctxt "help"
+msgid "Only display journals for \"%2$s\" student: <code>%1$s</code>"
+msgstr ""
+"Pokaż tylko dzienniki lekcji prowadzonych dla \"%2$s\": <code>%1$s</code>"
+
+#: includes/wcs_admin_hooks.php:399
+#, php-format
+msgctxt "help"
+msgid "Only display journals in \"%2$s\" date from: <code>%1$s</code>"
+msgstr ""
+"Pokaż tylko dzienniki lekcji prowadzonych od \"%2$s\": <code>%1$s</code>"
+
+#: includes/wcs_admin_hooks.php:405
+#, php-format
+msgctxt "help"
+msgid "Only display journals in \"%2$s\" date upto: <code>%1$s</code>"
+msgstr ""
+"Pokaż tylko dzienniki lekcji prowadzonych do \"%2$s\": <code>%1$s</code>"
+
+#: includes/wcs_admin_hooks.php:381
+#, php-format
+msgctxt "help"
+msgid "Only display journals of \"%2$s\" subject: <code>%1$s</code>"
+msgstr "Pokaż tylko dzienniki lekcji w temacie \"%2$s\": <code>%1$s</code>"
+
+#: includes/wcs_admin_hooks.php:303
 #, php-format
 msgctxt "help"
 msgid "Only display lessons by \"%2$s\" teacher: <code>%1$s</code>"
 msgstr "Pokaż tylko lekcje prowadzone przez \"%2$s\": <code>%1$s</code>"
 
-#: includes/wcs_admin.php:275
+#: includes/wcs_admin_hooks.php:309
 #, php-format
 msgctxt "help"
 msgid "Only display lessons for \"%2$s\" student: <code>%1$s</code>"
 msgstr "Pokaż tylko lekcje dla \"%2$s\": <code>%1$s</code>"
 
-#: includes/wcs_admin.php:281
+#: includes/wcs_admin_hooks.php:315
 #, php-format
 msgctxt "help"
 msgid "Only display lessons in \"%2$s\" classroom: <code>%1$s</code>"
 msgstr "Pokaż tylko lekcje prowadzone w \"%2$s\": <code>%1$s</code>"
 
-#: includes/wcs_admin.php:263
+#: includes/wcs_admin_hooks.php:297
 #, php-format
 msgctxt "help"
 msgid "Only display lessons of \"%2$s\" subject: <code>%1$s</code>"
 msgstr "Pokaż tylko lekcje w temacie \"%2$s\": <code>%1$s</code>"
 
-#: includes/wcs_admin.php:353
-#, php-format
-msgctxt "help"
-msgid "Only display reports by \"%2$s\" teacher: <code>%1$s</code>"
-msgstr ""
-"Pokaż tylko raporty lekcji prowadzonych przez \"%2$s\": <code>%1$s</code>"
-
-#: includes/wcs_admin.php:359
-#, php-format
-msgctxt "help"
-msgid "Only display reports for \"%2$s\" student: <code>%1$s</code>"
-msgstr ""
-"Pokaż tylko raporty lekcji prowadzonych dla \"%2$s\": <code>%1$s</code>"
-
-#: includes/wcs_admin.php:365
-#, php-format
-msgctxt "help"
-msgid "Only display reports in \"%2$s\" date from: <code>%1$s</code>"
-msgstr "Pokaż tylko raporty lekcji prowadzonych od \"%2$s\": <code>%1$s</code>"
-
-#: includes/wcs_admin.php:371
-#, php-format
-msgctxt "help"
-msgid "Only display reports in \"%2$s\" date upto: <code>%1$s</code>"
-msgstr "Pokaż tylko raporty lekcji prowadzonych do \"%2$s\": <code>%1$s</code>"
-
-#: includes/wcs_admin.php:347
-#, php-format
-msgctxt "help"
-msgid "Only display reports of \"%2$s\" subject: <code>%1$s</code>"
-msgstr "Pokaż tylko raporty lekcji w temacie \"%2$s\": <code>%1$s</code>"
-
-#: includes/wcs_admin.php:244 includes/wcs_admin.php:328
+#: includes/wcs_admin_hooks.php:278 includes/wcs_admin_hooks.php:362
 #, php-format
 msgctxt "help"
 msgid "See available <code>%1$s</code> in <strong>%2$s</strong> tab."
 msgstr ""
 "Zobcz co możez wstawić za <code>%1$s</code> w zakładce <strong>%2$s</strong>."
 
-#: includes/wcs_admin.php:205
+#: includes/wcs_admin_hooks.php:337
+#, php-format
+msgctxt "help"
+msgid ""
+"To display all the journals in a single schedule, simply enter the shortcode "
+"<code>%1$s</code> inside a page or a post."
+msgstr ""
+"Aby wyświetlić wszystkie dzienniki w jednym harmonogramie, po prostu wpisz "
+"krótki kod <code>%1$s</code> na stronie lub w poście."
+
+#: includes/wcs_admin_hooks.php:239
 #, php-format
 msgctxt "help"
 msgid ""
@@ -669,17 +604,7 @@ msgstr ""
 "Aby wyświetlić wszystkie lekcje w jednym harmonogramie, wystarczy wpisać "
 "krótki kod <code>%1$s</code> na stronie lub w poście."
 
-#: includes/wcs_admin.php:303
-#, php-format
-msgctxt "help"
-msgid ""
-"To display all the reports in a single schedule, simply enter the shortcode "
-"<code>%1$s</code> inside a page or a post."
-msgstr ""
-"Aby wyświetlić wszystkie raporty w jednym harmonogramie, po prostu wpisz "
-"krótki kod <code>%1$s</code> na stronie lub w poście."
-
-#: includes/wcs_admin.php:412
+#: includes/wcs_admin_hooks.php:446
 msgctxt "help"
 msgid ""
 "Use placeholders to design the way the class details appear in the schedule."
@@ -687,64 +612,77 @@ msgstr ""
 "Użyj symboli zastępczych, aby zaprojektować sposób wyświetlania szczegółów "
 "zajęć w harmonogramie."
 
-#: includes/wcs_admin.php:437
+#: includes/wcs_admin_hooks.php:486
 #, php-format
 msgctxt "help"
 msgid "Will display full name as link to page: <code>%1$s</code>"
 msgstr "Pokaże pełną nazwę jako link do strony: <code>%1$s</code>"
 
-#: includes/wcs_admin.php:444
+#: includes/wcs_admin_hooks.php:493
 #, php-format
 msgctxt "help"
 msgid "Will display full name with description in qTip: <code>%1$s</code>"
 msgstr "Pokaże pełną nazwę z opisem w okienku qTip: <code>%1$s</code>"
 
-#: includes/wcs_admin.php:430
+#: includes/wcs_admin_hooks.php:479
 #, php-format
 msgctxt "help"
 msgid "Will display full name: <code>%1$s</code>"
 msgstr "Pokaże pełną nazwę: <code>%1$s</code>"
 
-#: includes/wcs_admin.php:420
+#: includes/wcs_admin_hooks.php:463
+#, php-format
+#| msgid "Will display general info: <code>%1$s</code>"
+msgctxt "help"
+msgid "Will display general info for journal: <code>%1$s</code>"
+msgstr "Pokaże główne informacje dla dziennika: <code>%1$s</code>"
+
+#: includes/wcs_admin_hooks.php:472
 #, php-format
 msgctxt "help"
-msgid "Will display general info: <code>%1$s</code>"
-msgstr "Pokaże główne informacje: <code>%1$s</code>"
+msgid "Will display general info for progress: <code>%1$s</code>"
+msgstr "Pokaże główne informacje dla postępów: <code>%1$s</code>"
 
-#: includes/wcs_admin.php:451
+#: includes/wcs_admin_hooks.php:454
+#, php-format
+msgctxt "help"
+msgid "Will display general info for schedule: <code>%1$s</code>"
+msgstr "Pokaże główne informacje dla harmonogramu: <code>%1$s</code>"
+
+#: includes/wcs_admin_hooks.php:500
 #, php-format
 msgctxt "help"
 msgid "Will display short name (initials): <code>%1$s</code>"
 msgstr "Pokaże krótką nazwę (inicjały): <code>%1$s</code>"
 
-#: includes/wcs_admin.php:458
+#: includes/wcs_admin_hooks.php:507
 #, php-format
 msgctxt "help"
 msgid "Will display short name as link to page: <code>%1$s</code>"
 msgstr "Pokaże krótką nazwę jako link do strony: <code>%1$s</code>"
 
-#: includes/wcs_admin.php:225 includes/wcs_admin.php:314
+#: includes/wcs_admin_hooks.php:259 includes/wcs_admin_hooks.php:348
 msgctxt "help"
 msgid "You can also specify layout template."
 msgstr "Możesz także określić szablon układu."
 
-#: includes/wcs_admin.php:90
+#: includes/wcs_admin_hooks.php:108
 msgctxt "help title"
 msgid "HTML tags in template"
 msgstr "Tagi HTML w szablonie"
 
-#: includes/wcs_admin.php:85 includes/wcs_admin.php:246
-#: includes/wcs_admin.php:330
+#: includes/wcs_admin_hooks.php:103 includes/wcs_admin_hooks.php:280
+#: includes/wcs_admin_hooks.php:364
 msgctxt "help title"
 msgid "Placeholders"
 msgstr "Symbole zastępcze"
 
-#: includes/wcs_admin.php:75 includes/wcs_admin.php:80
+#: includes/wcs_admin_hooks.php:93 includes/wcs_admin_hooks.php:98
 msgctxt "help title"
 msgid "Using shortcode"
 msgstr "Używanie shortcode"
 
-#: includes/db/entity_lesson.php:68
+#: includes/classes/db/WCS_DB_Lesson_Item.php:76
 msgid "Hidden"
 msgstr "Ukryte"
 
@@ -752,9 +690,97 @@ msgstr "Ukryte"
 msgid "https://kwiatek.pro"
 msgstr "https://kwiatek.pro"
 
-#: includes/wcs_report.php:128
-msgid "ID"
-msgstr "ID"
+#: includes/classes/WCS_Progress.php:419
+#: includes/classes/template/progress/admin_table.php:60
+#: includes/classes/template/progress/admin_table.php:210
+#: includes/classes/template/progress/shortcode_form.php:86
+#: includes/classes/template/progress/admin_form.php:105
+msgid "Improvements"
+msgstr "Wskazania do dalszej terapii"
+
+#: includes/classes/WCS_Progress.php:420
+#: includes/classes/template/progress/admin_table.php:64
+#: includes/classes/template/progress/admin_table.php:215
+#: includes/classes/template/progress/shortcode_form.php:91
+#: includes/classes/template/progress/admin_form.php:110
+msgid "Indications"
+msgstr "Postępy"
+
+#: includes/classes/WCS_Output.php:154
+#: includes/classes/template/progress/admin_table.php:92
+msgctxt "item type"
+msgid "Partial"
+msgstr "Częściowy"
+
+#: includes/classes/WCS_Output.php:152
+#: includes/classes/template/progress/admin_table.php:96
+msgctxt "item type"
+msgid "Periodic"
+msgstr "Okresowy"
+
+#: includes/classes/WCS_Output.php:155
+#: includes/classes/template/progress/admin_table.php:100
+msgctxt "item type"
+msgid "undefined"
+msgstr "niezdefiniowayn"
+
+#: includes/classes/template/journal/report_html.php:12
+msgid "Journal"
+msgstr "Dziennik"
+
+#: includes/classes/WCS_Journal.php:567
+msgid "Journal entry added successfully"
+msgstr "Pomyślnie dodano nowy dziennik"
+
+#: includes/classes/WCS_Journal.php:660
+msgid "Journal entry deleted successfully"
+msgstr "Pomyślnie usunięto dziennik"
+
+#: includes/classes/WCS_Journal.php:544
+msgid "Journal entry updated successfully"
+msgstr "Pomyślnie zaktualizowano dziennik"
+
+#: includes/classes/template/journal/export.html.php:11
+#: includes/classes/template/progress/export_heading.html.php:11
+#, php-format
+msgctxt "journal template"
+msgid "by %s teacher"
+msgstr "przez %s"
+
+#: includes/classes/template/journal/export.html.php:17
+#: includes/classes/template/progress/export_heading.html.php:17
+#, php-format
+msgctxt "journal template"
+msgid "for %s student"
+msgstr "dla %s"
+
+#: includes/classes/template/progress/export_heading.html.php:22
+#, php-format
+msgctxt "journal template"
+msgid "from %s"
+msgstr "od %s"
+
+#: includes/classes/template/journal/export.html.php:5
+#: includes/classes/template/progress/export_heading.html.php:5
+#, php-format
+msgctxt "journal template"
+msgid "of %s subject"
+msgstr "z przedmiotu %s"
+
+#: includes/classes/template/progress/export_heading.html.php:27
+#, php-format
+msgctxt "journal template"
+msgid "upto %s"
+msgstr "do %s"
+
+#: includes/wcs_admin_hooks.php:56 includes/wcs_admin_hooks.php:57
+#: includes/wcs_content.php:89 includes/wcs_init.php:328
+msgid "Journals"
+msgstr "Dzienniki"
+
+#: includes/classes/settings/journal.php:10
+msgid "Journals Settings"
+msgstr "Ustawienia Dzienników"
 
 #. Author of the plugin
 msgid "Kwiatek.pro, Pulsar Web Design"
@@ -764,48 +790,58 @@ msgstr "Kwiatek.pro, Pulsar Web Design"
 msgid "Locations"
 msgstr "Lokalizacje"
 
-#: includes/wcs_report.php:21
-msgctxt "manage report"
-msgid "Report Management"
-msgstr "Zarządzanie raportami"
+#: includes/classes/template/journal/admin.php:8
+msgctxt "manage journal"
+msgid "Journal Management"
+msgstr "Zarządzanie dziennikami"
+
+#: includes/classes/template/progress/admin.php:8
+msgctxt "manage progress"
+msgid "Progress Management"
+msgstr "Zarządzanie Postępami"
+
+#: includes/wcs_utils.php:409
+#| msgid "Are you sure you want to delete this entry?"
+msgctxt "manage schedule"
+msgid "Are you sure you want to delete this journal?"
+msgstr "Czy na pewno chcesz usunąć ten dziennik?"
 
 #: includes/wcs_utils.php:399
 msgctxt "manage schedule"
 msgid "Are you sure you want to delete this lesson?"
 msgstr "Czy na pewno chcesz usunąć tą lekcję?"
 
-#: includes/wcs_utils.php:409
-#| msgid "Are you sure you want to delete this entry?"
+#: includes/wcs_utils.php:419
 msgctxt "manage schedule"
-msgid "Are you sure you want to delete this report?"
-msgstr "Czy na pewno chcesz usunąć ten raport?"
+msgid "Are you sure you want to delete this progress?"
+msgstr "Czy na pewno chcesz usunąć ten postęp?"
 
-#: includes/wcs_schedule.php:21
+#: includes/classes/template/schedule/admin.php:8
 msgctxt "manage schedule"
 msgid "Schedule Management"
 msgstr "Zarządzanie planem zajęć"
 
-#: includes/wcs_admin.php:589
+#: includes/classes/WCS_Admin.php:122
 msgctxt "manage schedule"
 msgid "select classroom"
 msgstr "wybierz salę"
 
-#: includes/wcs_admin.php:618
+#: includes/classes/WCS_Admin.php:151 includes/classes/WCS_Admin.php:197
 msgctxt "manage schedule"
 msgid "select option"
 msgstr "wybierz opcję"
 
-#: includes/wcs_admin.php:560
+#: includes/classes/WCS_Admin.php:93
 msgctxt "manage schedule"
 msgid "select student"
 msgstr "wybierz ucznia"
 
-#: includes/wcs_admin.php:502
+#: includes/classes/WCS_Admin.php:35
 msgctxt "manage schedule"
 msgid "select subject"
 msgstr "wybierz przedmiot"
 
-#: includes/wcs_admin.php:531
+#: includes/classes/WCS_Admin.php:64
 msgctxt "manage schedule"
 msgid "select teacher"
 msgstr "wybierz pedagoga"
@@ -882,15 +918,19 @@ msgstr "Nie znaleziono grup."
 msgid "No groups."
 msgstr "Brak grup."
 
-#: includes/wcs_schedule.php:566
+#: includes/classes/template/journal/admin_table.php:215
+msgid "No journals"
+msgstr "Brak dzienników"
+
+#: includes/classes/template/schedule/admin_table.php:228
 msgid "No lessons"
 msgstr "Brak lekcji"
 
-#: includes/wcs_report.php:1193
-msgid "No lessons reported"
+#: includes/classes/WCS_Journal.php:702
+msgid "No lessons journaled"
 msgstr "Brak zaraportowanych zajęć"
 
-#: includes/wcs_schedule.php:1137 includes/wcs_schedule.php:1184
+#: includes/classes/WCS_Schedule.php:695 includes/classes/WCS_Schedule.php:742
 msgid "No lessons scheduled"
 msgstr "Brak zaplanowanych zajęć"
 
@@ -902,9 +942,10 @@ msgstr "Nie znaleziono lokalizacji."
 msgid "No locations."
 msgstr "Brak lokalizacji."
 
-#: includes/wcs_report.php:705
-msgid "No reports"
-msgstr "Brak raportów"
+#: includes/classes/WCS_Progress.php:687
+#: includes/classes/template/progress/admin_table.php:261
+msgid "No progresses"
+msgstr "Brak postępów"
 
 #: includes/wcs_init.php:91
 msgid "No specializations found."
@@ -914,7 +955,7 @@ msgstr "Nie znaleziono specjalizacji."
 msgid "No specializations."
 msgstr "Brak specjalizacji."
 
-#: includes/wcs_settings.php:38 includes/wcs_utils.php:13
+#: includes/wcs_utils.php:13 includes/classes/WCS_Settings.php:38
 msgid "Nonce verification failed"
 msgstr "Weryfikacja nonce nie powiodła się"
 
@@ -928,42 +969,43 @@ msgstr "Nie znaleziono"
 msgid "Not found in Trash"
 msgstr "Nie znaleziono w Koszu"
 
-#: includes/wcs_schedule.php:316 includes/wcs_schedule.php:382
-#: includes/wcs_schedule.php:523
+#: includes/classes/template/schedule/admin_form.php:92
+#: includes/classes/template/schedule/admin_table.php:44
+#: includes/classes/template/schedule/admin_table.php:185
 msgid "Notes"
 msgstr "Notatka"
 
-#: includes/wcs_settings.php:1020
+#: includes/classes/WCS_Settings.php:163
 msgctxt "options"
 msgid "Save Settings"
 msgstr "💾Zapisz ustawienia"
 
-#: includes/wcs_settings.php:1055
+#: includes/classes/WCS_Settings.php:176
 msgctxt "options"
 msgid "Weekly Class Schedule Advanced Settings"
 msgstr "Ustawienia zawansowane"
 
-#: includes/wcs_settings.php:136
+#: includes/classes/WCS_Settings.php:152
 msgctxt "options"
 msgid "Weekly Class Schedule Standard Settings"
 msgstr "Konfiguracja"
 
-#: includes/wcs_settings.php:836
+#: includes/classes/settings/appearance.php:9
 msgctxt "options appearance settings"
 msgid "Appearance Settings"
 msgstr "Ustawienia wyglądu"
 
-#: includes/wcs_settings.php:969
+#: includes/classes/settings/appearance.php:141
 msgctxt "options appearance settings"
 msgid "Background"
 msgstr "Tło"
 
-#: includes/wcs_settings.php:972
+#: includes/classes/settings/appearance.php:144
 msgctxt "options appearance settings"
 msgid "Background color for the entire schedule."
 msgstr "Kolor tła dla całego harmonogramu."
 
-#: includes/wcs_settings.php:881
+#: includes/classes/settings/appearance.php:53
 msgctxt "options appearance settings"
 msgid ""
 "Background color of the lesson details box which appears when hovering over "
@@ -972,178 +1014,215 @@ msgstr ""
 "Kolor tła pola szczegółów lekcji, które pojawia się po najechaniu kursorem "
 "na lekcję."
 
-#: includes/wcs_settings.php:989
+#: includes/classes/settings/appearance.php:161
 msgctxt "options appearance settings"
 msgid "Background color of the qTip pop-up box."
 msgstr "Kolor tła wyskakującego okienka qTip."
 
-#: includes/wcs_settings.php:953
+#: includes/classes/settings/appearance.php:125
 msgctxt "options appearance settings"
 msgid "Background color of the schedule headings (weekdays, hours)."
 msgstr "Kolor tła nagłówków harmonogramu (dni powszednie, godziny)."
 
-#: includes/wcs_settings.php:915
+#: includes/classes/settings/appearance.php:87
 msgctxt "options appearance settings"
 msgid "Border"
 msgstr "Obramowanie"
 
-#: includes/wcs_settings.php:864
+#: includes/classes/settings/appearance.php:36
 msgctxt "options appearance settings"
 msgid "Lesson base"
 msgstr "Lekcja widok podstawowy"
 
-#: includes/wcs_settings.php:878
+#: includes/classes/settings/appearance.php:50
 msgctxt "options appearance settings"
 msgid "Lesson details box"
 msgstr "Pole szczegółów lekcji"
 
-#: includes/wcs_settings.php:1003
+#: includes/classes/settings/appearance.php:175
 msgctxt "options appearance settings"
 msgid "Links"
 msgstr "Odnośniki"
 
-#: includes/wcs_settings.php:986
+#: includes/classes/settings/appearance.php:158
 msgctxt "options appearance settings"
 msgid "qTip background"
 msgstr "Kolor okienka qTip"
 
-#: includes/wcs_settings.php:950
+#: includes/classes/settings/appearance.php:122
 msgctxt "options appearance settings"
 msgid "Schedule headings background"
 msgstr "Kolor tło nagłówków"
 
-#: includes/wcs_settings.php:931
+#: includes/classes/settings/appearance.php:103
 msgctxt "options appearance settings"
 msgid "Schedule headings color"
 msgstr "Kolor tekstu nagłówków"
 
-#: includes/wcs_settings.php:897
+#: includes/classes/settings/appearance.php:69
 msgctxt "options appearance settings"
 msgid "Text"
 msgstr "Tekst"
 
-#: includes/wcs_settings.php:900
+#: includes/classes/settings/appearance.php:72
 msgctxt "options appearance settings"
 msgid "Text color of schedule entries/lessons."
 msgstr "Kolor tekstu pozycji harmonogramu / lekcji."
 
-#: includes/wcs_settings.php:934
+#: includes/classes/settings/appearance.php:106
 msgctxt "options appearance settings"
 msgid "Text color of the schedule headings (weekdays, hours)."
 msgstr "Kolor tekstu nagłówków harmonogramu (dni tygodnia, godziny)."
 
-#: includes/wcs_settings.php:1006
+#: includes/classes/settings/appearance.php:178
 msgctxt "options appearance settings"
 msgid "The color of the links which appear in the lesson details box."
 msgstr "Kolor linków pojawiających się w polu szczegółów lekcji."
 
-#: includes/wcs_settings.php:867
+#: includes/classes/settings/appearance.php:39
 msgctxt "options appearance settings"
 msgid "The default background color for lessons in the schedule."
 msgstr "Domyślny kolor tła dla lekcji w harmonogramie."
 
-#: includes/wcs_settings.php:918
+#: includes/classes/settings/appearance.php:90
 msgctxt "options appearance settings"
 msgid "This color is used for all borders in the schedule output."
 msgstr ""
 "Ten kolor jest używany dla wszystkich ramek w danych wyjściowych zestawienia."
 
-#: includes/wcs_settings.php:573
+#: includes/classes/settings/journal.php:31
 msgctxt "options general settings"
-msgid "Add New Report"
-msgstr "Dodaj nowy raport"
+msgid "Add New Journal"
+msgstr "Dodaj nowy dziennik"
 
-#: includes/wcs_settings.php:477
+#: includes/classes/settings/progress.php:29
+#| msgid "Add New Progress (for all)"
+msgctxt "options general settings"
+msgid "Add New Progress"
+msgstr "Dodaj nowy Postęp (dla wszystkich)"
+
+#: includes/classes/settings/schedule.php:178
 msgctxt "options general settings"
 msgid "Class List Template"
 msgstr "Szablon widoku listy"
 
-#: includes/wcs_settings.php:431
+#: includes/classes/settings/schedule.php:132
 msgctxt "options general settings"
 msgid "Class Table Hover Template"
 msgstr "Szablon widoku tabeli po najechaniu myszką"
 
-#: includes/wcs_settings.php:385
+#: includes/classes/settings/schedule.php:86
 msgctxt "options general settings"
 msgid "Class Table Short Template"
 msgstr "Szablon widoku tabeli domyślny"
 
-#: includes/wcs_settings.php:799
+#: includes/classes/settings/progress.php:225
+#: includes/classes/settings/progress.php:271
+#: includes/classes/settings/journal.php:264
+#: includes/classes/settings/journal.php:309
+msgctxt "options general settings"
+msgid ""
+"Columns separated by new line. Values in line: <code>key, title, value</code>"
+"."
+msgstr ""
+"Każda kolumna w nowym wierszu. Definicja wiersza to <code>klucz, tytuł, "
+"wartość</code>."
+
+#: includes/classes/settings/progress.php:243
+#: includes/classes/settings/journal.php:281
 msgctxt "options general settings"
 msgid "CSS code"
 msgstr "Kod CSS"
 
-#: includes/wcs_settings.php:223
+#: includes/classes/settings/journal.php:295
+msgctxt "options general settings"
+msgid "CSV journal template"
+msgstr "Szablon CSV"
+
+#: includes/classes/settings/progress.php:257
+msgctxt "options general settings"
+msgid "CSV progress template"
+msgstr "Szablon CSV"
+
+#: includes/classes/settings/post_types.php:26
 msgctxt "options general settings"
 msgid "Custom archive URL"
 msgstr "Własny adres URL archiwum"
 
-#: includes/wcs_settings.php:251
+#: includes/classes/settings/post_types.php:54
 msgctxt "options general settings"
 msgid "Custom item URL"
 msgstr "Własny adres URL wpisu"
 
-#: includes/wcs_settings.php:157
+#: includes/classes/settings/taxonomies.php:27
 msgctxt "options general settings"
 msgid "Custom taxonomy URL"
 msgstr "Własny adres URL taksonomii"
 
-#: includes/wcs_settings.php:327
+#: includes/classes/settings/journal.php:62
+msgctxt "options general settings"
+msgid "Detect journal collisions"
+msgstr "Wykryj kolizje dziennika"
+
+#: includes/classes/settings/schedule.php:28
 msgctxt "options general settings"
 msgid "Detect lesson collisions"
 msgstr "Wykryj kolizje"
 
-#: includes/wcs_settings.php:604
+#: includes/classes/settings/journal.php:94
 msgctxt "options general settings"
-msgid "Detect report collisions"
-msgstr "Wykryj kolizje raportu"
+msgid "Display Journals"
+msgstr "Pokaż dzienniki"
 
-#: includes/wcs_settings.php:636
+#: includes/classes/settings/progress.php:63
+#| msgid "Display Progresses (for all)"
 msgctxt "options general settings"
-msgid "Display Reports"
-msgstr "Pokaż raporty"
+msgid "Display Progresse"
+msgstr "Pokaż Postępy (dla wszystkich)"
 
-#: includes/wcs_settings.php:523
+#: includes/classes/settings/schedule.php:224
 msgctxt "options general settings"
 msgid "Download iCalendar"
 msgstr "Pobierz kalendarz (iCal)"
 
-#: includes/wcs_settings.php:708
+#: includes/classes/settings/journal.php:166
+#| msgid "Download journal as CSV"
 msgctxt "options general settings"
-msgid "Download report as CSV"
-msgstr "Pobierz raporty (CSV)"
+msgid "Download journals as CSV"
+msgstr "Pobierz dzienniki (CSV)"
 
-#: includes/wcs_settings.php:739
+#: includes/classes/settings/journal.php:197
+#| msgid "Download journal as HTML"
 msgctxt "options general settings"
-msgid "Download report as HTML"
-msgstr "Pobierz raporty (HTML)"
+msgid "Download journals as HTML"
+msgstr "Pobierz dzienniki (HTML)"
 
-#: includes/wcs_settings.php:226
+#: includes/classes/settings/post_types.php:29
 msgctxt "options general settings"
 msgid "Empty value will disable custom archive URL."
 msgstr "Pusta wartość wyłączy niestandardowy adres URL archiwum."
 
-#: includes/wcs_settings.php:254
+#: includes/classes/settings/post_types.php:57
 msgctxt "options general settings"
 msgid "Empty value will disable custom item URL."
 msgstr "Pusta wartość wyłączy niestandardowy adres URL elementu."
 
-#: includes/wcs_settings.php:160
+#: includes/classes/settings/taxonomies.php:30
 msgctxt "options general settings"
 msgid "Empty value will disable custom taxonomy URL."
 msgstr ""
 "Pusta wartość spowoduje wyłączenie niestandardowego adresu URL taksonomii."
 
-#: includes/wcs_settings.php:607
+#: includes/classes/settings/journal.php:65
 msgctxt "options general settings"
 msgid ""
-"Enabling this feature will prevent reporting of multiple events, with same "
+"Enabling this feature will prevent journaling of multiple events, with same "
 "teacher or student at the same time."
 msgstr ""
 "Włączenie tej funkcji zapobiegnie raportowaniu wielu wydarzeń z tym samym "
 "nauczycielem lub uczniem w tym samym czasie."
 
-#: includes/wcs_settings.php:330
+#: includes/classes/settings/schedule.php:31
 msgctxt "options general settings"
 msgid ""
 "Enabling this feature will prevent scheduling of multiple subjects at the "
@@ -1152,7 +1231,7 @@ msgstr ""
 "Włączenie tej funkcji zapobiegnie planowaniu wielu przedmiotów w tym samym "
 "miejscu, z tym samym nauczycielem lub uczniem w tym samym czasie."
 
-#: includes/wcs_settings.php:846
+#: includes/classes/settings/appearance.php:18
 msgctxt "options general settings"
 msgid ""
 "Enabling this will open the template links (e.g. [subject link]) in a new "
@@ -1161,94 +1240,156 @@ msgstr ""
 "Włączenie tego spowoduje otwarcie linków szablonu (np. [subject link]) w "
 "nowej karcie."
 
-#: includes/wcs_settings.php:279
+#: includes/classes/settings/progress.php:17
+msgctxt "options general settings"
+msgid "For all"
+msgstr "Dla wszystkich"
+
+#: includes/classes/settings/progress.php:21
+msgctxt "options general settings"
+msgid "For masters"
+msgstr "Dla mistrzów"
+
+#: includes/classes/settings/progress.php:100
+#: includes/classes/settings/progress.php:164
+msgctxt "options general settings"
+msgid "For multiple items page."
+msgstr "Dla strony z wieloma elementami."
+
+#: includes/classes/settings/progress.php:108
+#: includes/classes/settings/progress.php:172
+msgctxt "options general settings"
+msgid "For single item page."
+msgstr "Dla strony z jednym elementem."
+
+#: includes/classes/settings/post_types.php:82
 msgctxt "options general settings"
 msgid "Hashed item slug"
 msgstr "Zakodowany adres wpisu"
 
-#: includes/wcs_settings.php:282
+#: includes/classes/settings/post_types.php:85
 msgctxt "options general settings"
 msgid "Hashing slug will protect real page address."
 msgstr "Hashowanie adresu chroni prawdziwy adres strony."
 
-#: includes/wcs_settings.php:362
+#: includes/classes/settings/schedule.php:63
 msgctxt "options general settings"
 msgid "How schedule should be generated on single page."
 msgstr "Jak należy generować harmonogram na pojedynczej stronie."
 
-#: includes/wcs_settings.php:779
+#: includes/classes/settings/progress.php:184
+#: includes/classes/settings/journal.php:237
 msgctxt "options general settings"
 msgid "HTML code"
 msgstr "Kod HTML"
 
-#: includes/wcs_settings.php:772
-#| msgid "Class Report Template"
+#: includes/classes/settings/journal.php:230
+#| msgid "Class Journal Template"
 msgctxt "options general settings"
-msgid "HTML report template"
-msgstr "Szablon raportu HTML"
+msgid "HTML journal template"
+msgstr "Szablon dziennika HTML"
 
-#: includes/wcs_settings.php:185
+#: includes/classes/settings/progress.php:156
+msgctxt "options general settings"
+msgid "HTML progress template"
+msgstr "Szablon HTML"
+
+#: includes/classes/settings/taxonomies.php:55
 msgctxt "options general settings"
 msgid "Is taxonomy hierarchical?"
 msgstr "Czy taksonomia jest hierarchiczna?"
 
-#: includes/wcs_settings.php:843
+#: includes/classes/settings/journal.php:125
+msgctxt "options general settings"
+msgid "Journal shortcode template"
+msgstr "Szablon dziennika dla shortcode"
+
+#: includes/classes/settings/appearance.php:15
 msgctxt "options general settings"
 msgid "Open template links in new tabs"
 msgstr "Otwórz łącza szablonów w nowych kartach"
 
-#: includes/wcs_settings.php:206
+#: includes/classes/settings/post_types.php:9
 msgctxt "options general settings"
 msgid "Post Type Settings"
 msgstr "Ustawienia stron"
 
-#: includes/wcs_settings.php:667
+#: includes/classes/settings/progress.php:120
 msgctxt "options general settings"
-msgid "Report shortcode template"
-msgstr "Szablon raportu dla shortcode"
+msgid "Progress shortcode template"
+msgstr "Szablon postępu dla shortcode"
 
-#: includes/wcs_settings.php:359
+#: includes/classes/settings/post_types.php:110
+msgctxt "options general settings"
+msgid "Satisfy access for any item"
+msgstr "Zapewnij dostęp do dowolnego elementu"
+
+#: includes/classes/settings/schedule.php:60
 msgctxt "options general settings"
 msgid "Single page schedule layout"
 msgstr "Układ pojedynczej strony"
 
-#: includes/wcs_settings.php:820
+#: includes/classes/settings/progress.php:218
+#: includes/classes/settings/progress.php:264
+#: includes/classes/settings/journal.php:257
+#: includes/classes/settings/journal.php:302
 #| msgid "Table body columns"
 msgctxt "options general settings"
 msgid "Table columns"
 msgstr "Kolumny tabeli"
 
-#: includes/wcs_settings.php:140
+#: includes/classes/settings/taxonomies.php:10
 msgctxt "options general settings"
 msgid "Taxonomy Type Settings"
 msgstr "Ustawienia typów taksonomii"
 
-#: includes/wcs_settings.php:711
+#: includes/classes/settings/journal.php:97
+#| msgid "Will display amount of journals for  all."
 msgctxt "options general settings"
-msgid "Will display extra link to download report as CSV."
-msgstr "Pokaże ekstra link do pobrania raportu lekcji jako CSV"
+msgid "Will display amount of journals for all."
+msgstr "Wyświetli określoną liczbę dzienników dla wszystkich."
 
-#: includes/wcs_settings.php:742
+#: includes/classes/settings/progress.php:66
+#| msgid "Will display amount of progresses for all."
 msgctxt "options general settings"
-msgid "Will display extra link to download report as HTML."
-msgstr "Pokaże ekstra link do pobrania raportu lekcji jako HTML."
+msgid "Will display amount of progresses."
+msgstr "Wyświetli określoną liczbę postępów dla wszystkic.h"
 
-#: includes/wcs_settings.php:526
+#: includes/classes/settings/journal.php:169
+msgctxt "options general settings"
+msgid "Will display extra link to download journal as CSV."
+msgstr "Pokaże ekstra link do pobrania dziennika jako CSV"
+
+#: includes/classes/settings/journal.php:200
+msgctxt "options general settings"
+msgid "Will display extra link to download journal as HTML."
+msgstr "Pokaże ekstra link do pobrania dziennika jako HTML."
+
+#: includes/classes/settings/schedule.php:227
 msgctxt "options general settings"
 msgid "Will display extra link to download schedule as iCalendar."
 msgstr "Pokaże ekstra link do pobrania planu lekcji jako kalendarz (iCal)."
 
-#: includes/wcs_settings.php:576
+#: includes/classes/settings/journal.php:34
 msgctxt "options general settings"
-msgid "Will display form allowing anyone to add new lesson report."
-msgstr "Pokaże formularz raportowania lekcji na stronie wpisu."
+msgid "Will display form allowing anyone to add new lesson journal."
+msgstr "Pokaże formularz dziennika na stronie wpisu."
 
-#: includes/wcs_settings.php:639
+#: includes/classes/settings/progress.php:32
+#| msgid "Will display form allowing anyone to add new lesson progress."
 msgctxt "options general settings"
-msgid "Will display reported lessons."
-msgstr "Pokaże zaraportowane lekcje na stronie wpisu."
+msgid "Will display form to add new lesson progress."
+msgstr "Wyświetli formularz umożliwiający każdemu dodawanie nowych postępó.w"
 
-#: includes/wcs_settings.php:40
+#: includes/classes/settings/post_types.php:113
+msgctxt "options general settings"
+msgid ""
+"Will grant access to any password protected resource if entered from type."
+msgstr ""
+"Przyznaje dostęp do dowolnego zasobu chronionego hasłem, jeśli zostanie "
+"wprowadzony z typu."
+
+#: includes/classes/WCS_Settings.php:40
 msgid "Options updated"
 msgstr "Ustawienia zaktualizowane"
 
@@ -1257,15 +1398,25 @@ msgctxt "page title"
 msgid "Add New Classroom"
 msgstr "Dodaj nową salę"
 
-#: includes/wcs_utils.php:392 includes/wcs_schedule.php:227
+#: includes/wcs_utils.php:402
+#: includes/classes/template/journal/shortcode_form.php:3
+#: includes/classes/template/journal/admin_form.php:3
+msgctxt "page title"
+msgid "Add New Journal"
+msgstr "Dodaj nowy dziennik"
+
+#: includes/wcs_utils.php:392
+#: includes/classes/template/schedule/admin_form.php:3
 msgctxt "page title"
 msgid "Add New Lesson"
 msgstr "Dodaj nową lekcję"
 
-#: includes/wcs_utils.php:402 includes/wcs_report.php:359
+#: includes/wcs_utils.php:412
+#: includes/classes/template/progress/shortcode_form.php:11
+#: includes/classes/template/progress/admin_form.php:11
 msgctxt "page title"
-msgid "Add New Report"
-msgstr "Dodaj nowy raport"
+msgid "Add New Progress"
+msgstr "Dodaj nowy Postęp"
 
 #: includes/wcs_init.php:172
 msgctxt "page title"
@@ -1302,30 +1453,40 @@ msgctxt "page title"
 msgid "All Teachers"
 msgstr "Wszyscy pedagodzy"
 
+#: includes/wcs_utils.php:404
+msgctxt "page title"
+msgid "Duplicate Journal"
+msgstr "Powiel dziennik"
+
 #: includes/wcs_utils.php:394
 msgctxt "page title"
 msgid "Duplicate Lesson"
 msgstr "Kopiuj lekcję"
 
-#: includes/wcs_utils.php:404
+#: includes/wcs_utils.php:414
 msgctxt "page title"
-msgid "Duplicate Report"
-msgstr "Powiel raport"
+msgid "Duplicate Progress"
+msgstr "Kopiuj Progres"
 
 #: includes/wcs_init.php:240
 msgctxt "page title"
 msgid "Edit Classroom"
 msgstr "Edytuj salę"
 
+#: includes/wcs_utils.php:403
+msgctxt "page title"
+msgid "Edit Journal"
+msgstr "Edytuj dziennik"
+
 #: includes/wcs_utils.php:393
 msgctxt "page title"
 msgid "Edit Lesson"
 msgstr "Edytuj lekcję"
 
-#: includes/wcs_utils.php:403
+#: includes/wcs_utils.php:413
 msgctxt "page title"
-msgid "Edit Report"
-msgstr "Edytuj raport"
+msgid "Edit Progress"
+msgstr "Edytuj Postęp"
 
 #: includes/wcs_init.php:174
 msgctxt "page title"
@@ -1362,22 +1523,22 @@ msgctxt "page title"
 msgid "View Teacher"
 msgstr "Zobacz pedagoga"
 
-#: includes/wcs_settings.php:25 includes/wcs_init.php:233
+#: includes/wcs_init.php:233 includes/classes/WCS_Settings.php:25
 msgctxt "post type general name"
 msgid "Classrooms"
 msgstr "Sale"
 
-#: includes/wcs_settings.php:21 includes/wcs_init.php:167
+#: includes/wcs_init.php:167 includes/classes/WCS_Settings.php:21
 msgctxt "post type general name"
 msgid "Students"
 msgstr "Uczniowie"
 
-#: includes/wcs_settings.php:13 includes/wcs_init.php:39
+#: includes/wcs_init.php:39 includes/classes/WCS_Settings.php:13
 msgctxt "post type general name"
 msgid "Subjects"
 msgstr "Przedmioty"
 
-#: includes/wcs_settings.php:17 includes/wcs_init.php:105
+#: includes/wcs_init.php:105 includes/classes/WCS_Settings.php:17
 msgctxt "post type general name"
 msgid "Teachers"
 msgstr "Pedagodzy"
@@ -1402,130 +1563,135 @@ msgctxt "post type singular name"
 msgid "Teacher"
 msgstr "Pedagog"
 
-#: includes/template/report_html.php:12
-msgid "Report"
-msgstr "Raport"
+#: includes/wcs_init.php:336
+#: includes/classes/template/progress/export.html.php:12
+#: includes/classes/template/progress/export_single.html.php:14
+msgid "Progress"
+msgstr "Postęp"
 
-#: includes/wcs_report.php:1047
-msgid "Report entry added successfully"
-msgstr "Pomyślnie dodano nowy raport"
+#: includes/classes/WCS_Progress.php:534
+msgid "Progress entry added successfully"
+msgstr "Pomyślnie dodano nowy postęp"
 
-#: includes/wcs_report.php:1144
-msgid "Report entry deleted successfully"
-msgstr "Pomyślnie usunięto raport"
+#: includes/classes/WCS_Progress.php:639
+msgid "Progress entry deleted successfully"
+msgstr "Pomyślnie usunięto postęp"
 
-#: includes/wcs_report.php:1024
-msgid "Report entry updated successfully"
-msgstr "Pomyślnie zaktualizowano raport"
+#: includes/classes/WCS_Progress.php:515
+msgid "Progress entry updated successfully"
+msgstr "Pomyślnie zaktualizowano postęp"
 
-#: includes/template/report_html_heading.php:11
-#, php-format
-msgctxt "report template"
-msgid "by %s teacher"
-msgstr "przez %s"
+#: includes/wcs_admin_hooks.php:65 includes/wcs_admin_hooks.php:66
+#: includes/wcs_content.php:120
+msgid "Progresses"
+msgstr "Postępy"
 
-#: includes/template/report_html_heading.php:17
-#, php-format
-msgctxt "report template"
-msgid "for %s student"
-msgstr "dla %s"
+#: includes/classes/settings/progress.php:10
+msgid "Progresses Settings"
+msgstr "Ustawienia Postępów"
 
-#: includes/template/report_html_heading.php:5
-#, php-format
-msgctxt "report template"
-msgid "of %s subject"
-msgstr "z przedmiotu %s"
-
-#: includes/wcs_settings.php:552 includes/wcs_admin.php:47
-#: includes/wcs_admin.php:48 includes/wcs_content.php:51
-#: includes/wcs_init.php:328
-msgid "Reports"
-msgstr "Raporty"
-
-#: includes/wcs_utils.php:411
+#: includes/wcs_utils.php:421
 msgctxt "reset database"
 msgid "Are you sure you want to to this?"
 msgstr "Czy na pewno chcesz to wykonać?"
 
-#: includes/wcs_settings.php:1084
+#: includes/classes/WCS_Settings.php:205
 msgctxt "reset database"
 msgid "Clear everything"
 msgstr "🗑Wyczyść wszystko"
 
-#: includes/wcs_settings.php:1078
+#: includes/classes/WCS_Settings.php:199
 msgctxt "reset database"
-msgid "Clear report"
-msgstr "⏱Wyczyść raporty"
+msgid "Clear journal"
+msgstr "⏱Wyczyść dzienniki"
 
-#: includes/wcs_settings.php:1075
+#: includes/classes/WCS_Settings.php:196
 msgctxt "reset database"
 msgid "Clear schedule"
 msgstr "🗓Wyczyść plan zajęć"
 
-#: includes/wcs_settings.php:1060
+#: includes/classes/WCS_Settings.php:181
 msgctxt "reset database"
 msgid "Click the link below to clear the schedule or reset the settings"
 msgstr ""
 "Kliknij poniższy link, aby wyczyścić harmonogram lub zresetować ustawienia"
 
-#: includes/wcs_settings.php:1068
+#: includes/classes/WCS_Settings.php:189
 msgctxt "reset database"
 msgid "Create DB schema"
 msgstr "🆙Utwórz schemat bazy danych"
 
-#: includes/wcs_settings.php:1071
+#: includes/classes/WCS_Settings.php:192
 msgctxt "reset database"
 msgid "Install example data"
 msgstr "🔡Zainstaluj dane przykładowe"
 
-#: includes/wcs_settings.php:1081
+#: includes/classes/WCS_Settings.php:202
 msgctxt "reset database"
 msgid "Reset settings"
 msgstr "⚙️Zresetuj ustawienia"
 
-#: includes/wcs_report.php:322 includes/wcs_schedule.php:212
+#: includes/classes/template/journal/admin_search.php:60
+#: includes/classes/template/schedule/admin_search.php:50
+#: includes/classes/template/progress/admin_search.php:69
 msgid "Reset form"
 msgstr "Resetuj"
 
-#: includes/wcs_settings.php:308 includes/wcs_admin.php:37
-#: includes/wcs_content.php:32 includes/wcs_init.php:318
+#: includes/wcs_admin_hooks.php:46 includes/wcs_content.php:70
+#: includes/wcs_init.php:318
 msgid "Schedule"
 msgstr "Plan zajęć"
 
-#: includes/wcs_schedule.php:934
+#: includes/classes/WCS_Schedule.php:495
 msgid "Schedule entry added successfully"
 msgstr "Pomyślnie dodano nową lekcję"
 
-#: includes/wcs_schedule.php:1033
+#: includes/classes/WCS_Schedule.php:590
 msgid "Schedule entry deleted successfully"
 msgstr "Pomyślnie usunięto lekcję"
 
-#: includes/wcs_schedule.php:906
+#: includes/classes/WCS_Schedule.php:467
 msgid "Schedule entry updated successfully"
 msgstr "Pomyślnie zaktualizowano lekcję"
 
-#: includes/wcs_schedule.php:1083
+#: includes/classes/WCS_Schedule.php:640
 msgid "Schedule entry visibility toggled successfully"
 msgstr "Widoczność wpisu harmonogramu została pomyślnie włączona"
 
-#: includes/wcs_admin.php:672
+#: includes/classes/WCS_Admin.php:199
 msgctxt "Schedule layout as list"
 msgid "List"
 msgstr "Lista"
 
-#: includes/wcs_admin.php:670
-msgctxt "Schedule layout as none"
-msgid "Do not display"
-msgstr "Nie wyświetlaj"
-
-#: includes/wcs_admin.php:671
+#: includes/classes/WCS_Admin.php:198
 msgctxt "Schedule layout as table"
 msgid "Table"
 msgstr "Tabela"
 
-#: includes/wcs_admin.php:36
+#: includes/wcs_admin_hooks.php:45
 msgid "Schedule Management"
 msgstr "Zarządzanie planem zajęć"
+
+#: includes/classes/settings/schedule.php:9
+msgid "Schedule Settings"
+msgstr "Ustawienia Harmonogramu"
+
+#: includes/classes/WCS_Admin.php:216
+msgctxt "Schedule type as full"
+msgid "Periodic"
+msgstr "Okresowy"
+
+#: includes/classes/WCS_Admin.php:214
+#| msgctxt "Schedule mode as none"
+#| msgid "Select mode"
+msgctxt "Schedule type as none"
+msgid "Select type"
+msgstr "Wybierz rodzaj"
+
+#: includes/classes/WCS_Admin.php:215
+msgctxt "Schedule type as partial"
+msgid "Partial"
+msgstr "Częściowy"
 
 #: includes/wcs_init.php:25
 msgid "Search Branches"
@@ -1539,7 +1705,11 @@ msgstr "Szukaj sali"
 msgid "Search Groups"
 msgstr "Szukaj grupy"
 
-#: includes/wcs_schedule.php:207
+#: includes/classes/template/journal/admin_search.php:53
+msgid "Search journals"
+msgstr "Szukaj dzienników"
+
+#: includes/classes/template/schedule/admin_search.php:45
 msgid "Search lessons"
 msgstr "Szukaj lekcji"
 
@@ -1547,9 +1717,10 @@ msgstr "Szukaj lekcji"
 msgid "Search Locations"
 msgstr "Szukaj lokalizacji"
 
-#: includes/wcs_report.php:316
-msgid "Search reports"
-msgstr "Szukaj raportów"
+#: includes/classes/template/progress/admin_search.php:62
+#| msgid "Search progresses"
+msgid "Search Progresses"
+msgstr "Szukaj postępów"
 
 #: includes/wcs_init.php:90
 msgid "Search Specializations"
@@ -1587,58 +1758,86 @@ msgstr "Oddziel specjalizacje za pomocą przecinka"
 msgid "Specializations"
 msgstr "Specjalizacje"
 
-#: includes/wcs_admin.php:56 includes/wcs_admin.php:57
+#: includes/wcs_admin_hooks.php:74 includes/wcs_admin_hooks.php:75
 msgid "Standard Options"
 msgstr "Konfiguracja"
 
-#: includes/wcs_report.php:530 includes/wcs_schedule.php:361
+#: includes/classes/template/journal/admin_table.php:40
+#: includes/classes/template/schedule/admin_table.php:23
+#: includes/classes/template/progress/admin_table.php:41
 msgid "Start"
 msgstr "Początek"
 
-#: includes/wcs_report.php:129 includes/wcs_report.php:444
-#: includes/wcs_report.php:871 includes/wcs_schedule.php:289
-#: includes/wcs_schedule.php:725
+#: includes/classes/WCS_Progress.php:428
+#: includes/classes/template/progress/admin_form.php:95
+msgid "Start date"
+msgstr "Data początkowa"
+
+#: includes/classes/WCS_Schedule.php:286 includes/classes/WCS_Journal.php:399
+#: includes/classes/template/journal/shortcode_form.php:88
+#: includes/classes/template/journal/admin_form.php:88
+#: includes/classes/template/schedule/admin_form.php:65
 msgid "Start Time"
 msgstr "Początek"
 
-#: includes/wcs_report.php:133 includes/wcs_report.php:288
-#: includes/wcs_report.php:412 includes/wcs_report.php:545
-#: includes/wcs_report.php:643 includes/wcs_report.php:869
-#: includes/wcs_schedule.php:143 includes/wcs_schedule.php:187
-#: includes/wcs_schedule.php:257 includes/wcs_schedule.php:374
-#: includes/wcs_schedule.php:498 includes/wcs_schedule.php:722
+#: includes/classes/WCS_Schedule.php:105 includes/classes/WCS_Schedule.php:283
+#: includes/classes/WCS_Journal.php:397 includes/classes/WCS_Progress.php:418
+#: includes/classes/template/journal/shortcode_form.php:56
+#: includes/classes/template/journal/admin_table.php:55
+#: includes/classes/template/journal/admin_table.php:153
+#: includes/classes/template/journal/admin_search.php:24
+#: includes/classes/template/journal/admin_form.php:56
+#: includes/classes/template/schedule/admin_form.php:33
+#: includes/classes/template/schedule/admin_search.php:24
+#: includes/classes/template/schedule/admin_table.php:36
+#: includes/classes/template/schedule/admin_table.php:160
+#: includes/classes/template/progress/admin_table.php:56
+#: includes/classes/template/progress/admin_table.php:202
+#: includes/classes/template/progress/shortcode_form.php:64
+#: includes/classes/template/progress/admin_form.php:74
+#: includes/classes/template/progress/admin_search.php:24
 msgid "Student"
 msgstr "Uczeń"
 
-#: includes/wcs_report.php:954 includes/wcs_schedule.php:829
+#: includes/classes/WCS_Schedule.php:390 includes/classes/WCS_Journal.php:474
 msgid "Student is not available at this time"
 msgstr "Uczeń jest w tej chwili niedostępny"
 
-#: includes/wcs_report.php:131 includes/wcs_report.php:270
-#: includes/wcs_report.php:366 includes/wcs_report.php:537
-#: includes/wcs_report.php:619 includes/wcs_report.php:867
-#: includes/wcs_schedule.php:169 includes/wcs_schedule.php:232
-#: includes/wcs_schedule.php:366 includes/wcs_schedule.php:474
-#: includes/wcs_schedule.php:720
+#: includes/classes/WCS_Schedule.php:281 includes/classes/WCS_Journal.php:395
+#: includes/classes/WCS_Progress.php:423
+#: includes/classes/template/journal/shortcode_form.php:10
+#: includes/classes/template/journal/admin_table.php:47
+#: includes/classes/template/journal/admin_table.php:129
+#: includes/classes/template/journal/admin_search.php:6
+#: includes/classes/template/journal/admin_form.php:10
+#: includes/classes/template/schedule/admin_form.php:8
+#: includes/classes/template/schedule/admin_search.php:6
+#: includes/classes/template/schedule/admin_table.php:28
+#: includes/classes/template/schedule/admin_table.php:136
+#: includes/classes/template/progress/admin_table.php:48
+#: includes/classes/template/progress/admin_table.php:171
+#: includes/classes/template/progress/shortcode_form.php:18
+#: includes/classes/template/progress/admin_form.php:28
+#: includes/classes/template/progress/admin_search.php:6
 msgid "Subject"
 msgstr "Przedmiot"
 
-#: includes/wcs_settings.php:12 includes/wcs_init.php:13
+#: includes/wcs_init.php:13 includes/classes/WCS_Settings.php:12
 msgctxt "taxonomy general name"
 msgid "Branches"
 msgstr "Dziedziny"
 
-#: includes/wcs_settings.php:20 includes/wcs_init.php:141
+#: includes/wcs_init.php:141 includes/classes/WCS_Settings.php:20
 msgctxt "taxonomy general name"
 msgid "Groups"
 msgstr "Grupy"
 
-#: includes/wcs_settings.php:24 includes/wcs_init.php:206
+#: includes/wcs_init.php:206 includes/classes/WCS_Settings.php:24
 msgctxt "taxonomy general name"
 msgid "Locations"
 msgstr "Lokalizacje"
 
-#: includes/wcs_settings.php:16 includes/wcs_init.php:78
+#: includes/wcs_init.php:78 includes/classes/WCS_Settings.php:16
 msgctxt "taxonomy general name"
 msgid "Specializations"
 msgstr "Specjalizacje"
@@ -1663,42 +1862,202 @@ msgctxt "taxonomy singular name"
 msgid "Specialization"
 msgstr "Specjalizacja"
 
-#: includes/wcs_report.php:132 includes/wcs_report.php:279
-#: includes/wcs_report.php:389 includes/wcs_report.php:541
-#: includes/wcs_report.php:627 includes/wcs_report.php:868
-#: includes/wcs_schedule.php:141 includes/wcs_schedule.php:178
-#: includes/wcs_schedule.php:244 includes/wcs_schedule.php:370
-#: includes/wcs_schedule.php:482 includes/wcs_schedule.php:721
+#: includes/classes/WCS_Schedule.php:103 includes/classes/WCS_Schedule.php:282
+#: includes/classes/WCS_Journal.php:396 includes/classes/WCS_Progress.php:417
+#: includes/classes/template/journal/shortcode_form.php:33
+#: includes/classes/template/journal/admin_table.php:51
+#: includes/classes/template/journal/admin_table.php:137
+#: includes/classes/template/journal/admin_search.php:15
+#: includes/classes/template/journal/admin_form.php:33
+#: includes/classes/template/schedule/admin_form.php:20
+#: includes/classes/template/schedule/admin_search.php:15
+#: includes/classes/template/schedule/admin_table.php:32
+#: includes/classes/template/schedule/admin_table.php:144
+#: includes/classes/template/progress/admin_table.php:52
+#: includes/classes/template/progress/admin_table.php:186
+#: includes/classes/template/progress/shortcode_form.php:41
+#: includes/classes/template/progress/admin_form.php:51
+#: includes/classes/template/progress/admin_search.php:15
 msgid "Teacher"
 msgstr "Pedagog"
 
-#: includes/wcs_report.php:951 includes/wcs_schedule.php:806
+#: includes/classes/WCS_Schedule.php:367 includes/classes/WCS_Journal.php:471
 msgid "Teacher is not available at this time"
 msgstr "Pedagog jest w tej chwili niedostępny"
 
-#: includes/wcs_report.php:134 includes/wcs_report.php:465
-#: includes/wcs_report.php:549 includes/wcs_report.php:659
-#: includes/wcs_report.php:873
+#: includes/classes/WCS_Settings.php:434
+msgctxt "template journal for student"
+msgid ""
+"{subject link} with {teacher link} from {start time} to {end time} {topic}"
+msgstr ""
+"<strong><small>{start time}-{end time}</small></strong>\n"
+"{subject link} przez {teacher link} {topic}"
+
+#: includes/classes/WCS_Settings.php:368
+#| msgid ""
+#| "<small>{start time}-{end time}</small><br>{teacher link} at for {student "
+#| "link} {topic}"
+msgctxt "template journal for subject"
+msgid ""
+"<small>{start time}-{end time}</small><br>{teacher link} at {classroom link} "
+"for {student link} {topic}"
+msgstr "{teacher link}: {subject link} od {start time} do {end time} {topic}"
+
+#: includes/classes/WCS_Settings.php:401
+msgctxt "template journal for teacher"
+msgid ""
+"<small>{start time}-{end time}</small><br>{subject link} for {student link} "
+"{topic}"
+msgstr ""
+"<small>{start time}-{end time}</small><br>{subject link} dla {student link} "
+"{topic}"
+
+#: includes/classes/WCS_Settings.php:460
+msgctxt "template list for classroom"
+msgid ""
+"{subject link} with {teacher link} from {start time} to {end time} for "
+"{student link} {notes}"
+msgstr ""
+"{subject link} z {teacher link} od {start time} do {end time} dla {student "
+"link} {notes}"
+
+#: includes/classes/WCS_Settings.php:306
+msgctxt "template progress for student"
+msgid ""
+"<small>{start date} - {end date}</small><br>{subject link} with {teacher "
+"link}<br>improvements: {improvements}<br>indications: {indications}"
+msgstr ""
+"<small>{start date} - {end date}</small>\n"
+"{subject link} przez {teacher link}\n"
+"postęp: {improvements}\n"
+"wskazania: {indications}"
+
+#: includes/classes/WCS_Settings.php:301
+msgctxt "template progress for student"
+msgid ""
+"{subject link} with {teacher link}<br>improvements: {improvements}<br>"
+"indications: {indications}"
+msgstr ""
+"{subject link} z {teacher link}<br>postępy: {improvements}<br>wskazania do "
+"dalszej terapii: {indications}"
+
+#: includes/classes/WCS_Settings.php:427
+msgctxt "template schedule for student"
+msgid ""
+"{subject link} with {teacher link} at {classroom link} from {start time} to "
+"{end time} {notes}"
+msgstr ""
+"{subject link} z {teacher link} w {classroom link} od {start time} do {end "
+"time} {notes}wszystkich"
+
+#: includes/classes/WCS_Settings.php:361
+msgctxt "template schedule for subject"
+msgid ""
+"<small>{start time}-{end time}</small><br>{teacher link} at {classroom link} "
+"for {student link} {notes}"
+msgstr ""
+"<small>{start time}-{end time}</small><br>{teacher link} w {classroom link} "
+"dla {student link} {notes}"
+
+#: includes/classes/WCS_Settings.php:394
+msgctxt "template schedule for teacher"
+msgid ""
+"<small>{start time}-{end time}</small><br>{subject link} at {classroom link} "
+"for {student link} {notes}"
+msgstr ""
+"<small>{start time}-{end time}</small><br>{subject link} w {classroom link} "
+"dla {student link} {notes}"
+
+#: includes/classes/WCS_Settings.php:455
+msgctxt "template table details for classroom"
+msgid ""
+"<small>{start time}-{end time}</small><br>{subject link} with {teacher link} "
+"for {student link} {notes}"
+msgstr ""
+"<small>{start time}-{end time}</small><br>{subject link} z {teacher link} "
+"dla {student link} {notes}"
+
+#: includes/classes/WCS_Settings.php:422
+msgctxt "template table details for student"
+msgid ""
+"<small>{start time}-{end time}</small><br>{subject link} with {teacher link} "
+"at {classroom link}"
+msgstr ""
+"<small>{start time}-{end time}</small><br>{subject link} z {teacher link} w "
+"{classroom link} {notes}"
+
+#: includes/classes/WCS_Settings.php:356
+msgctxt "template table details for subject"
+msgid ""
+"<small>{start time}-{end time}</small><br>{teacher link} at {classroom link} "
+"for {student link} {notes}"
+msgstr ""
+"<small>{start time}-{end time}</small><br>{teacher link} w {classroom link} "
+"dla {student link} {notes}"
+
+#: includes/classes/WCS_Settings.php:389
+msgctxt "template table details for teacher"
+msgid ""
+"<small>{start time}-{end time}</small><br>{subject link} at {classroom link} "
+"for {student link} {notes}"
+msgstr ""
+"<small>{start time}-{end time}</small><br>{subject link} w {classroom link} "
+"dla {student link} {notes}"
+
+#: includes/classes/WCS_Settings.php:450
+msgctxt "template table short for classroom"
+msgid "<small>{start time}-{end time}</small><br>{subject} ({tea}/{stu})"
+msgstr "<small>{start time}-{end time}</small><br>{subject} ({tea}/{stu})"
+
+#: includes/classes/WCS_Settings.php:417
+msgctxt "template table short for student"
+msgid "<small>{start time}-{end time}</small><br>{subject} ({tea}) @{class}"
+msgstr "<small>{start time}-{end time}</small><br>{subject} ({tea}) @{class}"
+
+#: includes/classes/WCS_Settings.php:351
+msgctxt "template table short for subject"
+msgid "<small>{start time}-{end time}</small><br>{tea}/{stu} @{class}"
+msgstr ""
+"<small>{start time}-{end time}</small><br>{tea}/{stu} @{class}wszystkich"
+
+#: includes/classes/WCS_Settings.php:384
+msgctxt "template table short for teacher"
+msgid "<small>{start time}-{end time}</small><br>{subject} @{class} ({stu})"
+msgstr ""
+"<small>{start time}-{end time}</small><br>{subject} @{class} ({stu})"
+"wszystkich"
+
+#: includes/classes/WCS_Journal.php:401
+#: includes/classes/template/journal/shortcode_form.php:109
+#: includes/classes/template/journal/admin_table.php:59
+#: includes/classes/template/journal/admin_table.php:169
+#: includes/classes/template/journal/admin_form.php:109
 msgid "Topic"
 msgstr "Temat"
 
-#: includes/wcs_shortcode.php:64
+#: includes/classes/WCS_Progress.php:426
+#: includes/classes/template/progress/admin_table.php:40
+#: includes/classes/template/progress/admin_form.php:16
+#: includes/classes/template/progress/admin_search.php:49
+msgid "Type"
+msgstr "Rodzaj"
+
+#: includes/wcs_shortcode.php:62
 msgid "Unsupported layout"
 msgstr "Nieobsługiwany układ"
 
-#: includes/wcs_report.php:137 includes/wcs_report.php:664
-#: includes/wcs_schedule.php:528
+#: includes/classes/template/journal/admin_table.php:174
+#: includes/classes/template/schedule/admin_table.php:190
+#: includes/classes/template/progress/admin_table.php:220
 msgid "Updated at"
 msgstr "Zaktualizowano"
 
-#: includes/wcs_report.php:669 includes/wcs_schedule.php:533
+#: includes/classes/template/journal/admin_table.php:179
+#: includes/classes/template/schedule/admin_table.php:195
+#: includes/classes/template/progress/admin_table.php:225
 #, php-format
 msgid "Updated at %s by %s"
 msgstr "Zaktualizowano %s przez %s"
-
-#: includes/wcs_report.php:138
-msgid "Updated by"
-msgstr "Zaktualizowane przez"
 
 #: includes/wcs_utils.php:33
 #, php-format
@@ -1706,41 +2065,44 @@ msgctxt "validation"
 msgid "Field \"%s\" is required"
 msgstr "Pole \"%s\" jest wymagane"
 
-#: includes/wcs_schedule.php:310 includes/wcs_schedule.php:358
+#: includes/classes/template/schedule/admin_form.php:86
+#: includes/classes/template/schedule/admin_table.php:20
 msgid "Visibility"
 msgstr "Widoczność"
 
-#: includes/wcs_admin.php:707
+#: includes/classes/WCS_Admin.php:253
 msgctxt "visibility"
 msgid "Hidden"
 msgstr "Ukryte"
 
-#: includes/wcs_admin.php:706
+#: includes/classes/WCS_Admin.php:252
 msgctxt "visibility"
 msgid "Visible"
 msgstr "Widoczne"
 
-#: includes/wcs_schedule.php:727 includes/db/entity_lesson.php:68
+#: includes/classes/WCS_Schedule.php:288
+#: includes/classes/db/WCS_DB_Lesson_Item.php:76
 msgid "Visible"
 msgstr "Widoczne"
 
-#: includes/wcs_schedule.php:283 includes/wcs_schedule.php:724
+#: includes/classes/WCS_Schedule.php:285
+#: includes/classes/template/schedule/admin_form.php:59
 msgid "Weekday"
 msgstr "Dzień"
 
-#: includes/wcs_db.php:437
-msgid "Weekly Class Report truncated successfully."
-msgstr "Raporty zostały wyczyszczone"
+#: includes/classes/WCS_DB.php:483
+msgid "Weekly Class Journal truncated successfully."
+msgstr "Dzienniki zostały wyczyszczone"
 
 #. Name of the plugin
 msgid "Weekly Class Schedule"
 msgstr "Tygodniowy harmonogram zajęć"
 
-#: includes/wcs_db.php:380
+#: includes/classes/WCS_DB.php:426
 msgid "Weekly Class Schedule deleted successfully."
 msgstr "Tygodniowy harmonogram zajęć został pomyślnie usunięty."
 
-#: includes/wcs_db.php:361
+#: includes/classes/WCS_DB.php:407
 msgid "Weekly Class Schedule example data loaded successfully."
 msgstr "Przykładowe dane dla zostały pomyślnie zaimportowane."
 
@@ -1754,76 +2116,80 @@ msgstr ""
 "łatwy sposób zarządzania i aktualizowania harmonogramu oraz bazy danych "
 "przedmiotów, nauczycieli, uczniów i klas."
 
-#: includes/wcs_db.php:342
+#: includes/classes/WCS_DB.php:388
 msgid "Weekly Class Schedule installed successfully."
 msgstr "Tygodniowy harmonogram zajęć został pomyślnie zainstalowany."
 
-#: includes/wcs_db.php:399
+#: includes/classes/WCS_DB.php:445
 msgid "Weekly Class Schedule settings resetted."
 msgstr "Ustawienia harmonogramu zajęć tygodniowych zostały zresetowane."
 
-#: includes/wcs_db.php:418
+#: includes/classes/WCS_DB.php:464
 msgid "Weekly Class Schedule truncated successfully."
 msgstr "Tygodniowy harmonogram zajęć został pomyślnie wyczyszcony."
 
-#: includes/wcs_widgets.php:101
+#: includes/classes/WCS4_TodayClassesWidget.php:126
 msgctxt "widget settings"
 msgid "Classrooms to display"
 msgstr "Sale do wyświetlenia"
 
-#: includes/wcs_widgets.php:95
+#: includes/classes/WCS4_TodayClassesWidget.php:114
 msgctxt "widget settings"
 msgid "Maximum lessons to display"
 msgstr "Liczba lekcji"
 
-#: includes/wcs_widgets.php:97
+#: includes/classes/WCS4_TodayClassesWidget.php:120
 msgctxt "widget settings"
 msgid "Maximum number of lessons to display on list"
 msgstr "Maksymalna liczba lekcji do pokazania na liście"
 
-#: includes/wcs_widgets.php:106
+#: includes/classes/WCS4_TodayClassesWidget.php:142
 msgctxt "widget settings"
 msgid "No entries message"
 msgstr "Napis, gdy brak zajęć"
 
-#: includes/wcs_widgets.php:51 includes/wcs_widgets.php:84
+#: includes/classes/WCS4_TodayClassesWidget.php:51
+#: includes/classes/WCS4_TodayClassesWidget.php:88
 msgctxt "widget settings"
 msgid "No lessons today"
 msgstr "Brak zajęć dzisiaj"
 
-#: includes/wcs_widgets.php:111
+#: includes/classes/WCS4_TodayClassesWidget.php:152
 msgctxt "widget settings"
 msgid "Template"
 msgstr "Szablon"
 
-#: includes/wcs_widgets.php:90
+#: includes/classes/WCS4_TodayClassesWidget.php:104
 msgctxt "widget settings"
 msgid "Title"
 msgstr "Tytuł"
 
-#: includes/wcs_widgets.php:81
+#: includes/classes/WCS4_TodayClassesWidget.php:85
 msgctxt "widget settings"
 msgid "Today's Classes"
 msgstr "Dzisiejsze zajęcia"
 
 #. # Base ID
-#: includes/wcs_widgets.php:19
+#: includes/classes/WCS4_TodayClassesWidget.php:19
 msgctxt "widget settings"
 msgid "WCS Today's Classes"
 msgstr "WCS Dzisiejsze zajęcia"
 
-#: includes/wcs_widgets.php:85
+#: includes/classes/WCS4_TodayClassesWidget.php:93
 #| msgid "{start hour}: {subject link} @{classroom link}"
 msgctxt "widget template"
 msgid "{start time}: {subject link} @{classroom link}"
 msgstr "{start hour}: {subject link} @{classroom link}"
 
-#: includes/wcs_db.php:337 includes/wcs_db.php:356 includes/wcs_db.php:375
-#: includes/wcs_db.php:394 includes/wcs_db.php:413 includes/wcs_db.php:432
-#: includes/wcs_report.php:849 includes/wcs_report.php:1070
-#: includes/wcs_report.php:1119 includes/wcs_report.php:1158
-#: includes/wcs_schedule.php:702 includes/wcs_schedule.php:957
-#: includes/wcs_schedule.php:1007 includes/wcs_schedule.php:1050
-#: includes/wcs_schedule.php:1099
+#: includes/classes/WCS_DB.php:383 includes/classes/WCS_DB.php:402
+#: includes/classes/WCS_DB.php:421 includes/classes/WCS_DB.php:440
+#: includes/classes/WCS_DB.php:459 includes/classes/WCS_DB.php:478
+#: includes/classes/WCS_Schedule.php:263 includes/classes/WCS_Schedule.php:518
+#: includes/classes/WCS_Schedule.php:564 includes/classes/WCS_Schedule.php:607
+#: includes/classes/WCS_Schedule.php:656 includes/classes/WCS_Journal.php:369
+#: includes/classes/WCS_Journal.php:590 includes/classes/WCS_Journal.php:635
+#: includes/classes/WCS_Journal.php:674 includes/classes/WCS_Progress.php:391
+#: includes/classes/WCS_Progress.php:557 includes/classes/WCS_Progress.php:616
+#: includes/classes/WCS_Progress.php:653
 msgid "You are no allowed to run this action"
 msgstr "Nie masz uprawnień do wykonania tej akcji"

@@ -33,7 +33,8 @@ class WCS_DB_Item
                 $this->permalink = null;
             }
             if (!empty($this->description)) {
-                $this->info = '<span class="wcs4-qtip-box"><a href="#qtip" class="wcs4-qtip">' . $this->name . '</a><span class="wcs4-qtip-data">' . $this->getDescription() . '</span></span>';
+                $this->info = '<span class="wcs4-qtip-box"><a href="#qtip" class="wcs4-qtip">' . $this->name . '</a><span class="wcs4-qtip-data">' . $this->getDescription(
+                    ) . '</span></span>';
             } else {
                 $this->info = $this->getName();
             }

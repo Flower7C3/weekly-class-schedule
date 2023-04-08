@@ -18,12 +18,12 @@
             var select_id = $(this).data('select-id');
             var value = $(this).data('option-val');
             $('#' + select_id).val(value).change();
-            $('.results-filter').submit();
+            $('.results-filter .button-primary').click();
         });
         $(document).on('click.wcs-filter-reset', '.results-filter [type=reset]', function (e) {
             $('.results-filter select option:selected').attr('selected', false);
             setTimeout(function () {
-                $('.results-filter').submit();
+                $('.results-filter .button-primary').click();
             }, 500);
         });
     }
@@ -42,6 +42,7 @@
             $('#wcs4-management-form-wrapper form').one('change.reset', function () {
                 $('#wcs4-reset-form').show();
             });
+            $(this).closest('form').find('input,select').change();
         });
         $('#wcs4-management-form-wrapper form').one('change.reset', function () {
             $('#wcs4-reset-form').show();
@@ -90,7 +91,7 @@
 
 
     var load_editor = function () {
-        if ($('.css_editor').length) {
+        if ($('.code_editor').length) {
             var editorSettings = wp.codeEditor.defaultSettings ? _.clone(wp.codeEditor.defaultSettings) : {};
             editorSettings.codemirror = _.extend(
                 {},
@@ -101,7 +102,9 @@
                     mode: 'css',
                 }
             );
-            var editor = wp.codeEditor.initialize($('.css_editor'), editorSettings);
+            $('.code_editor').each(function (k, v) {
+                wp.codeEditor.initialize($('.code_editor:eq('+k+')'), editorSettings);
+            });
         }
     };
 

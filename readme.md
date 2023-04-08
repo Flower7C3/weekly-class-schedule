@@ -1,7 +1,7 @@
-## Weekly Class Schedule and Report
+## Weekly Class Schedule and Journal
 
 - Contributors: flower7c3, ty_pwd
-- Tags: schedule, weekly schedule, report, subjects, teachers, students, classes, lessons
+- Tags: schedule, weekly schedule, journal, subjects, teachers, students, classes, lessons
 - Requires at least: 4.0
 - Tested up to: 5.8
 - License: GPLv2 or later
@@ -23,6 +23,7 @@ Weekly Class Schedule generates a weekly schedule of subjects using an ultra-sim
 * Supports multiple classrooms/schedules/teachers/students.
 * Switchable "Teacher collision detection", "Student collision detection" and "Classroom collision detection".
 * Display class and teacher details directly on the schedule using qTip2.
+* Allow to add journals and progresses.
 
 ### Installation
 

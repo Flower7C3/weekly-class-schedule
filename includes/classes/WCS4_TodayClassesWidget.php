@@ -47,8 +47,12 @@ class WCS4_TodayClassesWidget extends WP_Widget
         $time = date('H:i:s');
         $classroom_ids = $instance['classroom'] ?: 'all';
         $max_lessons = (int)$instance['max_lessons'];
-        $limit = (is_int($max_lessons)) ? $max_lessons : NULL;
-        $no_entries_msg = ($instance['no_entries_text'] !== '') ? $instance['no_entries_text'] : _x('No lessons today', 'widget settings', 'wcs4');
+        $limit = (is_int($max_lessons)) ? $max_lessons : null;
+        $no_entries_msg = ($instance['no_entries_text'] !== '') ? $instance['no_entries_text'] : _x(
+            'No lessons today',
+            'widget settings',
+            'wcs4'
+        );
         $template = $instance['template'];
 
         $lessons = WCS_Schedule::get_items($classroom_ids, 'all', 'all', 'all', $today, $time, 1, $limit);
@@ -81,35 +85,75 @@ class WCS4_TodayClassesWidget extends WP_Widget
         $title = (isset($instance['title'])) ? $instance['title'] : _x("Today's Classes", 'widget settings', 'wcs4');
         $max_lessons = (isset($instance['max_lessons'])) ? $instance['max_lessons'] : 5;
         $classroom = (isset($instance['classroom'])) ? $instance['classroom'] : 'all';
-        $no_entries_text = (isset($instance['no_entries_text'])) ? $instance['no_entries_text'] : _x('No lessons today', 'widget settings', 'wcs4');
-        $template = (isset($instance['template'])) ? $instance['template'] : _x('{start time}: {subject link} @{classroom link}', 'widget template', 'wcs4');
+        $no_entries_text = (isset($instance['no_entries_text'])) ? $instance['no_entries_text'] : _x(
+            'No lessons today',
+            'widget settings',
+            'wcs4'
+        );
+        $template = (isset($instance['template'])) ? $instance['template'] : _x(
+            '{start time}: {subject link} @{classroom link}',
+            'widget template',
+            'wcs4'
+        );
 
         /* Print Form */
         ?>
         <p>
-            <label for="<?php echo $this->get_field_id('title'); ?>"><?php _ex('Title', 'widget settings', 'wcs4'); ?>:</label>
-            <input class="widefat" id="<?php echo $this->get_field_id('title'); ?>" name="<?php echo $this->get_field_name('title'); ?>" type="text" value="<?php echo esc_attr($title); ?>"/>
+            <label for="<?php
+            echo $this->get_field_id('title'); ?>"><?php
+                _ex('Title', 'widget settings', 'wcs4'); ?>:</label>
+            <input class="widefat" id="<?php
+            echo $this->get_field_id('title'); ?>" name="<?php
+            echo $this->get_field_name('title'); ?>" type="text" value="<?php
+            echo esc_attr($title); ?>"/>
         </p>
 
         <p>
-            <label for="<?php echo $this->get_field_id('max_lessons'); ?>"><?php _ex('Maximum lessons to display', 'widget settings', 'wcs4'); ?>:</label>
-            <input class="widefat" id="<?php echo $this->get_field_id('max_lessons'); ?>" name="<?php echo $this->get_field_name('max_lessons'); ?>" type="text" value="<?php echo esc_attr($max_lessons); ?>"/>
-            <span class='wcs4-description'><?php _ex('Maximum number of lessons to display on list', 'widget settings', 'wcs4'); ?></span>
+            <label for="<?php
+            echo $this->get_field_id('max_lessons'); ?>"><?php
+                _ex('Maximum lessons to display', 'widget settings', 'wcs4'); ?>:</label>
+            <input class="widefat" id="<?php
+            echo $this->get_field_id('max_lessons'); ?>" name="<?php
+            echo $this->get_field_name('max_lessons'); ?>" type="text" value="<?php
+            echo esc_attr($max_lessons); ?>"/>
+            <span class='wcs4-description'><?php
+                _ex('Maximum number of lessons to display on list', 'widget settings', 'wcs4'); ?></span>
         </p>
 
         <p>
-            <label for="<?php echo $this->get_field_id('classroom'); ?>"><?php _ex('Classrooms to display', 'widget settings', 'wcs4'); ?>:</label>
-            <?php echo WCS_Admin::generate_admin_select_list('classroom', $this->get_field_id('classroom'), $this->get_field_name('classroom') . '[]', $classroom, false, true, 'widefat'); ?>
+            <label for="<?php
+            echo $this->get_field_id('classroom'); ?>"><?php
+                _ex('Classrooms to display', 'widget settings', 'wcs4'); ?>:</label>
+            <?php
+            echo WCS_Admin::generate_admin_select_list(
+                'classroom',
+                $this->get_field_id('classroom'),
+                $this->get_field_name('classroom') . '[]',
+                $classroom,
+                false,
+                true,
+                'widefat'
+            ); ?>
         </p>
 
         <p>
-            <label for="<?php echo $this->get_field_id('no_entries_text'); ?>"><?php _ex('No entries message', 'widget settings', 'wcs4'); ?>:</label>
-            <input class="widefat" id="<?php echo $this->get_field_id('no_entries_text'); ?>" name="<?php echo $this->get_field_name('no_entries_text'); ?>" type="text" value="<?php echo esc_attr($no_entries_text); ?>"/>
+            <label for="<?php
+            echo $this->get_field_id('no_entries_text'); ?>"><?php
+                _ex('No entries message', 'widget settings', 'wcs4'); ?>:</label>
+            <input class="widefat" id="<?php
+            echo $this->get_field_id('no_entries_text'); ?>" name="<?php
+            echo $this->get_field_name('no_entries_text'); ?>" type="text" value="<?php
+            echo esc_attr($no_entries_text); ?>"/>
         </p>
 
         <p>
-            <label for="<?php echo $this->get_field_id('template'); ?>"><?php _ex('Template', 'widget settings', 'wcs4'); ?>:</label>
-            <textarea class="widefat" id="<?php echo $this->get_field_id('template'); ?>" name="<?php echo $this->get_field_name('template'); ?>"><?php echo esc_attr($template); ?></textarea>
+            <label for="<?php
+            echo $this->get_field_id('template'); ?>"><?php
+                _ex('Template', 'widget settings', 'wcs4'); ?>:</label>
+            <textarea class="widefat" id="<?php
+            echo $this->get_field_id('template'); ?>" name="<?php
+            echo $this->get_field_name('template'); ?>"><?php
+                echo esc_attr($template); ?></textarea>
         </p>
         <?php
     }

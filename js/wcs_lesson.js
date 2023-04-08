@@ -18,8 +18,14 @@
      * Handles the search button click event.
      */
     var bind_search_handler = function () {
-        $('#wcs-lessons-filter').submit(function (e) {
+        $(document).on('submit.wcs-lessons-filter', '#wcs-lessons-filter', function (e) {
             e.preventDefault();
+            console.log('form submit')
+            $('#wcs-lessons-search').click();
+        });
+        $(document).on('click.wcs-lessons-search', '#wcs-lessons-search', function (e) {
+            e.preventDefault();
+            console.log('submit click')
             var page = $('#search_wcs4_page').val();
             var classroom = $('#search_wcs4_lesson_classroom_id').val();
             var teacher = $('#search_wcs4_lesson_teacher_id').val();
@@ -55,11 +61,11 @@
             e.preventDefault();
 
             entry = {
-                action: 'add_or_update_schedule_entry',
+                action: 'wcs_add_or_update_schedule_entry',
                 security: WCS4_AJAX_OBJECT.ajax_nonce,
-                subject_id: $('#wcs4_lesson_subject[multiple]').length ? $('#wcs4_lesson_subject option:selected').toArray().map(item => item.value) : $('#wcs4_lesson_subject option:selected').val(),
-                teacher_id: $('#wcs4_lesson_teacher[multiple]').length ? $('#wcs4_lesson_teacher option:selected').toArray().map(item => item.value) : $('#wcs4_lesson_teacher option:selected').val(),
-                student_id: $('#wcs4_lesson_student[multiple]').length ? $('#wcs4_lesson_student option:selected').toArray().map(item => item.value) : $('#wcs4_lesson_student option:selected').val(),
+                subject_id: WCS4_LIB.form_field_value('wcs4_lesson_subject'),
+                teacher_id: WCS4_LIB.form_field_value('wcs4_lesson_teacher'),
+                student_id: WCS4_LIB.form_field_value('wcs4_lesson_student'),
                 classroom_id: $('#wcs4_lesson_classroom[multiple]').length ? $('#wcs4_lesson_classroom option:selected').toArray().map(item => item.value) : $('#wcs4_lesson_classroom option:selected').val(),
                 weekday: $('#wcs4_lesson_weekday option:selected').val(),
                 start_time: $('#wcs4_lesson_start_time').val(),
@@ -93,7 +99,7 @@
     var bind_edit_handler = function () {
         $(document).on('click.wcs4-visibility-lesson-button', '.wcs4-visibility-lesson-button', function (e) {
             var entry = {
-                action: 'toggle_visibility_schedule_entry',
+                action: 'wcs_toggle_visibility_schedule_entry',
                 security: WCS4_AJAX_OBJECT.ajax_nonce,
                 visible: 'true' === $(this).attr('data-visible') ? '0' : '1',
                 row_id: $(this).attr('data-lesson-id')
@@ -131,7 +137,7 @@
     var bind_delete_handler = function () {
         $(document).on('click.wcs4-delete-lesson-button', '.wcs4-delete-lesson-button', function (e) {
             let entry = {
-                action: 'delete_schedule_entry',
+                action: 'wcs_delete_schedule_entry',
                 security: WCS4_AJAX_OBJECT.ajax_nonce,
                 row_id: $(this).attr('data-lesson-id')
             };
@@ -155,7 +161,7 @@
      */
     var reload_html_view = function (classroom, teacher, student, subject, day, action) {
         entry = {
-            action: 'get_day_schedules_html',
+            action: 'wcs_get_day_schedules_html',
             security: WCS4_AJAX_OBJECT.ajax_nonce,
             classroom: classroom ? '#' + classroom : null,
             teacher: teacher ? '#' + teacher : null,

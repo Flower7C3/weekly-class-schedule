@@ -5,7 +5,6 @@
 /**
  * WCS4 Database operations
  */
-
 class WCS_DB
 {
     /**
@@ -26,16 +25,16 @@ class WCS_DB
         $query = "DELETE FROM $table_schedule_student WHERE student_id = %d";
         $wpdb->query($wpdb->prepare($query, array($post_id)));
 
-        $table_report = self::get_report_table_name();
-        $query = "DELETE FROM $table_report WHERE subject_id = %d  OR teacher_id = %d  OR student_id = %d OR classroom_id = %d";
+        $table_journal = self::get_journal_table_name();
+        $query = "DELETE FROM $table_journal WHERE subject_id = %d  OR teacher_id = %d  OR student_id = %d OR classroom_id = %d";
         $wpdb->query($wpdb->prepare($query, array($post_id, $post_id, $post_id, $post_id)));
 
-        $table_report_teacher = self::get_report_teacher_table_name();
-        $query = "DELETE FROM $table_report_teacher WHERE teacher_id = %d ";
+        $table_journal_teacher = self::get_journal_teacher_table_name();
+        $query = "DELETE FROM $table_journal_teacher WHERE teacher_id = %d ";
         $wpdb->query($wpdb->prepare($query, array($post_id)));
 
-        $table_report_student = self::get_report_student_table_name();
-        $query = "DELETE FROM $table_report_student WHERE student_id = %d";
+        $table_journal_student = self::get_journal_student_table_name();
+        $query = "DELETE FROM $table_journal_student WHERE student_id = %d";
         $wpdb->query($wpdb->prepare($query, array($post_id)));
     }
 
@@ -61,22 +60,34 @@ class WCS_DB
         return $wpdb->prefix . 'wcs4_schedule_student';
     }
 
-    public static function get_report_table_name(): string
+    public static function get_journal_table_name(): string
     {
         global $wpdb;
-        return $wpdb->prefix . 'wcs4_report';
+        return $wpdb->prefix . 'wcs4_journal';
     }
 
-    public static function get_report_teacher_table_name(): string
+    public static function get_journal_teacher_table_name(): string
     {
         global $wpdb;
-        return $wpdb->prefix . 'wcs4_report_teacher';
+        return $wpdb->prefix . 'wcs4_journal_teacher';
     }
 
-    public static function get_report_student_table_name(): string
+    public static function get_journal_student_table_name(): string
     {
         global $wpdb;
-        return $wpdb->prefix . 'wcs4_report_student';
+        return $wpdb->prefix . 'wcs4_journal_student';
+    }
+
+    public static function get_progress_table_name(): string
+    {
+        global $wpdb;
+        return $wpdb->prefix . 'wcs4_progress';
+    }
+
+    public static function get_progress_teacher_table_name(): string
+    {
+        global $wpdb;
+        return $wpdb->prefix . 'wcs4_progress_teacher';
     }
 
     /**
@@ -87,9 +98,11 @@ class WCS_DB
         $table_schedule = self::get_schedule_table_name();
         $table_schedule_teacher = self::get_schedule_teacher_table_name();
         $table_schedule_student = self::get_schedule_student_table_name();
-        $table_report = self::get_report_table_name();
-        $table_report_teacher = self::get_report_teacher_table_name();
-        $table_report_student = self::get_report_student_table_name();
+        $table_journal = self::get_journal_table_name();
+        $table_journal_teacher = self::get_journal_teacher_table_name();
+        $table_journal_student = self::get_journal_student_table_name();
+        $table_progress = self::get_progress_table_name();
+        $table_progress_teacher = self::get_progress_teacher_table_name();
 
         $sql_schedule = "CREATE TABLE `$table_schedule` (
             `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
@@ -104,7 +117,7 @@ class WCS_DB
             `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
             `updated_at` DATETIME DEFAULT NULL,
             `created_by` INT NULL,
-            `updated_by` INT NULL;
+            `updated_by` INT NULL,
             PRIMARY KEY (`id`)
         )";
         $sql_schedule_teacher = "CREATE TABLE `$table_schedule_teacher` (
@@ -116,7 +129,7 @@ class WCS_DB
             `student_id` int(20) unsigned NOT NULL
         )";
 
-        $sql_report = "CREATE TABLE `$table_report` (
+        $sql_journal = "CREATE TABLE `$table_journal` (
             `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
             `subject_id` int(20) unsigned NOT NULL,
             `date` date NOT NULL,
@@ -127,25 +140,45 @@ class WCS_DB
             `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
             `updated_at` DATETIME DEFAULT NULL,
             `created_by` INT NULL,
-            `updated_by` INT NULL;
+            `updated_by` INT NULL,
             PRIMARY KEY (`id`)
         )";
-        $sql_report_teacher = "CREATE TABLE `$table_report_teacher` (
+        $sql_journal_teacher = "CREATE TABLE `$table_journal_teacher` (
             `id` int(11) unsigned NOT NULL,
             `teacher_id` int(20) unsigned NOT NULL
         )";
-        $sql_report_student = "CREATE TABLE `$table_report_student` (
+        $sql_journal_student = "CREATE TABLE `$table_journal_student` (
             `id` int(11) unsigned NOT NULL,
             `student_id` int(20) unsigned NOT NULL
+        )";
+        $sql_progress = "CREATE TABLE `$table_progress` (
+            `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+            `subject_id` int(20) unsigned NOT NULL,
+            `student_id` int(20) unsigned NOT NULL,
+            `start_date` date NOT NULL,
+            `end_date` date NOT NULL,
+            `improvements` text,
+            `indications` text,
+            `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            `updated_at` DATETIME DEFAULT NULL,
+            `created_by` INT NULL,
+            `updated_by` INT NULL,
+            PRIMARY KEY (`id`)
+        )";
+        $sql_progress_teacher = "CREATE TABLE `$table_progress_teacher` (
+            `id` int(11) unsigned NOT NULL,
+            `teacher_id` int(20) unsigned NOT NULL
         )";
 
         require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
         dbDelta($sql_schedule);
         dbDelta($sql_schedule_teacher);
         dbDelta($sql_schedule_student);
-        dbDelta($sql_report);
-        dbDelta($sql_report_teacher);
-        dbDelta($sql_report_student);
+        dbDelta($sql_journal);
+        dbDelta($sql_journal_teacher);
+        dbDelta($sql_journal_student);
+        dbDelta($sql_progress);
+        dbDelta($sql_progress_teacher);
         add_option('wcs4_db_version', WCS4_DB_VERSION);
     }
 
@@ -279,9 +312,11 @@ class WCS_DB
         $wpdb->query('DROP TABLE IF EXISTS ' . self::get_schedule_teacher_table_name());
         $wpdb->query('DROP TABLE IF EXISTS ' . self::get_schedule_student_table_name());
         $wpdb->query('DROP TABLE IF EXISTS ' . self::get_schedule_table_name());
-        $wpdb->query('DROP TABLE IF EXISTS ' . self::get_report_teacher_table_name());
-        $wpdb->query('DROP TABLE IF EXISTS ' . self::get_report_student_table_name());
-        $wpdb->query('DROP TABLE IF EXISTS ' . self::get_report_table_name());
+        $wpdb->query('DROP TABLE IF EXISTS ' . self::get_journal_teacher_table_name());
+        $wpdb->query('DROP TABLE IF EXISTS ' . self::get_journal_student_table_name());
+        $wpdb->query('DROP TABLE IF EXISTS ' . self::get_journal_table_name());
+        $wpdb->query('DROP TABLE IF EXISTS ' . self::get_progress_teacher_table_name());
+        $wpdb->query('DROP TABLE IF EXISTS ' . self::get_progress_table_name());
     }
 
     /**
@@ -296,19 +331,19 @@ class WCS_DB
     }
 
     /**
-     * Truncate all the report data
+     * Truncate all the journal data
      */
-    public static function delete_reports(): void
+    public static function delete_journals(): void
     {
         global $wpdb;
-        $wpdb->query('TRUNCATE ' . self::get_report_teacher_table_name());
-        $wpdb->query('TRUNCATE ' . self::get_report_student_table_name());
-        $wpdb->query('TRUNCATE ' . self::get_report_table_name());
+        $wpdb->query('TRUNCATE ' . self::get_journal_teacher_table_name());
+        $wpdb->query('TRUNCATE ' . self::get_journal_student_table_name());
+        $wpdb->query('TRUNCATE ' . self::get_journal_table_name());
     }
 
-    public static function get_item($id)
+    public static function get_item($id): ?WCS_DB_Item
     {
-        if(empty($id)){
+        if (empty($id)) {
             return null;
         }
         global $wpdb;
@@ -323,17 +358,28 @@ class WCS_DB
         $query_arr[] = str_replace('#', '', $id);
         $query = $wpdb->prepare($query, $query_arr);
         $dbrow = $wpdb->get_row($query);
-        if(null === $dbrow){
+        if (null === $dbrow) {
             return null;
         }
         return new WCS_DB_Item($dbrow->item_id, $dbrow->item_name, $dbrow->item_desc);
+    }
+
+    public static function parse_query(array $result): array
+    {
+        $response = [];
+        if ($result) {
+            foreach ($result as $key => $val) {
+                $response[$key] = preg_match('/([,]+)/', $val) ? explode(',', $val) : $val;
+            }
+        }
+        return $response;
     }
 }
 
 /**
  * Handle install schema
  */
-add_action('wp_ajax_create_schema', static function () {
+add_action('wp_ajax_wcs_create_schema', static function () {
     $response = __('You are no allowed to run this action', 'wcs4');
     $status = 'error';
     if (current_user_can(WCS4_ADVANCED_OPTIONS_CAPABILITY)) {
@@ -352,7 +398,7 @@ add_action('wp_ajax_create_schema', static function () {
 /**
  * Handle load example data
  */
-add_action('wp_ajax_load_example_data', static function () {
+add_action('wp_ajax_wcs_load_example_data', static function () {
     $response = __('You are no allowed to run this action', 'wcs4');
     $status = 'error';
     if (current_user_can(WCS4_ADVANCED_OPTIONS_CAPABILITY)) {
@@ -371,7 +417,7 @@ add_action('wp_ajax_load_example_data', static function () {
 /**
  * Handle delete all
  */
-add_action('wp_ajax_delete_everything', static function () {
+add_action('wp_ajax_wcs_delete_everything', static function () {
     $response = __('You are no allowed to run this action', 'wcs4');
     $status = 'error';
     if (current_user_can(WCS4_ADVANCED_OPTIONS_CAPABILITY)) {
@@ -390,7 +436,7 @@ add_action('wp_ajax_delete_everything', static function () {
 /**
  * Handle reset settings
  */
-add_action('wp_ajax_reset_settings', static function () {
+add_action('wp_ajax_wcs_reset_settings', static function () {
     $response = __('You are no allowed to run this action', 'wcs4');
     $status = 'error';
     if (current_user_can(WCS4_ADVANCED_OPTIONS_CAPABILITY)) {
@@ -409,7 +455,7 @@ add_action('wp_ajax_reset_settings', static function () {
 /**
  * Handle clear schedule
  */
-add_action('wp_ajax_clear_schedule', static function () {
+add_action('wp_ajax_wcs_clear_schedule', static function () {
     $response = __('You are no allowed to run this action', 'wcs4');
     $status = 'error';
     if (current_user_can(WCS4_ADVANCED_OPTIONS_CAPABILITY)) {
@@ -426,15 +472,15 @@ add_action('wp_ajax_clear_schedule', static function () {
 });
 
 /**
- * Handle clear report
+ * Handle clear journal
  */
-add_action('wp_ajax_clear_report', static function () {
+add_action('wp_ajax_wcs_clear_journal', static function () {
     $response = __('You are no allowed to run this action', 'wcs4');
     $status = 'error';
     if (current_user_can(WCS4_ADVANCED_OPTIONS_CAPABILITY)) {
         wcs4_verify_nonce();
-        WCS_DB::delete_reports();
-        $response = __('Weekly Class Report truncated successfully.', 'wcs4');
+        WCS_DB::delete_journals();
+        $response = __('Weekly Class Journal truncated successfully.', 'wcs4');
         $status = 'cleared';
     }
     wcs4_json_response([
@@ -449,4 +495,4 @@ add_action('wp_ajax_clear_report', static function () {
  * Delete schedule entries when subject, teacher, student, or classroom gets deleted.
  * @param $post_id
  */
-add_action('delete_post', ['WCS_DB', 'delete_item_when_delete_post'], 10);
+add_action('delete_post', ['classes\WCS_DB', 'delete_item_when_delete_post'], 10);

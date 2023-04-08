@@ -5,29 +5,51 @@
 
     $(document).ready(function () {
         WCS4_LIB.apply_qtip();
-        bind_submit_handler();
+        bind_submit_journal_handler();
+        bind_submit_progress_handler();
     });
     /**
      * Handles the Add Item button click event.
      */
-    var bind_submit_handler = function () {
-        $('.wcs4-submit-report-form').click(function (e) {
+    var bind_submit_journal_handler = function () {
+        $('.wcs4-submit-journal-form').click(function (e) {
             var entry;
             e.preventDefault();
             entry = {
-                action: 'add_or_update_report_entry',
+                action: 'wcs_add_journal_entry',
                 security: WCS4_AJAX_OBJECT.ajax_nonce,
-                subject_id: $('input#wcs4_report_subject').length ? [$('input#wcs4_report_subject').val()] :($('select#wcs4_report_subject[multiple]').length ? $('select#wcs4_report_subject option:selected').toArray().map(item => item.value) : $('select#wcs4_report_subject option:selected').val()),
-                teacher_id: $('input#wcs4_report_teacher').length ? [$('input#wcs4_report_teacher').val()] :($('select#wcs4_report_teacher[multiple]').length ? $('select#wcs4_report_teacher option:selected').toArray().map(item => item.value) : $('select#wcs4_report_teacher option:selected').val()),
-                student_id: $('input#wcs4_report_student').length ? [$('input#wcs4_report_student').val()] :($('select#wcs4_report_student[multiple]').length ? $('select#wcs4_report_student option:selected').toArray().map(item => item.value) : $('select#wcs4_report_student option:selected').val()),
-                date: $('#wcs4_report_date').val(),
-                start_time: $('#wcs4_report_start_time').val(),
-                end_time: $('#wcs4_report_end_time').val(),
-                topic: $('#wcs4_report_topic').val()
+                subject_id: WCS4_LIB.form_field_value('wcs4_journal_subject'),
+                teacher_id: WCS4_LIB.form_field_value('wcs4_journal_teacher'),
+                student_id: WCS4_LIB.form_field_value('wcs4_journal_student'),
+                date: $('#wcs4_journal_date').val(),
+                start_time: $('#wcs4_journal_start_time').val(),
+                end_time: $('#wcs4_journal_end_time').val(),
+                topic: $('#wcs4_journal_topic').val()
             };
             WCS4_LIB.submit_entry(entry, function (data) {
                 if (data.result === 'updated') {
-                    jQuery('.wcs4-submit-report-form').closest('form').get(0).reset()
+                    jQuery('.wcs4-submit-journal-form').closest('form').get(0).reset()
+                }
+            });
+        });
+    }
+    var bind_submit_progress_handler = function () {
+        $('.wcs4-submit-progress-form').click(function (e) {
+            var entry;
+            e.preventDefault();
+            entry = {
+                action: 'wcs_add_progress_entry',
+                security: WCS4_AJAX_OBJECT.ajax_nonce,
+                subject_id: WCS4_LIB.form_field_value('wcs4_progress_subject'),
+                teacher_id: WCS4_LIB.form_field_value('wcs4_progress_teacher'),
+                student_id: WCS4_LIB.form_field_value('wcs4_progress_student'),
+                type: 'partial',
+                improvements: $('#wcs4_progress_improvements').val(),
+                indications: $('#wcs4_progress_indications').val()
+            };
+            WCS4_LIB.submit_entry(entry, function (data) {
+                if (data.result === 'updated') {
+                    jQuery('.wcs4-submit-progress-form').closest('form').get(0).reset()
                 }
             });
         });

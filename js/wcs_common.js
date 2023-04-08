@@ -66,7 +66,7 @@ var WCS4_LIB = (function ($) {
     }
 
     var modify_entry = function (scope, entry, callback, confirm_message) {
-        if (scope !== 'lesson' && scope !== 'report') {
+        if (scope !== 'lesson' && scope !== 'journal' && scope !== 'progress') {
             show_message(WCS4_AJAX_OBJECT.ajax_error, 'error');
             return;
         }
@@ -95,21 +95,32 @@ var WCS4_LIB = (function ($) {
      * Fetch entry data for form
      */
     var fetch_entry_data_to_form = function (scope, row_id, set_entry_data_to_form, reset_callback) {
-        if (scope !== 'lesson' && scope !== 'report') {
+        if (scope !== 'lesson' && scope !== 'journal' && scope !== 'progress') {
             show_message(WCS4_AJAX_OBJECT.ajax_error, 'error');
             return;
         }
         reset_to_add_mode(scope)
-        $('tr#' + scope + '-' + row_id).addClass('is-active');
-        var get_report_query;
-        get_report_query = {
-            action: 'get_' + scope,
-            security: WCS4_AJAX_OBJECT.ajax_nonce,
-            row_id: row_id
-        };
+        var get_query;
+        if (Array.isArray(row_id)) {
+            row_id.forEach(function (id) {
+                $('tr#' + scope + '-' + id).addClass('is-active');
+            });
+            get_query = {
+                action: 'wcs_get_' + scope,
+                security: WCS4_AJAX_OBJECT.ajax_nonce,
+                row_id: row_id
+            };
+        } else {
+            $('tr#' + scope + '-' + row_id).addClass('is-active');
+            get_query = {
+                action: 'wcs_get_' + scope,
+                security: WCS4_AJAX_OBJECT.ajax_nonce,
+                row_id: row_id
+            };
+        }
         $('#wcs4-management-form-wrapper .spinner').addClass('is-active');
         $('#wcs4-management-form-wrapper input,#wcs4-management-form-wrapper select,#wcs4-management-form-wrapper textarea').attr('readonly', true);
-        jQuery.post(WCS4_AJAX_OBJECT.ajax_url, get_report_query, function (data) {
+        jQuery.post(WCS4_AJAX_OBJECT.ajax_url, get_query, function (data) {
             set_entry_data_to_form(data.response)
             reset_callback(scope, data.response)
         }).fail(function (err) {
@@ -119,6 +130,20 @@ var WCS4_LIB = (function ($) {
             $('#wcs4-management-form-wrapper .spinner').removeClass('is-active');
             $('#wcs4-management-form-wrapper input,#wcs4-management-form-wrapper select,#wcs4-management-form-wrapper textarea').attr('readonly', null);
         });
+    };
+
+    var form_field_value = function (id) {
+        let $input = $('input#' + id);
+        if ($input.length) {
+            if ($input.attr('name').indexOf('[]') > 0) {
+                return [$('input#' + id).val()];
+            }
+            return $('input#' + id).val();
+        }
+        let $selected = $('select#' + id + ' option:selected');
+        return $('select#' + id + '[multiple]').length
+            ? $selected.toArray().map(item => item.value)
+            : $selected.val();
     };
     var update_view = function ($parent, entry, action) {
         $parent.find('.spinner').addClass('is-active');
@@ -177,9 +202,6 @@ var WCS4_LIB = (function ($) {
         }
     }
 
-    /**
-     * Enter copy mode.
-     */
     var reset_to_copy_mode = function (scope) {
         $('#wcs4-management-form-wrapper form').unbind('change.reset');
         // Add copying mode message
@@ -197,10 +219,24 @@ var WCS4_LIB = (function ($) {
             })
         }
     }
+    var reset_to_create_mode = function (scope) {
+        $('#wcs4-management-form-wrapper form').unbind('change.reset');
+        // Add copying mode message
+        $('#wcs4-management-form-title').text(WCS4_AJAX_OBJECT[scope].add_mode)
+        $('#wcs4-reset-form').hide();
+        $('#wcs4-management-form-wrapper').addClass('is-open');
+        // Let's add the row id and the save button.
+        $('#wcs4-submit-form').attr('value', WCS4_AJAX_OBJECT[scope].add_item);
+        // Add cancel copying button
+        if ($('#wcs4-cancel-copying-wrapper').length == 0) {
+            var cancel_button = '<span id="wcs4-cancel-copying-wrapper"><a href="#" id="wcs4-cancel-copying">' + WCS4_AJAX_OBJECT[scope].cancel_copying + '</a></span>';
+            $('#wcs4-reset-form').after(cancel_button);
+            $('#wcs4-cancel-copying').click(function () {
+                reset_to_add_mode(scope);
+            })
+        }
+    }
 
-    /**
-     * Exit edit mode.
-     */
     var reset_to_add_mode = function (scope) {
         $('#wcs4-management-form-wrapper form')
             .one('change.reset', function () {
@@ -208,6 +244,7 @@ var WCS4_LIB = (function ($) {
             })
             .get(0).reset();
         $('#wcs4-management-form-wrapper form select').scrollTop(0);
+        $('#wcs4-management-form-wrapper form').find('input,select').change();
         $('#wcs4-management-form-title').text(WCS4_AJAX_OBJECT[scope].add_mode);
         $('#wcs4-row-id').remove();
         $('#wcs4-cancel-copying-wrapper').remove();
@@ -256,8 +293,10 @@ var WCS4_LIB = (function ($) {
         submit_entry,
         modify_entry,
         fetch_entry_data_to_form,
+        form_field_value,
         // view
         reset_to_add_mode,
+        reset_to_create_mode,
         reset_to_edit_mode,
         reset_to_copy_mode,
         update_view,

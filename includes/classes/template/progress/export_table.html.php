@@ -2,9 +2,8 @@
 /**
  * @var array $thead_columns
  * @var array $tbody_columns
- * @var array $reports
+ * @var array $items
  */
-
 ?>
 <table>
     <thead>
@@ -22,13 +21,18 @@
     <tbody>
         <?php
         $index = 1;
-        foreach ($reports as $report): ?>
+        /** @var WCS_DB_Progress_Item $item */
+        foreach ($items as $item):
+            if($item->isTypePeriodic()){
+                continue;
+            }
+            ?>
             <tr>
                 <?php
                 foreach ($tbody_columns as $td): ?>
                     <td>
                         <?php
-                        $row = WCS_Output::process_template($report, $td);
+                        $row = WCS_Output::process_template($item, $td);
                         $row = str_replace([
                             '{index}',
                         ], [

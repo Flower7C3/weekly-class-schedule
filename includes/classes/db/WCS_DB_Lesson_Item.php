@@ -1,11 +1,11 @@
 <?php
 
-class WCS_DB_Report_Item
+class WCS_DB_Lesson_Item
 {
     /** @var int */
     private $id;
-    /** @var string */
-    private $date;
+    /** @var int */
+    private $weekday;
     /** @var string */
     private $start_time;
     /** @var string */
@@ -20,8 +20,14 @@ class WCS_DB_Report_Item
     private $student;
     /** @var array */
     private $students = [];
+    /** @var WCS_DB_Item */
+    private $classroom;
+    /** @var bool */
+    private $visible;
     /** @var string */
-    private $topic;
+    private $notes;
+    /** @var string */
+    private $color;
     /** @var int */
     private $position = 0;
 
@@ -35,21 +41,47 @@ class WCS_DB_Report_Item
      */
     public function __construct($dbrow, $format)
     {
-        $this->id = $dbrow->report_id;
+        $this->id = $dbrow->schedule_id;
         $this->setCreatedAt($dbrow->created_at)
             ->setCreatedBy($dbrow->created_by)
             ->setUpdatedAt($dbrow->updated_at)
             ->setUpdatedBy($dbrow->updated_by);
 
-        $this->date = $dbrow->date;
+        $this->weekday = $dbrow->weekday;
 
         $this->start_time = date($format, strtotime($dbrow->start_time));
         $this->end_time = date($format, strtotime($dbrow->end_time));
-        $this->topic = $dbrow->topic;
+        $this->notes = $dbrow->notes;
+        $this->visible = $dbrow->visible ? true : false;
 
         $this->subject = new WCS_DB_Item($dbrow->subject_id, $dbrow->subject_name, $dbrow->subject_desc);
-        $this->teachers[$dbrow->teacher_id] = new WCS_DB_Item($dbrow->teacher_id, $dbrow->teacher_name, $dbrow->teacher_desc);
-        $this->students[$dbrow->student_id] = new WCS_DB_Item($dbrow->student_id, $dbrow->student_name, $dbrow->student_desc);
+        $this->teachers[$dbrow->teacher_id] = new WCS_DB_Item(
+            $dbrow->teacher_id,
+            $dbrow->teacher_name,
+            $dbrow->teacher_desc
+        );
+        $this->students[$dbrow->student_id] = new WCS_DB_Item(
+            $dbrow->student_id,
+            $dbrow->student_name,
+            $dbrow->student_desc
+        );
+        $this->classroom = new WCS_DB_Item($dbrow->classroom_id, $dbrow->classroom_name, $dbrow->classroom_desc);
+    }
+
+    /**
+     * @return string
+     */
+    public function getVisibleText()
+    {
+        return $this->isVisible() ? __('Visible', 'wcs4') : __('Hidden', 'wcs4');
+    }
+
+    /**
+     * @return int
+     */
+    public function isVisible()
+    {
+        return $this->visible;
     }
 
     /**
@@ -109,9 +141,17 @@ class WCS_DB_Report_Item
     /**
      * @return mixed
      */
-    public function getTopic()
+    public function getNotes()
     {
-        return $this->topic;
+        return $this->notes;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getColor()
+    {
+        return $this->color;
     }
 
     /**
@@ -122,8 +162,30 @@ class WCS_DB_Report_Item
         return $this->id;
     }
 
+    public function getAllMinutes()
+    {
+        $startMinutes = $this->getStartMinutes();
+        $endMinutes = $this->getEndMinutes();
+        $minutes = [];
+        for ($minute = $startMinutes; $minute < $endMinutes; $minute++) {
+            $timeM = sprintf('%02d', $minute % 60);
+            $timeH = sprintf('%02d', ($minute - $timeM) / 60);
+            $minutes[] = $timeH . ':' . $timeM;
+        }
+        return $minutes;
+    }
+
     /**
-     * @return string
+     * @return int
+     */
+    public function getStartMinutes()
+    {
+        $time = explode(':', $this->getStartTime());
+        return $time[0] * 60 + $time[1];
+    }
+
+    /**
+     * @return false|string
      */
     public function getStartTime()
     {
@@ -131,29 +193,44 @@ class WCS_DB_Report_Item
     }
 
     /**
-     * @return string
+     * @return int
+     */
+    public function getEndMinutes()
+    {
+        $time = explode(':', $this->getEndTime());
+        return $time[0] * 60 + $time[1];
+    }
+
+    /**
+     * @return false|string
      */
     public function getEndTime()
     {
         return $this->end_time;
     }
 
+    public function getEndDateTime(int $shiftDays = 0): DateTime
+    {
+        return (new DateTime(
+            'last sunday ' .
+            $this->getEndTime()
+        ))->add(new DateInterval('P' . ($this->getWeekday() + $shiftDays) . 'D'));
+    }
+
     /**
-     * @return string
+     * @return mixed
      */
-    public function getDate()
+    public function getWeekday()
     {
-        return $this->date;
+        return $this->weekday;
     }
 
-    public function getStartDateTime(): DateTime
+    public function getStartDateTime(int $shiftDays = 0): DateTime
     {
-        return new DateTime($this->getDate() . ' ' . $this->getStartTime());
-    }
-
-    public function getEndDateTime(): DateTime
-    {
-        return new DateTime($this->getDate() . ' ' . $this->getEndTime());
+        return (new DateTime(
+            'last sunday ' .
+            $this->getStartTime()
+        ))->add(new DateInterval('P' . ($this->getWeekday() + $shiftDays) . 'D'));
     }
 
     /**
@@ -162,6 +239,14 @@ class WCS_DB_Report_Item
     public function getSubject()
     {
         return $this->subject;
+    }
+
+    /**
+     * @return WCS_DB_Item
+     */
+    public function getClassroom()
+    {
+        return $this->classroom;
     }
 
     /**
@@ -230,4 +315,3 @@ class WCS_DB_Report_Item
         return $this->student;
     }
 }
-

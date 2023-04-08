@@ -203,7 +203,7 @@ function wcs4_select_list(
         $params['required'] = 'required="required"';
     }
     if (true === $multiple) {
-        $params['multiple'] = 'multiple="multiple" size="6"';
+        $params['multiple'] = 'multiple="multiple" size="10"';
     }
     $output = '<select ' . implode(' ', $params) . '>';
 
@@ -398,15 +398,25 @@ function wcs4_js_i18n($handle)
             'cancel_copying' => _x('Exit copy lesson mode', 'button text', 'wcs4'),
             'delete_warning' => _x('Are you sure you want to delete this lesson?', 'manage schedule', 'wcs4'),
         ),
-        'report' => array(
-            'add_mode' => _x('Add New Report', 'page title', 'wcs4'),
-            'edit_mode' => _x('Edit Report', 'page title', 'wcs4'),
-            'copy_mode' => _x('Duplicate Report', 'page title', 'wcs4'),
-            'add_item' => _x('Add Report', 'button text', 'wcs4'),
-            'save_item' => _x('Save Report', 'button text', 'wcs4'),
-            'cancel_editing' => _x('Exit edit report mode', 'button text', 'wcs4'),
-            'cancel_copying' => _x('Exit copy report mode', 'button text', 'wcs4'),
-            'delete_warning' => _x('Are you sure you want to delete this report?', 'manage schedule', 'wcs4'),
+        'journal' => array(
+            'add_mode' => _x('Add New Journal', 'page title', 'wcs4'),
+            'edit_mode' => _x('Edit Journal', 'page title', 'wcs4'),
+            'copy_mode' => _x('Duplicate Journal', 'page title', 'wcs4'),
+            'add_item' => _x('Add Journal', 'button text', 'wcs4'),
+            'save_item' => _x('Save Journal', 'button text', 'wcs4'),
+            'cancel_editing' => _x('Exit edit journal mode', 'button text', 'wcs4'),
+            'cancel_copying' => _x('Exit copy journal mode', 'button text', 'wcs4'),
+            'delete_warning' => _x('Are you sure you want to delete this journal?', 'manage schedule', 'wcs4'),
+        ),
+        'progress' => array(
+            'add_mode' => _x('Add New Progress', 'page title', 'wcs4'),
+            'edit_mode' => _x('Edit Progress', 'page title', 'wcs4'),
+            'copy_mode' => _x('Duplicate Progress', 'page title', 'wcs4'),
+            'add_item' => _x('Add Progress', 'button text', 'wcs4'),
+            'save_item' => _x('Save Progress', 'button text', 'wcs4'),
+            'cancel_editing' => _x('Exit edit progress mode', 'button text', 'wcs4'),
+            'cancel_copying' => _x('Exit copy progress mode', 'button text', 'wcs4'),
+            'delete_warning' => _x('Are you sure you want to delete this progress?', 'manage schedule', 'wcs4'),
         ),
         'reset_warning' => _x('Are you sure you want to to this?', 'reset database', 'wcs4'),
         'ajax_url' => admin_url('admin-ajax.php'),
