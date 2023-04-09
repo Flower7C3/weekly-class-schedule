@@ -1,6 +1,7 @@
 <?php
 
 /** @noinspection SqlResolve */
+
 /** @noinspection SqlNoDataSourceInspection */
 
 /**
@@ -452,7 +453,8 @@ function wcs4_help_placeholders_callback()
             <?php
             printf(
                 _x('Will display general info for schedule: <code>%1$s</code>', 'help', 'wcs4'),
-                implode('</code>, <code>',
+                implode(
+                    '</code>, <code>',
                     ['{schedule no}', '{date}', '{weekday}', '{start time}', '{end time}', '{notes}',]
                 )
             ); ?>
@@ -461,8 +463,20 @@ function wcs4_help_placeholders_callback()
             <?php
             printf(
                 _x('Will display general info for journal: <code>%1$s</code>', 'help', 'wcs4'),
-                implode('</code>, <code>',
-                    ['{item no}', '{date}', '{start time}', '{end time}', '{duration time}', '{topic}', '{created at}', '{created by}', '{updated at}', '{updated by}',]
+                implode(
+                    '</code>, <code>',
+                    [
+                        '{item no}',
+                        '{date}',
+                        '{start time}',
+                        '{end time}',
+                        '{duration time}',
+                        '{topic}',
+                        '{created at}',
+                        '{created by}',
+                        '{updated at}',
+                        '{updated by}',
+                    ]
                 )
             ); ?>
         </li>
@@ -470,7 +484,23 @@ function wcs4_help_placeholders_callback()
             <?php
             printf(
                 _x('Will display general info for progress: <code>%1$s</code>', 'help', 'wcs4'),
-                implode('</code>, <code>', ['{item no}', '{start date}', '{end date}', '{improvements}', '{indications}', '{type}', '{created at}', '{created at date}', '{created by}', '{updated at}', '{updated at date}', '{updated by}',])
+                implode(
+                    '</code>, <code>',
+                    [
+                        '{item no}',
+                        '{start date}',
+                        '{end date}',
+                        '{improvements}',
+                        '{indications}',
+                        '{type}',
+                        '{created at}',
+                        '{created at date}',
+                        '{created by}',
+                        '{updated at}',
+                        '{updated at date}',
+                        '{updated by}',
+                    ]
+                )
             ); ?>
         </li>
         <li>
@@ -514,4 +544,37 @@ function wcs4_help_placeholders_callback()
         _ex('If item is private, full and short names will be replaced with item first letter.', 'help', 'wcs4'); ?>
     </p>
     <?php
+}
+
+function admin_th(string $name, ?string $key = null, ?string $order_direction = null, ?string $order_by = null): void
+{
+    ?>
+    <?php
+    if (null === $key || null === $order_direction || null === $order_by): ?>
+        <th class="column-primary">
+            <span><?= $name ?></span>
+        </th>
+    <?php
+    else: ?>
+        <?php
+        if ($key === $order_by) {
+            $curr_direction = ($order_direction === 'asc') ? 'asc' : 'desc';
+            $new_direction = ($order_direction === 'asc') ? 'desc' : 'asc';
+        } else {
+            $curr_direction = '';
+            $new_direction = 'asc';
+        }
+        ?>
+        <th class="column-primary sortable <?= ($key === $order_by) ? ' sorted' : '' ?> <?= $curr_direction ?>"
+            data-order-current-field="<?= $key ?>"
+            data-order-current-direction="<?= $curr_direction ?>"
+        >
+            <a href="#" data-order-field="<?= $key ?>"
+               data-order-direction="<?= $new_direction ?>">
+                <span><?= $name ?></span>
+                <span class="sorting-indicator"></span>
+            </a>
+        </th>
+    <?php
+    endif;
 }

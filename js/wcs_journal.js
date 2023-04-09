@@ -31,8 +31,8 @@
                 $('#search_wcs4_journal_subject_id').val(),
                 $('#search_wcs4_journal_date_from').val(),
                 $('#search_wcs4_journal_date_upto').val(),
-                null,
-                null,
+                $('.sortable.sorted').data('order-current-field'),
+                $('.sortable.sorted').data('order-current-direction'),
                 'fade'
             );
         });
@@ -42,15 +42,15 @@
      * Handles the Add Item button click event.
      */
     var bind_sort_handler = function () {
-        $(document).on('click.wcs4-events-list-sort', '#wcs4-journal-events-list-wrapper [data-orderby][data-order]', function (e) {
+        $(document).on('click.wcs4-events-list-sort', '#wcs4-journal-events-list-wrapper [data-order-field][data-order-direction]', function (e) {
             reload_html_view(
                 $('#search_wcs4_journal_teacher_id').val(),
                 $('#search_wcs4_journal_student_id').val(),
                 $('#search_wcs4_journal_subject_id').val(),
                 $('#search_wcs4_journal_date_from').val(),
                 $('#search_wcs4_journal_date_upto').val(),
-                $(this).data('orderby'),
-                $(this).data('order'),
+                $(this).data('order-field'),
+                $(this).data('order-direction'),
                 'fade')
             ;
         });
@@ -83,8 +83,8 @@
                         $('#search_wcs4_journal_subject_id').val(),
                         $('#search_wcs4_journal_date_from').val(),
                         $('#search_wcs4_journal_date_upto').val(),
-                        null,
-                        null,
+                        $('.sortable.sorted').data('order-current-field'),
+                        $('.sortable.sorted').data('order-current-direction'),
                         'fade'
                     );
                     // Clear topic.
@@ -131,8 +131,8 @@
                     $('#search_wcs4_journal_subject_id').val(),
                     $('#search_wcs4_journal_date_from').val(),
                     $('#search_wcs4_journal_date_upto').val(),
-                    null,
-                    null,
+                    $('.sortable.sorted').data('order-current-field'),
+                    $('.sortable.sorted').data('order-current-direction'),
                     'remove'
                 );
             }, WCS4_AJAX_OBJECT['journal'].delete_warning);
@@ -142,7 +142,7 @@
     /**
      * Updates dynamically a specific journal vi.
      */
-    var reload_html_view = function (teacher, student, subject, date_from, date_upto, orderby, order, action) {
+    var reload_html_view = function (teacher, student, subject, date_from, date_upto, order_field, order_direction, action) {
         var page = $('#search_wcs4_page').val();
         var state = {
             'page': page,
@@ -151,8 +151,8 @@
             'subject': subject,
             'date_from': date_from,
             'date_upto': date_upto,
-            'orderby': orderby,
-            'order': order,
+            'order_field': order_field,
+            'order_direction': order_direction,
         };
         var url = $('#wcs-journals-filter').attr('action')
             + '?page=' + page
@@ -161,8 +161,8 @@
             + '&subject=' + subject
             + '&date_from=' + date_from
             + '&date_upto=' + date_upto
-            + '&orderby=' + orderby
-            + '&order=' + order
+            + '&order_field=' + order_field
+            + '&order_direction=' + order_direction
         ;
         history.pushState(state, $('title').text(), url);
         entry = {
@@ -173,8 +173,8 @@
             subject: subject ? '#' + subject : null,
             date_from: date_from,
             date_upto: date_upto,
-            orderby: orderby,
-            order: order,
+            order_field: order_field,
+            order_direction: order_direction,
         };
         var $parent = $('#wcs4-journal-events-list-wrapper');
         WCS4_LIB.update_view($parent, entry, action)

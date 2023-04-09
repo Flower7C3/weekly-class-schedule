@@ -92,6 +92,14 @@ class WCS_DB_Progress_Item
         return $this;
     }
 
+    public function getStartOrType(): string
+    {
+        if ($this->isTypePartial()) {
+            return _x('Partial', 'item type', 'wcs4');
+        }
+        return $this->getStartDate();
+    }
+
     public function getDate(): string
     {
         if ($this->getUpdatedAt() instanceof DateTimeInterface) {
@@ -133,7 +141,7 @@ class WCS_DB_Progress_Item
             /** @var WCS_DB_Item $_teacher */
             foreach ($this->teachers as $_teacher) {
                 $name[] = $_teacher->getName();
-                $short[] = $_teacher->getShort();
+                $short[] = $_teacher->getNameShort();
                 $long[] = $_teacher->getInfo();
                 $description[] = $_teacher->getDescription();
                 $link_name[] = $_teacher->getLinkName();
@@ -142,7 +150,7 @@ class WCS_DB_Progress_Item
             $this->teacher = new WCS_DB_Item();
             $this->teacher
                 ->setName(implode(', ', $name))
-                ->setShort(implode(', ', $short))
+                ->setNameShort(implode(', ', $short))
                 ->setInfo(implode(', ', $long))
                 ->setDescription(implode(', ', $description))
                 ->setLinkName(implode(', ', $link_name))

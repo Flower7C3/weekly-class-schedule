@@ -244,8 +244,8 @@ add_shortcode('student_progress_create', static function ($atts) {
 add_shortcode('wp_query', static function (array $options = []) {
     $shortcode_atts = shortcode_atts([
         'post_type' => 'page',
-        'order' => 'ASC',
-        'orderby' => 'title',
+        'order_direction' => 'ASC',
+        'order_field' => 'title',
         'category' => '',
         'taxonomy' => '',
         'taxonomy_field' => '',
@@ -276,11 +276,11 @@ add_shortcode('wp_query', static function (array $options = []) {
     if ($shortcode_atts['has_password']) {
         $args['has_password'] = $shortcode_atts['has_password'];
     }
-    if ($shortcode_atts['order']) {
-        $args['order'] = $shortcode_atts['order'];
+    if ($shortcode_atts['order_direction']) {
+        $args['order_direction'] = $shortcode_atts['order_direction'];
     }
-    if ($shortcode_atts['orderby']) {
-        $args['orderby'] = $shortcode_atts['orderby'];
+    if ($shortcode_atts['order_field']) {
+        $args['order_field'] = $shortcode_atts['order_field'];
     }
     if ($shortcode_atts['posts_per_page']) {
         $args['posts_per_page'] = $shortcode_atts['posts_per_page'];

@@ -18,8 +18,8 @@ class WCS_Journal
             !empty($_GET['subject']) ? '#' . $_GET['subject'] : null,
             !empty($_GET['date_from']) ? sanitize_text_field($_GET['date_from']) : date('Y-m-01'),
             !empty($_GET['date_upto']) ? sanitize_text_field($_GET['date_upto']) : date('Y-m-d'),
-            !empty($_GET['orderby']) ? sanitize_text_field($_GET['orderby']) : 'time',
-            !empty($_GET['order']) ? sanitize_text_field($_GET['order']) : 'desc'
+            !empty($_GET['order_field']) ? sanitize_text_field($_GET['order_field']) : 'time',
+            !empty($_GET['order_direction']) ? sanitize_text_field($_GET['order_direction']) : 'desc'
         );
         include self::TEMPLATE_DIR . 'admin.php';
     }
@@ -132,8 +132,8 @@ class WCS_Journal
         $subject = sanitize_text_field($_GET['subject'] ? '#' . $_GET['subject'] : null);
         $date_from = sanitize_text_field($_GET['date_from']);
         $date_upto = sanitize_text_field($_GET['date_upto']);
-        $orderby = !empty($_GET['orderby']) ? sanitize_text_field($_GET['orderby']) : 'time';
-        $order = !empty($_GET['order']) ? sanitize_text_field($_GET['order']) : 'asc';
+        $order_field = !empty($_GET['order_field']) ? sanitize_text_field($_GET['order_field']) : 'created-at';
+        $order_direction = !empty($_GET['order_direction']) ? sanitize_text_field($_GET['order_direction']) : 'asc';
         switch (get_post_type()) {
             case 'wcs4_teacher':
                 $teacher = '#' . get_the_id();
@@ -147,7 +147,7 @@ class WCS_Journal
         }
 
         # get journals
-        $items = self::get_items($teacher, $student, $subject, $date_from, $date_upto, $orderby, $order);
+        $items = self::get_items($teacher, $student, $subject, $date_from, $date_upto, $order_field, $order_direction);
 
         $wcs4_options = WCS_Settings::load_settings();
 
@@ -224,11 +224,11 @@ class WCS_Journal
         $subject = 'all',
         $date_from = null,
         $date_upto = null,
-        $orderby = null,
-        $order = null
+        $order_field = null,
+        $order_direction = null
     ): string {
         ob_start();
-        $items = self::get_items($teacher, $student, $subject, $date_from, $date_upto, $orderby, $order);
+        $items = self::get_items($teacher, $student, $subject, $date_from, $date_upto, $order_field, $order_direction);
         include self::TEMPLATE_DIR . 'admin_table.php';
         $result = ob_get_clean();
         return trim($result);
@@ -240,8 +240,8 @@ class WCS_Journal
         $subject = 'all',
         $date_from = null,
         $date_upto = null,
-        $orderby = null,
-        $order = null,
+        $order_field = null,
+        $order_direction = null,
         $limit = null,
         $paged = null
     ): array {
@@ -311,52 +311,28 @@ class WCS_Journal
             $where[] = 'date <= "%s"';
             $query_arr[] = $date_upto;
         }
-        if (!empty($where)) {
-            $query .= ' WHERE ' . implode(' AND ', $where);
-        }
-        switch ($orderby) {
-            default:
+        switch ($order_field) {
             case 'time':
-                $order = ($order === 'asc' || $order === 'ASC') ? 'ASC' : 'DESC';
-                $query .= ' ORDER BY date ' . $order . ', start_time ' . $order;
+                $order_field = ['date' => $order_direction, 'start_time' => $order_direction];
                 break;
+            case 'subject':
+                $order_field = ['subject_name' => $order_direction];
+                break;
+            case 'teacher':
+                $order_field = ['teacher_name' => $order_direction];
+                break;
+            case 'student':
+                $order_field = ['student_name' => $order_direction];
+                break;
+            case 'created-at':
+                $order_field = ['created_at' => $order_direction];
+                break;
+            default:
             case 'updated-at':
-                $order = ($order === 'asc' || $order === 'ASC') ? 'ASC' : 'DESC';
-                $query .= ' ORDER BY updated_at ' . $order;
+                $order_field = ['updated_at' => $order_direction];
                 break;
         }
-        if (null !== $limit) {
-            $query .= ' LIMIT %d';
-            $query_arr[] = $limit;
-            if (null !== $paged) {
-                $query .= ' OFFSET %d';
-                $query_arr[] = $limit * ($paged - 1);
-            }
-        }
-        $query = $wpdb->prepare($query, $query_arr);
-        $results = $wpdb->get_results($query);
-        return self::parse_results($results);
-    }
-
-    private static function parse_results($results): array
-    {
-        $format = get_option('time_format');
-        $items = array();
-        if ($results) {
-            foreach ($results as $row) {
-                $item = new WCS_DB_Journal_Item($row, $format);
-                $item = apply_filters('wcs4_format_class', $item);
-                if (!isset($items[$item->getId()])) {
-                    $items[$item->getId()] = $item;
-                } else {
-                    /** @var WCS_DB_Journal_Item $_item */
-                    $_item = $items[$item->getId()];
-                    $_item->addTeachers($item->getTeachers());
-                    $_item->addStudents($item->getStudents());
-                }
-            }
-        }
-        return $items;
+        return WCS_DB::get_items(WCS_DB_Journal_Item::class, $query, $where, $query_arr, $order_field, $limit, $paged);
     }
 
     public static function create_item(): void
@@ -681,8 +657,8 @@ class WCS_Journal
                 sanitize_text_field($_POST['subject']),
                 sanitize_text_field($_POST['date_from']),
                 sanitize_text_field($_POST['date_upto']),
-                sanitize_text_field($_POST['orderby']),
-                sanitize_text_field($_POST['order'])
+                sanitize_text_field($_POST['order_field']),
+                sanitize_text_field($_POST['order_direction'])
             );
         }
         wcs4_json_response(['html' => $html,]);
@@ -700,7 +676,7 @@ class WCS_Journal
     public static function get_html_of_journal_list(array $journals, string $journal_key, string $template_list): string
     {
         if (empty($journals)) {
-            return '<div class="wcs4-no-lessons-message">' . __('No lessons journaled', 'wcs4') . '</div>';
+            return '<div class="wcs4-no-items-message">' . __('No lessons journaled', 'wcs4') . '</div>';
         }
 
         $dateWithLessons = [];

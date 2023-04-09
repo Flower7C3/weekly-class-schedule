@@ -54,8 +54,8 @@
                 $('#search_wcs4_progress_date_from').val(),
                 $('#search_wcs4_progress_date_upto').val(),
                 $('#search_wcs4_progress_type').val(),
-                null,
-                null,
+                $('.sortable.sorted').data('order-current-field'),
+                $('.sortable.sorted').data('order-current-direction'),
                 'fade'
             );
         });
@@ -65,7 +65,7 @@
      * Handles the Add Item button click event.
      */
     var bind_sort_handler = function () {
-        $(document).on('click.wcs4-events-list-sort', '#wcs4-progress-events-list-wrapper [data-orderby][data-order]', function (e) {
+        $(document).on('click.wcs4-events-list-sort', '#wcs4-progress-events-list-wrapper [data-order-field][data-order-direction]', function (e) {
             reload_html_view(
                 $('#search_wcs4_progress_teacher_id').val(),
                 $('#search_wcs4_progress_student_id').val(),
@@ -73,8 +73,8 @@
                 $('#search_wcs4_progress_date_from').val(),
                 $('#search_wcs4_progress_date_upto').val(),
                 $('#search_wcs4_progress_type').val(),
-                $(this).data('orderby'),
-                $(this).data('order'),
+                $(this).data('order-field'),
+                $(this).data('order-direction'),
                 'fade')
             ;
         });
@@ -109,8 +109,8 @@
                         $('#search_wcs4_progress_date_from').val(),
                         $('#search_wcs4_progress_date_upto').val(),
                         $('#search_wcs4_progress_type').val(),
-                        null,
-                        null,
+                        $('.sortable.sorted').data('order-current-field'),
+                        $('.sortable.sorted').data('order-current-direction'),
                         'fade'
                     );
                     // Clear improvements and indications.
@@ -168,9 +168,8 @@
                     $('#search_wcs4_progress_subject_id').val(),
                     $('#search_wcs4_progress_date_from').val(),
                     $('#search_wcs4_progress_date_upto').val(),
-                    $('#search_wcs4_progress_type').val(),
-                    null,
-                    null,
+                    $('.sortable.sorted').data('order-current-field'),
+                    $('.sortable.sorted').data('order-current-direction'),
                     'remove'
                 );
             }, WCS4_AJAX_OBJECT['progress'].delete_warning);
@@ -180,7 +179,7 @@
     /**
      * Updates dynamically a specific progress vi.
      */
-    var reload_html_view = function (teacher, student, subject, date_from, date_upto, type, orderby, order, action) {
+    var reload_html_view = function (teacher, student, subject, date_from, date_upto, type, order_field, order_direction, action) {
         var page = $('#search_wcs4_page').val();
         var state = {
             'page': page,
@@ -190,8 +189,8 @@
             'date_from': date_from,
             'date_upto': date_upto,
             'type': type,
-            'orderby': orderby,
-            'order': order,
+            'order_field': order_field,
+            'order_direction': order_direction,
         };
         var url = $('#wcs-progresses-filter').attr('action')
             + '?page=' + page
@@ -201,8 +200,8 @@
             + '&date_from=' + date_from
             + '&date_upto=' + date_upto
             + '&type=' + type
-            + '&orderby=' + orderby
-            + '&order=' + order
+            + '&order_field=' + order_field
+            + '&order_direction=' + order_direction
         ;
         history.pushState(state, $('title').text(), url);
         entry = {
@@ -214,8 +213,8 @@
             date_from: date_from,
             date_upto: date_upto,
             type: type,
-            orderby: orderby,
-            order: order,
+            order_field: order_field,
+            order_direction: order_direction,
         };
         var $parent = $('#wcs4-progress-events-list-wrapper');
         WCS4_LIB.update_view($parent, entry, action)

@@ -2,13 +2,13 @@
 /**
  * @var array $items
  * @var string $weekday
- * @var string $orderby
- * @var string $order
+ * @var string $order_field
+ * @var string $order_direction
  */
 
 ?>
 <div class="wcs4-day-content-wrapper"
-     data-hash="<?= md5(serialize($items) . $orderby . $order) ?>">
+     data-hash="<?= md5(serialize($items) . $order_field . $order_direction) ?>">
     <?php
     if ($items): ?>
         <table class="wp-list-table widefat fixed striped wcs4-admin-schedule-table"
@@ -157,28 +157,7 @@
                         <?= $item->getNotes() ?>
                     </td>
                     <td data-colname="<?= __('Updated at', 'wcs4') ?>">
-                        <?php
-                        if ($item->getUpdatedAt()): ?>
-                            <span title="<?= sprintf(
-                                __('Updated at %s by %s', 'wcs4'),
-                                $item->getUpdatedAt()->format('Y-m-d H:i:s'),
-                                $item->getUpdatedBy()->display_name ?: 'nn'
-                            ) ?>">
-                                <?= $item->getUpdatedAt()->format('Y-m-d H:i:s') ?>
-                                <?= $item->getUpdatedBy()->display_name ?>
-                            </span>
-                        <?php
-                        else: ?>
-                            <span title="<?= sprintf(
-                                __('Created at %s by %s', 'wcs4'),
-                                $item->getCreatedAt()->format('Y-m-d H:i:s'),
-                                $item->getCreatedBy()->display_name ?: 'nn'
-                            ) ?>">
-                                <?= $item->getCreatedAt()->format('Y-m-d H:i:s') ?>
-                                <?= $item->getCreatedBy()->display_name ?>
-                            </span>
-                        <?php
-                        endif; ?>
+                        <?php include __DIR__.'/../_common/updated_at.php' ?>
                     </td>
                 </tr>
             <?php

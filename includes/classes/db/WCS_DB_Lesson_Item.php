@@ -264,7 +264,7 @@ class WCS_DB_Lesson_Item
             /** @var WCS_DB_Item $_teacher */
             foreach ($this->teachers as $_teacher) {
                 $name[] = $_teacher->getName();
-                $short[] = $_teacher->getShort();
+                $short[] = $_teacher->getNameShort();
                 $long[] = $_teacher->getInfo();
                 $description[] = $_teacher->getDescription();
                 $link_name[] = $_teacher->getLinkName();
@@ -273,7 +273,7 @@ class WCS_DB_Lesson_Item
             $this->teacher = new WCS_DB_Item();
             $this->teacher
                 ->setName(implode(', ', $name))
-                ->setShort(implode(', ', $short))
+                ->setNameShort(implode(', ', $short))
                 ->setInfo(implode(', ', $long))
                 ->setDescription(implode(', ', $description))
                 ->setLinkName(implode(', ', $link_name))
@@ -297,7 +297,7 @@ class WCS_DB_Lesson_Item
             /** @var WCS_DB_Item $_student */
             foreach ($this->students as $_student) {
                 $name[] = $_student->getName();
-                $short[] = $_student->getShort();
+                $short[] = $_student->getNameShort();
                 $long[] = $_student->getInfo();
                 $description[] = $_student->getDescription();
                 $link_name[] = $_student->getLinkName();
@@ -306,7 +306,7 @@ class WCS_DB_Lesson_Item
             $this->student = new WCS_DB_Item();
             $this->student
                 ->setName(implode(', ', $name))
-                ->setShort(implode(', ', $short))
+                ->setNameShort(implode(', ', $short))
                 ->setInfo(implode(', ', $long))
                 ->setDescription(implode(', ', $description))
                 ->setLinkName(implode(', ', $link_name))

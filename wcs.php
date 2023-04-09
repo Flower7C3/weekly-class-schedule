@@ -31,7 +31,7 @@ if (APP_DEVEL) {
     opcache_reset();
     define('WCS4_VERSION', '4.devel.' . time());
 } else {
-    define('WCS4_VERSION', '4.48' . time());
+    define('WCS4_VERSION', '4.49' . time());
 }
 
 define('WCS4_REQUIRED_WP_VERSION', '4.0');

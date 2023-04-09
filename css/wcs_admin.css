@@ -210,11 +210,11 @@ form.readonly select, form[readonly] select, select.readonly, select[readonly] {
     background-color: #eee !important;
 }
 
-.wcs-management-page-callback [data-orderby][data-order] .dashicons {
+.wcs-management-page-callback [data-order-by][data-order-direction] .dashicons {
     color: silver;
 }
 
-.wcs-management-page-callback [data-orderby][data-order].active .dashicons {
+.wcs-management-page-callback [data-order-by][data-order-direction].active .dashicons {
     color: blue;
 }
 

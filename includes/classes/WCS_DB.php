@@ -378,6 +378,69 @@ class WCS_DB
         }
         return $response;
     }
+
+    public static function get_items(
+        string $className,
+        string $query,
+        array $where,
+        array $query_arr,
+        array $order_field,
+        ?string $limit = null,
+        ?int $paged = 1
+    ): array {
+        global $wpdb;
+        if (!empty($where)) {
+            $query .= ' WHERE ' . implode(' AND ', $where);
+        }
+        $order = [];
+        foreach ($order_field as $field => $direction) {
+            $direction = ($direction === 'asc' || $direction === 'ASC') ? 'ASC' : 'DESC';
+            $order[] = sprintf('%s %s', $field, $direction);
+        }
+        $query .= ' ORDER BY ' . implode(', ', $order);
+        if (null !== $limit) {
+            $query .= ' LIMIT %d';
+            $query_arr[] = $limit;
+            if (null !== $paged) {
+                $query .= ' OFFSET %d';
+                $query_arr[] = $limit * ($paged - 1);
+            }
+        }
+        $query = $wpdb->prepare($query, $query_arr);
+        $results = $wpdb->get_results($query);
+        $format = get_option('time_format');
+        $items = [];
+        if ($results) {
+            foreach ($results as $row) {
+                $item = new $className($row, $format);
+                $item = apply_filters('wcs4_format_class', $item);
+                if (!isset($items[$item->getId()])) {
+                    $items[$item->getId()] = $item;
+                } else {
+                    switch ($className) {
+                        case 'WCS_DB_Lesson_Item':
+                            /** @var WCS_DB_Lesson_Item $_item */
+                            $_item = $items[$item->getId()];
+                            $_item->addTeachers($item->getTeachers());
+                            $_item->addStudents($item->getStudents());
+                            break;
+                        case 'WCS_DB_Journal_Item':
+                            /** @var WCS_DB_Journal_Item $_item */
+                            $_item = $items[$item->getId()];
+                            $_item->addTeachers($item->getTeachers());
+                            $_item->addStudents($item->getStudents());
+                            break;
+                        case 'WCS_DB_Progress_Item':
+                            /** @var WCS_DB_Progress_Item $_item */
+                            $_item = $items[$item->getId()];
+                            $_item->addTeachers($item->getTeachers());
+                            break;
+                    }
+                }
+            }
+        }
+        return $items;
+    }
 }
 
 /**
@@ -512,4 +575,4 @@ add_action('wcs_clear_progress', static function () {
  * Delete schedule entries when subject, teacher, student, or classroom gets deleted.
  * @param $post_id
  */
-add_action('delete_post', ['classes\WCS_DB', 'delete_item_when_delete_post'], 10);
+add_action('delete_post', ['WCS_DB', 'delete_item_when_delete_post'], 10);

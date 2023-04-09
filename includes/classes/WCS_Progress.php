@@ -19,8 +19,8 @@ class WCS_Progress
             !empty($_GET['date_from']) ? sanitize_text_field($_GET['date_from']) : date('Y-m-01'),
             !empty($_GET['date_upto']) ? sanitize_text_field($_GET['date_upto']) : date('Y-m-d'),
             $_GET['type'] ?? null,
-            !empty($_GET['orderby']) ? sanitize_text_field($_GET['orderby']) : 'updated-at',
-            !empty($_GET['order']) ? sanitize_text_field($_GET['order']) : 'desc'
+            !empty($_GET['order_field']) ? sanitize_text_field($_GET['order_field']) : 'updated-at',
+            !empty($_GET['order_direction']) ? sanitize_text_field($_GET['order_direction']) : 'desc'
         );
         include self::TEMPLATE_DIR . 'admin.php';
     }
@@ -136,8 +136,8 @@ class WCS_Progress
         $date_from = sanitize_text_field($_GET['date_from'] ?? null);
         $date_upto = sanitize_text_field($_GET['date_upto'] ?? null);
         $type = sanitize_text_field($_GET['type'] ?? null);
-        $orderby = !empty($_GET['orderby']) ? sanitize_text_field($_GET['orderby']) : 'time';
-        $order = !empty($_GET['order']) ? sanitize_text_field($_GET['order']) : 'asc';
+        $order_field = !empty($_GET['order_field']) ? sanitize_text_field($_GET['order_field']) : 'created-at';
+        $order_direction = !empty($_GET['order_direction']) ? sanitize_text_field($_GET['order_direction']) : 'asc';
         switch (get_post_type()) {
             case 'wcs4_teacher':
                 $teacher = '#' . get_the_id();
@@ -151,7 +151,17 @@ class WCS_Progress
         }
 
         # get progresses
-        $items = self::get_items($id, $teacher, $student, $subject, $date_from, $date_upto, $type, $orderby, $order);
+        $items = self::get_items(
+            $id,
+            $teacher,
+            $student,
+            $subject,
+            $date_from,
+            $date_upto,
+            $type,
+            $order_field,
+            $order_direction
+        );
         $wcs4_options = WCS_Settings::load_settings();
 
         /** @var WCS_DB_Progress_Item $item */
@@ -240,11 +250,21 @@ class WCS_Progress
         $date_from = null,
         $date_upto = null,
         $type = null,
-        $orderby = null,
-        $order = null
+        $order_field = null,
+        $order_direction = null
     ): string {
         ob_start();
-        $items = self::get_items(null, $teacher, $student, $subject, $date_from, $date_upto, $type, $orderby, $order);
+        $items = self::get_items(
+            null,
+            $teacher,
+            $student,
+            $subject,
+            $date_from,
+            $date_upto,
+            $type,
+            $order_field,
+            $order_direction
+        );
         include self::TEMPLATE_DIR . 'admin_table.php';
         $result = ob_get_clean();
         return trim($result);
@@ -258,8 +278,8 @@ class WCS_Progress
         $date_from = null,
         $date_upto = null,
         $type = null,
-        $orderby = null,
-        $order = null,
+        $order_field = null,
+        $order_direction = null,
         $limit = null,
         $paged = null
     ): array {
@@ -335,50 +355,37 @@ class WCS_Progress
             $where[] = 'created_at <= "%s"';
             $query_arr[] = $date_upto . ' 23:59:59';
         }
-        if (!empty($where)) {
-            $query .= ' WHERE ' . implode(' AND ', $where);
-        }
-        switch ($orderby) {
+
+        switch ($order_field) {
+            case 'time':
+                $order_field = ['start_date' => $order_direction];
+                break;
+            case 'subject':
+                $order_field = ['subject_name' => $order_direction];
+                break;
+            case 'teacher':
+                $order_field = ['teacher_name' => $order_direction];
+                break;
+            case 'student':
+                $order_field = ['student_name' => $order_direction];
+                break;
+            case 'created-at':
+                $order_field = ['created_at' => $order_direction];
+                break;
             default:
             case 'updated-at':
-                $order = ($order === 'asc' || $order === 'ASC') ? 'ASC' : 'DESC';
-                $query .= ' ORDER BY updated_at ' . $order;
-                break;
-            case 'time':
-                $order = ($order === 'asc' || $order === 'ASC') ? 'ASC' : 'DESC';
-                $query .= ' ORDER BY start_date ' . $order;
+                $order_field = ['updated_at' => $order_direction];
                 break;
         }
-        if (null !== $limit) {
-            $query .= ' LIMIT %d';
-            $query_arr[] = $limit;
-            if (null !== $paged) {
-                $query .= ' OFFSET %d';
-                $query_arr[] = $limit * ($paged - 1);
-            }
-        }
-        $query = $wpdb->prepare($query, $query_arr);
-        $results = $wpdb->get_results($query);
-        return self::parse_results($results);
-    }
-
-    private static function parse_results($results): array
-    {
-        $items = array();
-        if ($results) {
-            foreach ($results as $row) {
-                $item = new WCS_DB_Progress_Item($row);
-                $item = apply_filters('wcs4_format_class', $item);
-                if (!isset($items[$item->getId()])) {
-                    $items[$item->getId()] = $item;
-                } else {
-                    /** @var WCS_DB_Progress_Item $_item */
-                    $_item = $items[$item->getId()];
-                    $_item->addTeachers($item->getTeachers());
-                }
-            }
-        }
-        return $items;
+        return WCS_DB::get_items(
+            WCS_DB_Progress_Item::class,
+            $query,
+            $where,
+            $query_arr,
+            $order_field,
+            $limit,
+            $paged
+        );
     }
 
     public static function create_item(): void
@@ -407,8 +414,9 @@ class WCS_Progress
             $subject_id = ($_POST['subject_id']);
             $teacher_id = ($_POST['teacher_id']);
             $student_id = ($_POST['student_id']);
-            $start_date = sanitize_text_field($_POST['start_date']);
-            $end_date = sanitize_text_field($_POST['end_date']);
+            $start_date = sanitize_text_field($_POST['start_date'] ?: null);
+
+            $end_date = sanitize_text_field($_POST['end_date'] ?: null);
             $improvements = sanitize_textarea_field($_POST['improvements']);
             $indications = sanitize_textarea_field($_POST['indications']);
             $type = sanitize_text_field($_POST['type']);
@@ -461,8 +469,8 @@ class WCS_Progress
                 $data = array(
                     'subject_id' => $subject_id,
                     'student_id' => $student_id,
-                    'start_date' => $start_date,
-                    'end_date' => $end_date,
+                    'start_date' => ('' === $start_date ? null : $start_date),
+                    'end_date' => ('' === $end_date ? null : $end_date),
                     'improvements' => $improvements,
                     'indications' => $indications,
                     'type' => $type,
@@ -579,7 +587,7 @@ class WCS_Progress
                             SELECT $table.*, group_concat(teacher_id) as teacher_id
                             FROM $table
                             LEFT JOIN $table_teacher USING (id)
-                            WHERE id IN (".implode(',', array_fill(0, count($row_id), '%d')).")
+                            WHERE id IN (" . implode(',', array_fill(0, count($row_id), '%d')) . ")
                             GROUP BY id",
                         $row_id
                     );
@@ -662,8 +670,8 @@ class WCS_Progress
                 sanitize_text_field($_POST['date_from']),
                 sanitize_text_field($_POST['date_upto']),
                 sanitize_text_field($_POST['type']),
-                sanitize_text_field($_POST['orderby']),
-                sanitize_text_field($_POST['order'])
+                sanitize_text_field($_POST['order_field']),
+                sanitize_text_field($_POST['order_direction'])
             );
         }
         wcs4_json_response(['html' => $html,]);
@@ -686,7 +694,7 @@ class WCS_Progress
         string $template_periodic
     ): string {
         if (empty($progresses)) {
-            return '<div class="wcs4-no-lessons-message">' . __('No progresses', 'wcs4') . '</div>';
+            return '<div class="wcs4-no-items-message">' . __('No progresses', 'wcs4') . '</div>';
         }
 
         $dateWithLessons = [];

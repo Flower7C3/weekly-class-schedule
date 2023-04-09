@@ -220,42 +220,14 @@ class WCS_Schedule
             $where[] = 'visible = %d';
             $query_arr[] = $visible;
         }
-        if (!empty($where)) {
-            $query .= ' WHERE ' . implode(' AND ', $where);
-        }
-        $query .= ' ORDER BY weekday, start_time ';
-        if (null !== $limit) {
-            $query .= ' LIMIT %d';
-            $query_arr[] = $limit;
-            if (null !== $paged) {
-                $query .= ' OFFSET %d';
-                $query_arr[] = $limit * ($paged - 1);
-            }
-        }
-        $query = $wpdb->prepare($query, $query_arr);
-        $results = $wpdb->get_results($query);
-        return self::parse_results($results);
-    }
-
-    private static function parse_results($results): array
-    {
-        $format = get_option('time_format');
-        $items = array();
-        if ($results) {
-            foreach ($results as $row) {
-                $item = new WCS_DB_Lesson_Item($row, $format);
-                $item = apply_filters('wcs4_format_class', $item);
-                if (!isset($items[$item->getId()])) {
-                    $items[$item->getId()] = $item;
-                } else {
-                    /** @var WCS_DB_Lesson_Item $_item */
-                    $_item = $items[$item->getId()];
-                    $_item->addTeachers($item->getTeachers());
-                    $_item->addStudents($item->getStudents());
-                }
-            }
-        }
-        return $items;
+        return WCS_DB::get_items(
+            WCS_DB_Lesson_Item::class,
+            $query,
+            $where,
+            $query_arr, ['weekday' => 'ASC', 'start_time' => 'ASC'],
+            $limit,
+            $paged
+        );
     }
 
     public static function save_item($force_insert = false): void
@@ -691,7 +663,7 @@ class WCS_Schedule
         string $template_list
     ): string {
         if (empty($lessons)) {
-            return '<div class="wcs4-no-lessons-message">' . __('No lessons scheduled', 'wcs4') . '</div>';
+            return '<div class="wcs4-no-items-message">' . __('No lessons scheduled', 'wcs4') . '</div>';
         }
 
         $weekdaysWithLessons = [];
@@ -738,7 +710,7 @@ class WCS_Schedule
         string $template_table_details
     ): string {
         if (empty($lessons)) {
-            return '<div class="wcs4-no-lessons-message">' . __('No lessons scheduled', 'wcs4') . '</div>';
+            return '<div class="wcs4-no-items-message">' . __('No lessons scheduled', 'wcs4') . '</div>';
         }
 
         $weekMinutes = [];

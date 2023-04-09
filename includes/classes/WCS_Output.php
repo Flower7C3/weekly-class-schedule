@@ -25,7 +25,7 @@ class WCS_Output
             ], [
                 $item->getName(),
                 $item->getInfo(),
-                $item->getShort(),
+                $item->getNameShort(),
                 $item->getLinkName(),
                 $item->getLinkShort(),
             ], $template);
@@ -40,7 +40,7 @@ class WCS_Output
             ], [
                 $item->getSubject()->getName(),
                 $item->getSubject()->getInfo(),
-                $item->getSubject()->getShort(),
+                $item->getSubject()->getNameShort(),
                 $item->getSubject()->getLinkName(),
                 $item->getSubject()->getLinkShort(),
             ], $template);
@@ -55,7 +55,7 @@ class WCS_Output
             ], [
                 $item->getTeacher()->getName(),
                 $item->getTeacher()->getInfo(),
-                $item->getTeacher()->getShort(),
+                $item->getTeacher()->getNameShort(),
                 $item->getTeacher()->getLinkName(),
                 $item->getTeacher()->getLinkShort(),
             ], $template);
@@ -70,7 +70,7 @@ class WCS_Output
             ], [
                 $item->getStudent()->getName(),
                 $item->getStudent()->getInfo(),
-                $item->getStudent()->getShort(),
+                $item->getStudent()->getNameShort(),
                 $item->getStudent()->getLinkName(),
                 $item->getStudent()->getLinkShort(),
             ], $template);
@@ -85,7 +85,7 @@ class WCS_Output
             ], [
                 $item->getClassroom()->getName(),
                 $item->getClassroom()->getInfo(),
-                $item->getClassroom()->getShort(),
+                $item->getClassroom()->getNameShort(),
                 $item->getClassroom()->getLinkName(),
                 $item->getClassroom()->getLinkShort(),
             ], $template);

@@ -2,61 +2,68 @@
 
 class WCS_DB_Item
 {
-    private $id;
-    private $name;
-    private $short;
-    private $info;
-    private $description;
-    private $permalink;
-    private $link_name;
-    private $link_short;
+    private int $id;
+    private ?string $name = null;
+    private string $nameShort = '';
+    private string $nameFirstLetter = '';
+    private ?string $info = null;
+    private ?string $description = null;
+    private string|null|false|WP_Error $permalink;
+    private ?string $linkName = null;
+    private string $linkShort = '';
 
-    /**
-     * WCS4_Item constructor.
-     * @param null|int $id
-     * @param null|string $name
-     * @param null|string $description
-     */
-    public function __construct($id = null, $name = null, $description = null)
+    public function __construct(?int $id = null, ?string $name = null, ?string $description = null)
     {
-        if (!empty($id)) {
+        if (null !== $id) {
             $this->id = $id;
             $this->name = $name;
             $this->description = $description;
-            $this->permalink = get_permalink($this->id);
-            $this->short = $this->convert_sentence_to_initials($this->name);
-            if (!(('publish' === get_post_status($this->id) && !post_password_required($this->id))
-                || is_user_logged_in())) {
-                $this->short = $this->convert_sentence_to_initials($this->name, true);
-                $this->name = $this->short;
+            $this->generatePermalink();
+            $this->nameShort = $this->convert_sentence_to_initials($this->name);
+            $this->generateFirst();
+            if (!(is_user_logged_in()
+                || ('publish' === get_post_status($this->id) && !post_password_required($this->id)))) {
+                $this->nameShort = $this->convert_sentence_to_initials($this->name, true);
+                $this->name = $this->nameShort;
                 $this->description = null;
                 $this->permalink = null;
             }
             if (!empty($this->description)) {
-                $this->info = '<span class="wcs4-qtip-box"><a href="#qtip" class="wcs4-qtip">' . $this->name . '</a><span class="wcs4-qtip-data">' . $this->getDescription(
-                    ) . '</span></span>';
+                $this->info = '<span class="wcs4-qtip-box">'
+                    . '<a href="#qtip" class="wcs4-qtip">'
+                    . $this->name
+                    . '</a>'
+                    . '<span class="wcs4-qtip-data">'
+                    . $this->getDescription()
+                    . '</span>'
+                    . '</span>';
             } else {
                 $this->info = $this->getName();
             }
-            if (empty($this->link_name)) {
+            if (empty($this->linkName)) {
                 $a_target = '';
                 if ('yes' === WCS_Settings::get_option('open_template_links_in_new_tab')) {
                     $a_target = 'target=_blank';
                 }
-                $this->link_name = !$this->hasPermalink()
+                $this->linkName = !$this->hasPermalink()
                     ? $this->getName()
                     : '<a href="' . $this->permalink . '" ' . $a_target . '>' . $this->getName() . '</a>';
             }
-            if (empty($this->link_short)) {
+            if (empty($this->linkShort)) {
                 $a_target = '';
                 if ('yes' === WCS_Settings::get_option('open_template_links_in_new_tab')) {
                     $a_target = 'target=_blank';
                 }
-                $this->link_short = !$this->hasPermalink()
-                    ? $this->getShort()
-                    : '<a href="' . $this->getPermalink() . '" ' . $a_target . '>' . $this->getShort() . '</a>';
+                $this->linkShort = !$this->hasPermalink()
+                    ? $this->getNameShort()
+                    : '<a href="' . $this->getPermalink() . '" ' . $a_target . '>' . $this->getNameShort() . '</a>';
             }
         }
+    }
+
+    public function getId(): int
+    {
+        return $this->id;
     }
 
     /**
@@ -65,7 +72,7 @@ class WCS_DB_Item
      * @param bool $private
      * @return string
      */
-    private function convert_sentence_to_initials($text, $private = false)
+    private function convert_sentence_to_initials($text, $private = false): string
     {
         $words = explode(' ', $text);
         $initials = [];
@@ -78,107 +85,78 @@ class WCS_DB_Item
         return implode('.', $initials) . '.';
     }
 
-    /**
-     * @return string
-     */
-    public function getName()
+    public function getName(): ?string
     {
         return $this->name;
     }
 
-    /**
-     * @param string $name
-     * @return WCS_DB_Item
-     */
-    public function setName($name)
+    public function setName(string $name): self
     {
         $this->name = $name;
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getShort()
+    public function getNameShort(): string
     {
-        return $this->short;
+        return $this->nameShort;
     }
 
-    /**
-     * @param string $short
-     * @return WCS_DB_Item
-     */
-    public function setShort($short)
+    public function setNameShort(string $nameShort): self
     {
-        $this->short = $short;
+        $this->nameShort = $nameShort;
         return $this;
     }
 
-    /**
-     * @return int
-     */
-    public function getId()
+    public function getNameFirstLetter(): string
     {
-        return $this->id;
+        return $this->nameFirstLetter;
     }
 
-    /**
-     * @return string
-     */
-    public function getDescription()
+    public function generateFirst(): self
+    {
+        $this->nameFirstLetter = mb_substr($this->getName(), 0, 1);
+        return $this;
+    }
+
+    public function getDescription(): ?string
     {
         return $this->description;
     }
 
-    /**
-     * @param string $description
-     * @return WCS_DB_Item
-     */
-    public function setDescription($description)
+    public function setDescription(?string $description): self
     {
         $this->description = $description;
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getLinkName()
+    public function getLinkName(): ?string
     {
-        return $this->link_name;
+        return $this->linkName;
     }
 
-    /**
-     * @param string $link_name
-     * @return WCS_DB_Item
-     */
-    public function setLinkName($link_name)
+    public function setLinkName($linkName): self
     {
-        $this->link_name = $link_name;
+        $this->linkName = $linkName;
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getLinkShort()
+    public function getLinkShort(): string
     {
-        return $this->link_short;
+        return $this->linkShort;
     }
 
-    /**
-     * @param string $link_short
-     * @return WCS_DB_Item
-     */
-    public function setLinkShort($link_short): WCS_DB_Item
+    public function setLinkShort(string $linkShort): self
     {
-        $this->link_short = $link_short;
+        $this->linkShort = $linkShort;
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
+    private function generatePermalink(): self
+    {
+        $this->permalink = get_permalink($this->id);
+        return $this;
+    }
+
     public function getPermalink(): ?string
     {
         return $this->permalink;
@@ -189,19 +167,12 @@ class WCS_DB_Item
         return !(null === $this->getPermalink());
     }
 
-    /**
-     * @return string|null
-     */
     public function getInfo(): ?string
     {
         return $this->info;
     }
 
-    /**
-     * @param string|null $info
-     * @return WCS_DB_Item
-     */
-    public function setInfo($info)
+    public function setInfo($info): self
     {
         $this->info = $info;
         return $this;
