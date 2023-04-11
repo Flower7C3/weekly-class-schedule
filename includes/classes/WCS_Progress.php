@@ -286,6 +286,7 @@ class WCS_Progress
         global $wpdb;
 
         $table = WCS_DB::get_progress_table_name();
+        $table_subject = WCS_DB::get_progress_subject_table_name();
         $table_teacher = WCS_DB::get_progress_teacher_table_name();
         $table_posts = $wpdb->prefix . 'posts';
         $table_meta = $wpdb->prefix . 'postmeta';
@@ -298,6 +299,7 @@ class WCS_Progress
                 start_date, end_date,
                 improvements, indications, type
             FROM $table 
+            LEFT JOIN $table_subject USING(id)
             LEFT JOIN $table_teacher USING(id)
             LEFT JOIN $table_posts sub ON subject_id = sub.ID
             LEFT JOIN $table_posts tea ON teacher_id = tea.ID
@@ -409,6 +411,7 @@ class WCS_Progress
             $update_request = false;
             $row_id = null;
             $table = WCS_DB::get_progress_table_name();
+            $table_subject = WCS_DB::get_progress_subject_table_name();
             $table_teacher = WCS_DB::get_progress_teacher_table_name();
 
             $subject_id = ($_POST['subject_id']);
@@ -467,7 +470,6 @@ class WCS_Progress
 
             if (empty($errors)) {
                 $data = array(
-                    'subject_id' => $subject_id,
                     'student_id' => $student_id,
                     'start_date' => ('' === $start_date ? null : $start_date),
                     'end_date' => ('' === $end_date ? null : $end_date),
@@ -502,17 +504,27 @@ class WCS_Progress
                             $table,
                             $data,
                             array('id' => $row_id),
-                            array('%d', '%d', '%s', '%s', '%s', '%s', '%s', '%s', '%d'),
+                            array( '%d', '%s', '%s', '%s', '%s', '%s', '%s', '%d'),
                             array('%d')
                         );
                         if (false === $r) {
                             throw new RuntimeException($wpdb->last_error, 1);
                         }
+                        $r = $wpdb->delete($table_subject, array('id' => $row_id));
+                        if (false === $r) {
+                            throw new RuntimeException($wpdb->last_error, 2);
+                        }
+                        foreach ($subject_id as $_id) {
+                            $data_subject = array('id' => $row_id, 'subject_id' => $_id);
+                            $r = $wpdb->insert($table_subject, $data_subject);
+                            if (false === $r) {
+                                throw new RuntimeException($wpdb->last_error, 4);
+                            }
+                        }
                         $r = $wpdb->delete($table_teacher, array('id' => $row_id));
                         if (false === $r) {
                             throw new RuntimeException($wpdb->last_error, 2);
                         }
-
                         foreach ($teacher_id as $_id) {
                             $data_teacher = array('id' => $row_id, 'teacher_id' => $_id);
                             $r = $wpdb->insert($table_teacher, $data_teacher);
@@ -528,12 +540,19 @@ class WCS_Progress
                         $r = $wpdb->insert(
                             $table,
                             $data,
-                            array('%d', '%d', '%s', '%s', '%s', '%s', '%s', '%d', '%s', '%d')
+                            array('%d', '%s', '%s', '%s', '%s', '%s', '%d', '%s', '%d')
                         );
                         if (false === $r) {
                             throw new RuntimeException($wpdb->last_error, 6);
                         }
                         $row_id = $wpdb->insert_id;
+                        foreach ($subject_id as $_id) {
+                            $data_subject = array('id' => $row_id, 'subject_id' => $_id);
+                            $r = $wpdb->insert($table_subject, $data_subject);
+                            if (false === $r) {
+                                throw new RuntimeException($wpdb->last_error, 7);
+                            }
+                        }
                         foreach ($teacher_id as $_id) {
                             $data_teacher = array('id' => $row_id, 'teacher_id' => $_id);
                             $r = $wpdb->insert($table_teacher, $data_teacher);
@@ -572,6 +591,7 @@ class WCS_Progress
             $response = [];
 
             $table = WCS_DB::get_progress_table_name();
+            $table_subject = WCS_DB::get_progress_subject_table_name();
             $table_teacher = WCS_DB::get_progress_teacher_table_name();
 
             $required = array(
@@ -584,8 +604,9 @@ class WCS_Progress
                 if (is_array($row_id)) {
                     $query = $wpdb->prepare(
                         "
-                            SELECT $table.*, group_concat(teacher_id) as teacher_id
+                            SELECT $table.*, group_concat(subject_id) as subject_id, group_concat(teacher_id) as teacher_id
                             FROM $table
+                            LEFT JOIN $table_subject USING (id)
                             LEFT JOIN $table_teacher USING (id)
                             WHERE id IN (" . implode(',', array_fill(0, count($row_id), '%d')) . ")
                             GROUP BY id",
@@ -600,8 +621,9 @@ class WCS_Progress
                 } else {
                     $query = $wpdb->prepare(
                         "
-                            SELECT $table.*, group_concat(teacher_id) as teacher_id
+                            SELECT $table.*, group_concat(subject_id) as teacher_id, group_concat(teacher_id) as teacher_id
                             FROM $table
+                            LEFT JOIN $table_subject USING (id)
                             LEFT JOIN $table_teacher USING (id)
                             WHERE id = %d
                             GROUP BY id",
@@ -630,6 +652,7 @@ class WCS_Progress
             global $wpdb;
 
             $table = WCS_DB::get_progress_table_name();
+            $table_subject = WCS_DB::get_progress_subject_table_name();
             $table_teacher = WCS_DB::get_progress_teacher_table_name();
 
             $required = array(
@@ -641,8 +664,9 @@ class WCS_Progress
                 $row_id = sanitize_text_field($_POST['row_id']);
 
                 $result = $wpdb->delete($table, array('id' => $row_id), array('%d'));
+                $result_subject = $wpdb->delete($table_subject, array('id' => $row_id), array('%d'));
                 $result_teacher = $wpdb->delete($table_teacher, array('id' => $row_id), array('%d'));
-                if (0 === $result || 0 === $result_teacher) {
+                if (0 === $result || 0 === $result_subject || 0 === $result_teacher) {
                     $response = __('Failed to delete entry', 'wcs4');
                     $errors = true;
                 } else {

@@ -84,6 +84,11 @@ class WCS_DB
         return $wpdb->prefix . 'wcs4_progress';
     }
 
+    public static function get_progress_subject_table_name(): string
+    {
+        global $wpdb;
+        return $wpdb->prefix . 'wcs4_progress_subject';
+    }
     public static function get_progress_teacher_table_name(): string
     {
         global $wpdb;
@@ -102,6 +107,7 @@ class WCS_DB
         $table_journal_teacher = self::get_journal_teacher_table_name();
         $table_journal_student = self::get_journal_student_table_name();
         $table_progress = self::get_progress_table_name();
+        $table_progress_subject = self::get_progress_subject_table_name();
         $table_progress_teacher = self::get_progress_teacher_table_name();
 
         $sql_schedule = "CREATE TABLE `$table_schedule` (
@@ -165,6 +171,10 @@ class WCS_DB
             `updated_by` INT NULL,
             PRIMARY KEY (`id`)
         )";
+        $sql_progress_subject = "CREATE TABLE `$table_progress_subject` (
+            `id` int(11) unsigned NOT NULL,
+            `subject_id` int(20) unsigned NOT NULL
+        )";
         $sql_progress_teacher = "CREATE TABLE `$table_progress_teacher` (
             `id` int(11) unsigned NOT NULL,
             `teacher_id` int(20) unsigned NOT NULL
@@ -178,6 +188,7 @@ class WCS_DB
         dbDelta($sql_journal_teacher);
         dbDelta($sql_journal_student);
         dbDelta($sql_progress);
+        dbDelta($sql_progress_subject);
         dbDelta($sql_progress_teacher);
         add_option('wcs4_db_version', WCS4_DB_VERSION);
     }
@@ -315,6 +326,7 @@ class WCS_DB
         $wpdb->query('DROP TABLE IF EXISTS ' . self::get_journal_teacher_table_name());
         $wpdb->query('DROP TABLE IF EXISTS ' . self::get_journal_student_table_name());
         $wpdb->query('DROP TABLE IF EXISTS ' . self::get_journal_table_name());
+        $wpdb->query('DROP TABLE IF EXISTS ' . self::get_progress_subject_table_name());
         $wpdb->query('DROP TABLE IF EXISTS ' . self::get_progress_teacher_table_name());
         $wpdb->query('DROP TABLE IF EXISTS ' . self::get_progress_table_name());
     }
@@ -341,6 +353,7 @@ class WCS_DB
     public static function delete_progresses(): void
     {
         global $wpdb;
+        $wpdb->query('TRUNCATE ' . self::get_progress_subject_table_name());
         $wpdb->query('TRUNCATE ' . self::get_progress_teacher_table_name());
         $wpdb->query('TRUNCATE ' . self::get_progress_table_name());
     }
@@ -433,6 +446,7 @@ class WCS_DB
                         case 'WCS_DB_Progress_Item':
                             /** @var WCS_DB_Progress_Item $_item */
                             $_item = $items[$item->getId()];
+                            $_item->addSubjects($item->getSubjects());
                             $_item->addTeachers($item->getTeachers());
                             break;
                     }

@@ -147,7 +147,15 @@ class WCS_Journal
         }
 
         # get journals
-        $items = self::get_items($teacher, $student, $subject, $date_from, $date_upto, $order_field, $order_direction);
+        $items = self::get_items(
+            $teacher,
+            $student,
+            $subject,
+            $date_from,
+            $date_upto,
+            $order_field,
+            $order_direction
+        );
 
         $wcs4_options = WCS_Settings::load_settings();
 
@@ -228,7 +236,15 @@ class WCS_Journal
         $order_direction = null
     ): string {
         ob_start();
-        $items = self::get_items($teacher, $student, $subject, $date_from, $date_upto, $order_field, $order_direction);
+        $items = self::get_items(
+            $teacher,
+            $student,
+            $subject,
+            $date_from,
+            $date_upto,
+            $order_field,
+            $order_direction
+        );
         include self::TEMPLATE_DIR . 'admin_table.php';
         $result = ob_get_clean();
         return trim($result);

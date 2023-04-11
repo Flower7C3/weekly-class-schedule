@@ -162,11 +162,19 @@
                             <td data-colname="<?= __('Subject', 'wcs4') ?>">
                                 <?php
                                 if ($item->isTypePartial()): ?>
-                                    <?php
-                                    WCS_Output::item_admin_link(
-                                        'search_wcs4_progress_subject_id',
-                                        $item->getSubject()
-                                    ); ?>
+                                    <ul>
+                                        <?php
+                                        foreach ($item->getSubject() as $item_subject): ?>
+                                            <li>
+                                                <?php
+                                                WCS_Output::item_admin_link(
+                                                    'search_wcs4_progress_subject_id',
+                                                    $item_subject
+                                                ); ?>
+                                            </li>
+                                        <?php
+                                        endforeach; ?>
+                                    </ul>
                                 <?php
                                 else: ?>
                                     -

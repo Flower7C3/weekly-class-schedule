@@ -33,7 +33,7 @@
                     'wcs4_progress_subject',
                     $subject ?? null,
                     true,
-                    false,
+                    true,
                     null,
                     ['subject' => $subject ?? null, 'teacher' => $teacher ?? null, 'student' => $student ?? null]
                 ); ?>

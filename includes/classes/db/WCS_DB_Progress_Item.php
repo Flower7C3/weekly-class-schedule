@@ -6,6 +6,7 @@ class WCS_DB_Progress_Item
     public const TYPE_PERIODIC = 'type.periodic';
     private int $id;
     private WCS_DB_Item $subject;
+    private array $subjects = [];
     private WCS_DB_Item $teacher;
     private array $teachers = [];
     private WCS_DB_Item $student;
@@ -27,7 +28,11 @@ class WCS_DB_Progress_Item
             ->setUpdatedAt($db_row->updated_at)
             ->setUpdatedBy($db_row->updated_by);
 
-        $this->subject = new WCS_DB_Item($db_row->subject_id, $db_row->subject_name, $db_row->subject_desc);
+        $this->subjects[$db_row->subject_id] = new WCS_DB_Item(
+            $db_row->subject_id,
+            $db_row->subject_name,
+            $db_row->subject_desc
+        );
         $this->student = new WCS_DB_Item($db_row->student_id, $db_row->student_name, $db_row->student_desc);
         $this->teachers[$db_row->teacher_id] = new WCS_DB_Item(
             $db_row->teacher_id,
@@ -108,15 +113,45 @@ class WCS_DB_Progress_Item
         return $this->getCreatedAt()->format('Y-m-d');
     }
 
-    public function getSubject(): WCS_DB_Item
+    public function getSubjects(): array
     {
-        return $this->subject;
+        return $this->subjects;
     }
 
-    public function addTeachers(array $teachers): self
+    public function addSubjects(array $subjects): self
     {
-        $this->teachers += $teachers;
+        $this->subjects += $subjects;
         return $this;
+    }
+
+    public function getSubject(): WCS_DB_Item
+    {
+        if (empty($this->subject)) {
+            $name = [];
+            $short = [];
+            $long = [];
+            $description = [];
+            $link_name = [];
+            $link_short = [];
+            /** @var WCS_DB_Item $_subject */
+            foreach ($this->subjects as $_subject) {
+                $name[] = $_subject->getName();
+                $short[] = $_subject->getNameShort();
+                $long[] = $_subject->getInfo();
+                $description[] = $_subject->getDescription();
+                $link_name[] = $_subject->getLinkName();
+                $link_short[] = $_subject->getLinkShort();
+            }
+            $this->subject = new WCS_DB_Item();
+            $this->subject
+                ->setName(implode(', ', $name))
+                ->setNameShort(implode(', ', $short))
+                ->setInfo(implode(', ', $long))
+                ->setDescription(implode(', ', $description))
+                ->setLinkName(implode(', ', $link_name))
+                ->setLinkShort(implode(', ', $link_short));
+        }
+        return $this->subject;
     }
 
     public function getStudent(): WCS_DB_Item
@@ -127,6 +162,12 @@ class WCS_DB_Progress_Item
     public function getTeachers(): array
     {
         return $this->teachers;
+    }
+
+    public function addTeachers(array $teachers): self
+    {
+        $this->teachers += $teachers;
+        return $this;
     }
 
     public function getTeacher(): WCS_DB_Item

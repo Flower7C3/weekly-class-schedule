@@ -58,6 +58,7 @@
                 $('.sortable.sorted').data('order-current-direction'),
                 'fade'
             );
+            update_create_button();
         });
     };
 
@@ -139,8 +140,25 @@
             WCS4_LIB.fetch_entry_data_to_form('progress', $(this).closest('tr').data('id'), set_entry_data_to_form, WCS4_LIB.reset_to_copy_mode)
         });
     }
-
+    var update_create_button = function () {
+        if ('' === $('#search_wcs4_progress_student_id').val()) {
+            $('#wcs-progresses-create').attr('disabled', true)
+        } else {
+            $('#wcs-progresses-create').attr('disabled', false)
+        }
+    }
     var bind_create_handler = function () {
+        update_create_button();
+        $(document).on('click.wcs-filter-toggle-student', '.search-filter', function (e) {
+            setTimeout(function () {
+                update_create_button();
+            }, 300);
+        });
+        $(document).on('click.wcs4-reset-progress-button', '#wcs-progresses-filter [type="reset"]', function (e) {
+            setTimeout(function () {
+                update_create_button();
+            }, 300);
+        });
         $(document).on('click.wcs4-create-progress-button', '#wcs-progresses-create', function (e) {
             var ids = [];
             jQuery('tr[id]').each(function (k, v) {
@@ -168,6 +186,7 @@
                     $('#search_wcs4_progress_subject_id').val(),
                     $('#search_wcs4_progress_date_from').val(),
                     $('#search_wcs4_progress_date_upto').val(),
+                    $('#search_wcs4_progress_type').val(),
                     $('.sortable.sorted').data('order-current-field'),
                     $('.sortable.sorted').data('order-current-direction'),
                     'remove'
