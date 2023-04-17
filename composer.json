@@ -1,0 +1,9 @@
+{
+  "type": "wordpress-plugin",
+  "license": "MIT",
+  "autoload": {
+    "psr-4": {
+      "WCS4\\": "src/"
+    }
+  }
+}

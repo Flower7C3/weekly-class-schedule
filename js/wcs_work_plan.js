@@ -54,6 +54,8 @@
                 $('#search_wcs4_work_plan_date_from').val(),
                 $('#search_wcs4_work_plan_date_upto').val(),
                 $('#search_wcs4_work_plan_type').val(),
+                $('#search_wcs4_work_plan_created_at_from').val(),
+                $('#search_wcs4_work_plan_created_at_upto').val(),
                 $('.sortable.sorted').data('order-current-field'),
                 $('.sortable.sorted').data('order-current-direction'),
                 'fade'
@@ -74,6 +76,8 @@
                 $('#search_wcs4_work_plan_date_from').val(),
                 $('#search_wcs4_work_plan_date_upto').val(),
                 $('#search_wcs4_work_plan_type').val(),
+                $('#search_wcs4_work_plan_created_at_from').val(),
+                $('#search_wcs4_work_plan_created_at_upto').val(),
                 $(this).data('order-field'),
                 $(this).data('order-direction'),
                 'fade')
@@ -112,6 +116,8 @@
                         $('#search_wcs4_work_plan_date_from').val(),
                         $('#search_wcs4_work_plan_date_upto').val(),
                         $('#search_wcs4_work_plan_type').val(),
+                        $('#search_wcs4_work_plan_created_at_from').val(),
+                        $('#search_wcs4_work_plan_created_at_upto').val(),
                         $('.sortable.sorted').data('order-current-field'),
                         $('.sortable.sorted').data('order-current-direction'),
                         'fade'
@@ -146,9 +152,9 @@
     }
     var update_create_button = function () {
         if ('' === $('#search_wcs4_work_plan_student_id').val()) {
-            $('#wcs4-work-plans-create').attr('disabled', true)
+            $('#wcs4-work-plan-filter  [data-action="generate"]').attr('disabled', true)
         } else {
-            $('#wcs4-work-plans-create').attr('disabled', false)
+            $('#wcs4-work-plan-filter  [data-action="generate"]').attr('disabled', false)
         }
     }
     var bind_create_handler = function () {
@@ -191,6 +197,8 @@
                     $('#search_wcs4_work_plan_date_from').val(),
                     $('#search_wcs4_work_plan_date_upto').val(),
                     $('#search_wcs4_work_plan_type').val(),
+                    $('#search_wcs4_work_plan_created_at_from').val(),
+                    $('#search_wcs4_work_plan_created_at_upto').val(),
                     $('.sortable.sorted').data('order-current-field'),
                     $('.sortable.sorted').data('order-current-direction'),
                     'remove'
@@ -202,7 +210,7 @@
     /**
      * Updates dynamically a specific work_plan vi.
      */
-    var reload_html_view = function (teacher, student, subject, date_from, date_upto, type, order_field, order_direction, action) {
+    var reload_html_view = function (teacher, student, subject, date_from, date_upto, type, created_at_from, created_at_upto, order_field, order_direction, action) {
         var page = $('#search_wcs4_page').val();
         var state = {
             'page': page,
@@ -212,6 +220,8 @@
             'date_from': date_from,
             'date_upto': date_upto,
             'type': type,
+            'created_at_from': created_at_from,
+            'created_at_upto': created_at_upto,
             'order_field': order_field,
             'order_direction': order_direction,
         };
@@ -223,6 +233,8 @@
             + '&date_from=' + date_from
             + '&date_upto=' + date_upto
             + '&type=' + type
+            + '&created_at_from=' + created_at_from
+            + '&created_at_upto=' + created_at_upto
             + '&order_field=' + order_field
             + '&order_direction=' + order_direction
         ;
@@ -236,6 +248,8 @@
             date_from: date_from,
             date_upto: date_upto,
             type: type,
+            created_at_from: created_at_from,
+            created_at_upto: created_at_upto,
             order_field: order_field,
             order_direction: order_direction,
         };

@@ -3,8 +3,12 @@
 /**
  * Create the subject, teacher, student, and classroom post types.
  */
+
+use WCS4\Controller\Settings;
+use WCS4\Helper\DB;
+
 add_action('init', static function () {
-    $wcs4_settings = WCS_Settings::load_settings();
+    $wcs4_settings = Settings::load_settings();
 
     # Register subject
     if (!empty($wcs4_settings['subject_taxonomy_slug'])) {
@@ -339,6 +343,8 @@ function wcs4_actions($actions, $the_post)
                 $type => $the_post->ID,
                 'date_from' => date('Y-m-01'),
                 'date_upto' => date('Y-m-d'),
+                'order_field' => 'time',
+                'order_direction' => 'asc',
             ]),
             __('Download Journals as HTML', 'wcs4')
         );
@@ -404,7 +410,7 @@ register_activation_hook(__FILE__, static function () {
 add_action('wcs4_activate_action', static function () {
     $version = get_option('wcs4_version');
     if (false === $version) {
-        WCS_DB::create_schema();
+        DB::create_schema();
     }
 });
 

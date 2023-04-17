@@ -31,6 +31,8 @@
                 $('#search_wcs4_journal_subject_id').val(),
                 $('#search_wcs4_journal_date_from').val(),
                 $('#search_wcs4_journal_date_upto').val(),
+                $('#search_wcs4_journal_created_at_from').val(),
+                $('#search_wcs4_journal_created_at_upto').val(),
                 $('.sortable.sorted').data('order-current-field'),
                 $('.sortable.sorted').data('order-current-direction'),
                 'fade'
@@ -49,6 +51,8 @@
                 $('#search_wcs4_journal_subject_id').val(),
                 $('#search_wcs4_journal_date_from').val(),
                 $('#search_wcs4_journal_date_upto').val(),
+                $('#search_wcs4_journal_created_at_from').val(),
+                $('#search_wcs4_journal_created_at_upto').val(),
                 $(this).data('order-field'),
                 $(this).data('order-direction'),
                 'fade')
@@ -83,6 +87,8 @@
                         $('#search_wcs4_journal_subject_id').val(),
                         $('#search_wcs4_journal_date_from').val(),
                         $('#search_wcs4_journal_date_upto').val(),
+                        $('#search_wcs4_journal_created_at_from').val(),
+                        $('#search_wcs4_journal_created_at_upto').val(),
                         $('.sortable.sorted').data('order-current-field'),
                         $('.sortable.sorted').data('order-current-direction'),
                         'fade'
@@ -131,6 +137,8 @@
                     $('#search_wcs4_journal_subject_id').val(),
                     $('#search_wcs4_journal_date_from').val(),
                     $('#search_wcs4_journal_date_upto').val(),
+                    $('#search_wcs4_journal_created_at_from').val(),
+                    $('#search_wcs4_journal_created_at_upto').val(),
                     $('.sortable.sorted').data('order-current-field'),
                     $('.sortable.sorted').data('order-current-direction'),
                     'remove'
@@ -142,7 +150,7 @@
     /**
      * Updates dynamically a specific journal vi.
      */
-    var reload_html_view = function (teacher, student, subject, date_from, date_upto, order_field, order_direction, action) {
+    var reload_html_view = function (teacher, student, subject, date_from, date_upto, created_at_from, created_at_upto, order_field, order_direction, action) {
         var page = $('#search_wcs4_page').val();
         var state = {
             'page': page,
@@ -151,6 +159,8 @@
             'subject': subject,
             'date_from': date_from,
             'date_upto': date_upto,
+            'created_at_from': created_at_from,
+            'created_at_upto': created_at_upto,
             'order_field': order_field,
             'order_direction': order_direction,
         };
@@ -161,6 +171,8 @@
             + '&subject=' + subject
             + '&date_from=' + date_from
             + '&date_upto=' + date_upto
+            + '&created_at_from=' + created_at_from
+            + '&created_at_upto=' + created_at_upto
             + '&order_field=' + order_field
             + '&order_direction=' + order_direction
         ;
@@ -173,6 +185,8 @@
             subject: subject ? '#' + subject : null,
             date_from: date_from,
             date_upto: date_upto,
+            created_at_from: created_at_from,
+            created_at_upto: created_at_upto,
             order_field: order_field,
             order_direction: order_direction,
         };

@@ -11,6 +11,13 @@
 /**
  * Register admin pages (schedule management, settings, etc...).
  */
+
+use WCS4\Controller\Journal;
+use WCS4\Controller\Progress;
+use WCS4\Controller\Schedule;
+use WCS4\Controller\Settings;
+use WCS4\Controller\WorkPlan;
+
 if (!defined('WCS4_SCHEDULE_VIEW_CAPABILITY')) {
     define('WCS4_SCHEDULE_VIEW_CAPABILITY', 'wcs4_schedule_view');
 }
@@ -56,7 +63,7 @@ add_action('admin_menu', static function () {
         __('Schedule', 'wcs4'),
         WCS4_SCHEDULE_VIEW_CAPABILITY,
         'wcs4',
-        array(WCS_Schedule::class, "callback_of_management_page"),
+        array(Schedule::class, "callback_of_management_page"),
         'dashicons-schedule',
         50
     );
@@ -66,7 +73,7 @@ add_action('admin_menu', static function () {
         __('Journals', 'wcs4'),
         WCS4_JOURNAL_VIEW_CAPABILITY,
         'wcs4-journal',
-        array(WCS_Journal::class, "callback_of_management_page")
+        array(Journal::class, "callback_of_management_page")
     );
     $page_work_plans = add_submenu_page(
         'wcs4',
@@ -74,7 +81,7 @@ add_action('admin_menu', static function () {
         __('Work Plans', 'wcs4'),
         WCS4_PROGRESS_VIEW_CAPABILITY,
         'wcs4-work-plan',
-        array(WCS_WorkPlan::class, "callback_of_management_page")
+        array(WorkPlan::class, "callback_of_management_page")
     );
     $page_progress = add_submenu_page(
         'wcs4',
@@ -82,7 +89,7 @@ add_action('admin_menu', static function () {
         __('Progresses', 'wcs4'),
         WCS4_PROGRESS_VIEW_CAPABILITY,
         'wcs4-progress',
-        array(WCS_Progress::class, "callback_of_management_page")
+        array(Progress::class, "callback_of_management_page")
     );
     $page_standard_options = add_submenu_page(
         'wcs4',
@@ -90,7 +97,7 @@ add_action('admin_menu', static function () {
         __('Standard Options', 'wcs4'),
         WCS4_STANDARD_OPTIONS_CAPABILITY,
         'wcs4-standard-options',
-        array(WCS_Settings::class, "standard_options_page_callback")
+        array(Settings::class, "standard_options_page_callback")
     );
     add_submenu_page(
         'wcs4',
@@ -98,7 +105,7 @@ add_action('admin_menu', static function () {
         __('Advanced Options', 'wcs4'),
         WCS4_ADVANCED_OPTIONS_CAPABILITY,
         'wcs4-advanced-options',
-        array(WCS_Settings::class, "advanced_options_page_callback")
+        array(Settings::class, "advanced_options_page_callback")
     );
 
     $help_tabs = [];

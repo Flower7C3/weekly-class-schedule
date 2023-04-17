@@ -4,13 +4,18 @@
 /**
  * Append schedule to single page
  */
+
+use WCS4\Controller\Journal;
+use WCS4\Controller\Schedule;
+use WCS4\Controller\Settings;
+
 const WCS_POST_ACCESS_COOKIE_NAME = 'wp-postpass_' . COOKIEHASH;
 const WCS_SESSION_CHECK_POST = 'check-post';
 const WCS_SESSION_SATISFY_POST = 'satisfy-post';
 
 function get_wcs_post_pass_satisfy_any(): array
 {
-    $wcs4_settings = WCS_Settings::load_settings();
+    $wcs4_settings = Settings::load_settings();
     $wcs_post_pass_satisfy_any = [];
     foreach (WCS4_POST_TYPES as $type) {
         $name = str_replace('wcs4_', '', $type);
@@ -100,7 +105,7 @@ add_filter('the_content', static function ($content) {
                 . '</a><br>';
         }
         if (!post_password_required($post_id)) {
-            $wcs4_settings = WCS_Settings::load_settings();
+            $wcs4_settings = Settings::load_settings();
             $post_type_key = str_replace('wcs4_', '', $post_type);
             ### SCHEDULE
             $layout = $wcs4_settings[$post_type_key . '_schedule_layout'];
@@ -148,7 +153,7 @@ add_filter('the_content', static function ($content) {
                     $content .= '<summary>' . __('Journals', 'wcs4') . '</summary>';
                     $template = $wcs4_settings[$post_type_key . '_journal_shortcode_template'];
                     $params = [];
-                    $params[] = $post_type_key . '="' . $post_id . '"';
+                    $params[] = $post_type_key . '="#' . $post_id . '"';
                     $params[] = 'template="' . $template . '"';
                     $params[] = 'limit=' . $wcs4_settings[$post_type_key . '_journal_view'];
                     $content .= '[class_journal  ' . implode(' ', $params) . ']';
@@ -275,18 +280,18 @@ add_filter('single_template', static function ($single) {
     global $post;
     $post_type = $post->post_type;
     $post_type_key = str_replace('wcs4_', '', $post_type);
-    $wcs4_settings = WCS_Settings::load_settings();
+    $wcs4_settings = Settings::load_settings();
     if (isset($post_type, $_GET['format']) && array_key_exists($post_type, WCS4_POST_TYPES_WHITELIST)) {
         if ('ical' === $_GET['format'] && 'yes' === $wcs4_settings[$post_type_key . '_schedule_download_ical']) {
-            WCS_Schedule::callback_of_calendar_page();
+            Schedule::callback_of_calendar_page();
         }
         if ('csv' === $_GET['format'] && 'yes' === $wcs4_settings[$post_type_key . '_journal_download_csv']
             && current_user_can(WCS4_JOURNAL_EXPORT_CAPABILITY)) {
-            WCS_Journal::callback_of_export_csv_page();
+            Journal::callback_of_export_csv_page();
         }
         if ('html' === $_GET['format'] && 'yes' === $wcs4_settings[$post_type_key . '_journal_download_html']
             && current_user_can(WCS4_JOURNAL_EXPORT_CAPABILITY)) {
-            WCS_Journal::callback_of_export_html_page();
+            Journal::callback_of_export_html_page();
         }
     }
     return $single;

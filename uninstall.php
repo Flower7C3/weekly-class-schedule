@@ -2,6 +2,8 @@
 
 //if uninstall not called from WordPress exit
 
+use WCS4\Helper\DB;
+
 if (!defined('WP_UNINSTALL_PLUGIN'))
     exit();
 
@@ -29,9 +31,9 @@ function wcs4_delete_plugin()
             wp_delete_post($post->ID, true);
     }
 
-    $wpdb->query('DROP TABLE IF EXISTS '. WCS_DB::get_schedule_teacher_table_name());
-    $wpdb->query('DROP TABLE IF EXISTS '. WCS_DB::get_schedule_student_table_name());
-    $wpdb->query('DROP TABLE IF EXISTS '. WCS_DB::get_schedule_table_name());
+    $wpdb->query('DROP TABLE IF EXISTS '. DB::get_schedule_teacher_table_name());
+    $wpdb->query('DROP TABLE IF EXISTS '. DB::get_schedule_student_table_name());
+    $wpdb->query('DROP TABLE IF EXISTS '. DB::get_schedule_table_name());
 }
 
 wcs4_delete_plugin();

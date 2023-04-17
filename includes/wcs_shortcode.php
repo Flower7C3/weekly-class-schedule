@@ -7,6 +7,14 @@
  * @param $atts
  * @return string
  */
+
+use WCS4\Controller\Journal;
+use WCS4\Controller\Progress;
+use WCS4\Controller\Schedule;
+use WCS4\Controller\Settings;
+use WCS4\Controller\WorkPlan;
+use WCS4\Helper\Output;
+
 add_shortcode('wcs', static function ($atts) {
     $output = '';
     $buffer = '';
@@ -21,26 +29,33 @@ add_shortcode('wcs', static function ($atts) {
     $template_table_short = '';
     $template_table_details = '';
     $template_list = '';
-    $wcs4_options = WCS_Settings::load_settings();
+    $wcs4_options = Settings::load_settings();
 
-    extract(shortcode_atts(array(
-        'layout' => 'table',
-        'classroom' => 'all',
-        'teacher' => 'all',
-        'student' => 'all',
-        'subject' => 'all',
-        'style' => 'normal',
-        'limit' => null,
-        'paged' => null,
-        'template_table_short' => $wcs4_options['schedule_template_table_short'],
-        'template_table_details' => $wcs4_options['schedule_template_table_details'],
-        'template_list' => $wcs4_options['schedule_template_list'],
-    ), $atts), EXTR_OVERWRITE);
+    extract(
+        shortcode_atts(array(
+            'layout' => 'table',
+            'classroom' => 'all',
+            'teacher' => 'all',
+            'student' => 'all',
+            'subject' => 'all',
+            'style' => 'normal',
+            'limit' => null,
+            'paged' => null,
+            'template_table_short' => $wcs4_options['schedule_template_table_short'],
+            'template_table_details' => $wcs4_options['schedule_template_table_details'],
+            'template_list' => $wcs4_options['schedule_template_list'],
+        ), $atts),
+        EXTR_OVERWRITE
+    );
     # Get lessons
-    $lessons = WCS_Schedule::get_items($classroom, $teacher, $student, $subject, null, null, 1, $limit, $paged);
+    $lessons = Schedule::get_items($classroom, $teacher, $student, $subject, null, null, 1, $limit, $paged);
 
     # Classroom
-    $schedule_key = 'wcs4-key-' . preg_replace('/[^A-Za-z0-9]/', '-', implode('-', [$classroom, $teacher, $student, $subject, $limit, $paged]));
+    $schedule_key = 'wcs4-key-' . preg_replace(
+            '/[^A-Za-z0-9]/',
+            '-',
+            implode('-', [$classroom, $teacher, $student, $subject, $limit, $paged])
+        );
     $schedule_key = strtolower($schedule_key);
 
     $output = apply_filters('wcs4_pre_render', $output, $style);
@@ -48,19 +63,42 @@ add_shortcode('wcs', static function ($atts) {
     $output .= '<div class="wcs4-schedule-wrapper" id="' . $schedule_key . '">';
     if ($layout === 'table') {
         # Render table layout
-        $weekdays = wcs4_get_indexed_weekdays($abbr = TRUE);
-        $output .= WCS_Schedule::get_html_of_schedule_table_for_shortcode($lessons, $weekdays, $schedule_key, $template_table_short, $template_table_details);
-    } else if ($layout === 'list') {
-        # Render list layout
-        $weekdays = wcs4_get_weekdays();
-        $output .= WCS_Schedule::get_html_of_schedule_list_for_shortcode($lessons, $weekdays, $schedule_key, $template_list);
+        $weekdays = wcs4_get_indexed_weekdays($abbr = true);
+        $output .= Schedule::get_html_of_schedule_table_for_shortcode(
+            $lessons,
+            $weekdays,
+            $schedule_key,
+            $template_table_short,
+            $template_table_details
+        );
     } else {
-        $weekdays = wcs4_get_weekdays();
-        $buffer = apply_filters('wcs4_render_layout', $buffer, $lessons, $weekdays, $classroom, $teacher, $student, $subject, $wcs4_options);
-        if (empty($buffer)) {
-            $output .= __('Unsupported layout', 'wcs4');
+        if ($layout === 'list') {
+            # Render list layout
+            $weekdays = wcs4_get_weekdays();
+            $output .= Schedule::get_html_of_schedule_list_for_shortcode(
+                $lessons,
+                $weekdays,
+                $schedule_key,
+                $template_list
+            );
         } else {
-            $output .= $buffer;
+            $weekdays = wcs4_get_weekdays();
+            $buffer = apply_filters(
+                'wcs4_render_layout',
+                $buffer,
+                $lessons,
+                $weekdays,
+                $classroom,
+                $teacher,
+                $student,
+                $subject,
+                $wcs4_options
+            );
+            if (empty($buffer)) {
+                $output .= __('Unsupported layout', 'wcs4');
+            } else {
+                $output .= $buffer;
+            }
         }
     }
     $output .= '</div>';
@@ -69,10 +107,10 @@ add_shortcode('wcs', static function ($atts) {
 
     # Only load front end scripts and styles if it's our shortcode
     add_action('wp_footer', static function () {
-        $wcs4_options = WCS_Settings::load_settings();
+        $wcs4_options = Settings::load_settings();
         $wcs4_js_data = [];
         $wcs4_js_data['options'] = $wcs4_options;
-        WCS_Output::load_frontend_scripts($wcs4_js_data);
+        Output::load_frontend_scripts($wcs4_js_data);
     });
 
     return $output;
@@ -98,42 +136,59 @@ add_shortcode('class_journal', static function ($atts) {
     $limit = null;
     $paged = null;
     $template = '';
-    $wcs4_options = WCS_Settings::load_settings();
+    $wcs4_options = Settings::load_settings();
 
-    extract(shortcode_atts(array(
-        'subject' => 'all',
-        'teacher' => 'all',
-        'student' => 'all',
-        'style' => 'normal',
-        'date_from' => null,
-        'date_upto' => null,
-        'limit' => null,
-        'paged' => null,
-        'template' => $wcs4_options['journal_shortcode_template'],
-    ), $atts), EXTR_OVERWRITE);
+    extract(
+        shortcode_atts(array(
+            'subject' => 'all',
+            'teacher' => 'all',
+            'student' => 'all',
+            'style' => 'normal',
+            'date_from' => null,
+            'date_upto' => null,
+            'limit' => null,
+            'paged' => null,
+            'template' => $wcs4_options['journal_shortcode_template'],
+        ), $atts),
+        EXTR_OVERWRITE
+    );
 
     # Get journals
-    $journals = WCS_Journal::get_items($teacher, $student, $subject, $date_from, $date_upto, null, null, $limit, $paged);
+    $journals = Journal::get_items(
+        $teacher,
+        $student,
+        $subject,
+        $date_from,
+        $date_upto,
+        null,
+        null,
+        $limit,
+        $paged
+    );
 
     # Classroom
-    $schedule_key = 'wcs4-key-' . preg_replace('/[^A-Za-z0-9]/', '-', implode('-', [$teacher, $student, $subject, $date_from, $date_upto, $limit, $paged]));
+    $schedule_key = 'wcs4-key-' . preg_replace(
+            '/[^A-Za-z0-9]/',
+            '-',
+            implode('-', [$teacher, $student, $subject, $date_from, $date_upto, $limit, $paged])
+        );
     $schedule_key = strtolower($schedule_key);
 
     $output = apply_filters('wcs4_pre_render', $output, $style);
 
     # Render list layout
     $output .= '<div class="wcs4-schedule-wrapper" id="' . $schedule_key . '">';
-    $output .= WCS_Journal::get_html_of_journal_list($journals, $schedule_key, $template);
+    $output .= Journal::get_html_of_journal_list($journals, $schedule_key, $template);
     $output .= '</div>';
 
     $output = apply_filters('wcs4_post_render', $output, $style, $teacher, $student, $subject, $date_from, $date_upto);
 
     # Only load front end scripts and styles if it's our shortcode
     add_action('wp_footer', static function () {
-        $wcs4_options = WCS_Settings::load_settings();
+        $wcs4_options = Settings::load_settings();
         $wcs4_js_data = [];
         $wcs4_js_data['options'] = $wcs4_options;
-        WCS_Output::load_frontend_scripts($wcs4_js_data);
+        Output::load_frontend_scripts($wcs4_js_data);
     });
 
     return $output;
@@ -144,20 +199,23 @@ add_shortcode('class_journal_create', static function ($atts) {
     $teacher = '';
     $student = '';
 
-    extract(shortcode_atts(array(
-        'subject' => '',
-        'teacher' => '',
-        'student' => '',
-    ), $atts), EXTR_OVERWRITE);
+    extract(
+        shortcode_atts(array(
+            'subject' => '',
+            'teacher' => '',
+            'student' => '',
+        ), $atts),
+        EXTR_OVERWRITE
+    );
 
-    $result = WCS_Journal::get_html_of_shortcode_form($subject, $teacher, $student);
+    $result = Journal::get_html_of_shortcode_form($subject, $teacher, $student);
 
     # Only load front end scripts and styles if it's our shortcode
     add_action('wp_footer', static function () {
-        $wcs4_options = WCS_Settings::load_settings();
+        $wcs4_options = Settings::load_settings();
         $wcs4_js_data = [];
         $wcs4_js_data['options'] = $wcs4_options;
-        WCS_Output::load_frontend_scripts($wcs4_js_data);
+        Output::load_frontend_scripts($wcs4_js_data);
     });
     return trim($result);
 });
@@ -175,43 +233,68 @@ add_shortcode('student_progress', static function ($atts) {
     $paged = null;
     $template_partial = '';
     $template_periodic = '';
-    $wcs4_options = WCS_Settings::load_settings();
+    $wcs4_options = Settings::load_settings();
 
-    extract(shortcode_atts(array(
-        'subject' => 'all',
-        'teacher' => 'all',
-        'student' => 'all',
-        'style' => 'normal',
-        'date_from' => null,
-        'date_upto' => null,
-        'limit' => null,
-        'paged' => null,
-        'template_partial' => $wcs4_options['progress_shortcode_template_partial_type'],
-        'template_periodic' => $wcs4_options['progress_shortcode_template_periodic_type'],
-    ), $atts), EXTR_OVERWRITE);
+    extract(
+        shortcode_atts(array(
+            'subject' => 'all',
+            'teacher' => 'all',
+            'student' => 'all',
+            'style' => 'normal',
+            'date_from' => null,
+            'date_upto' => null,
+            'limit' => null,
+            'paged' => null,
+            'template_partial' => $wcs4_options['progress_shortcode_template_partial_type'],
+            'template_periodic' => $wcs4_options['progress_shortcode_template_periodic_type'],
+        ), $atts),
+        EXTR_OVERWRITE
+    );
 
     # Get progresses
-    $progresses = WCS_Progress::get_items(null, $teacher, $student, $subject, $date_from, $date_upto, null, null, $limit, $paged);
+    $progresses = Progress::get_items(
+        null,
+        $teacher,
+        $student,
+        $subject,
+        $date_from,
+        $date_upto,
+        null,
+        null,
+        null,
+        null,
+        $limit,
+        $paged
+    );
 
     # Classroom
-    $schedule_key = 'wcs4-key-' . preg_replace('/[^A-Za-z0-9]/', '-', implode('-', [$teacher, $student, $subject, $date_from, $date_upto, $limit, $paged]));
+    $schedule_key = 'wcs4-key-' . preg_replace(
+            '/[^A-Za-z0-9]/',
+            '-',
+            implode('-', [$teacher, $student, $subject, $date_from, $date_upto, $limit, $paged])
+        );
     $schedule_key = strtolower($schedule_key);
 
     $output = apply_filters('wcs4_pre_render', $output, $style);
 
     # Render list layout
     $output .= '<div class="wcs4-schedule-wrapper" id="' . $schedule_key . '">';
-    $output .= WCS_Progress::get_html_of_progress_list_for_shortcode($progresses, $schedule_key, $template_partial, $template_periodic);
+    $output .= Progress::get_html_of_progress_list_for_shortcode(
+        $progresses,
+        $schedule_key,
+        $template_partial,
+        $template_periodic
+    );
     $output .= '</div>';
 
     $output = apply_filters('wcs4_post_render', $output, $style, $teacher, $student, $subject, $date_from, $date_upto);
 
     # Only load front end scripts and styles if it's our shortcode
     add_action('wp_footer', static function () {
-        $wcs4_options = WCS_Settings::load_settings();
+        $wcs4_options = Settings::load_settings();
         $wcs4_js_data = [];
         $wcs4_js_data['options'] = $wcs4_options;
-        WCS_Output::load_frontend_scripts($wcs4_js_data);
+        Output::load_frontend_scripts($wcs4_js_data);
     });
 
     return $output;
@@ -222,20 +305,23 @@ add_shortcode('student_progress_create', static function ($atts) {
     $teacher = '';
     $student = '';
 
-    extract(shortcode_atts(array(
-        'subject' => '',
-        'teacher' => '',
-        'student' => '',
-    ), $atts), EXTR_OVERWRITE);
+    extract(
+        shortcode_atts(array(
+            'subject' => '',
+            'teacher' => '',
+            'student' => '',
+        ), $atts),
+        EXTR_OVERWRITE
+    );
 
-    $result = WCS_Progress::get_html_of_shortcode_form($subject, $teacher, $student);
+    $result = Progress::get_html_of_shortcode_form($subject, $teacher, $student);
 
     # Only load front end scripts and styles if it's our shortcode
     add_action('wp_footer', static function () {
-        $wcs4_options = WCS_Settings::load_settings();
+        $wcs4_options = Settings::load_settings();
         $wcs4_js_data = [];
         $wcs4_js_data['options'] = $wcs4_options;
-        WCS_Output::load_frontend_scripts($wcs4_js_data);
+        Output::load_frontend_scripts($wcs4_js_data);
     });
     return trim($result);
 });
@@ -253,43 +339,66 @@ add_shortcode('student_work_plan', static function ($atts) {
     $paged = null;
     $template_partial = '';
     $template_periodic = '';
-    $wcs4_options = WCS_Settings::load_settings();
+    $wcs4_options = Settings::load_settings();
 
-    extract(shortcode_atts(array(
-        'subject' => 'all',
-        'teacher' => 'all',
-        'student' => 'all',
-        'style' => 'normal',
-        'date_from' => null,
-        'date_upto' => null,
-        'limit' => null,
-        'paged' => null,
-        'template_partial' => $wcs4_options['work_plan_shortcode_template_partial_type'],
-        'template_periodic' => $wcs4_options['work_plan_shortcode_template_periodic_type'],
-    ), $atts), EXTR_OVERWRITE);
+    extract(
+        shortcode_atts(array(
+            'subject' => 'all',
+            'teacher' => 'all',
+            'student' => 'all',
+            'style' => 'normal',
+            'date_from' => null,
+            'date_upto' => null,
+            'limit' => null,
+            'paged' => null,
+            'template_partial' => $wcs4_options['work_plan_shortcode_template_partial_type'],
+            'template_periodic' => $wcs4_options['work_plan_shortcode_template_periodic_type'],
+        ), $atts),
+        EXTR_OVERWRITE
+    );
 
     # Get work_plans
-    $work_plans = WCS_WorkPlan::get_items(null, $teacher, $student, $subject, $date_from, $date_upto, null, null, $limit, $paged);
+    $work_plans = WorkPlan::get_items(
+        null,
+        $teacher,
+        $student,
+        $subject,
+        $date_from,
+        $date_upto,
+        null,
+        null,
+        $limit,
+        $paged
+    );
 
     # Classroom
-    $schedule_key = 'wcs4-key-' . preg_replace('/[^A-Za-z0-9]/', '-', implode('-', [$teacher, $student, $subject, $date_from, $date_upto, $limit, $paged]));
+    $schedule_key = 'wcs4-key-' . preg_replace(
+            '/[^A-Za-z0-9]/',
+            '-',
+            implode('-', [$teacher, $student, $subject, $date_from, $date_upto, $limit, $paged])
+        );
     $schedule_key = strtolower($schedule_key);
 
     $output = apply_filters('wcs4_pre_render', $output, $style);
 
     # Render list layout
     $output .= '<div class="wcs4-schedule-wrapper" id="' . $schedule_key . '">';
-    $output .= WCS_WorkPlan::get_html_of_work_plan_list_for_shortcode($work_plans, $schedule_key, $template_partial, $template_periodic);
+    $output .= WorkPlan::get_html_of_work_plan_list_for_shortcode(
+        $work_plans,
+        $schedule_key,
+        $template_partial,
+        $template_periodic
+    );
     $output .= '</div>';
 
     $output = apply_filters('wcs4_post_render', $output, $style, $teacher, $student, $subject, $date_from, $date_upto);
 
     # Only load front end scripts and styles if it's our shortcode
     add_action('wp_footer', static function () {
-        $wcs4_options = WCS_Settings::load_settings();
+        $wcs4_options = Settings::load_settings();
         $wcs4_js_data = [];
         $wcs4_js_data['options'] = $wcs4_options;
-        WCS_Output::load_frontend_scripts($wcs4_js_data);
+        Output::load_frontend_scripts($wcs4_js_data);
     });
 
     return $output;
@@ -300,20 +409,23 @@ add_shortcode('student_work_plan_create', static function ($atts) {
     $teacher = '';
     $student = '';
 
-    extract(shortcode_atts(array(
-        'subject' => '',
-        'teacher' => '',
-        'student' => '',
-    ), $atts), EXTR_OVERWRITE);
+    extract(
+        shortcode_atts(array(
+            'subject' => '',
+            'teacher' => '',
+            'student' => '',
+        ), $atts),
+        EXTR_OVERWRITE
+    );
 
-    $result = WCS_WorkPlan::get_html_of_shortcode_form($subject, $teacher, $student);
+    $result = WorkPlan::get_html_of_shortcode_form($subject, $teacher, $student);
 
     # Only load front end scripts and styles if it's our shortcode
     add_action('wp_footer', static function () {
-        $wcs4_options = WCS_Settings::load_settings();
+        $wcs4_options = Settings::load_settings();
         $wcs4_js_data = [];
         $wcs4_js_data['options'] = $wcs4_options;
-        WCS_Output::load_frontend_scripts($wcs4_js_data);
+        Output::load_frontend_scripts($wcs4_js_data);
     });
     return trim($result);
 });
@@ -410,14 +522,21 @@ add_shortcode('wp_query', static function (array $options = []) {
                     if (!empty($terms)) {
                         $termNames = [];
                         foreach ($terms as $term) {
-                            if (isset($shortcode_atts['taxonomy_field'], $shortcode_atts['taxonomy_terms']) && in_array($term->{$shortcode_atts['taxonomy_field']}, $shortcode_atts['taxonomy_terms'], true)) {
+                            if (isset($shortcode_atts['taxonomy_field'], $shortcode_atts['taxonomy_terms']) && in_array(
+                                    $term->{$shortcode_atts['taxonomy_field']},
+                                    $shortcode_atts['taxonomy_terms'],
+                                    true
+                                )) {
                                 continue;
                             }
                             $termNames[] = $term->name;
                         }
                         if (!empty($termNames)) {
                             sort($termNames);
-                            $row_value['taxonomy'] = sprintf($shortcode_atts['display_taxonomy_pattern'], implode(', ', $termNames));
+                            $row_value['taxonomy'] = sprintf(
+                                $shortcode_atts['display_taxonomy_pattern'],
+                                implode(', ', $termNames)
+                            );
                         }
                     }
                 }
@@ -459,8 +578,10 @@ add_shortcode('wp_query', static function (array $options = []) {
             case 'details';
                 break;
         }
-    } else if (in_array($shortcode_atts['display_empty_message'], [true, 'true', 1, '1', 'yes'], true)) {
-        $response[] = '<p>' . $shortcode_atts['empty_message'] . '</p>';
+    } else {
+        if (in_array($shortcode_atts['display_empty_message'], [true, 'true', 1, '1', 'yes'], true)) {
+            $response[] = '<p>' . $shortcode_atts['empty_message'] . '</p>';
+        }
     }
     return implode('', $response);
 });
