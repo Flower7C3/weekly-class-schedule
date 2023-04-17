@@ -9,6 +9,7 @@
         include 'post_types.php';
         include 'schedule.php';
         include 'journal.php';
+        include 'work_plan.php';
         include 'progress.php';
         include 'appearance.php';
         include 'editor.php';

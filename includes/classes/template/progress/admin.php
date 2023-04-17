@@ -3,7 +3,7 @@
  * @var string $table;
  */
 ?>
-<div class="wrap wcs-management-page-callback">
+<div class="wrap wcs4-management-page-callback">
     <h1 class="wp-heading-inline"><?php
         _ex('Progress Management', 'manage progress', 'wcs4'); ?></h1>
     <a href="#" class="page-title-action" id="wcs4-show-form"><?php

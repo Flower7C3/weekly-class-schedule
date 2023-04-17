@@ -1,4 +1,4 @@
-<div class="form-wrap" id="wcs4-management-form-wrapper">
+<div class="wcs4-form-wrap" id="wcs4-management-form-wrapper">
     <h2 id="wcs4-management-form-title"><?php
         _ex('Add New Lesson', 'page title', 'wcs4'); ?></h2>
     <form id="wcs4-schedule-management-form" action="<?php

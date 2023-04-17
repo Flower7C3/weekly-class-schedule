@@ -25,7 +25,6 @@ class WCS_Admin
         $table = WCS_DB::get_schedule_table_name();
         $table_teacher = WCS_DB::get_schedule_teacher_table_name();
         $table_student = WCS_DB::get_schedule_student_table_name();
-        $include_ids = [];
 
         $values = array();
 
@@ -34,123 +33,55 @@ class WCS_Admin
                 if (!$multiple) {
                     $values[''] = _x('select subject', 'manage schedule', 'wcs4');
                 }
-                if (!empty($filter['subject'])) {
-                    $include_ids = $wpdb->get_col(
-                        $wpdb->prepare(
-                            "SELECT DISTINCT subject_id FROM $table LEFT JOIN $table_teacher USING (id) LEFT JOIN $table_student USING (id) WHERE subject_id IN (%s)",
-                            array($filter['subject'])
-                        )
-                    );
-                }
-                if (!empty($filter['teacher'])) {
-                    $include_ids = $wpdb->get_col(
-                        $wpdb->prepare(
-                            "SELECT DISTINCT subject_id FROM $table LEFT JOIN $table_teacher USING (id) LEFT JOIN $table_student USING (id) WHERE teacher_id IN (%s)",
-                            array($filter['teacher'])
-                        )
-                    );
-                }
-                if (!empty($filter['student'])) {
-                    $include_ids = $wpdb->get_col(
-                        $wpdb->prepare(
-                            "SELECT DISTINCT subject_id FROM $table LEFT JOIN $table_teacher USING (id) LEFT JOIN $table_student USING (id) WHERE student_id IN (%s)",
-                            array($filter['student'])
-                        )
-                    );
-                }
+                $querySelect = 'subject_id';
                 break;
             case 'teacher':
                 if (!$multiple) {
                     $values[''] = _x('select teacher', 'manage schedule', 'wcs4');
                 }
-                if (!empty($filter['subject'])) {
-                    $include_ids = $wpdb->get_col(
-                        $wpdb->prepare(
-                            "SELECT DISTINCT teacher_id FROM $table LEFT JOIN $table_teacher USING (id) LEFT JOIN $table_student USING (id) WHERE subject_id IN (%s)",
-                            array($filter['subject'])
-                        )
-                    );
-                }
-                if (!empty($filter['teacher'])) {
-                    $include_ids = $wpdb->get_col(
-                        $wpdb->prepare(
-                            "SELECT DISTINCT teacher_id FROM $table LEFT JOIN $table_teacher USING (id) LEFT JOIN $table_student USING (id) WHERE teacher_id IN (%s)",
-                            array($filter['teacher'])
-                        )
-                    );
-                }
-                if (!empty($filter['student'])) {
-                    $include_ids = $wpdb->get_col(
-                        $wpdb->prepare(
-                            "SELECT DISTINCT teacher_id FROM $table LEFT JOIN $table_teacher USING (id) LEFT JOIN $table_student USING (id) WHERE student_id IN (%s)",
-                            array($filter['student'])
-                        )
-                    );
-                }
+                $querySelect = 'teacher_id';
                 break;
             case 'student':
                 if (!$multiple) {
                     $values[''] = _x('select student', 'manage schedule', 'wcs4');
                 }
-                if (!empty($filter['subject'])) {
-                    $include_ids = $wpdb->get_col(
-                        $wpdb->prepare(
-                            "SELECT DISTINCT student_id FROM $table LEFT JOIN $table_teacher USING (id) LEFT JOIN $table_student USING (id) WHERE subject_id IN (%s)",
-                            array($filter['subject'])
-                        )
-                    );
-                }
-                if (!empty($filter['teacher'])) {
-                    $include_ids = $wpdb->get_col(
-                        $wpdb->prepare(
-                            "SELECT DISTINCT student_id FROM $table LEFT JOIN $table_teacher USING (id) LEFT JOIN $table_student USING (id) WHERE teacher_id IN (%s)",
-                            array($filter['teacher'])
-                        )
-                    );
-                }
-                if (!empty($filter['student'])) {
-                    $include_ids = $wpdb->get_col(
-                        $wpdb->prepare(
-                            "SELECT DISTINCT student_id FROM $table LEFT JOIN $table_teacher USING (id) LEFT JOIN $table_student USING (id) WHERE student_id IN (%s)",
-                            array($filter['student'])
-                        )
-                    );
-                }
+                $querySelect = 'student_id';
                 break;
             case 'classroom':
                 if (!$multiple) {
                     $values[''] = _x('select classroom', 'manage schedule', 'wcs4');
                 }
-                if (!empty($filter['subject'])) {
-                    $include_ids = $wpdb->get_col(
-                        $wpdb->prepare(
-                            "SELECT DISTINCT classroom_id FROM $table LEFT JOIN $table_teacher USING (id) LEFT JOIN $table_student USING (id) WHERE subject_id IN (%s)",
-                            array($filter['subject'])
-                        )
-                    );
-                }
-                if (!empty($filter['teacher'])) {
-                    $include_ids = $wpdb->get_col(
-                        $wpdb->prepare(
-                            "SELECT DISTINCT classroom_id FROM $table LEFT JOIN $table_teacher USING (id) LEFT JOIN $table_student USING (id) WHERE teacher_id IN (%s)",
-                            array($filter['teacher'])
-                        )
-                    );
-                }
-                if (!empty($filter['student'])) {
-                    $include_ids = $wpdb->get_col(
-                        $wpdb->prepare(
-                            "SELECT DISTINCT classroom_id FROM $table LEFT JOIN $table_teacher USING (id) LEFT JOIN $table_student USING (id) WHERE student_id IN (%s)",
-                            array($filter['student'])
-                        )
-                    );
-                }
+                $querySelect = 'classroom_id';
                 break;
             default:
                 if (!$multiple) {
                     $values[''] = _x('select option', 'manage schedule', 'wcs4');
                 }
+                $querySelect = '';
                 break;
+        }
+
+        if (!empty($querySelect)) {
+            $queryWhere = [];
+            $queryParams = [];
+            if (!empty($filter['subject'])) {
+                $queryWhere[] = 'subject_id IN (%s)';
+                $queryParams[] = $filter['subject'];
+            }
+            if (!empty($filter['teacher'])) {
+                $queryWhere[] = 'teacher_id IN (%s)';
+                $queryParams[] = $filter['teacher'];
+            }
+            if (!empty($filter['student'])) {
+                $queryWhere[] = 'student_id IN (%s)';
+                $queryParams[] = $filter['student'];
+            }
+            $queryString = "SELECT DISTINCT $querySelect FROM $table LEFT JOIN $table_teacher USING (id) LEFT JOIN $table_student USING (id) WHERE "
+                . implode(" AND ", $queryWhere);
+            $query = $wpdb->prepare($queryString, $queryParams);
+            $include_ids = $wpdb->get_col($query);
+        } else {
+            $include_ids = [];
         }
 
         if (isset($filter['subject'], $filter['teacher'], $filter['student']) && empty($include_ids)) {
@@ -208,8 +139,16 @@ class WCS_Admin
         $default = null,
         bool $required = false
     ): string {
+        $values = [];
         switch ($package) {
-            case 'type':
+            case 'work_plan_type':
+                $values = [
+                    '' => _x('Select type', 'Schedule type as none', 'wcs4'),
+                    WCS_DB_WorkPlan_Item::TYPE_PARTIAL => _x('Partial', 'Schedule type as partial', 'wcs4'),
+                    WCS_DB_WorkPlan_Item::TYPE_CUMULATIVE => _x('Cumulative', 'Schedule type as cumulative', 'wcs4')
+                ];
+                break;
+            case 'progress_type':
                 $values = [
                     '' => _x('Select type', 'Schedule type as none', 'wcs4'),
                     WCS_DB_Progress_Item::TYPE_PARTIAL => _x('Partial', 'Schedule type as partial', 'wcs4'),

@@ -1,7 +1,6 @@
 <?php
 
 //if uninstall not called from WordPress exit
-use classes\WCS_DB;
 
 if (!defined('WP_UNINSTALL_PLUGIN'))
     exit();

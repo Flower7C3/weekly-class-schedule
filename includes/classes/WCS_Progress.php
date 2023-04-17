@@ -27,7 +27,7 @@ class WCS_Progress
 
     public static function callback_of_export_csv_page(): void
     {
-        if (!current_user_can(WCS4_JOURNAL_EXPORT_CAPABILITY)) {
+        if (!current_user_can(WCS4_PROGRESS_EXPORT_CAPABILITY)) {
             header('HTTP/1.0 403 Forbidden');
             exit();
         }
@@ -123,7 +123,7 @@ class WCS_Progress
 
     public static function callback_of_export_html_page(): void
     {
-        if (!current_user_can(WCS4_JOURNAL_EXPORT_CAPABILITY)) {
+        if (!current_user_can(WCS4_PROGRESS_EXPORT_CAPABILITY)) {
             header('HTTP/1.0 403 Forbidden');
             exit();
         }
@@ -403,7 +403,7 @@ class WCS_Progress
 
         wcs4_verify_nonce();
 
-        if (true === $force_insert || current_user_can(WCS4_JOURNAL_MANAGE_CAPABILITY)) {
+        if (true === $force_insert || current_user_can(WCS4_PROGRESS_MANAGE_CAPABILITY)) {
             global $wpdb;
 
             $response = [];
@@ -584,7 +584,7 @@ class WCS_Progress
     {
         $errors = [];
         $response = __('You are no allowed to run this action', 'wcs4');
-        if (current_user_can(WCS4_JOURNAL_MANAGE_CAPABILITY)) {
+        if (current_user_can(WCS4_PROGRESS_MANAGE_CAPABILITY)) {
             wcs4_verify_nonce();
 
             global $wpdb;
@@ -646,7 +646,7 @@ class WCS_Progress
     {
         $errors = [];
         $response = __('You are no allowed to run this action', 'wcs4');
-        if (current_user_can(WCS4_JOURNAL_MANAGE_CAPABILITY)) {
+        if (current_user_can(WCS4_PROGRESS_MANAGE_CAPABILITY)) {
             wcs4_verify_nonce();
 
             global $wpdb;
@@ -685,7 +685,7 @@ class WCS_Progress
     public static function get_ajax_html(): void
     {
         $html = __('You are no allowed to run this action', 'wcs4');
-        if (current_user_can(WCS4_JOURNAL_MANAGE_CAPABILITY)) {
+        if (current_user_can(WCS4_PROGRESS_MANAGE_CAPABILITY)) {
             wcs4_verify_nonce();
             $html = self::get_html_of_admin_table(
                 sanitize_text_field($_POST['teacher']),
@@ -718,7 +718,7 @@ class WCS_Progress
         string $template_periodic
     ): string {
         if (empty($progresses)) {
-            return '<div class="wcs4-no-items-message">' . __('No progresses', 'wcs4') . '</div>';
+            return '<p class="wcs4-no-items-message">' . __('No progresses', 'wcs4') . '</p>';
         }
 
         $dateWithLessons = [];
@@ -735,7 +735,7 @@ class WCS_Progress
             if (!empty($dayProgresses)) {
                 $time = strtotime($date);
                 $weekday = strftime('%w', $time);
-                $output .= '<h3>' . strftime('%x', $time) . ' (' . $weekdays[$weekday] . ')' . '</h3>';
+                $output .= '<h4>' . strftime('%x', $time) . ' (' . $weekdays[$weekday] . ')' . '</h4>';
                 $output .= '<ul class="wcs4-grid-date-list wcs4-grid-date-list-' . $date . '">';
                 /** @var WCS_DB_Progress_Item $progress */
                 foreach ($dayProgresses as $progress) {
@@ -761,5 +761,5 @@ add_action('wp_ajax_nopriv_wcs_add_progress_entry', [WCS_Progress::class, 'creat
 add_action('wp_ajax_wcs_delete_progress_entry', [WCS_Progress::class, 'delete_item']);
 add_action('wp_ajax_wcs_get_progress', [WCS_Progress::class, 'get_item']);
 add_action('wp_ajax_wcs_get_progresses_html', [WCS_Progress::class, 'get_ajax_html']);
-add_action('wp_ajax_wcs_download_progress_csv', [WCS_Progress::class, 'callback_of_export_csv_page']);
-add_action('wp_ajax_wcs_download_progress_html', [WCS_Progress::class, 'callback_of_export_html_page']);
+add_action('wp_ajax_wcs_download_progresses_csv', [WCS_Progress::class, 'callback_of_export_csv_page']);
+add_action('wp_ajax_wcs_download_progresses_html', [WCS_Progress::class, 'callback_of_export_html_page']);

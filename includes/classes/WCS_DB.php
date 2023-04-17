@@ -78,6 +78,22 @@ class WCS_DB
         return $wpdb->prefix . 'wcs4_journal_student';
     }
 
+    public static function get_work_plan_table_name(): string
+    {
+        global $wpdb;
+        return $wpdb->prefix . 'wcs4_work_plan';
+    }
+
+    public static function get_work_plan_subject_table_name(): string
+    {
+        global $wpdb;
+        return $wpdb->prefix . 'wcs4_work_plan_subject';
+    }
+    public static function get_work_plan_teacher_table_name(): string
+    {
+        global $wpdb;
+        return $wpdb->prefix . 'wcs4_work_plan_teacher';
+    }
     public static function get_progress_table_name(): string
     {
         global $wpdb;
@@ -106,6 +122,9 @@ class WCS_DB
         $table_journal = self::get_journal_table_name();
         $table_journal_teacher = self::get_journal_teacher_table_name();
         $table_journal_student = self::get_journal_student_table_name();
+        $table_work_plan = self::get_work_plan_table_name();
+        $table_work_plan_subject = self::get_work_plan_subject_table_name();
+        $table_work_plan_teacher = self::get_work_plan_teacher_table_name();
         $table_progress = self::get_progress_table_name();
         $table_progress_subject = self::get_progress_subject_table_name();
         $table_progress_teacher = self::get_progress_teacher_table_name();
@@ -157,7 +176,7 @@ class WCS_DB
             `id` int(11) unsigned NOT NULL,
             `student_id` int(20) unsigned NOT NULL
         )";
-        $sql_progress = "CREATE TABLE `$table_progress` (
+        $sql_work_plan = "CREATE TABLE `$table_work_plan` (
             `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
             `subject_id` int(20) unsigned NOT NULL,
             `student_id` int(20) unsigned NOT NULL,
@@ -165,6 +184,30 @@ class WCS_DB
             `end_date` date NOT NULL,
             `improvements` text,
             `indications` text,
+            `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            `updated_at` DATETIME DEFAULT NULL,
+            `created_by` INT NULL,
+            `updated_by` INT NULL,
+            PRIMARY KEY (`id`)
+        )";
+        $sql_work_plan_subject = "CREATE TABLE `$table_work_plan_subject` (
+            `id` int(11) unsigned NOT NULL,
+            `subject_id` int(20) unsigned NOT NULL
+        )";
+        $sql_work_plan_teacher = "CREATE TABLE `$table_work_plan_teacher` (
+            `id` int(11) unsigned NOT NULL,
+            `teacher_id` int(20) unsigned NOT NULL
+        )";
+        $sql_progress = "CREATE TABLE `$table_progress` (
+            `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+            `subject_id` int(20) unsigned NOT NULL,
+            `student_id` int(20) unsigned NOT NULL,
+            `start_date` date NOT NULL,
+            `end_date` date NOT NULL,
+            `diagnosis` text,
+            `strengths` text,
+            `goals` text,
+            `methods` text,
             `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
             `updated_at` DATETIME DEFAULT NULL,
             `created_by` INT NULL,
@@ -187,6 +230,9 @@ class WCS_DB
         dbDelta($sql_journal);
         dbDelta($sql_journal_teacher);
         dbDelta($sql_journal_student);
+        dbDelta($sql_work_plan);
+        dbDelta($sql_work_plan_subject);
+        dbDelta($sql_work_plan_teacher);
         dbDelta($sql_progress);
         dbDelta($sql_progress_subject);
         dbDelta($sql_progress_teacher);
@@ -326,6 +372,9 @@ class WCS_DB
         $wpdb->query('DROP TABLE IF EXISTS ' . self::get_journal_teacher_table_name());
         $wpdb->query('DROP TABLE IF EXISTS ' . self::get_journal_student_table_name());
         $wpdb->query('DROP TABLE IF EXISTS ' . self::get_journal_table_name());
+        $wpdb->query('DROP TABLE IF EXISTS ' . self::get_work_plan_subject_table_name());
+        $wpdb->query('DROP TABLE IF EXISTS ' . self::get_work_plan_teacher_table_name());
+        $wpdb->query('DROP TABLE IF EXISTS ' . self::get_work_plan_table_name());
         $wpdb->query('DROP TABLE IF EXISTS ' . self::get_progress_subject_table_name());
         $wpdb->query('DROP TABLE IF EXISTS ' . self::get_progress_teacher_table_name());
         $wpdb->query('DROP TABLE IF EXISTS ' . self::get_progress_table_name());
@@ -348,6 +397,14 @@ class WCS_DB
         $wpdb->query('TRUNCATE ' . self::get_journal_teacher_table_name());
         $wpdb->query('TRUNCATE ' . self::get_journal_student_table_name());
         $wpdb->query('TRUNCATE ' . self::get_journal_table_name());
+    }
+
+    public static function delete_work_plans(): void
+    {
+        global $wpdb;
+        $wpdb->query('TRUNCATE ' . self::get_work_plan_subject_table_name());
+        $wpdb->query('TRUNCATE ' . self::get_work_plan_teacher_table_name());
+        $wpdb->query('TRUNCATE ' . self::get_work_plan_table_name());
     }
 
     public static function delete_progresses(): void
@@ -443,6 +500,12 @@ class WCS_DB
                             $_item->addTeachers($item->getTeachers());
                             $_item->addStudents($item->getStudents());
                             break;
+                        case 'WCS_DB_WorkPlan_Item':
+                            /** @var WCS_DB_WorkPlan_Item $_item */
+                            $_item = $items[$item->getId()];
+                            $_item->addSubjects($item->getSubjects());
+                            $_item->addTeachers($item->getTeachers());
+                            break;
                         case 'WCS_DB_Progress_Item':
                             /** @var WCS_DB_Progress_Item $_item */
                             $_item = $items[$item->getId()];
@@ -536,7 +599,7 @@ add_action('wp_ajax_wcs_reset_settings', static function () {
 /**
  * Handle clear schedule
  */
-add_action('wp_ajax_wcs_clear_schedule', static function () {
+add_action('wp_ajax_wcs_clear_schedules', static function () {
     $response = __('You are no allowed to run this action', 'wcs4');
     $status = 'error';
     if (current_user_can(WCS4_ADVANCED_OPTIONS_CAPABILITY)) {
@@ -552,13 +615,13 @@ add_action('wp_ajax_wcs_clear_schedule', static function () {
     die();
 });
 
-add_action('wp_ajax_wcs_clear_journal', static function () {
+add_action('wp_ajax_wcs_clear_journals', static function () {
     $response = __('You are no allowed to run this action', 'wcs4');
     $status = 'error';
     if (current_user_can(WCS4_ADVANCED_OPTIONS_CAPABILITY)) {
         wcs4_verify_nonce();
         WCS_DB::delete_journals();
-        $response = __('Weekly Class Journal truncated successfully.', 'wcs4');
+        $response = __('Weekly Class Journals truncated successfully.', 'wcs4');
         $status = 'cleared';
     }
     wcs4_json_response([
@@ -568,13 +631,31 @@ add_action('wp_ajax_wcs_clear_journal', static function () {
     die();
 });
 
-add_action('wcs_clear_progress', static function () {
+add_action('wp_ajax_wcs_clear_work_plans', static function () {
+    $response = __('You are no allowed to run this action', 'wcs4');
+    $status = 'error';
+    if (current_user_can(WCS4_ADVANCED_OPTIONS_CAPABILITY)) {
+        wcs4_verify_nonce();
+        WCS_DB::delete_work_plans();
+        $response = __('WCS Work Plans truncated successfully.', 'wcs4');
+        $status = 'cleared';
+    }
+    wcs4_json_response([
+        'response' => $response,
+        'result' => $status,
+    ]);
+    die();
+});
+
+add_action('wp_ajax_wcs_clear_progresses', static function () {
+    error_reporting(E_ALL);
+    ini_set('display_errors', true);
     $response = __('You are no allowed to run this action', 'wcs4');
     $status = 'error';
     if (current_user_can(WCS4_ADVANCED_OPTIONS_CAPABILITY)) {
         wcs4_verify_nonce();
         WCS_DB::delete_progresses();
-        $response = __('Weekly Class Progress truncated successfully.', 'wcs4');
+        $response = __('WCS Progresses truncated successfully.', 'wcs4');
         $status = 'cleared';
     }
     wcs4_json_response([

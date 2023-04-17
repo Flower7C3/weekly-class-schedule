@@ -1,5 +1,9 @@
 <?php
 
+
+
+use WP_User;
+
 trait WCS_Entity_Blameable_Trait
 {
     /** @var WP_User|null */

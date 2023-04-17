@@ -1,4 +1,4 @@
-<form id="wcs-progresses-filter" class="results-filter" method="get" action="">
+<form id="wcs4-progresses-filter" class="results-filter" method="get" action="">
     <input id="search_wcs4_page" type="hidden" name="page" value="<?php
     echo $_GET['page']; ?>"/>
     <div class="search-box">
@@ -60,13 +60,13 @@
                 _e('Type', 'wcs4'); ?></label>
             <?php
             echo WCS_Admin::generate_admin_select_list_options(
-                'type',
+                'progress_type',
                 'search_wcs4_progress_type',
                 'type',
                 !empty($_GET['type']) ? $_GET['type'] : ''
             ); ?>
         </span>
-        <button type="submit" id="wcs-progresses-search"
+        <button type="submit" id="wcs4-progresses-search"
                 class="button button-primary"
         >
             <span class="dashicons dashicons-filter"></span>
@@ -84,10 +84,10 @@
         if (current_user_can(WCS4_JOURNAL_EXPORT_CAPABILITY)): ?>
             <br>
             <br>
-            <button type="submit" id="wcs-progresses-download-csv"
+            <button type="submit" id="wcs4-progresses-download-csv"
                     class="button button-secondary"
                     name="action"
-                    value="wcs_download_progress_csv"
+                    value="wcs_download_progresses_csv"
                     formaction="<?php
                     echo admin_url('admin-ajax.php'); ?>"
             >
@@ -95,10 +95,10 @@
                 <?php
                 echo __('Download Progresses as CSV', 'wcs4') ?>
             </button>
-            <button type="submit" id="wcs-progresses-download-html"
+            <button type="submit" id="wcs4-progresses-download-html"
                     class="button button-secondary"
                     name="action"
-                    value="wcs_download_progress_html"
+                    value="wcs_download_progresses_html"
                     formaction="<?php
                     echo admin_url('admin-ajax.php'); ?>"
                     formtarget="_blank"
@@ -107,8 +107,9 @@
                 <?php
                 echo __('Download Progresses as HTML', 'wcs4') ?>
             </button>
-            <button type="button" id="wcs-progresses-create"
+            <button type="button"
                     class="button button-secondary"
+                    data-action="generate"
             >
                 <span class="dashicons dashicons-plus-alt"></span>
                 <?php

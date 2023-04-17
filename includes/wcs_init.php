@@ -309,42 +309,84 @@ function wcs4_actions($actions, $the_post)
         return $actions;
     }
     $type = str_replace('wcs4_', '', $the_post->post_type);
-    $actions[] = sprintf(
-        '<a href="%s">%s</a>',
-        'admin.php?' . http_build_query([
-            'page' => 'weekly-class-schedule',
-            $type => $the_post->ID,
-        ]),
-        __('Schedule', 'wcs4')
-    );
-    $actions[] = sprintf(
-        '<a href="%s">%s</a>',
-        'admin.php?' . http_build_query([
-            'page' => 'class-journal',
-            $type => $the_post->ID,
-            'date_from' => date('Y-m-01'),
-            'date_upto' => date('Y-m-d'),
-        ]),
-        __('Journals', 'wcs4')
-    );
-    $actions[] = sprintf(
-        '<a href="%s">%s</a>',
-        'admin.php?' . http_build_query([
-            'page' => 'class-progress',
-            $type => $the_post->ID,
-        ]),
-        __('Progress', 'wcs4')
-    );
-    $actions[] = sprintf(
-        '<a href="%s">%s</a>',
-        'admin-ajax.php?' . http_build_query([
-            'action' => 'download_class_journal_html',
-            $type => $the_post->ID,
-            'date_from' => date('Y-m-01'),
-            'date_upto' => date('Y-m-d'),
-        ]),
-        __('Download journals as HTML', 'wcs4')
-    );
+    if (current_user_can(WCS4_SCHEDULE_VIEW_CAPABILITY)) {
+        $actions[] = sprintf(
+            '<a href="%s">%s</a>',
+            'admin.php?' . http_build_query([
+                'page' => 'wcs4',
+                $type => $the_post->ID,
+            ]),
+            __('Schedule', 'wcs4')
+        );
+    }
+    if (current_user_can(WCS4_JOURNAL_VIEW_CAPABILITY)) {
+        $actions[] = sprintf(
+            '<a href="%s">%s</a>',
+            'admin.php?' . http_build_query([
+                'page' => 'wcs4-journal',
+                $type => $the_post->ID,
+                'date_from' => date('Y-m-01'),
+                'date_upto' => date('Y-m-d'),
+            ]),
+            __('Journals', 'wcs4')
+        );
+    }
+    if (current_user_can(WCS4_JOURNAL_EXPORT_CAPABILITY)) {
+        $actions[] = sprintf(
+            '<a href="%s">%s</a>',
+            'admin-ajax.php?' . http_build_query([
+                'action' => 'wcs_download_journals_html',
+                $type => $the_post->ID,
+                'date_from' => date('Y-m-01'),
+                'date_upto' => date('Y-m-d'),
+            ]),
+            __('Download Journals as HTML', 'wcs4')
+        );
+    }
+    if (current_user_can(WCS4_WORK_PLAN_VIEW_CAPABILITY)) {
+        $actions[] = sprintf(
+            '<a href="%s">%s</a>',
+            'admin.php?' . http_build_query([
+                'page' => 'wcs4-work-plan',
+                $type => $the_post->ID,
+            ]),
+            __('Work Plans', 'wcs4')
+        );
+    }
+    if (current_user_can(WCS4_WORK_PLAN_EXPORT_CAPABILITY)) {
+        $actions[] = sprintf(
+            '<a href="%s">%s</a>',
+            'admin-ajax.php?' . http_build_query([
+                'action' => 'wcs_download_work_plans_html',
+                $type => $the_post->ID,
+                'date_from' => date('Y-m-01'),
+                'date_upto' => date('Y-m-d'),
+            ]),
+            __('Download Work Plans as HTML', 'wcs4')
+        );
+    }
+    if (current_user_can(WCS4_PROGRESS_VIEW_CAPABILITY)) {
+        $actions[] = sprintf(
+            '<a href="%s">%s</a>',
+            'admin.php?' . http_build_query([
+                'page' => 'wcs4-progress',
+                $type => $the_post->ID,
+            ]),
+            __('Progresses', 'wcs4')
+        );
+    }
+    if (current_user_can(WCS4_PROGRESS_EXPORT_CAPABILITY)) {
+        $actions[] = sprintf(
+            '<a href="%s">%s</a>',
+            'admin-ajax.php?' . http_build_query([
+                'action' => 'wcs_download_progresses_html',
+                $type => $the_post->ID,
+                'date_from' => date('Y-m-01'),
+                'date_upto' => date('Y-m-d'),
+            ]),
+            __('Download Progresses as HTML', 'wcs4')
+        );
+    }
     return $actions;
 }
 

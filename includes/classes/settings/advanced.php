@@ -19,16 +19,20 @@
             <?= _x('Install example data', 'reset database', 'wcs4') ?>
         </button>
         <br><br>
-        <button name="wcs_clear_schedule" id="wcs4_clear_schedule" class="button-cancel wp-ui-notification">
-            <?= _x('Clear schedule', 'reset database', 'wcs4') ?>
+        <button name="wcs_clear_schedules" id="wcs4_clear_schedule" class="button-cancel wp-ui-notification">
+            <?= _x('Clear Schedules', 'reset database', 'wcs4') ?>
         </button>
 
-        <button name="wcs_clear_journal" id="wcs4_clear_journal" class="button-cancel wp-ui-notification">
-            <?= _x('Clear journal', 'reset database', 'wcs4') ?>
+        <button name="wcs_clear_journals" id="wcs4_clear_journals" class="button-cancel wp-ui-notification">
+            <?= _x('Clear Journals', 'reset database', 'wcs4') ?>
         </button>
 
-        <button name="wcs_clear_progress" id="wcs4_clear_progress" class="button-cancel wp-ui-notification">
-            <?= _x('Clear progress', 'reset database', 'wcs4') ?>
+        <button name="wcs_clear_work_plans" id="wcs4_clear_work_plans" class="button-cancel wp-ui-notification">
+            <?= _x('Clear Work Plans', 'reset database', 'wcs4') ?>
+        </button>
+
+        <button name="wcs_clear_progresses" id="wcs4_clear_progresses" class="button-cancel wp-ui-notification">
+            <?= _x('Clear Progresses', 'reset database', 'wcs4') ?>
         </button>
 
         <button name="wcs_reset_settings" id="wcs4_reset_settings" class="button-cancel wp-ui-notification">

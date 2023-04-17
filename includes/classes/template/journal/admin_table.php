@@ -85,6 +85,7 @@
                     /** @var WCS_DB_Journal_Item $item */
                     foreach ($groupData as $item): ?>
                         <tr id="journal-<?= $item->getId() ?>"
+                            data-type="journal"
                             data-id="<?= $item->getId() ?>">
                             <td class="column-primary
                                 <?= (current_user_can(WCS4_JOURNAL_MANAGE_CAPABILITY)) ? ' has-row-actions' : '' ?>">
@@ -92,30 +93,24 @@
                                 <?php
                                 if (current_user_can(WCS4_JOURNAL_MANAGE_CAPABILITY)): ?>
                                     <div class="row-actions">
-                                                    <span class="edit hide-if-no-js">
-                                                        <a href="#" class="wcs4-edit-journal-button"
-                                                           id="wcs4-edit-button-<?= $item->getId() ?>"
-                                                           data-journal-id="<?= $item->getId() ?>">
-                                                            <?= __('Edit', 'wcs4') ?>
-                                                        </a>
-                                                        |
-                                                    </span>
+                                        <span class="edit hide-if-no-js">
+                                            <a href="#" class="wcs4-edit-button">
+                                                <?= __('Edit', 'wcs4') ?>
+                                            </a>
+                                            |
+                                        </span>
                                         <span class="copy hide-if-no-js">
-                                                        <a href="#" class="wcs4-copy-journal-button"
-                                                           id="wcs4-copy-button-<?= $item->getId() ?>"
-                                                           data-journal-id="<?= $item->getId() ?>">
-                                                            <?= __('Duplicate', 'wcs4') ?>
-                                                        </a>
-                                                        |
-                                                    </span>
+                                            <a href="#" class="wcs4-copy-button">
+                                                <?= __('Duplicate', 'wcs4') ?>
+                                            </a>
+                                            |
+                                        </span>
                                         <span class="delete hide-if-no-js">
-                                                        <a href="#" class="wcs4-delete-journal-button"
-                                                           id=wcs4-delete-<?= $item->getId() ?>"
-                                                           data-journal-id="<?= $item->getId() ?>"
-                                                           data-date="<?= $item->getDate() ?>">
-                                                            <?= __('Delete', 'wcs4') ?>
-                                                        </a>
-                                                    </span>
+                                            <a href="#" class="wcs4-delete-button"
+                                               data-date="<?= $item->getDate() ?>">
+                                                <?= __('Delete', 'wcs4') ?>
+                                            </a>
+                                        </span>
                                     </div>
                                 <?php
                                 endif; ?>
@@ -163,7 +158,8 @@
                                 <?= $item->getTopic() ?>
                             </td>
                             <td data-colname="<?= __('Updated at', 'wcs4') ?>">
-                                <?php include __DIR__.'/../_common/updated_at.php' ?>
+                                <?php
+                                include __DIR__ . '/../_common/updated_at.php' ?>
                             </td>
                         </tr>
                     <?php

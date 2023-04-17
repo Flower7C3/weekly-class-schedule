@@ -45,7 +45,7 @@
         })
     };
     var bind_search_handler = function () {
-        $(document).on('click.wcs-progresses-search', '#wcs-progresses-search', function (e) {
+        $(document).on('click.wcs4-progresses-search', '#wcs4-progresses-search', function (e) {
             e.preventDefault();
             reload_html_view(
                 $('#search_wcs4_progress_teacher_id').val(),
@@ -66,7 +66,7 @@
      * Handles the Add Item button click event.
      */
     var bind_sort_handler = function () {
-        $(document).on('click.wcs4-events-list-sort', '#wcs4-progress-events-list-wrapper [data-order-field][data-order-direction]', function (e) {
+        $(document).on('click.wcs4-progress-events-list-sort', '#wcs4-progress-events-list-wrapper [data-order-field][data-order-direction]', function (e) {
             reload_html_view(
                 $('#search_wcs4_progress_teacher_id').val(),
                 $('#search_wcs4_progress_student_id').val(),
@@ -127,7 +127,7 @@
      * Handles the edit button click event.
      */
     var bind_edit_handler = function () {
-        $(document).on('click.wcs4-edit-progress-button', '.wcs4-edit-progress-button', function (e) {
+        $(document).on('click.wcs4-edit-progress-button', 'tr[data-type="progress"] .wcs4-edit-button', function (e) {
             WCS4_LIB.fetch_entry_data_to_form('progress', $(this).closest('tr').data('id'), set_entry_data_to_form, WCS4_LIB.reset_to_edit_mode);
         });
     }
@@ -136,30 +136,30 @@
      * Handles the copy button click event.
      */
     var bind_copy_handler = function () {
-        $(document).on('click.wcs4-copy-progress-button', '.wcs4-copy-progress-button', function (e) {
+        $(document).on('click.wcs4-copy-progress-button', 'tr[data-type="progress"] .wcs4-copy-button', function (e) {
             WCS4_LIB.fetch_entry_data_to_form('progress', $(this).closest('tr').data('id'), set_entry_data_to_form, WCS4_LIB.reset_to_copy_mode)
         });
     }
     var update_create_button = function () {
         if ('' === $('#search_wcs4_progress_student_id').val()) {
-            $('#wcs-progresses-create').attr('disabled', true)
+            $('#wcs4-progresses-create').attr('disabled', true)
         } else {
-            $('#wcs-progresses-create').attr('disabled', false)
+            $('#wcs4-progresses-create').attr('disabled', false)
         }
     }
     var bind_create_handler = function () {
         update_create_button();
-        $(document).on('click.wcs-filter-toggle-student', '.search-filter', function (e) {
+        $(document).on('click.wcs4-filter-toggle-student', '.search-filter', function (e) {
             setTimeout(function () {
                 update_create_button();
             }, 300);
         });
-        $(document).on('click.wcs4-reset-progress-button', '#wcs-progresses-filter [type="reset"]', function (e) {
+        $(document).on('click.wcs4-reset-progress-button', '#wcs4-progresses-filter [type="reset"]', function (e) {
             setTimeout(function () {
                 update_create_button();
             }, 300);
         });
-        $(document).on('click.wcs4-create-progress-button', '#wcs-progresses-create', function (e) {
+        $(document).on('click.wcs4-create-progress-button', '#wcs4-progresses-filter  [data-action="generate"]', function (e) {
             var ids = [];
             jQuery('tr[id]').each(function (k, v) {
                 ids.push(jQuery(v).data('id'));
@@ -172,7 +172,7 @@
      * Handles the delete button click event.
      */
     var bind_delete_handler = function () {
-        $(document).on('click.wcs4-delete-progress-button', '.wcs4-delete-progress-button', function (e) {
+        $(document).on('click.wcs4-delete-progress-button', 'tr[data-type="progress"] .wcs4-delete-button', function (e) {
             var entry = {
                 action: 'wcs_delete_progress_entry',
                 security: WCS4_AJAX_OBJECT.ajax_nonce,
@@ -211,7 +211,7 @@
             'order_field': order_field,
             'order_direction': order_direction,
         };
-        var url = $('#wcs-progresses-filter').attr('action')
+        var url = $('#wcs4-progresses-filter').attr('action')
             + '?page=' + page
             + '&teacher=' + teacher
             + '&student=' + student

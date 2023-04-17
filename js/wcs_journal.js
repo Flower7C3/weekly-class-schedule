@@ -19,11 +19,11 @@
      * Handles the search button click event.
      */
     var bind_search_handler = function () {
-        // $(document).on('submit.wcs-journals-filter', '#wcs-journals-filter', function (e) {
+        // $(document).on('submit.wcs4-journals-filter', '#wcs4-journals-filter', function (e) {
         //     e.preventDefault();
-        //     $('#wcs-journals-search').click();
+        //     $('#wcs4-journals-search').click();
         // });
-        $(document).on('click.wcs-journals-search', '#wcs-journals-search', function (e) {
+        $(document).on('click.wcs4-journals-search', '#wcs4-journals-search', function (e) {
             e.preventDefault();
             reload_html_view(
                 $('#search_wcs4_journal_teacher_id').val(),
@@ -42,7 +42,7 @@
      * Handles the Add Item button click event.
      */
     var bind_sort_handler = function () {
-        $(document).on('click.wcs4-events-list-sort', '#wcs4-journal-events-list-wrapper [data-order-field][data-order-direction]', function (e) {
+        $(document).on('click.wcs4-journal-events-list-sort', '#wcs4-journal-events-list-wrapper [data-order-field][data-order-direction]', function (e) {
             reload_html_view(
                 $('#search_wcs4_journal_teacher_id').val(),
                 $('#search_wcs4_journal_student_id').val(),
@@ -99,7 +99,7 @@
      * Handles the edit button click event.
      */
     var bind_edit_handler = function () {
-        $(document).on('click.wcs4-edit-journal-button', '.wcs4-edit-journal-button', function (e) {
+        $(document).on('click.wcs4-edit-journal-button', 'tr[data-type="journal"] .wcs4-edit-button', function (e) {
             WCS4_LIB.fetch_entry_data_to_form('journal', $(this).closest('tr').data('id'), set_entry_data_to_form, WCS4_LIB.reset_to_edit_mode);
         });
     }
@@ -108,7 +108,7 @@
      * Handles the copy button click event.
      */
     var bind_copy_handler = function () {
-        $(document).on('click.wcs4-copy-journal-button', '.wcs4-copy-journal-button', function (e) {
+        $(document).on('click.wcs4-copy-journal-button', 'tr[data-type="journal"] .wcs4-copy-button', function (e) {
             WCS4_LIB.fetch_entry_data_to_form('journal', $(this).closest('tr').data('id'), set_entry_data_to_form, WCS4_LIB.reset_to_copy_mode)
         });
     }
@@ -117,7 +117,7 @@
      * Handles the delete button click event.
      */
     var bind_delete_handler = function () {
-        $(document).on('click.wcs4-delete-journal-button', '.wcs4-delete-journal-button', function (e) {
+        $(document).on('click.wcs4-delete-journal-button', 'tr[data-type="journal"] .wcs4-delete-button', function (e) {
             var entry = {
                 action: 'wcs_delete_journal_entry',
                 security: WCS4_AJAX_OBJECT.ajax_nonce,
@@ -154,7 +154,7 @@
             'order_field': order_field,
             'order_direction': order_direction,
         };
-        var url = $('#wcs-journals-filter').attr('action')
+        var url = $('#wcs4-journals-filter').attr('action')
             + '?page=' + page
             + '&teacher=' + teacher
             + '&student=' + student

@@ -1,4 +1,4 @@
-<div class="form-wrap" id="wcs4-management-form-wrapper">
+<div class="wcs4-form-wrap" id="wcs4-management-form-wrapper">
     <h2 id="wcs4-management-form-title"><?php
         _ex('Add New Journal', 'page title', 'wcs4'); ?></h2>
     <form id="wcs4-journal-management-form" class="czr-form" action="<?php

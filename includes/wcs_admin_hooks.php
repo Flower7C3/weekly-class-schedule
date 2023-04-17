@@ -26,6 +26,15 @@ if (!defined('WCS4_JOURNAL_MANAGE_CAPABILITY')) {
 if (!defined('WCS4_JOURNAL_EXPORT_CAPABILITY')) {
     define('WCS4_JOURNAL_EXPORT_CAPABILITY', 'wcs4_journal_export');
 }
+if (!defined('WCS4_WORK_PLAN_VIEW_CAPABILITY')) {
+    define('WCS4_WORK_PLAN_VIEW_CAPABILITY', 'wcs4_work_plan_view');
+}
+if (!defined('WCS4_WORK_PLAN_MANAGE_CAPABILITY')) {
+    define('WCS4_WORK_PLAN_MANAGE_CAPABILITY', 'wcs4_work_plan_manage');
+}
+if (!defined('WCS4_WORK_PLAN_EXPORT_CAPABILITY')) {
+    define('WCS4_WORK_PLAN_EXPORT_CAPABILITY', 'wcs4_work_plan_export');
+}
 if (!defined('WCS4_PROGRESS_VIEW_CAPABILITY')) {
     define('WCS4_PROGRESS_VIEW_CAPABILITY', 'wcs4_progress_view');
 }
@@ -46,45 +55,49 @@ add_action('admin_menu', static function () {
         __('Schedule Management', 'wcs4'),
         __('Schedule', 'wcs4'),
         WCS4_SCHEDULE_VIEW_CAPABILITY,
-        'wcs',
+        'wcs4',
         array(WCS_Schedule::class, "callback_of_management_page"),
         'dashicons-schedule',
         50
     );
-
     $page_journal = add_submenu_page(
-        'wcs',
+        'wcs4',
         __('Journals', 'wcs4'),
         __('Journals', 'wcs4'),
         WCS4_JOURNAL_VIEW_CAPABILITY,
-        'wcs-journal',
+        'wcs4-journal',
         array(WCS_Journal::class, "callback_of_management_page")
     );
-
+    $page_work_plans = add_submenu_page(
+        'wcs4',
+        __('Work Plans', 'wcs4'),
+        __('Work Plans', 'wcs4'),
+        WCS4_PROGRESS_VIEW_CAPABILITY,
+        'wcs4-work-plan',
+        array(WCS_WorkPlan::class, "callback_of_management_page")
+    );
     $page_progress = add_submenu_page(
-        'wcs',
+        'wcs4',
         __('Progresses', 'wcs4'),
         __('Progresses', 'wcs4'),
         WCS4_PROGRESS_VIEW_CAPABILITY,
-        'wcs-progress',
+        'wcs4-progress',
         array(WCS_Progress::class, "callback_of_management_page")
     );
-
     $page_standard_options = add_submenu_page(
-        'wcs',
+        'wcs4',
         __('Standard Options', 'wcs4'),
         __('Standard Options', 'wcs4'),
         WCS4_STANDARD_OPTIONS_CAPABILITY,
-        'wcs-standard-options',
+        'wcs4-standard-options',
         array(WCS_Settings::class, "standard_options_page_callback")
     );
-
     add_submenu_page(
-        'wcs',
+        'wcs4',
         __('Advanced Options', 'wcs4'),
         __('Advanced Options', 'wcs4'),
         WCS4_ADVANCED_OPTIONS_CAPABILITY,
-        'wcs-advanced-options',
+        'wcs4-advanced-options',
         array(WCS_Settings::class, "advanced_options_page_callback")
     );
 
@@ -136,6 +149,15 @@ add_action('admin_menu', static function () {
             }
         }
     });
+    add_action('load-' . $page_work_plans, static function () use ($help_tabs) {
+        $screen = get_current_screen();
+        if (null !== $screen) {
+            $tabs = array($help_tabs['placeholders'], $help_tabs['allowed_html']);
+            foreach ($tabs as $tab) {
+                $screen->add_help_tab($tab);
+            }
+        }
+    });
     add_action('load-' . $page_standard_options, static function () use ($help_tabs) {
         $screen = get_current_screen();
         if (null !== $screen) {
@@ -159,6 +181,9 @@ add_action('init', static function () {
         $role->add_cap(WCS4_JOURNAL_VIEW_CAPABILITY, true);
         $role->add_cap(WCS4_JOURNAL_MANAGE_CAPABILITY, true);
         $role->add_cap(WCS4_JOURNAL_EXPORT_CAPABILITY, true);
+        $role->add_cap(WCS4_WORK_PLAN_VIEW_CAPABILITY, true);
+        $role->add_cap(WCS4_WORK_PLAN_MANAGE_CAPABILITY, true);
+        $role->add_cap(WCS4_WORK_PLAN_EXPORT_CAPABILITY, true);
         $role->add_cap(WCS4_PROGRESS_VIEW_CAPABILITY, true);
         $role->add_cap(WCS4_PROGRESS_MANAGE_CAPABILITY, true);
         $role->add_cap(WCS4_PROGRESS_EXPORT_CAPABILITY, true);
@@ -172,6 +197,9 @@ add_action('init', static function () {
         $role->add_cap(WCS4_JOURNAL_VIEW_CAPABILITY, true);
         $role->add_cap(WCS4_JOURNAL_MANAGE_CAPABILITY, true);
         $role->add_cap(WCS4_JOURNAL_EXPORT_CAPABILITY, true);
+        $role->add_cap(WCS4_WORK_PLAN_VIEW_CAPABILITY, true);
+        $role->add_cap(WCS4_WORK_PLAN_MANAGE_CAPABILITY, true);
+        $role->add_cap(WCS4_WORK_PLAN_EXPORT_CAPABILITY, true);
         $role->add_cap(WCS4_PROGRESS_VIEW_CAPABILITY, true);
         $role->add_cap(WCS4_PROGRESS_MANAGE_CAPABILITY, true);
         $role->add_cap(WCS4_PROGRESS_EXPORT_CAPABILITY, true);
@@ -181,6 +209,7 @@ add_action('init', static function () {
     if (null !== $role) {
         $role->add_cap(WCS4_SCHEDULE_VIEW_CAPABILITY, true);
         $role->add_cap(WCS4_JOURNAL_VIEW_CAPABILITY, true);
+        $role->add_cap(WCS4_WORK_PLAN_VIEW_CAPABILITY, true);
         $role->add_cap(WCS4_PROGRESS_VIEW_CAPABILITY, true);
     }
 });
@@ -215,16 +244,18 @@ add_action('admin_enqueue_scripts', static function () {
     wp_enqueue_script('wcs4_lesson_js');
     wp_register_script('wcs4_journal_js', WCS4_PLUGIN_URL . '/js/wcs_journal.js', array('jquery'), WCS4_VERSION);
     wp_enqueue_script('wcs4_journal_js');
+    wp_register_script('wcs4_work_plan_js', WCS4_PLUGIN_URL . '/js/wcs_work_plan.js', array('jquery'), WCS4_VERSION);
+    wp_enqueue_script('wcs4_work_plan_js');
     wp_register_script('wcs4_progress_js', WCS4_PLUGIN_URL . '/js/wcs_progress.js', array('jquery'), WCS4_VERSION);
     wp_enqueue_script('wcs4_progress_js');
     wcs4_js_i18n('wcs4_admin_js');
 });
 
 /**
- * Loads plugins necessary for admin area such as the colorpicker.
+ * Loads plugins necessary for admin area such as the color picker.
  */
 add_action('admin_enqueue_scripts', static function () {
-    # Colorpicker
+    # Color picker
     wp_register_style('wcs4_colorpicker_css', WCS4_PLUGIN_URL . '/plugins/colorpicker/css/colorpicker.min.css');
     wp_enqueue_style('wcs4_colorpicker_css');
 
@@ -479,6 +510,31 @@ function wcs4_help_placeholders_callback()
                         '{created at}',
                         '{created by}',
                         '{updated at}',
+                        '{updated by}',
+                    ]
+                )
+            ); ?>
+        </li>
+        <li>
+            <?php
+            printf(
+                _x('Will display general info for work plans: <code>%1$s</code>', 'help', 'wcs4'),
+                implode(
+                    '</code>, <code>',
+                    [
+                        '{item no}',
+                        '{start date}',
+                        '{end date}',
+                        '{diagnosis}',
+                        '{strengths}',
+                        '{goals}',
+                        '{methods}',
+                        '{type}',
+                        '{created at}',
+                        '{created at date}',
+                        '{created by}',
+                        '{updated at}',
+                        '{updated at date}',
                         '{updated by}',
                     ]
                 )

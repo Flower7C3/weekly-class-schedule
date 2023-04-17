@@ -1,4 +1,4 @@
-<form id="wcs-journals-filter" class="results-filter" method="get" action="">
+<form id="wcs4-journals-filter" class="results-filter" method="get" action="">
     <input id="search_wcs4_page" type="hidden" name="page" value="<?php
     echo $_GET['page']; ?>"/>
     <div class="search-box">
@@ -55,7 +55,7 @@
                 ['default' => date('Y-m-d')]
             ); ?>
         </span>
-        <button type="submit" id="wcs-journals-search"
+        <button type="submit" id="wcs4-journals-search"
                 class="button button-primary"
         >
             <span class="dashicons dashicons-filter"></span>
@@ -73,26 +73,26 @@
         if (current_user_can(WCS4_JOURNAL_EXPORT_CAPABILITY)): ?>
             <br>
             <br>
-            <button type="submit" id="wcs-journals-download-csv"
+            <button type="submit" id="wcs4-journals-download-csv"
                     class="button button-secondary"
                     name="action"
-                    value="wcs_journal_download_csv"
+                    value="wcs_download_journals_csv"
                     formaction="<?php echo admin_url('admin-ajax.php'); ?>"
             >
                 <span class="dashicons dashicons-download"></span>
                 <?php
                 echo __('Download journals as CSV', 'wcs4') ?>
             </button>
-            <button type="submit" id="wcs-journals-download-html"
+            <button type="submit" id="wcs4-journals-download-html"
                     class="button button-secondary"
                     name="action"
-                    value="wcs_journal_download_html"
+                    value="wcs_download_journals_html"
                     formaction="<?php echo admin_url('admin-ajax.php'); ?>"
                     formtarget="_blank"
             >
                 <span class="dashicons dashicons-download"></span>
                 <?php
-                echo __('Download journals as HTML', 'wcs4') ?>
+                echo __('Download Journals as HTML', 'wcs4') ?>
             </button>
         <?php
         endif; ?>

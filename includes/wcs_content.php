@@ -132,21 +132,6 @@ add_filter('the_content', static function ($content) {
                     $journal_view_access = false;
                 }
             }
-            if (true === $journal_view_access) {
-                $content .= '<h2>' . __('Journals', 'wcs4') . '</h2>';
-                $template = $wcs4_settings[$post_type_key . '_journal_shortcode_template'];
-                $params = [];
-                $params[] = $post_type_key . '="' . $post_id . '"';
-                $params[] = 'template="' . $template . '"';
-                $params[] = 'limit=' . $wcs4_settings[$post_type_key . '_journal_view'];
-                $content .= '[class_journal  ' . implode(' ', $params) . ']';
-                if ('yes' === $wcs4_settings[$post_type_key . '_journal_download_csv']) {
-                    $content .= '<a href="?format=csv">' . __('Download journals as CSV', 'wcs4') . '</a>';
-                }
-                if ('yes' === $wcs4_settings[$post_type_key . '_journal_download_html']) {
-                    $content .= '<a href="?format=html">' . __('Download journals as HTML', 'wcs4') . '</a>';
-                }
-            }
 
             ### JOURNAL CREATE
             $journal_create_access = false;
@@ -156,13 +141,80 @@ add_filter('the_content', static function ($content) {
                     $journal_create_access = false;
                 }
             }
-            if (true === $journal_create_access) {
-                $params = [];
-                $params[] = $post_type_key . '="' . $post_id . '"';
-                $content .= '[class_journal_create  ' . implode(' ', $params) . ']';
+
+            if (true === $journal_view_access || true === $journal_create_access) {
+                $content .= '<details class="wcs4">';
+                if (true === $journal_view_access) {
+                    $content .= '<summary>' . __('Journals', 'wcs4') . '</summary>';
+                    $template = $wcs4_settings[$post_type_key . '_journal_shortcode_template'];
+                    $params = [];
+                    $params[] = $post_type_key . '="' . $post_id . '"';
+                    $params[] = 'template="' . $template . '"';
+                    $params[] = 'limit=' . $wcs4_settings[$post_type_key . '_journal_view'];
+                    $content .= '[class_journal  ' . implode(' ', $params) . ']';
+                    if ('yes' === $wcs4_settings[$post_type_key . '_journal_download_csv']) {
+                        $content .= '<a href="?format=csv">' . __('Download journals as CSV', 'wcs4') . '</a>';
+                    }
+                    if ('yes' === $wcs4_settings[$post_type_key . '_journal_download_html']) {
+                        $content .= '<a href="?format=html">' . __('Download Journals as HTML', 'wcs4') . '</a>';
+                    }
+                }
+                if (true === $journal_create_access) {
+                    $params = [];
+                    $params[] = $post_type_key . '="' . $post_id . '"';
+                    $content .= '[class_journal_create  ' . implode(' ', $params) . ']';
+                }
+                $content .= '</details>';
             }
 
             if ('student' === $post_type_key) {
+                ### WORK PLAN VIEW
+                $work_plan_view_access = false;
+                if (!empty($wcs4_settings['work_plan_view'])) {
+                    $work_plan_view_access = $wcs4_settings['work_plan_view'];
+                }
+                if (!empty($wcs4_settings['work_plan_view_masters'])
+                    && isset($_SESSION[WCS_SESSION_SATISFY_POST])
+                    && in_array($_SESSION[WCS_SESSION_SATISFY_POST]['type'], get_wcs_post_pass_satisfy_any(), true)) {
+                    $work_plan_view_access = $wcs4_settings['work_plan_view_masters'];
+                }
+                ### WORK PLAN CREATE
+                $work_plan_create_access = false;
+                if ('yes' === $wcs4_settings['work_plan_create']) {
+                    $work_plan_create_access = true;
+                }
+                if ('yes' === $wcs4_settings['work_plan_create_masters']
+                    && isset($_SESSION[WCS_SESSION_SATISFY_POST])
+                    && in_array($_SESSION[WCS_SESSION_SATISFY_POST]['type'], get_wcs_post_pass_satisfy_any(), true)) {
+                    $work_plan_create_access = true;
+                }
+                if (!empty($work_plan_view_access) || (true === $work_plan_create_access)) {
+                    $content .= '<details class="wcs4">';
+                    if (!empty($work_plan_view_access)) {
+                        $content .= '<summary><strong>' . __('Work Plans', 'wcs4') . '</strong></summary>';
+                        $params = [];
+                        $params[] = 'student="#' . $post_id . '"';
+                        $params[] = 'template_partial="' . $wcs4_settings['work_plan_shortcode_template_partial_type'] . '"';
+                        $params[] = 'template_periodic="' . $wcs4_settings['work_plan_shortcode_template_periodic_type'] . '"';
+                        $params[] = 'limit=' . $work_plan_view_access;
+                        $content .= '[student_work_plan  ' . implode(' ', $params) . ']';
+                    }
+
+                    if (true === $work_plan_create_access) {
+                        $params = [];
+                        $params[] = 'student="' . $post_id . '"';
+                        if ($_SESSION[WCS_SESSION_SATISFY_POST]) {
+                            $type = str_replace(
+                                'wcs4_',
+                                '',
+                                $_SESSION[WCS_SESSION_SATISFY_POST]['type']
+                            );
+                            $params[] = $type . '="' . $_SESSION[WCS_SESSION_SATISFY_POST]['ID'] . '"';
+                        }
+                        $content .= '[student_work_plan_create  ' . implode(' ', $params) . ']';
+                    }
+                    $content .= '</details>';
+                }
                 ### PROGRESS VIEW
                 $progress_view_access = false;
                 if (!empty($wcs4_settings['progress_view'])) {
@@ -173,16 +225,6 @@ add_filter('the_content', static function ($content) {
                     && in_array($_SESSION[WCS_SESSION_SATISFY_POST]['type'], get_wcs_post_pass_satisfy_any(), true)) {
                     $progress_view_access = $wcs4_settings['progress_view_masters'];
                 }
-                if (!empty($progress_view_access)) {
-                    $content .= '<h2>' . __('Progresses', 'wcs4') . '</h2>';
-                    $params = [];
-                    $params[] = 'student="#' . $post_id . '"';
-                    $params[] = 'template_partial="' . $wcs4_settings['progress_shortcode_template_partial_type'] . '"';
-                    $params[] = 'template_periodic="' . $wcs4_settings['progress_shortcode_template_periodic_type'] . '"';
-                    $params[] = 'limit=' . $progress_view_access;
-                    $content .= '[student_progress  ' . implode(' ', $params) . ']';
-                }
-
                 ### PROGRESS CREATE
                 $progress_create_access = false;
                 if ('yes' === $wcs4_settings['progress_create']) {
@@ -193,10 +235,32 @@ add_filter('the_content', static function ($content) {
                     && in_array($_SESSION[WCS_SESSION_SATISFY_POST]['type'], get_wcs_post_pass_satisfy_any(), true)) {
                     $progress_create_access = true;
                 }
-                if (true === $progress_create_access) {
-                    $params = [];
-                    $params[] = 'student="' . $post_id . '"';
-                    $content .= '[student_progress_create  ' . implode(' ', $params) . ']';
+                if (!empty($progress_view_access) || (true === $progress_create_access)) {
+                    $content .= '<details class="wcs4">';
+                    if (!empty($progress_view_access)) {
+                        $content .= '<summary><strong>' . __('Progresses', 'wcs4') . '</strong></summary>';
+                        $params = [];
+                        $params[] = 'student="#' . $post_id . '"';
+                        $params[] = 'template_partial="' . $wcs4_settings['progress_shortcode_template_partial_type'] . '"';
+                        $params[] = 'template_periodic="' . $wcs4_settings['progress_shortcode_template_periodic_type'] . '"';
+                        $params[] = 'limit=' . $progress_view_access;
+                        $content .= '[student_progress  ' . implode(' ', $params) . ']';
+                    }
+
+                    if (true === $progress_create_access) {
+                        $params = [];
+                        $params[] = 'student="' . $post_id . '"';
+                        if ($_SESSION[WCS_SESSION_SATISFY_POST]) {
+                            $type = str_replace(
+                                'wcs4_',
+                                '',
+                                $_SESSION[WCS_SESSION_SATISFY_POST]['type']
+                            );
+                            $params[] = $type . '="' . $_SESSION[WCS_SESSION_SATISFY_POST]['ID'] . '"';
+                        }
+                        $content .= '[student_progress_create  ' . implode(' ', $params) . ']';
+                    }
+                    $content .= '</details><br>';
                 }
             }
         }

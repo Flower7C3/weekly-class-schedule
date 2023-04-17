@@ -44,11 +44,12 @@
             /** @var WCS_DB_Lesson_Item $item */
             foreach ($items as $item): ?>
                 <tr id="lesson-<?= $item->getId() ?>"
+                    data-type="schedule"
                     data-day="<?= $item->getWeekday() ?>"
                     data-id="<?= $item->getId() ?>"
                     class="<?= $item->isVisible() ? 'active' : 'inactive' ?>">
                     <th scope="row" class="check-column">
-                        <a href="#" class="wcs4-visibility-lesson-button"
+                        <a href="#" class="wcs4-visibility-button"
                            id="wcs4-<?php
                            if ($item->isVisible()): ?>hide<?php
                            else: ?>show<?php
@@ -77,26 +78,21 @@
                         if (current_user_can(WCS4_SCHEDULE_MANAGE_CAPABILITY)): ?>
                             <div class="row-actions">
                                 <span class="edit hide-if-no-js">
-                                    <a href="#" class="wcs4-edit-lesson-button"
-                                       id="wcs4-edit-button-<?= $item->getId() ?>"
-                                       data-lesson-id="<?= $item->getId() ?>"
+                                    <a href="#" class="wcs4-edit-button"
                                        data-day="<?= $item->getWeekday() ?>">
                                         <?= __('Edit', 'wcs4') ?>
                                     </a>
                                     |
                                 </span>
                                 <span class="copy hide-if-no-js">
-                                    <a href="#" class="wcs4-copy-lesson-button"
-                                       id="wcs4-copy-button-<?= $item->getId() ?>"
-                                       data-lesson-id="<?= $item->getId() ?>"
+                                    <a href="#" class="wcs4-copy-button"
                                        data-day="<?= $item->getWeekday() ?>">
                                         <?= __('Duplicate', 'wcs4') ?>
                                     </a>
                                     |
                                 </span>
                                 <span class="delete hide-if-no-js">
-                                    <a href="#" class="wcs4-delete-lesson-button" id=wcs4-delete-<?= $item->getId() ?>"
-                                       data-lesson-id="<?= $item->getId() ?>"
+                                    <a href="#" class="wcs4-delete-button"
                                        data-day="<?= $item->getWeekday() ?>">
                                         <?= __('Delete', 'wcs4') ?>
                                     </a>

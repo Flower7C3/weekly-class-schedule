@@ -1,6 +1,6 @@
-<div class="form-wrap" id="wcs4-management-form-wrapper">
-    <h2 id="wcs4-management-form-title"><?php
-        _ex('Add New Journal', 'page title', 'wcs4'); ?></h2>
+<details class="wcs4-form-wrap" id="wcs4-management-form-wrapper">
+    <summary id="wcs4-management-form-title"><?php
+        _ex('Add New Journal', 'page title', 'wcs4'); ?></summary>
     <form id="wcs4-journal-management-form" class="czr-form" action="<?php
     echo $_SERVER['PHP_SELF']; ?>" method="post">
         <?php
@@ -122,4 +122,4 @@
             <div id="wcs4-ajax-text-wrapper" class="wcs4-ajax-text"></div>
         </fieldset>
     </form>
-</div> <!-- /#journal-management-form-wrapper -->
+</details> <!-- /#journal-management-form-wrapper -->

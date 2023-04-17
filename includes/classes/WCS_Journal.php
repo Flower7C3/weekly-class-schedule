@@ -692,7 +692,7 @@ class WCS_Journal
     public static function get_html_of_journal_list(array $journals, string $journal_key, string $template_list): string
     {
         if (empty($journals)) {
-            return '<div class="wcs4-no-items-message">' . __('No lessons journaled', 'wcs4') . '</div>';
+            return '<p class="wcs4-no-items-message">' . __('No lessons journaled', 'wcs4') . '</p>';
         }
 
         $dateWithLessons = [];
@@ -709,7 +709,7 @@ class WCS_Journal
             if (!empty($dayJournals)) {
                 $time = strtotime($date);
                 $weekday = strftime('%w', $time);
-                $output .= '<h3>' . strftime('%x', $time) . ' (' . $weekdays[$weekday] . ')' . '</h3>';
+                $output .= '<h4>' . strftime('%x', $time) . ' (' . $weekdays[$weekday] . ')' . '</h4>';
                 $output .= '<ul class="wcs4-grid-date-list wcs4-grid-date-list-' . $date . '">';
                 /** @var WCS_DB_Journal_Item $journal */
                 foreach ($dayJournals as $journal) {
@@ -731,5 +731,5 @@ add_action('wp_ajax_nopriv_wcs_add_journal_entry', [WCS_Journal::class, 'create_
 add_action('wp_ajax_wcs_delete_journal_entry', [WCS_Journal::class, 'delete_item']);
 add_action('wp_ajax_wcs_get_journal', [WCS_Journal::class, 'get_item']);
 add_action('wp_ajax_wcs_get_journals_html', [WCS_Journal::class, 'get_ajax_html']);
-add_action('wp_ajax_wcs_journal_download_csv', [WCS_Journal::class, 'callback_of_export_csv_page']);
-add_action('wp_ajax_wcs_journal_download_html', [WCS_Journal::class, 'callback_of_export_html_page']);
+add_action('wp_ajax_wcs_download_journals_csv', [WCS_Journal::class, 'callback_of_export_csv_page']);
+add_action('wp_ajax_wcs_download_journals_html', [WCS_Journal::class, 'callback_of_export_html_page']);

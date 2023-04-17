@@ -3,15 +3,23 @@
  * Loads all the required modules for the WCS4 plugin.
  */
 include_once(ABSPATH . 'wp-includes/pluggable.php');
-require_once WCS4_PLUGIN_DIR . '/includes/classes/db/WCS_Entity_Blameable_Trait.php';
-require_once WCS4_PLUGIN_DIR . '/includes/classes/db/WCS_Entity_Timestampable_Trait.php';
 require_once WCS4_PLUGIN_DIR . '/includes/classes/WCS_DB.php';
-require_once WCS4_PLUGIN_DIR . '/includes/classes/db/WCS_DB_Item.php';
-require_once WCS4_PLUGIN_DIR . '/includes/classes/db/WCS_DB_Lesson_Item.php';
-require_once WCS4_PLUGIN_DIR . '/includes/classes/db/WCS_DB_Journal_Item.php';
-require_once WCS4_PLUGIN_DIR . '/includes/classes/db/WCS_DB_Progress_Item.php';
+require_once WCS4_PLUGIN_DIR . '/includes/classes/WCS_Entity_Blameable_Trait.php';
+require_once WCS4_PLUGIN_DIR . '/includes/classes/WCS_Entity_Timestampable_Trait.php';
+require_once WCS4_PLUGIN_DIR . '/includes/classes/WCS_DB_Classroom_Trait.php';
+require_once WCS4_PLUGIN_DIR . '/includes/classes/WCS_DB_Student_Trait.php';
+require_once WCS4_PLUGIN_DIR . '/includes/classes/WCS_DB_Students_Trait.php';
+require_once WCS4_PLUGIN_DIR . '/includes/classes/WCS_DB_Subject_Trait.php';
+require_once WCS4_PLUGIN_DIR . '/includes/classes/WCS_DB_Subjects_Trait.php';
+require_once WCS4_PLUGIN_DIR . '/includes/classes/WCS_DB_Teachers_Trait.php';
+require_once WCS4_PLUGIN_DIR . '/includes/classes/WCS_DB_Item.php';
+require_once WCS4_PLUGIN_DIR . '/includes/classes/WCS_DB_Lesson_Item.php';
+require_once WCS4_PLUGIN_DIR . '/includes/classes/WCS_DB_Journal_Item.php';
+require_once WCS4_PLUGIN_DIR . '/includes/classes/WCS_DB_WorkPlan_Item.php';
+require_once WCS4_PLUGIN_DIR . '/includes/classes/WCS_DB_Progress_Item.php';
 require_once WCS4_PLUGIN_DIR . '/includes/classes/WCS_Schedule.php';
 require_once WCS4_PLUGIN_DIR . '/includes/classes/WCS_Journal.php';
+require_once WCS4_PLUGIN_DIR . '/includes/classes/WCS_WorkPlan.php';
 require_once WCS4_PLUGIN_DIR . '/includes/classes/WCS_Progress.php';
 require_once WCS4_PLUGIN_DIR . '/includes/classes/WCS_Admin.php';
 require_once WCS4_PLUGIN_DIR . '/includes/classes/WCS_Settings.php';

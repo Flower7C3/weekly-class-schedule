@@ -89,7 +89,9 @@
                     <?php
                     /** @var WCS_DB_Progress_Item $item */
                     foreach ($groupData as $item): ?>
-                        <tr id="progress-<?= $item->getId() ?>" data-id="<?= $item->getId() ?>">
+                        <tr id="progress-<?= $item->getId() ?>"
+                            data-type="progress"
+                            data-id="<?= $item->getId() ?>">
                             <td class="column-primary
                                 <?= (current_user_can(WCS4_JOURNAL_MANAGE_CAPABILITY)) ? ' has-row-actions' : '' ?>">
                                 <?php
@@ -118,36 +120,30 @@
                                             <span class="download hide-if-no-js">
                                             <a href="<?= admin_url(
                                                 'admin-ajax.php'
-                                            ) ?>?action=wcs_download_progress_html&id=<?= $item->getId() ?>"
+                                            ) ?>?action=wcs_download_progresses_html&id=<?= $item->getId() ?>"
                                                target="_blank"
                                                class="wcs4-download-progress-button"
                                             >
-                                                <?= __('Download progresses as HTML', 'wcs4') ?>
+                                                <?= __('Download Progresses as HTML', 'wcs4') ?>
                                             </a>
                                             |
                                         </span>
                                         <?php
                                         endif; ?>
                                         <span class="edit hide-if-no-js">
-                                            <a href="#" class="wcs4-edit-progress-button"
-                                               id="wcs4-edit-button-<?= $item->getId() ?>"
-                                               data-progress-id="<?= $item->getId() ?>">
+                                            <a href="#" class="wcs4-edit-button">
                                                 <?= __('Edit', 'wcs4') ?>
                                             </a>
                                             |
                                         </span>
                                         <span class="copy hide-if-no-js">
-                                            <a href="#" class="wcs4-copy-progress-button"
-                                               id="wcs4-copy-button-<?= $item->getId() ?>"
-                                               data-progress-id="<?= $item->getId() ?>">
+                                            <a href="#" class="wcs4-copy-button">
                                                 <?= __('Duplicate', 'wcs4') ?>
                                             </a>
                                             |
                                         </span>
                                         <span class="delete hide-if-no-js">
-                                            <a href="#" class="wcs4-delete-progress-button"
-                                               id=wcs4-delete-<?= $item->getId() ?>"
-                                               data-progress-id="<?= $item->getId() ?>"
+                                            <a href="#" class="wcs4-delete-button"
                                                data-date="<?= $item->getDate() ?>">
                                                 <?= __('Delete', 'wcs4') ?>
                                             </a>

@@ -6,6 +6,7 @@
     $(document).ready(function () {
         WCS4_LIB.apply_qtip();
         bind_submit_journal_handler();
+        bind_submit_work_plan_handler();
         bind_submit_progress_handler();
     });
     /**
@@ -29,6 +30,29 @@
             WCS4_LIB.submit_entry(entry, function (data) {
                 if (data.result === 'updated') {
                     jQuery('.wcs4-submit-journal-form').closest('form').get(0).reset()
+                }
+            });
+        });
+    }
+    var bind_submit_work_plan_handler = function () {
+        $('.wcs4-submit-work-plan-form').click(function (e) {
+            var entry;
+            e.preventDefault();
+            entry = {
+                action: 'wcs_add_work_plan_entry',
+                security: WCS4_AJAX_OBJECT.ajax_nonce,
+                subject_id: WCS4_LIB.form_field_value('wcs4_work_plan_subject'),
+                teacher_id: WCS4_LIB.form_field_value('wcs4_work_plan_teacher'),
+                student_id: WCS4_LIB.form_field_value('wcs4_work_plan_student'),
+                type: 'type.partial',
+                diagnosis: $('#wcs4_work_plan_diagnosis').val(),
+                strengths: $('#wcs4_work_plan_strengths').val(),
+                goals: $('#wcs4_work_plan_goals').val(),
+                methods: $('#wcs4_work_plan_methods').val()
+            };
+            WCS4_LIB.submit_entry(entry, function (data) {
+                if (data.result === 'updated') {
+                    jQuery('.wcs4-submit-work-plan-form').closest('form').get(0).reset()
                 }
             });
         });

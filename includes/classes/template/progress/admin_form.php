@@ -6,7 +6,7 @@
  */
 
 ?>
-<div class="form-wrap" id="wcs4-management-form-wrapper">
+<div class="wcs4-form-wrap" id="wcs4-management-form-wrapper">
     <h2 id="wcs4-management-form-title"><?php
         _ex('Add New Progress', 'page title', 'wcs4'); ?></h2>
     <form id="wcs4-progress-management-form" class="czr-form" action="<?php
@@ -16,7 +16,7 @@
                 _e('Type', 'wcs4'); ?></label>
             <?php
             echo WCS_Admin::generate_admin_select_list_options(
-                'type',
+                'progress_type',
                 'wcs4_progress_type',
                 'type'
             ); ?>

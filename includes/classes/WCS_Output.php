@@ -30,7 +30,7 @@ class WCS_Output
                 $item->getLinkShort(),
             ], $template);
         }
-        if ($item instanceof WCS_DB_Lesson_Item || $item instanceof WCS_DB_Journal_Item || $item instanceof WCS_DB_Progress_Item) {
+        if ($item instanceof WCS_DB_Lesson_Item || $item instanceof WCS_DB_Journal_Item || $item instanceof WCS_DB_WorkPlan_Item || $item instanceof WCS_DB_Progress_Item) {
             $template = str_replace([
                 '{subject}',
                 '{subject info}',
@@ -45,7 +45,7 @@ class WCS_Output
                 $item->getSubject()->getLinkShort(),
             ], $template);
         }
-        if ($item instanceof WCS_DB_Lesson_Item || $item instanceof WCS_DB_Journal_Item || $item instanceof WCS_DB_Progress_Item) {
+        if ($item instanceof WCS_DB_Lesson_Item || $item instanceof WCS_DB_Journal_Item || $item instanceof WCS_DB_WorkPlan_Item || $item instanceof WCS_DB_Progress_Item) {
             $template = str_replace([
                 '{teacher}',
                 '{teacher info}',
@@ -62,7 +62,7 @@ class WCS_Output
                 $item->getTeachersList(),
             ], $template);
         }
-        if ($item instanceof WCS_DB_Lesson_Item || $item instanceof WCS_DB_Journal_Item || $item instanceof WCS_DB_Progress_Item) {
+        if ($item instanceof WCS_DB_Lesson_Item || $item instanceof WCS_DB_Journal_Item || $item instanceof WCS_DB_WorkPlan_Item || $item instanceof WCS_DB_Progress_Item) {
             $template = str_replace([
                 '{student}',
                 '{student info}',
@@ -127,6 +127,44 @@ class WCS_Output
                 $item->getCreatedAt() ? $item->getCreatedAt()->format('Y-m-d H:i:s') : null,
                 $item->getCreatedBy() ? $item->getCreatedBy()->display_name : null,
                 $item->getUpdatedAt() ? $item->getUpdatedAt()->format('Y-m-d H:i:s') : null,
+                $item->getUpdatedBy() ? $item->getUpdatedBy()->display_name : null,
+            ], $template);
+        }
+        if ($item instanceof WCS_DB_WorkPlan_Item) {
+            $template = str_replace([
+                '{item no}',
+                '{start date}',
+                '{end date}',
+                '{diagnosis}',
+                '{strengths}',
+                '{goals}',
+                '{methods}',
+                '{type}',
+                '{created at}',
+                '{created at date}',
+                '{created by}',
+                '{updated at}',
+                '{updated at date}',
+                '{updated by}',
+            ], [
+                $item->getId(),
+                $item->getStartDate(),
+                $item->getEndDate(),
+                nl2br($item->getDiagnosis()),
+                nl2br($item->getStrengths()),
+                nl2br($item->getGoals()),
+                nl2br($item->getMethods()),
+                ($item->isTypeCumulative()
+                    ? _x('Cumulative', 'item type', 'wcs4')
+                    : ($item->isTypePartial()
+                        ? _x('Partial', 'item type', 'wcs4')
+                        : _x('undefined', 'item type', 'wcs4')
+                    )),
+                $item->getCreatedAt() ? $item->getCreatedAt()->format('Y-m-d H:i:s') : null,
+                $item->getCreatedAt() ? $item->getCreatedAt()->format('Y-m-d') : null,
+                $item->getCreatedBy() ? $item->getCreatedBy()->display_name : null,
+                $item->getUpdatedAt() ? $item->getUpdatedAt()->format('Y-m-d H:i:s') : null,
+                $item->getUpdatedAt() ? $item->getUpdatedAt()->format('Y-m-d') : null,
                 $item->getUpdatedBy() ? $item->getUpdatedBy()->display_name : null,
             ], $template);
         }

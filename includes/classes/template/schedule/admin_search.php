@@ -1,4 +1,4 @@
-<form id="wcs-lessons-filter" class="results-filter" method="get" action="">
+<form id="wcs4-lessons-filter" class="results-filter" method="get" action="">
     <input id="search_wcs4_page" type="hidden" name="page" value="<?php
     echo $_GET['page']; ?>"/>
     <div class="search-box">
@@ -46,7 +46,7 @@
                 (int)$_GET['classroom']
             ); ?>
         </span>
-        <button type="submit" id="wcs-lessons-search"
+        <button type="submit" id="wcs4-lessons-search"
                 class="button button-primary">
             <span class="dashicons dashicons-filter"></span>
             <?php

@@ -203,7 +203,14 @@ function wcs4_select_list(
         $params['required'] = 'required="required"';
     }
     if (true === $multiple) {
-        $params['multiple'] = 'multiple="multiple" size="10"';
+        $params['multiple'] = 'multiple="multiple"';
+        if (count($values) > 8) {
+            $params['size'] = 'size="10"';
+        } elseif (count($values) > 1) {
+            $params['size'] = 'size="4"';
+        } else {
+            $params['size'] = 'size="1"';
+        }
     }
     $output = '<select ' . implode(' ', $params) . '>';
 
@@ -374,7 +381,7 @@ function wcs4_validate_html($data)
 function wcs4_validate_slug($data)
 {
 //    if (filter_var($data, FILTER_VALIDATE_URL)) {
-        return $data;
+    return $data;
 //    }
 //    return false;
 }
@@ -407,6 +414,16 @@ function wcs4_js_i18n($handle)
             'cancel_editing' => _x('Exit edit journal mode', 'button text', 'wcs4'),
             'cancel_copying' => _x('Exit copy journal mode', 'button text', 'wcs4'),
             'delete_warning' => _x('Are you sure you want to delete this journal?', 'manage schedule', 'wcs4'),
+        ),
+        'work_plan' => array(
+            'add_mode' => _x('Add New Work Plan', 'page title', 'wcs4'),
+            'edit_mode' => _x('Edit Work Plan', 'page title', 'wcs4'),
+            'copy_mode' => _x('Duplicate Work Plan', 'page title', 'wcs4'),
+            'add_item' => _x('Add Work Plan', 'button text', 'wcs4'),
+            'save_item' => _x('Save Work Plan', 'button text', 'wcs4'),
+            'cancel_editing' => _x('Exit edit work plan mode', 'button text', 'wcs4'),
+            'cancel_copying' => _x('Exit copy work plan mode', 'button text', 'wcs4'),
+            'delete_warning' => _x('Are you sure you want to delete this work plan?', 'manage schedule', 'wcs4'),
         ),
         'progress' => array(
             'add_mode' => _x('Add New Progress', 'page title', 'wcs4'),

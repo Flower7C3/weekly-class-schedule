@@ -1,8 +1,13 @@
 <?php
 
+
+
+use WCS_Settings;
+use WP_Error;
+
 class WCS_DB_Item
 {
-    private int $id;
+    private int $id = 0;
     private ?string $name = null;
     private string $nameShort = '';
     private string $nameFirstLetter = '';

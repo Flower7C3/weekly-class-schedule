@@ -240,6 +240,84 @@ add_shortcode('student_progress_create', static function ($atts) {
     return trim($result);
 });
 
+add_shortcode('student_work_plan', static function ($atts) {
+    $output = '';
+    $buffer = '';
+    $subject = '';
+    $teacher = '';
+    $student = '';
+    $date_from = '';
+    $date_upto = '';
+    $style = '';
+    $limit = null;
+    $paged = null;
+    $template_partial = '';
+    $template_periodic = '';
+    $wcs4_options = WCS_Settings::load_settings();
+
+    extract(shortcode_atts(array(
+        'subject' => 'all',
+        'teacher' => 'all',
+        'student' => 'all',
+        'style' => 'normal',
+        'date_from' => null,
+        'date_upto' => null,
+        'limit' => null,
+        'paged' => null,
+        'template_partial' => $wcs4_options['work_plan_shortcode_template_partial_type'],
+        'template_periodic' => $wcs4_options['work_plan_shortcode_template_periodic_type'],
+    ), $atts), EXTR_OVERWRITE);
+
+    # Get work_plans
+    $work_plans = WCS_WorkPlan::get_items(null, $teacher, $student, $subject, $date_from, $date_upto, null, null, $limit, $paged);
+
+    # Classroom
+    $schedule_key = 'wcs4-key-' . preg_replace('/[^A-Za-z0-9]/', '-', implode('-', [$teacher, $student, $subject, $date_from, $date_upto, $limit, $paged]));
+    $schedule_key = strtolower($schedule_key);
+
+    $output = apply_filters('wcs4_pre_render', $output, $style);
+
+    # Render list layout
+    $output .= '<div class="wcs4-schedule-wrapper" id="' . $schedule_key . '">';
+    $output .= WCS_WorkPlan::get_html_of_work_plan_list_for_shortcode($work_plans, $schedule_key, $template_partial, $template_periodic);
+    $output .= '</div>';
+
+    $output = apply_filters('wcs4_post_render', $output, $style, $teacher, $student, $subject, $date_from, $date_upto);
+
+    # Only load front end scripts and styles if it's our shortcode
+    add_action('wp_footer', static function () {
+        $wcs4_options = WCS_Settings::load_settings();
+        $wcs4_js_data = [];
+        $wcs4_js_data['options'] = $wcs4_options;
+        WCS_Output::load_frontend_scripts($wcs4_js_data);
+    });
+
+    return $output;
+});
+
+add_shortcode('student_work_plan_create', static function ($atts) {
+    $subject = '';
+    $teacher = '';
+    $student = '';
+
+    extract(shortcode_atts(array(
+        'subject' => '',
+        'teacher' => '',
+        'student' => '',
+    ), $atts), EXTR_OVERWRITE);
+
+    $result = WCS_WorkPlan::get_html_of_shortcode_form($subject, $teacher, $student);
+
+    # Only load front end scripts and styles if it's our shortcode
+    add_action('wp_footer', static function () {
+        $wcs4_options = WCS_Settings::load_settings();
+        $wcs4_js_data = [];
+        $wcs4_js_data['options'] = $wcs4_options;
+        WCS_Output::load_frontend_scripts($wcs4_js_data);
+    });
+    return trim($result);
+});
+
 
 add_shortcode('wp_query', static function (array $options = []) {
     $shortcode_atts = shortcode_atts([

@@ -1,5 +1,7 @@
 <?php
 
+
+
 trait WCS_Entity_Timestampable_Trait
 {
     /** @var DateTime */

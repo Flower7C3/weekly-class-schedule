@@ -663,7 +663,7 @@ class WCS_Schedule
         string $template_list
     ): string {
         if (empty($lessons)) {
-            return '<div class="wcs4-no-items-message">' . __('No lessons scheduled', 'wcs4') . '</div>';
+            return '<p class="wcs4-no-items-message">' . __('No lessons scheduled', 'wcs4') . '</p>';
         }
 
         $weekdaysWithLessons = [];
@@ -677,7 +677,7 @@ class WCS_Schedule
         foreach ($weekdays as $dayIndex => $dayName) {
             $lessons = $weekdaysWithLessons[$dayIndex];
             if (!empty($lessons)) {
-                $output .= '<h3>' . $dayName . '</h3>';
+                $output .= '<h4>' . $dayName . '</h4>';
                 $output .= '<ul class="wcs4-grid-weekday-list wcs4-grid-weekday-list-' . $dayIndex . '">';
                 /** @var WCS_DB_Lesson_Item $lesson */
                 foreach ($lessons as $lesson) {
@@ -710,7 +710,7 @@ class WCS_Schedule
         string $template_table_details
     ): string {
         if (empty($lessons)) {
-            return '<div class="wcs4-no-items-message">' . __('No lessons scheduled', 'wcs4') . '</div>';
+            return '<p class="wcs4-no-items-message">' . __('No lessons scheduled', 'wcs4') . '</p>';
         }
 
         $weekMinutes = [];

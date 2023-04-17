@@ -18,12 +18,12 @@
      * Handles the search button click event.
      */
     var bind_search_handler = function () {
-        $(document).on('submit.wcs-lessons-filter', '#wcs-lessons-filter', function (e) {
+        $(document).on('submit.wcs4-lessons-filter', '#wcs4-lessons-filter', function (e) {
             e.preventDefault();
             console.log('form submit')
-            $('#wcs-lessons-search').click();
+            $('#wcs4-lessons-search').click();
         });
-        $(document).on('click.wcs-lessons-search', '#wcs-lessons-search', function (e) {
+        $(document).on('click.wcs4-lessons-search', '#wcs4-lessons-search', function (e) {
             e.preventDefault();
             console.log('submit click')
             var page = $('#search_wcs4_page').val();
@@ -97,7 +97,7 @@
      * Handles the edit button click event.
      */
     var bind_edit_handler = function () {
-        $(document).on('click.wcs4-visibility-lesson-button', '.wcs4-visibility-lesson-button', function (e) {
+        $(document).on('click.wcs4-visibility-lesson-button', 'tr[data-type="schedule"] .wcs4-visibility-button', function (e) {
             var entry = {
                 action: 'wcs_toggle_visibility_schedule_entry',
                 security: WCS4_AJAX_OBJECT.ajax_nonce,
@@ -117,7 +117,7 @@
                 }
             });
         });
-        $(document).on('click.wcs4-edit-lesson-button', '.wcs4-edit-lesson-button', function (e) {
+        $(document).on('click.wcs4-edit-lesson-button', 'tr[data-type="schedule"] .wcs4-edit-button', function (e) {
             WCS4_LIB.fetch_entry_data_to_form('lesson', $(this).closest('tr').data('id'), set_entry_data_to_form, WCS4_LIB.reset_to_edit_mode);
         });
     }
@@ -126,7 +126,7 @@
      * Handles the copy button click event.
      */
     var bind_copy_handler = function () {
-        $(document).on('click.wcs4-copy-lesson-button', '.wcs4-copy-lesson-button', function (e) {
+        $(document).on('click.wcs4-copy-lesson-button', 'tr[data-type="schedule"] .wcs4-copy-button', function (e) {
             WCS4_LIB.fetch_entry_data_to_form('lesson', $(this).closest('tr').data('id'), set_entry_data_to_form, WCS4_LIB.reset_to_copy_mode)
         });
     }
@@ -135,7 +135,7 @@
      * Handles the delete button click event.
      */
     var bind_delete_handler = function () {
-        $(document).on('click.wcs4-delete-lesson-button', '.wcs4-delete-lesson-button', function (e) {
+        $(document).on('click.wcs4-delete-lesson-button', 'tr[data-type="schedule"] .wcs4-delete-button', function (e) {
             let entry = {
                 action: 'wcs_delete_schedule_entry',
                 security: WCS4_AJAX_OBJECT.ajax_nonce,

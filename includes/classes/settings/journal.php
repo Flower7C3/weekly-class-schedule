@@ -194,7 +194,7 @@
         <tr>
             <th>
                 <?php
-                _ex('Download journals as HTML', 'options general settings', 'wcs4'); ?>
+                _ex('Download Journals as HTML', 'options general settings', 'wcs4'); ?>
                 <div class="wcs4-description">
                     <?php
                     _ex(
