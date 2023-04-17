@@ -168,13 +168,19 @@ class Progress
         );
         $wcs4_options = Settings::load_settings();
 
-        /** @var Progress_Item $item */
-        $item = $items[$id];
-        if (!empty($id) && $item->isTypePeriodic()) {
-            $template_style = wp_unslash($wcs4_options['progress_html_template_style']);
-            $template_code = wp_kses_stripslashes($wcs4_options['progress_html_template_code_periodic_type']);
-            include self::TEMPLATE_DIR . 'export_type_periodic.html.php';
-            exit;
+        if (!empty($id)) {
+            /** @var Progress_Item $item */
+            $item = $items[$id];
+            if ($item->isTypePeriodic()) {
+                $template_style = wp_unslash($wcs4_options['progress_html_template_style']);
+                $template_code = wp_kses_stripslashes($wcs4_options['progress_html_template_code_periodic_type']);
+                ob_start();
+                include self::TEMPLATE_DIR . 'export_type_periodic.html.php';
+                $html = ob_get_clean();
+                Snapshot::add_item($_GET, $item->getId(), $html);
+                echo $html;
+                exit;
+            }
         }
 
         [$thead_columns, $tbody_columns] = Output::extract_for_table($wcs4_options['progress_html_table_columns']);
@@ -224,7 +230,11 @@ class Progress
             $table,
         ], $template_code);
 
+        ob_start();
         include self::TEMPLATE_DIR . 'export_type_partial.html.php';
+        $html = ob_get_clean();
+        Snapshot::add_item($_GET, $heading, $html);
+        echo $html;
         exit;
     }
 

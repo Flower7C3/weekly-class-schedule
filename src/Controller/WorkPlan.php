@@ -224,7 +224,11 @@ class WorkPlan
             $table,
         ], $template_code);
 
+        ob_start();
         include self::TEMPLATE_DIR . 'export_type_partial.html.php';
+        $html = ob_get_clean();
+        Snapshot::add_item($_GET, $heading, $html);
+        echo $html;
         exit;
     }
 

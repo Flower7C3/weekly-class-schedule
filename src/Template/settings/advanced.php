@@ -33,6 +33,10 @@
             <?= _x('Clear Progresses', 'reset database', 'wcs4') ?>
         </button>
 
+        <button name="wcs_clear_snapshots" id="wcs4_clear_snapshots" class="button-cancel wp-ui-notification">
+            <?= _x('Clear Snapshots', 'reset database', 'wcs4') ?>
+        </button>
+
         <button name="wcs_reset_settings" id="wcs4_reset_settings" class="button-cancel wp-ui-notification">
             <?= _x('Reset settings', 'reset database', 'wcs4') ?>
         </button>

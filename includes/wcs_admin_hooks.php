@@ -13,6 +13,7 @@
  */
 
 use WCS4\Controller\Journal;
+use WCS4\Controller\Snapshot;
 use WCS4\Controller\Progress;
 use WCS4\Controller\Schedule;
 use WCS4\Controller\Settings;
@@ -50,6 +51,12 @@ if (!defined('WCS4_PROGRESS_MANAGE_CAPABILITY')) {
 }
 if (!defined('WCS4_PROGRESS_EXPORT_CAPABILITY')) {
     define('WCS4_PROGRESS_EXPORT_CAPABILITY', 'wcs4_progress_export');
+}
+if (!defined('WCS4_SNAPSHOT_VIEW_CAPABILITY')) {
+    define('WCS4_SNAPSHOT_VIEW_CAPABILITY', 'wcs4_snapshot_view');
+}
+if (!defined('WCS4_SNAPSHOT_MANAGE_CAPABILITY')) {
+    define('WCS4_SNAPSHOT_MANAGE_CAPABILITY', 'wcs4_snapshot_manage');
 }
 if (!defined('WCS4_STANDARD_OPTIONS_CAPABILITY')) {
     define('WCS4_STANDARD_OPTIONS_CAPABILITY', 'wcs4_standard_options');
@@ -90,6 +97,14 @@ add_action('admin_menu', static function () {
         WCS4_PROGRESS_VIEW_CAPABILITY,
         'wcs4-progress',
         array(Progress::class, "callback_of_management_page")
+    );
+    add_submenu_page(
+        'wcs4',
+        __('Snapshots', 'wcs4'),
+        __('Snapshots', 'wcs4'),
+        WCS4_PROGRESS_VIEW_CAPABILITY,
+        'wcs4-snapshot',
+        array(Snapshot::class, "callback_of_management_page")
     );
     $page_standard_options = add_submenu_page(
         'wcs4',
@@ -194,6 +209,8 @@ add_action('init', static function () {
         $role->add_cap(WCS4_PROGRESS_VIEW_CAPABILITY, true);
         $role->add_cap(WCS4_PROGRESS_MANAGE_CAPABILITY, true);
         $role->add_cap(WCS4_PROGRESS_EXPORT_CAPABILITY, true);
+        $role->add_cap(WCS4_SNAPSHOT_VIEW_CAPABILITY, true);
+        $role->add_cap(WCS4_SNAPSHOT_MANAGE_CAPABILITY, true);
         $role->add_cap(WCS4_STANDARD_OPTIONS_CAPABILITY, true);
         $role->add_cap(WCS4_ADVANCED_OPTIONS_CAPABILITY, true);
     }
@@ -210,6 +227,8 @@ add_action('init', static function () {
         $role->add_cap(WCS4_PROGRESS_VIEW_CAPABILITY, true);
         $role->add_cap(WCS4_PROGRESS_MANAGE_CAPABILITY, true);
         $role->add_cap(WCS4_PROGRESS_EXPORT_CAPABILITY, true);
+        $role->add_cap(WCS4_SNAPSHOT_VIEW_CAPABILITY, true);
+        $role->add_cap(WCS4_SNAPSHOT_MANAGE_CAPABILITY, true);
         $role->add_cap(WCS4_STANDARD_OPTIONS_CAPABILITY, true);
     }
     $role = get_role('author');
@@ -255,6 +274,8 @@ add_action('admin_enqueue_scripts', static function () {
     wp_enqueue_script('wcs4_work_plan_js');
     wp_register_script('wcs4_progress_js', WCS4_PLUGIN_URL . '/js/wcs_progress.js', array('jquery'), WCS4_VERSION);
     wp_enqueue_script('wcs4_progress_js');
+    wp_register_script('wcs4_snapshot_js', WCS4_PLUGIN_URL . '/js/wcs_snapshot.js', array('jquery'), WCS4_VERSION);
+    wp_enqueue_script('wcs4_snapshot_js');
     wcs4_js_i18n('wcs4_admin_js');
 });
 

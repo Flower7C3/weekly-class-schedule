@@ -66,7 +66,7 @@ var WCS4_LIB = (function ($) {
     }
 
     var modify_entry = function (scope, entry, callback, confirm_message) {
-        if (scope !== 'lesson' && scope !== 'journal' && scope !== 'work_plan' && scope !== 'progress') {
+        if (scope !== 'lesson' && scope !== 'journal' && scope !== 'work_plan' && scope !== 'progress' && scope !== 'snapshot') {
             show_message(WCS4_AJAX_OBJECT.ajax_error, 'error');
             return;
         }
@@ -95,7 +95,7 @@ var WCS4_LIB = (function ($) {
      * Fetch entry data for form
      */
     var fetch_entry_data_to_form = function (scope, row_id, set_entry_data_to_form, reset_callback) {
-        if (scope !== 'lesson' && scope !== 'journal' && scope !== 'work_plan' && scope !== 'progress') {
+        if (scope !== 'lesson' && scope !== 'journal' && scope !== 'work_plan' && scope !== 'progress' && scope !== 'snapshot') {
             show_message(WCS4_AJAX_OBJECT.ajax_error, 'error');
             return;
         }

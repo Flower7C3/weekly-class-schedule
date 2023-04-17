@@ -146,8 +146,7 @@ use WCS4\Helper\Output;
                                             |
                                         </span>
                                         <span class="delete hide-if-no-js">
-                                            <a href="#" class="wcs4-delete-button"
-                                               data-date="<?= $item->getDate() ?>">
+                                            <a href="#" class="wcs4-delete-button">
                                                 <?= __('Delete', 'wcs4') ?>
                                             </a>
                                         </span>

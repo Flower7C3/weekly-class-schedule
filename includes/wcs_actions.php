@@ -1,5 +1,6 @@
 <?php
 
+use WCS4\Controller\Snapshot;
 use WCS4\Helper\TodayClassesWidget;
 use WCS4\Controller\Journal;
 use WCS4\Controller\Progress;
@@ -41,6 +42,10 @@ add_action('wp_ajax_wcs_get_progress', [Progress::class, 'get_item']);
 add_action('wp_ajax_wcs_get_progresses_html', [Progress::class, 'get_ajax_html']);
 add_action('wp_ajax_wcs_download_progresses_csv', [Progress::class, 'callback_of_export_csv_page']);
 add_action('wp_ajax_wcs_download_progresses_html', [Progress::class, 'callback_of_export_html_page']);
+
+add_action('wp_ajax_wcs_get_snapshots_html', [Snapshot::class, 'get_ajax_html']);
+add_action('wp_ajax_wcs_view_item', [Snapshot::class, 'callback_of_view_item']);
+add_action('wp_ajax_wcs_delete_snapshot_entry', [Snapshot::class, 'delete_item']);
 
 add_action('wcs4_default_settings', [Settings::class, 'set_default_settings']);
 
@@ -181,6 +186,24 @@ add_action('wp_ajax_wcs_clear_progresses', static function () {
         wcs4_verify_nonce();
         DB::delete_progresses();
         $response = __('WCS Progresses truncated successfully.', 'wcs4');
+        $status = 'cleared';
+    }
+    wcs4_json_response([
+        'response' => $response,
+        'result' => $status,
+    ]);
+    die();
+});
+
+add_action('wp_ajax_wcs_clear_snapshots', static function () {
+    error_reporting(E_ALL);
+    ini_set('display_errors', true);
+    $response = __('You are no allowed to run this action', 'wcs4');
+    $status = 'error';
+    if (current_user_can(WCS4_ADVANCED_OPTIONS_CAPABILITY)) {
+        wcs4_verify_nonce();
+        DB::delete_snapshots();
+        $response = __('WCS Snapshots truncated successfully.', 'wcs4');
         $status = 'cleared';
     }
     wcs4_json_response([

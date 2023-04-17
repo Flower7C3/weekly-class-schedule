@@ -1,0 +1,25 @@
+<?php
+/**
+ * @var string $table ;
+ */
+
+?>
+<div class="wrap wcs4-management-page-callback">
+    <h1 class="wp-heading-inline"><?php
+        _ex('Snapshots', 'manage snapshot', 'wcs4'); ?></h1>
+    <hr class="wp-header-end">
+    <div id="ajax-response"></div>
+    <div id="col-container" class="wp-clearfix">
+        <div class="tablenav top">
+            <div class="alignleft actions">
+                <?php
+                include 'admin_search.php'; ?>
+            </div>
+            <br class="clear">
+        </div>
+        <div class="col-wrap" id="wcs4-snapshot-events-list-wrapper">
+            <?php
+            echo $table; ?>
+        </div>
+    </div>
+</div>

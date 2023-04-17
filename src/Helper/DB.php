@@ -122,6 +122,12 @@ class DB
         return $wpdb->prefix . 'wcs4_progress_teacher';
     }
 
+    public static function get_snapshot_table_name(): string
+    {
+        global $wpdb;
+        return $wpdb->prefix . 'wcs4_snapshot';
+    }
+
     /**
      * Creates the required WCS4 db tables.
      */
@@ -139,6 +145,7 @@ class DB
         $table_progress = self::get_progress_table_name();
         $table_progress_subject = self::get_progress_subject_table_name();
         $table_progress_teacher = self::get_progress_teacher_table_name();
+        $table_snapshots = self::get_snapshot_table_name();
 
         $sql_schedule = "CREATE TABLE `$table_schedule` (
             `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
@@ -233,6 +240,21 @@ class DB
             `id` int(11) unsigned NOT NULL,
             `teacher_id` int(20) unsigned NOT NULL
         )";
+        $sql_snapshots = "CREATE TABLE `$table_snapshots` (
+            `id` int(11) NOT NULL,
+            `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            `created_by` int(11) NOT NULL,
+            `updated_at` datetime DEFAULT NULL,
+            `updated_by` int(11) DEFAULT NULL,
+            `page` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+            `action` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+            `params` text COLLATE utf8mb4_unicode_ci,
+            `title` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+            `html` text COLLATE utf8mb4_unicode_ci NOT NULL,
+            `hash` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+            `version` int(11) NOT NULL,
+            PRIMARY KEY (`id`)
+         )";
 
         require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
         dbDelta($sql_schedule);
@@ -247,6 +269,7 @@ class DB
         dbDelta($sql_progress);
         dbDelta($sql_progress_subject);
         dbDelta($sql_progress_teacher);
+        dbDelta($sql_snapshots);
         add_option('wcs4_db_version', WCS4_DB_VERSION);
     }
 
@@ -389,6 +412,7 @@ class DB
         $wpdb->query('DROP TABLE IF EXISTS ' . self::get_progress_subject_table_name());
         $wpdb->query('DROP TABLE IF EXISTS ' . self::get_progress_teacher_table_name());
         $wpdb->query('DROP TABLE IF EXISTS ' . self::get_progress_table_name());
+        $wpdb->query('DROP TABLE IF EXISTS ' . self::get_snapshot_table_name());
     }
 
     /**
@@ -424,6 +448,12 @@ class DB
         $wpdb->query('TRUNCATE ' . self::get_progress_subject_table_name());
         $wpdb->query('TRUNCATE ' . self::get_progress_teacher_table_name());
         $wpdb->query('TRUNCATE ' . self::get_progress_table_name());
+    }
+
+    public static function delete_snapshots(): void
+    {
+        global $wpdb;
+        $wpdb->query('TRUNCATE ' . self::get_snapshot_table_name());
     }
 
     public static function get_item($id): ?Item
@@ -499,25 +529,25 @@ class DB
                     $items[$item->getId()] = $item;
                 } else {
                     switch ($className) {
-                        case 'WCS4\Entity\Lesson_Item':
+                        case Lesson_Item::class:
                             /** @var Lesson_Item $_item */
                             $_item = $items[$item->getId()];
                             $_item->addTeachers($item->getTeachers());
                             $_item->addStudents($item->getStudents());
                             break;
-                        case 'WCS4\Entity\Journal_Item':
+                        case Journal_Item::class:
                             /** @var Journal_Item $_item */
                             $_item = $items[$item->getId()];
                             $_item->addTeachers($item->getTeachers());
                             $_item->addStudents($item->getStudents());
                             break;
-                        case 'WCS4\Entity\WorkPlan_Item':
+                        case WorkPlan_Item::class:
                             /** @var WorkPlan_Item $_item */
                             $_item = $items[$item->getId()];
                             $_item->addSubjects($item->getSubjects());
                             $_item->addTeachers($item->getTeachers());
                             break;
-                        case 'WCS4\Entity\Progress_Item':
+                        case Progress_Item::class:
                             /** @var Progress_Item $_item */
                             $_item = $items[$item->getId()];
                             $_item->addSubjects($item->getSubjects());

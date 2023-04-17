@@ -435,6 +435,9 @@ function wcs4_js_i18n($handle)
             'cancel_copying' => _x('Exit copy progress mode', 'button text', 'wcs4'),
             'delete_warning' => _x('Are you sure you want to delete this progress?', 'manage schedule', 'wcs4'),
         ),
+        'snapshot' => array(
+            'delete_warning' => _x('Are you sure you want to delete this snapshot?', 'manage schedule', 'wcs4'),
+        ),
         'reset_warning' => _x('Are you sure you want to to this?', 'reset database', 'wcs4'),
         'ajax_url' => admin_url('admin-ajax.php'),
         'ajax_nonce' => wp_create_nonce('wcs4-ajax-nonce'),
