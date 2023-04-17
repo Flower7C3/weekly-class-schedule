@@ -220,5 +220,14 @@ class WCS_DB_Progress_Item
     {
         return self::TYPE_PARTIAL === $this->getType();
     }
+
+    public function getTeachersList(): string
+    {
+        $result = [];
+        foreach ($this->getTeachers() as $teacher) {
+            $result[] = '<li>' . $teacher->getName() . '</li>';
+        }
+        return '<ul>' . implode('', $result) . '</ul>';
+    }
 }
 

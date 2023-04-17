@@ -604,7 +604,7 @@ class WCS_Progress
                 if (is_array($row_id)) {
                     $query = $wpdb->prepare(
                         "
-                            SELECT $table.*, group_concat(subject_id) as subject_id, group_concat(teacher_id) as teacher_id
+                            SELECT $table.*, GROUP_CONCAT(subject_id) AS subject_id, GROUP_CONCAT(teacher_id) AS teacher_id
                             FROM $table
                             LEFT JOIN $table_subject USING (id)
                             LEFT JOIN $table_teacher USING (id)
@@ -621,7 +621,7 @@ class WCS_Progress
                 } else {
                     $query = $wpdb->prepare(
                         "
-                            SELECT $table.*, group_concat(subject_id) as teacher_id, group_concat(teacher_id) as teacher_id
+                            SELECT $table.*, GROUP_CONCAT(subject_id) AS subject_id, GROUP_CONCAT(teacher_id) AS teacher_id
                             FROM $table
                             LEFT JOIN $table_subject USING (id)
                             LEFT JOIN $table_teacher USING (id)

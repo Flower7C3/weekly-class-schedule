@@ -164,7 +164,7 @@
                                 if ($item->isTypePartial()): ?>
                                     <ul>
                                         <?php
-                                        foreach ($item->getSubject() as $item_subject): ?>
+                                        foreach ($item->getSubjects() as $item_subject): ?>
                                             <li>
                                                 <?php
                                                 WCS_Output::item_admin_link(

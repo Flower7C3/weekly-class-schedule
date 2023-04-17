@@ -177,5 +177,4 @@ class WCS_DB_Item
         $this->info = $info;
         return $this;
     }
-
 }

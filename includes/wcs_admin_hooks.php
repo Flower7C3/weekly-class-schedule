@@ -168,9 +168,13 @@ add_action('init', static function () {
     $role = get_role('editor');
     if (null !== $role) {
         $role->add_cap(WCS4_SCHEDULE_VIEW_CAPABILITY, true);
-        $role->add_cap(WCS4_JOURNAL_VIEW_CAPABILITY, true);
-        $role->add_cap(WCS4_PROGRESS_VIEW_CAPABILITY, true);
         $role->add_cap(WCS4_SCHEDULE_MANAGE_CAPABILITY, true);
+        $role->add_cap(WCS4_JOURNAL_VIEW_CAPABILITY, true);
+        $role->add_cap(WCS4_JOURNAL_MANAGE_CAPABILITY, true);
+        $role->add_cap(WCS4_JOURNAL_EXPORT_CAPABILITY, true);
+        $role->add_cap(WCS4_PROGRESS_VIEW_CAPABILITY, true);
+        $role->add_cap(WCS4_PROGRESS_MANAGE_CAPABILITY, true);
+        $role->add_cap(WCS4_PROGRESS_EXPORT_CAPABILITY, true);
         $role->add_cap(WCS4_STANDARD_OPTIONS_CAPABILITY, true);
     }
     $role = get_role('author');

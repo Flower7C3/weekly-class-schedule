@@ -508,7 +508,7 @@ class WCS_Schedule
                 $result = $wpdb->get_row(
                     $wpdb->prepare(
                         "
-                            SELECT *, group_concat(teacher_id) as teacher_id, group_concat(student_id) as student_id
+                            SELECT *, GROUP_CONCAT(teacher_id) AS teacher_id, GROUP_CONCAT(student_id) AS student_id
                             FROM $table
                             LEFT JOIN $table_teacher USING (id)
                             LEFT JOIN $table_student USING (id)

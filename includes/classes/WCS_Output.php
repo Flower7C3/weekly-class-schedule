@@ -52,12 +52,14 @@ class WCS_Output
                 '{tea}',
                 '{teacher link}',
                 '{tea link}',
+                '{teacher list}',
             ], [
                 $item->getTeacher()->getName(),
                 $item->getTeacher()->getInfo(),
                 $item->getTeacher()->getNameShort(),
                 $item->getTeacher()->getLinkName(),
                 $item->getTeacher()->getLinkShort(),
+                $item->getTeachersList(),
             ], $template);
         }
         if ($item instanceof WCS_DB_Lesson_Item || $item instanceof WCS_DB_Journal_Item || $item instanceof WCS_DB_Progress_Item) {
