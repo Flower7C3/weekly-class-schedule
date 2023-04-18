@@ -125,7 +125,9 @@ use WCS4\Helper\Output;
                                             <span class="download hide-if-no-js">
                                             <a href="<?= admin_url(
                                                 'admin-ajax.php'
-                                            ) ?>?action=wcs_download_work_plans_html&id=<?= $item->getId() ?>"
+                                            ) ?>?action=wcs_download_work_plans_html&nonce=<?= wp_create_nonce(
+                                                'work_plan'
+                                            ) ?>&id=<?= $item->getId() ?>"
                                                target="_blank"
                                                class="wcs4-download-work-plan-button"
                                             >
@@ -216,7 +218,8 @@ use WCS4\Helper\Output;
                                 <?= $item->getMethods() ?>
                             </td>
                             <td data-colname="<?= __('Updated at', 'wcs4') ?>">
-                                <?php include __DIR__.'/../_common/updated_at.php' ?>
+                                <?php
+                                include __DIR__ . '/../_common/updated_at.php' ?>
                             </td>
                         </tr>
                     <?php

@@ -48,10 +48,10 @@ class Schedule
     public static function callback_of_calendar_page()
     {
         # get user data
-        $classroom = sanitize_text_field(!empty($_GET['classroom']) ? '#' . $_GET['classroom'] : null);
-        $teacher = sanitize_text_field(!empty($_GET['teacher']) ? '#' . $_GET['teacher'] : null);
-        $student = sanitize_text_field(!empty($_GET['student']) ? '#' . $_GET['student'] : null);
-        $subject = sanitize_text_field(!empty($_GET['subject']) ? '#' . $_GET['subject'] : null);
+        $classroom = empty($_GET['classroom']) ? null : '#' . sanitize_text_field($_GET['classroom']);
+        $teacher = empty($_GET['teacher']) ? null : '#' . sanitize_text_field($_GET['teacher']);
+        $student = empty($_GET['student']) ? null : '#' . sanitize_text_field($_GET['student']);
+        $subject = empty($_GET['subject']) ? null : '#' . sanitize_text_field($_GET['subject']);
         switch (get_post_type()) {
             case 'wcs4_classroom':
                 $classroom = '#' . get_the_id();

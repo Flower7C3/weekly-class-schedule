@@ -13,8 +13,8 @@ class Snapshot
     public static function callback_of_management_page(): void
     {
         $table = self::get_html_of_admin_table(
-            !empty($_GET['title']) ? $_GET['title'] : null,
             !empty($_GET['location']) ? $_GET['location'] : null,
+            !empty($_GET['query_string']) ? $_GET['query_string'] : null,
             !empty($_GET['created_at_from']) ? sanitize_text_field($_GET['created_at_from']) : null,
             !empty($_GET['created_at_upto']) ? sanitize_text_field($_GET['created_at_upto']) : null,
             !empty($_GET['order_field']) ? sanitize_text_field($_GET['order_field']) : 'created-at',
@@ -25,8 +25,8 @@ class Snapshot
 
 
     public static function get_html_of_admin_table(
-        $title = null,
         $location = null,
+        $queryString = null,
         $created_at_from = null,
         $created_at_upto = null,
         $order_field = null,
@@ -34,8 +34,8 @@ class Snapshot
     ): string {
         ob_start();
         $items = self::get_items(
-            $title,
             $location,
+            $queryString,
             $created_at_from,
             $created_at_upto,
             $order_field,
@@ -47,8 +47,8 @@ class Snapshot
     }
 
     public static function get_items(
-        $title = null,
         $location = null,
+        $queryString = null,
         $created_at_from = null,
         $created_at_upto = null,
         $order_field = null,
@@ -56,28 +56,27 @@ class Snapshot
         $limit = null,
         $paged = null
     ): array {
+        global $wpdb;
         $table = DB::get_snapshot_table_name();
 
         $query = "SELECT
                 $table.id AS snapshot_id,
                 $table.created_at, $table.created_by, $table.updated_at, $table.updated_by,
-                $table.page, $table.action, $table.params, $table.title, $table.html, $table.hash, $table.version
+                $table.title, $table.query_string, $table.action, $table.html, $table.hash, $table.version
             FROM $table
         ";
 
         # Add IDs by default (post filter)
         $where = [];
         $query_arr = [];
-
-        if (!empty($title)) {
-            $where[] = 'title LIKE "%s"';
-            $query_arr[] = '%' . $title . '%';
-        }
         if (!empty($location)) {
-            $where[] = '(page LIKE "%s" OR action LIKE "%s" OR params LIKE "%s")';
-            $query_arr[] = '%' . $location . '%';
-            $query_arr[] = '%' . $location . '%';
-            $query_arr[] = '%' . $location . '%';
+            $where[] = '(title LIKE "%s" OR action LIKE "%s")';
+            $query_arr[] = '%' . $wpdb->esc_like($location) . '%';
+            $query_arr[] = '%' . $wpdb->esc_like($location) . '%';
+        }
+        if (!empty($queryString)) {
+            $where[] = 'query_string LIKE "%s"';
+            $query_arr[] = '%' . $wpdb->esc_like($queryString) . '%';
         }
         if (!empty($created_at_from)) {
             $where[] = 'created_at >= "%s"';
@@ -88,6 +87,9 @@ class Snapshot
             $query_arr[] = $created_at_upto . ' 23:59:59';
         }
         switch ($order_field) {
+            case 'location':
+                $order_field = ['title' => $order_direction];
+                break;
             case 'created-at':
                 $order_field = ['created_at' => $order_direction];
                 break;
@@ -114,8 +116,8 @@ class Snapshot
         if (current_user_can(WCS4_SNAPSHOT_MANAGE_CAPABILITY)) {
             wcs4_verify_nonce();
             $html = self::get_html_of_admin_table(
-                sanitize_text_field($_POST['title']),
                 sanitize_text_field($_POST['location']),
+                sanitize_text_field($_POST['query_string']),
                 sanitize_text_field($_POST['created_at_from']),
                 sanitize_text_field($_POST['created_at_upto']),
                 sanitize_text_field($_POST['order_field']),
@@ -126,27 +128,25 @@ class Snapshot
         die();
     }
 
-    public static function add_item(array $query, string $title, string $html): void
+    public static function add_item(array $queryString, string $title, string $html): void
     {
         global $wpdb;
         $table = DB::get_snapshot_table_name();
 
         $urlParams = [];
-        foreach ($query as $key => $val) {
-            if (!empty($val) && !in_array($key, ['page', 'action'])) {
+        foreach ($queryString as $key => $val) {
+            if (!empty($val)) {
                 $urlParams[$key] = $val;
             }
         }
-        $page = $_GET['page'] ?? null;
-        $action = $_GET['action'] ?? null;
-        $params = json_encode($urlParams);
+        $queryString = json_encode($urlParams);
         $hash = md5($html);
         $version = 1;
 
         $row = $wpdb->get_row(
             $wpdb->prepare(
-                "SELECT id,hash,version FROM $table WHERE page = %s action = %s AND params = %s",
-                [$page, $action, $params],
+                "SELECT id,hash,version FROM $table WHERE query_string = %s",
+                [$queryString],
             ),
             ARRAY_A
         );
@@ -166,16 +166,15 @@ class Snapshot
             $r = $wpdb->insert(
                 $table,
                 [
-                    'page' => $page,
-                    'action' => $action,
-                    'params' => $params,
                     'title' => trim($title),
+                    'query_string' => $queryString,
+                    'action' => $urlParams['action'],
                     'html' => $html,
                     'hash' => $hash,
                     'created_by' => get_current_user_id(),
                     'version' => $version,
                 ],
-                ['%s', '%s', '%s', '%s', '%s', '%s', '%d', '%d']
+                ['%s', '%s', '%s', '%s', '%s', '%d', '%d']
             );
         }
         if ('update' === $mode) {
@@ -198,6 +197,10 @@ class Snapshot
     {
         global $wpdb;
         $table = DB::get_snapshot_table_name();
+        if (!wp_verify_nonce($_GET['nonce'], 'snapshot')) {
+            header('HTTP/1.0 403 Access Denied');
+            exit();
+        }
         $id = sanitize_text_field($_GET['id']);
         $html = $wpdb->get_var(
             $wpdb->prepare(

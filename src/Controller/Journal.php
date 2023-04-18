@@ -42,9 +42,9 @@ class Journal
         }
 
         # get user data
-        $teacher = sanitize_text_field(!empty($_GET['teacher']) ? '#' . $_GET['teacher'] : null);
-        $student = sanitize_text_field(!empty($_GET['student']) ? '#' . $_GET['student'] : null);
-        $subject = sanitize_text_field(!empty($_GET['subject']) ? '#' . $_GET['subject'] : null);
+        $teacher = empty($_GET['teacher']) ? null :'#' . sanitize_text_field($_GET['teacher']);
+        $student = empty($_GET['student']) ? null :'#' . sanitize_text_field($_GET['student']);
+        $subject = empty($_GET['subject']) ? null :'#' . sanitize_text_field($_GET['subject']);
         $date_from = sanitize_text_field($_GET['date_from']);
         $date_upto = sanitize_text_field($_GET['date_upto']);
         switch (get_post_type()) {
@@ -129,13 +129,13 @@ class Journal
         }
 
         # get user data
-        $teacher = sanitize_text_field($_GET['teacher'] ? '#' . $_GET['teacher'] : null);
-        $student = sanitize_text_field($_GET['student'] ? '#' . $_GET['student'] : null);
-        $subject = sanitize_text_field($_GET['subject'] ? '#' . $_GET['subject'] : null);
+        $teacher = empty($_GET['teacher']) ? null : '#' . sanitize_text_field($_GET['teacher']);
+        $student = empty($_GET['student']) ? null : '#' . sanitize_text_field($_GET['student']);
+        $subject = empty($_GET['subject']) ? null : '#' . sanitize_text_field($_GET['subject']);
         $date_from = sanitize_text_field($_GET['date_from']);
         $date_upto = sanitize_text_field($_GET['date_upto']);
-        $order_field = !empty($_GET['order_field']) ? sanitize_text_field($_GET['order_field']) : 'time';
-        $order_direction = !empty($_GET['order_direction']) ? sanitize_text_field($_GET['order_direction']) : 'asc';
+        $order_field = empty($_GET['order_field']) ? 'time' : sanitize_text_field($_GET['order_field']);
+        $order_direction = empty($_GET['order_direction']) ? 'asc' : sanitize_text_field($_GET['order_direction']);
         switch (get_post_type()) {
             case 'wcs4_teacher':
                 $teacher = '#' . get_the_id();
@@ -162,10 +162,7 @@ class Journal
         );
 
         $wcs4_options = Settings::load_settings();
-        [$thead_columns, $tbody_columns] = Output::extract_for_table(
-            $wcs4_options['journal_html_table_columns'],
-            $items
-        );
+        [$thead_columns, $tbody_columns] = Output::extract_for_table($wcs4_options['journal_html_table_columns']);
 
         $subject_item = '';
         $student_item = '';
@@ -192,7 +189,6 @@ class Journal
         $table = ob_get_clean();
 
         $template_style = wp_unslash($wcs4_options['journal_html_template_style']);
-
         $template_code = wp_kses_stripslashes($wcs4_options['journal_html_template_code']);
         $template_code = Output::process_template(null, $template_code);
         $template_code = str_replace([
@@ -218,6 +214,7 @@ class Journal
         $html = ob_get_clean();
         Snapshot::add_item($_GET, $heading, $html);
         echo $html;
+        exit;
     }
 
     public static function get_html_of_shortcode_form($subject = null, $teacher = null, $student = null): string

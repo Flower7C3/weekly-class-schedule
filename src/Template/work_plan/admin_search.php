@@ -5,10 +5,8 @@
 
     echo $_GET['page']; ?>"/>
     <div class="search-box">
-        <fieldset class="alignleft">
-            <legend><?= __('Subject', 'wcs4') ?></legend>
             <div class="alignleft">
-                <label class="screen-reader-text" for="search_wcs4_work_plan_subject_id">
+                <label for="search_wcs4_work_plan_subject_id">
                     <?= __('Subject', 'wcs4'); ?>
                 </label>
                 <?php
@@ -19,11 +17,8 @@
                     array_key_exists('subject', $_GET) ? (int)$_GET['subject'] : ''
                 ); ?>
             </div>
-        </fieldset>
-        <fieldset class="alignleft">
-            <legend><?= __('Teacher', 'wcs4') ?></legend>
             <div class="alignleft">
-                <label class="screen-reader-text" for="search_wcs4_work_plan_teacher_id">
+                <label for="search_wcs4_work_plan_teacher_id">
                     <?= __('Teacher', 'wcs4'); ?>
 
                 </label>
@@ -35,11 +30,8 @@
                     array_key_exists('teacher', $_GET) ? (int)$_GET['teacher'] : ''
                 ); ?>
             </div>
-        </fieldset>
-        <fieldset class="alignleft">
-            <legend><?= __('Student', 'wcs4') ?></legend>
             <div class="alignleft">
-                <label class="screen-reader-text" for="search_wcs4_work_plan_student_id">
+                <label for="search_wcs4_work_plan_student_id">
                     <?= __('Student', 'wcs4'); ?>
                 </label>
                 <?php
@@ -50,11 +42,8 @@
                     array_key_exists('student', $_GET) ? (int)$_GET['student'] : ''
                 ); ?>
             </div>
-        </fieldset>
-        <fieldset class="alignleft">
-            <legend><?= __('Start from-to', 'wcs4') ?></legend>
             <div class="alignleft">
-                <label class="screen-reader-text" for="search_wcs4_work_plan_date_from">
+                <label for="search_wcs4_work_plan_date_from">
                     <?= __('Date from', 'wcs4'); ?>
 
                 </label>
@@ -66,7 +55,7 @@
                 ); ?>
             </div>
             <div class="alignleft">
-                <label class="screen-reader-text" for="search_wcs4_work_plan_date_upto">
+                <label for="search_wcs4_work_plan_date_upto">
                     <?= __('Date to', 'wcs4'); ?>
                 </label>
                 <?php
@@ -76,11 +65,8 @@
                     ['default' => array_key_exists('date_upto', $_GET) ? $_GET['date_upto'] : '']
                 ); ?>
             </div>
-        </fieldset>
-        <fieldset class="alignleft">
-            <legend><?= __('Type', 'wcs4') ?></legend>
             <div class="alignleft">
-                <label class="screen-reader-text" for="search_wcs4_work_plan_type">
+                <label for="search_wcs4_work_plan_type">
                     <?= __('Type', 'wcs4'); ?>
                 </label>
                 <?php
@@ -91,11 +77,8 @@
                     array_key_exists('type', $_GET) ? $_GET['type'] : ''
                 ); ?>
             </div>
-        </fieldset>
-        <fieldset class="alignleft">
-            <legend><?= __('Created at from-to', 'wcs4') ?></legend>
             <div class="alignleft">
-                <label class="screen-reader-text" for="search_wcs4_work_plan_created_at_from">
+                <label for="search_wcs4_work_plan_created_at_from">
                     <?= __('Created at from', 'wcs4'); ?>
                 </label>
                 <?php
@@ -106,7 +89,7 @@
                 ); ?>
             </div>
             <div class="alignleft">
-                <label class="screen-reader-text" for="search_wcs4_work_plan_created_at_upto">
+                <label for="search_wcs4_work_plan_created_at_upto">
                     <?= __('Created at to', 'wcs4'); ?>
 
                 </label>
@@ -118,8 +101,7 @@
                 ); ?>
             </div>
         </fieldset>
-        <fieldset class="alignleft">
-            <legend>&nbsp;</legend>
+        <div class="alignleft buttons">
             <button type="submit" id="search"
                     class="button button-primary"
             >
@@ -134,7 +116,7 @@
                 <?php
                 echo __('Reset form', 'wcs4') ?>
             </button>
-        </fieldset>
+        </div>
         <div class="wp-clearfix"></div>
         <?php
         if (current_user_can(WCS4_JOURNAL_EXPORT_CAPABILITY)): ?>

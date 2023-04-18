@@ -235,3 +235,10 @@ form.readonly select, form[readonly] select, select.readonly, select[readonly] {
     position: relative;
     top: 5px;
 }
+
+fieldset label, .alignleft > label {
+    display: block;
+}
+.buttons {
+    padding-top: 18px;
+}

@@ -6,17 +6,26 @@
  */
 
 use WCS4\Entity\Snapshot_Item;
-use WCS4\Entity\Progress_Item;
+use WCS4\Helper\Output;
 
 ?>
-<div class="wcs4-day-content-wrapper" data-hash="<?= md5(serialize($items) . $order_field . $order_direction) ?>">
+<div class="wcs4-day-content-wrapper"
+     data-hash="<?= md5(serialize($items) . time() . $order_field . $order_direction) ?>">
     <?php
     if ($items): ?>
         <?php
         $groups = [];
-        /** @var Progress_Item $item */
+        /** @var Snapshot_Item $item */
         foreach ($items as $item) {
-            $key = $item->getCreatedAt()->format('Y-m-d');
+            switch ($order_field) {
+                case 'location':
+                    $key = $item->getTitle();
+                    break;
+                default:
+                case 'updated-at':
+                    $key = $item->getCreatedAt()->format('Y-m-d');
+                    break;
+            }
             $groups[$key][] = $item;
         }
         if ($order_direction === 'desc') {
@@ -38,13 +47,13 @@ use WCS4\Entity\Progress_Item;
                     <tr>
                         <?php
                         admin_th(
-                            __('Title', 'wcs4'),
-                            'title',
+                            __('Location', 'wcs4'),
+                            'location',
                             $order_direction,
                             $order_field
                         );
                         admin_th(
-                            __('Location', 'wcs4')
+                            __('Query', 'wcs4')
                         );
                         admin_th(
                             __('Version', 'wcs4')
@@ -65,16 +74,48 @@ use WCS4\Entity\Progress_Item;
                             data-type="snapshot"
                             data-id="<?= $item->getId() ?>">
                             <td class="column-primary has-row-actions">
+                                <?php
+                                switch ($item->getAction()) {
+                                    default:
+                                        $label = $item->getAction();
+                                        break;
+                                    case 'wcs_download_schedules_html':
+                                        $label = __('Schedules', 'wcs4');
+                                        break;
+                                    case 'wcs_download_journals_html':
+                                        $label = __('Journals', 'wcs4');
+                                        break;
+                                    case 'wcs_download_work_plans_html':
+                                        $label = __('Work Plans', 'wcs4');
+                                        break;
+                                    case 'wcs_download_progresses_html':
+                                        $label = __('Progresses', 'wcs4');
+                                        break;
+                                }
+                                Output::admin_search_link(
+                                    'search_wcs4_snapshot_location',
+                                    $item->getAction(),
+                                    $label
+                                ); ?>
                                 <?= $item->getTitle() ?>
                                 <div class="row-actions">
-                                    <span class="download hide-if-no-js">
+                                    <span class="download">
                                         <a href="<?= admin_url(
                                             'admin-ajax.php'
-                                        ) ?>?action=wcs_view_snapshot&id=<?= $item->getId() ?>"
+                                        ) ?>?action=wcs_view_snapshot&nonce=<?=wp_create_nonce('snapshot')?>&id=<?= $item->getId() ?>"
                                            target="_blank"
                                            class="wcs4-view-button"
                                         >
-                                            <?= __('Cached', 'wcs4') ?>
+                                            <?= __('Preview') ?>
+                                        </a>
+                                        |
+                                    </span>
+                                    <span class="download">
+                                        <a href="<?= $item->getUrl() ?>"
+                                           target="_blank"
+                                           class="wcs4-view-button"
+                                        >
+                                            <?= __('Reload') ?>
                                         </a>
                                         |
                                     </span>
@@ -92,20 +133,8 @@ use WCS4\Entity\Progress_Item;
                                     <span class="screen-reader-text"><?= __('Show more details') ?></span>
                                 </button>
                             </td>
-                            <td class="has-row-actions">
-                                <?= $item->getPage() ?>/<?= $item->getAction() ?>
-                                <br>
-                                <small><?= $item->getParamsRaw() ?></small>
-                                <div class="row-actions">
-                                    <div class="download hide-if-no-js">
-                                        <a href="<?= $item->getUrl() ?>"
-                                           target="_blank"
-                                           class="wcs4-view-button"
-                                        >
-                                            <?= __('Current', 'wcs4') ?>
-                                        </a>
-                                    </div>
-                                </div>
+                            <td>
+                                <small><?= $item->getQueryString() ?></small>
                             </td>
                             <td>
                                 <?= $item->getVersion() ?>

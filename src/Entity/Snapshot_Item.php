@@ -8,10 +8,9 @@ use WCS4\Entity\Trait\Timestampable_Trait;
 class Snapshot_Item
 {
     private int $id;
-    private string $page;
-    private string $action;
-    private string $params;
     private string $title;
+    private string $queryString;
+    private string $action;
     private string $html;
     private string $hash;
     private int $version;
@@ -26,10 +25,9 @@ class Snapshot_Item
             ->setCreatedBy($db_row->created_by)
             ->setUpdatedAt($db_row->updated_at)
             ->setUpdatedBy($db_row->updated_by);
-        $this->page = $db_row->page;
-        $this->action = $db_row->action;
-        $this->params = $db_row->params;
         $this->title = $db_row->title;
+        $this->queryString = $db_row->query_string;
+        $this->action = $db_row->action;
         $this->html = $db_row->html;
         $this->hash = $db_row->hash;
         $this->version = $db_row->version;
@@ -40,29 +38,20 @@ class Snapshot_Item
         return $this->id;
     }
 
-    public function getPage(): string
+
+    public function getTitle(): string
     {
-        return $this->page;
+        return $this->title;
+    }
+
+    public function getQueryString(): string
+    {
+        return $this->queryString;
     }
 
     public function getAction(): string
     {
         return $this->action;
-    }
-
-    public function getParams(): array
-    {
-        return \json_decode($this->params, true);
-    }
-
-    public function getParamsRaw(): string
-    {
-        return $this->params;
-    }
-
-    public function getTitle(): string
-    {
-        return $this->title;
     }
 
     public function getHtml(): string
@@ -84,14 +73,7 @@ class Snapshot_Item
     {
         return admin_url(
                 'admin-ajax.php'
-            ) . '?' . self::getQuery($this);
-    }
-
-    public static function getQuery(self $item): string
-    {
-        return 'page=' . $item->getPage()
-            . '&action=' . $item->getAction()
-            . '&' . http_build_query($item->getParams());
+            ) . '?' . http_build_query(\json_decode($this->getQueryString(), true));
     }
 
 }

@@ -19,8 +19,8 @@
         $(document).on('click.wcs4-snapshots-search', '#wcs4-snapshots-search', function (e) {
             e.preventDefault();
             reload_html_view(
-                $('#search_wcs4_snapshot_title').val(),
                 $('#search_wcs4_snapshot_location').val(),
+                $('#search_wcs4_snapshot_query_string').val(),
                 $('#search_wcs4_snapshot_created_at_from').val(),
                 $('#search_wcs4_snapshot_created_at_upto').val(),
                 $('.sortable.sorted').data('order-current-field'),
@@ -36,8 +36,8 @@
     var bind_sort_handler = function () {
         $(document).on('click.wcs4-snapshot-events-list-sort', '#wcs4-snapshot-events-list-wrapper [data-order-field][data-order-direction]', function (e) {
             reload_html_view(
-                $('#search_wcs4_snapshot_title').val(),
                 $('#search_wcs4_snapshot_location').val(),
+                $('#search_wcs4_snapshot_query_string').val(),
                 $('#search_wcs4_snapshot_created_at_from').val(),
                 $('#search_wcs4_snapshot_created_at_upto').val(),
                 $(this).data('order-field'),
@@ -60,8 +60,8 @@
             WCS4_LIB.modify_entry('snapshot', entry, function (data) {
                 // Let's refresh the date
                 reload_html_view(
-                    $('#search_wcs4_snapshot_title').val(),
                     $('#search_wcs4_snapshot_location').val(),
+                    $('#search_wcs4_snapshot_query_string').val(),
                     $('#search_wcs4_snapshot_created_at_from').val(),
                     $('#search_wcs4_snapshot_created_at_upto').val(),
                     $('.sortable.sorted').data('order-current-field'),
@@ -75,12 +75,12 @@
     /**
      * Updates dynamically a specific snapshot vi.
      */
-    var reload_html_view = function (title, location, created_at_from, created_at_upto, order_field, order_direction, action) {
+    var reload_html_view = function (location, query_string, created_at_from, created_at_upto, order_field, order_direction, action) {
         var page = $('#search_wcs4_page').val();
         var state = {
             'page': page,
-            'title': title,
             'location': location,
+            'query_string': query_string,
             'created_at_from': created_at_from,
             'created_at_upto': created_at_upto,
             'order_field': order_field,
@@ -88,8 +88,8 @@
         };
         var url = $('#wcs4-snapshots-filter').attr('action')
             + '?page=' + page
-            + '&title=' + title
             + '&location=' + location
+            + '&query_string=' + query_string
             + '&created_at_from=' + created_at_from
             + '&created_at_upto=' + created_at_upto
             + '&order_field=' + order_field
@@ -99,8 +99,8 @@
         entry = {
             action: 'wcs_get_snapshots_html',
             security: WCS4_AJAX_OBJECT.ajax_nonce,
-            title: title,
             location: location,
+            query_string: query_string,
             created_at_from: created_at_from,
             created_at_upto: created_at_upto,
             order_field: order_field,

@@ -297,19 +297,15 @@ class Output
         if ($item->getId()): ?>
             <a href="#"
                class="search-filter"
-               data-select-id="<?php
-               echo $selectId ?>"
-               data-option-val="<?php
-               echo $item->getId() ?>">
-                <?php
-                echo $item->getName() ?>
+               data-select-id="<?= $selectId ?>"
+               data-option-val="<?= $item->getId() ?>">
+                <?= $item->getName() ?>
             </a>
             <?php
             if ($item->hasPermalink()): ?>
                 <span class="row-actions">
                     <span class="edit">
-                        <a href="<?php
-                        echo $item->getPermalink() ?>">
+                        <a href="<?= $item->getPermalink() ?>">
                             <span class="dashicons dashicons-external"></span>
                         </a>
                     </span>
@@ -323,7 +319,20 @@ class Output
         endif;
     }
 
-    public static function extract_for_table(string $option, array $items = []): array
+    public static function admin_search_link($selectId, string $value, ?string $label = null): void
+    {
+        ?>
+        <a href="#"
+           class="search-filter"
+           data-select-id="<?= $selectId ?>"
+           data-option-val="<?= $value ?>">
+            <?php
+            echo $label ?: $value ?>
+        </a>
+        <?php
+    }
+
+    public static function extract_for_table(string $option): array
     {
         $thead_columns = [];
         $tbody_columns = [];

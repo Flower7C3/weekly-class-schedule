@@ -43,9 +43,9 @@ class Progress
         }
 
         # get user data
-        $teacher = sanitize_text_field(!empty($_GET['teacher']) ? '#' . $_GET['teacher'] : null);
-        $student = sanitize_text_field(!empty($_GET['student']) ? '#' . $_GET['student'] : null);
-        $subject = sanitize_text_field(!empty($_GET['subject']) ? '#' . $_GET['subject'] : null);
+        $teacher = empty($_GET['teacher']) ? null : '#' . sanitize_text_field($_GET['teacher']);
+        $student = empty($_GET['student']) ? null : '#' . sanitize_text_field($_GET['student']);
+        $subject = empty($_GET['subject']) ? null : '#' . sanitize_text_field($_GET['subject']);
         $date_from = sanitize_text_field($_GET['date_from']);
         $date_upto = sanitize_text_field($_GET['date_upto']);
         $type = sanitize_text_field($_GET['type']);
@@ -132,14 +132,14 @@ class Progress
 
         # get user data
         $id = sanitize_text_field($_GET['id'] ?? null);
-        $teacher = sanitize_text_field(!empty($_GET['teacher']) ? '#' . $_GET['teacher'] : null);
-        $student = sanitize_text_field(!empty($_GET['student']) ? '#' . $_GET['student'] : null);
-        $subject = sanitize_text_field(!empty($_GET['subject']) ? '#' . $_GET['subject'] : null);
-        $date_from = sanitize_text_field($_GET['date_from'] ?? null);
-        $date_upto = sanitize_text_field($_GET['date_upto'] ?? null);
-        $type = sanitize_text_field($_GET['type'] ?? null);
-        $order_field = !empty($_GET['order_field']) ? sanitize_text_field($_GET['order_field']) : 'time';
-        $order_direction = !empty($_GET['order_direction']) ? sanitize_text_field($_GET['order_direction']) : 'asc';
+        $teacher = empty($_GET['teacher']) ? null : '#' . sanitize_text_field($_GET['teacher']);
+        $student = empty($_GET['student']) ? null : '#' . sanitize_text_field($_GET['student']);
+        $subject = empty($_GET['subject']) ? null : '#' . sanitize_text_field($_GET['subject']);
+        $date_from = empty($_GET['date_from']) ? null : sanitize_text_field($_GET['date_from']);
+        $date_upto = empty($_GET['date_upto']) ? null : sanitize_text_field($_GET['date_upto']);
+        $type = empty($_GET['type']) ? null : sanitize_text_field($_GET['type']);
+        $order_field = empty($_GET['order_field']) ? 'time' : sanitize_text_field($_GET['order_field']);
+        $order_direction = empty($_GET['order_direction']) ? 'asc' : sanitize_text_field($_GET['order_direction']);
         switch (get_post_type()) {
             case 'wcs4_teacher':
                 $teacher = '#' . get_the_id();
@@ -169,6 +169,10 @@ class Progress
         $wcs4_options = Settings::load_settings();
 
         if (!empty($id)) {
+            if (!wp_verify_nonce($_GET['nonce'], 'progress')) {
+                header('HTTP/1.0 403 Access Denied');
+                exit();
+            }
             /** @var Progress_Item $item */
             $item = $items[$id];
             if ($item->isTypePeriodic()) {

@@ -123,7 +123,9 @@ use WCS4\Helper\Output;
                                             <span class="download hide-if-no-js">
                                             <a href="<?= admin_url(
                                                 'admin-ajax.php'
-                                            ) ?>?action=wcs_download_progresses_html&id=<?= $item->getId() ?>"
+                                            ) ?>?action=wcs_download_progresses_html&nonce=<?= wp_create_nonce(
+                                                'progress'
+                                            ) ?>&id=<?= $item->getId() ?>"
                                                target="_blank"
                                                class="wcs4-download-progress-button"
                                             >
@@ -208,7 +210,8 @@ use WCS4\Helper\Output;
                                 <?= $item->getImprovements() ?>
                             </td>
                             <td data-colname="<?= __('Updated at', 'wcs4') ?>">
-                                <?php include __DIR__.'/../_common/updated_at.php' ?>
+                                <?php
+                                include __DIR__ . '/../_common/updated_at.php' ?>
                             </td>
                         </tr>
                     <?php

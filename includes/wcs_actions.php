@@ -44,7 +44,7 @@ add_action('wp_ajax_wcs_download_progresses_csv', [Progress::class, 'callback_of
 add_action('wp_ajax_wcs_download_progresses_html', [Progress::class, 'callback_of_export_html_page']);
 
 add_action('wp_ajax_wcs_get_snapshots_html', [Snapshot::class, 'get_ajax_html']);
-add_action('wp_ajax_wcs_view_item', [Snapshot::class, 'callback_of_view_item']);
+add_action('wp_ajax_wcs_view_snapshot', [Snapshot::class, 'callback_of_view_item']);
 add_action('wp_ajax_wcs_delete_snapshot_entry', [Snapshot::class, 'delete_item']);
 
 add_action('wcs4_default_settings', [Settings::class, 'set_default_settings']);
