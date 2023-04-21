@@ -35,6 +35,7 @@ class Schedule
                     !empty($_GET['teacher']) ? '#' . $_GET['teacher'] : null,
                     !empty($_GET['student']) ? '#' . $_GET['student'] : null,
                     !empty($_GET['subject']) ? '#' . $_GET['subject'] : null,
+                    !empty($_GET['independent']) ? $_GET['independent'] : null,
                     $key
                 ),
             ];
@@ -69,7 +70,7 @@ class Schedule
         $shiftDays = (int)abs($_GET['week'] ?: 0) * 7;
 
         # get lessons
-        $lessons = self::get_items($classroom, $teacher, $student, $subject, null, null, 1);
+        $lessons = self::get_items($classroom, $teacher, $student, $subject);
 
         # build filename
         $filename_params = [];
@@ -132,10 +133,11 @@ class Schedule
         $teacher = 'all',
         $student = 'all',
         $subject = 'all',
+        $independent = null,
         $weekday = null
     ): string {
         ob_start();
-        $items = self::get_items($classroom, $teacher, $student, $subject, $weekday, null, null);
+        $items = self::get_items($classroom, $teacher, $student, $subject, $weekday, null, null, $independent);
         include self::TEMPLATE_DIR . 'admin_table.php';
         $result = ob_get_clean();
         return trim($result);
@@ -152,6 +154,7 @@ class Schedule
         int $weekday = null,
         int $time = null,
         ?int $visible = 1,
+        ?string $independent = null,
         string $limit = null,
         string $paged = null
     ): array {
@@ -169,7 +172,7 @@ class Schedule
                 tea.ID AS teacher_id, tea.post_title AS teacher_name, tea.post_content AS teacher_desc,
                 stu.ID AS student_id, stu.post_title AS student_name, stu.post_content AS student_desc,
                 cls.ID AS classroom_id, cls.post_title AS classroom_name, cls.post_content AS classroom_desc,
-                weekday, start_time, end_time, visible,
+                weekday, start_time, end_time, visible, independent,
                 notes
             FROM $table 
             LEFT JOIN $table_teacher USING(id)
@@ -228,6 +231,10 @@ class Schedule
             $where[] = 'visible = %d';
             $query_arr[] = $visible;
         }
+        if (null !== $independent && '' !== $independent) {
+            $where[] = 'independent = %d';
+            $query_arr[] =  ('yes' === $independent) ? 1 : 0;
+        }
         return DB::get_items(
             Lesson_Item::class,
             $query,
@@ -267,6 +274,7 @@ class Schedule
                 'start_time' => __('Start Time', 'wcs4'),
                 'end_time' => __('End Time', 'wcs4'),
                 'visible' => __('Visible', 'wcs4'),
+                'independent' => __('Independent', 'wcs4'),
             );
 
             $errors = wcs4_verify_required_fields($required);
@@ -284,7 +292,8 @@ class Schedule
             $weekday = sanitize_text_field($_POST['weekday']);
             $start_time = sanitize_text_field($_POST['start_time']);
             $end_time = sanitize_text_field($_POST['end_time']);
-            $visible = sanitize_text_field($_POST['visible']);
+            $visible = ('visible' === sanitize_text_field($_POST['visible'])) ? 1 : 0;
+            $independent = ('yes' === sanitize_text_field($_POST['independent'])) ? 1 : 0;
 
             $notes = '';
 
@@ -303,7 +312,7 @@ class Schedule
 
             $wcs4_settings = Settings::load_settings();
 
-            if (!empty($classroom_id) && $wcs4_settings['schedule_classroom_collision'] === 'yes') {
+            if (empty($independent) && !empty($classroom_id) && $wcs4_settings['schedule_classroom_collision'] === 'yes') {
                 # Validate classroom collision (if applicable)
                 $schedule_classroom_collision = $wpdb->get_col(
                     $wpdb->prepare(
@@ -313,6 +322,7 @@ class Schedule
                      WHERE
                            classroom_id = %d
                        AND weekday = %d
+                       AND independent = 0
                        AND %s < end_time
                        AND %s > start_time
                        AND id != %d
@@ -325,7 +335,7 @@ class Schedule
                 }
             }
 
-            if (!empty($teacher_id) && $wcs4_settings['schedule_teacher_collision'] === 'yes') {
+            if (empty($independent) && !empty($teacher_id) && $wcs4_settings['schedule_teacher_collision'] === 'yes') {
                 # Validate teacher collision (if applicable)
                 $schedule_teacher_collision = $wpdb->get_col(
                     $wpdb->prepare(
@@ -336,6 +346,7 @@ class Schedule
                     WHERE
                           teacher_id IN (%s)
                       AND weekday = %d
+                      AND independent = 0
                       AND %s < end_time
                       AND %s > start_time
                       AND id != %d
@@ -348,7 +359,7 @@ class Schedule
                 }
             }
 
-            if (!empty($student_id) && $wcs4_settings['schedule_student_collision'] === 'yes') {
+            if (empty($independent) && !empty($student_id) && $wcs4_settings['schedule_student_collision'] === 'yes') {
                 # Validate student collision (if applicable)
                 $schedule_student_collision = $wpdb->get_col(
                     $wpdb->prepare(
@@ -359,6 +370,7 @@ class Schedule
                         WHERE
                               student_id IN (%s)
                           AND weekday = %d
+                          AND independent = 0
                           AND %s < end_time
                           AND %s > start_time
                           AND id != %d
@@ -384,7 +396,8 @@ class Schedule
                     'start_time' => $start_time,
                     'end_time' => $end_time,
                     'timezone' => $timezone,
-                    'visible' => ('visible' === $visible) ? 1 : 0,
+                    'visible' => $visible,
+                    'independent' => $independent,
                     'notes' => $notes,
                 );
 
@@ -413,7 +426,7 @@ class Schedule
                             $table,
                             $data_schedule,
                             array('id' => $row_id),
-                            array('%d', '%d', '%d', '%s', '%s', '%s', '%d', '%s', '%s', '%d'),
+                            array('%d', '%d', '%d', '%s', '%s', '%s', '%d', '%d', '%s', '%s', '%d'),
                             array('%d')
                         );
                         if (false === $r) {
@@ -451,7 +464,7 @@ class Schedule
                         $r = $wpdb->insert(
                             $table,
                             $data_schedule,
-                            array('%d', '%d', '%d', '%s', '%s', '%s', '%d', '%s', '%d')
+                            array('%d', '%d', '%d', '%s', '%s', '%s', '%d', '%d', '%s', '%d')
                         );
                         if (false === $r) {
                             throw new RuntimeException($wpdb->last_error, 6);
@@ -648,6 +661,7 @@ class Schedule
                     sanitize_text_field($_POST['teacher']),
                     sanitize_text_field($_POST['student']),
                     sanitize_text_field($_POST['subject']),
+                    sanitize_text_field($_POST['independent']),
                     sanitize_text_field($_POST['weekday'])
                 );
             }

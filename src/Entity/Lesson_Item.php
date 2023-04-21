@@ -19,6 +19,7 @@ class Lesson_Item
     private string $start_time;
     private string $end_time;
     private bool $visible;
+    private bool $independent;
     private string $notes;
     private string $color = '';
     private int $position = 0;
@@ -49,6 +50,7 @@ class Lesson_Item
         $this->end_time = date($format, strtotime($dbrow->end_time));
         $this->notes = $dbrow->notes;
         $this->visible = $dbrow->visible ? true : false;
+        $this->independent = $dbrow->independent ? true : false;
 
         $this->teachers[$dbrow->teacher_id] = new Item(
             $dbrow->teacher_id,
@@ -72,27 +74,22 @@ class Lesson_Item
         return $this->isVisible() ? __('Visible', 'wcs4') : __('Hidden', 'wcs4');
     }
 
-    /**
-     * @return int
-     */
-    public function isVisible()
+    public function isVisible(): bool
     {
         return $this->visible;
     }
 
-    /**
-     * @return int
-     */
-    public function getPosition()
+    public function isIndependent(): bool|int
+    {
+        return $this->independent;
+    }
+
+    public function getPosition(): int
     {
         return $this->position;
     }
 
-    /**
-     * @param int $position
-     * @return Lesson_Item
-     */
-    public function setPosition($position)
+    public function setPosition(int $position): self
     {
         $this->position = $position;
         return $this;

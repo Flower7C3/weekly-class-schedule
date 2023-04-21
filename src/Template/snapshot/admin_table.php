@@ -19,7 +19,7 @@ use WCS4\Helper\Output;
         foreach ($items as $item) {
             switch ($order_field) {
                 case 'location':
-                    $key = $item->getTitle();
+                    $key = $item->getActionLabel();
                     break;
                 default:
                 case 'updated-at':
@@ -53,6 +53,9 @@ use WCS4\Helper\Output;
                             $order_field
                         );
                         admin_th(
+                            __('Title', 'wcs4')
+                        );
+                        admin_th(
                             __('Query', 'wcs4')
                         );
                         admin_th(
@@ -75,34 +78,19 @@ use WCS4\Helper\Output;
                             data-id="<?= $item->getId() ?>">
                             <td class="column-primary has-row-actions">
                                 <?php
-                                switch ($item->getAction()) {
-                                    default:
-                                        $label = $item->getAction();
-                                        break;
-                                    case 'wcs_download_schedules_html':
-                                        $label = __('Schedules', 'wcs4');
-                                        break;
-                                    case 'wcs_download_journals_html':
-                                        $label = __('Journals', 'wcs4');
-                                        break;
-                                    case 'wcs_download_work_plans_html':
-                                        $label = __('Work Plans', 'wcs4');
-                                        break;
-                                    case 'wcs_download_progresses_html':
-                                        $label = __('Progresses', 'wcs4');
-                                        break;
-                                }
+
                                 Output::admin_search_link(
                                     'search_wcs4_snapshot_location',
                                     $item->getAction(),
-                                    $label
+                                    $item->getActionLabel()
                                 ); ?>
-                                <?= $item->getTitle() ?>
                                 <div class="row-actions">
                                     <span class="download">
                                         <a href="<?= admin_url(
                                             'admin-ajax.php'
-                                        ) ?>?action=wcs_view_snapshot&nonce=<?=wp_create_nonce('snapshot')?>&id=<?= $item->getId() ?>"
+                                        ) ?>?action=wcs_view_snapshot&nonce=<?= wp_create_nonce(
+                                            'snapshot'
+                                        ) ?>&id=<?= $item->getId() ?>"
                                            target="_blank"
                                            class="wcs4-view-button"
                                         >
@@ -134,7 +122,15 @@ use WCS4\Helper\Output;
                                 </button>
                             </td>
                             <td>
-                                <small><?= $item->getQueryString() ?></small>
+                                <?= $item->getTitle() ?>
+                            </td>
+                            <td>
+                                <small><?php
+                                    Output::admin_search_link(
+                                        'search_wcs4_snapshot_query_string',
+                                        $item->getQueryHash(),
+                                        $item->getQueryString()
+                                    ) ?></small>
                             </td>
                             <td>
                                 <?= $item->getVersion() ?>

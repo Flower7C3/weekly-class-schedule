@@ -11,6 +11,7 @@ namespace WCS4\Controller;
 use DateTimeImmutable;
 use DateTimeZone;
 use WCS4\Entity\Journal_Item;
+use WCS4\Entity\Snapshot_Item;
 use WCS4\Helper\DB;
 use WCS4\Helper\Output;
 
@@ -114,10 +115,12 @@ class Journal
         }
 
         # submit content to browser
-        header('Content-Type: application/csv');
-        header('Content-Disposition: attachment; filename=' . $filename_key);
+        ob_start();
         fseek($handle, 0);
         fpassthru($handle);
+        $content = ob_get_clean();
+        Snapshot::add_item($_GET, $filename_key, $content, Snapshot_Item::TYPE_CSV);
+        echo $content;
         exit;
     }
 
@@ -211,9 +214,9 @@ class Journal
 
         ob_start();
         include self::TEMPLATE_DIR . 'export.html.php';
-        $html = ob_get_clean();
-        Snapshot::add_item($_GET, $heading, $html);
-        echo $html;
+        $content = ob_get_clean();
+        Snapshot::add_item($_GET, $heading, $content, Snapshot_Item::TYPE_HTML);
+        echo $content;
         exit;
     }
 

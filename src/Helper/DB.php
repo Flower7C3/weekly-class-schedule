@@ -156,6 +156,7 @@ class DB
             `end_time` time NOT NULL,
             `timezone` varchar(255) NOT NULL DEFAULT 'UTC',
             `visible` tinyint(1) NOT NULL DEFAULT '1',
+            `independent` tinyint(1) NOT NULL DEFAULT '1',
             `notes` text,
             `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
             `updated_at` DATETIME DEFAULT NULL,
@@ -249,8 +250,10 @@ class DB
             `title` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
             `action` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
             `query_string` text COLLATE utf8mb4_unicode_ci,
-            `html` text COLLATE utf8mb4_unicode_ci NOT NULL,
-            `hash` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+            `query_hash` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+            `content` text COLLATE utf8mb4_unicode_ci NOT NULL,
+            `content_hash` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+            `content_type` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
             `version` int(11) NOT NULL,
             PRIMARY KEY (`id`)
          )";

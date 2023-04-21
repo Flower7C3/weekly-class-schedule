@@ -2,6 +2,7 @@
 /**
  * @var array $items
  * @var string $weekday
+ * @var string $independent
  * @var string $order_field
  * @var string $order_direction
  */
@@ -11,7 +12,7 @@ use WCS4\Helper\Output;
 
 ?>
 <div class="wcs4-day-content-wrapper"
-     data-hash="<?= md5(serialize($items) . $order_field . $order_direction) ?>">
+     data-hash="<?= md5(serialize($items) .$independent. $order_field . $order_direction) ?>">
     <?php
     if ($items): ?>
         <table class="wp-list-table widefat fixed striped wcs4-admin-schedule-table"
@@ -19,6 +20,7 @@ use WCS4\Helper\Output;
             <thead>
             <tr>
                 <th title="<?= __('Visibility', 'wcs4') ?>" class="manage-column column-cb check-column"></th>
+                <th title="<?= __('Independence', 'wcs4') ?>" class="manage-column column-cb check-column"></th>
                 <th class="column-primary">
                     <span><?= __('Start', 'wcs4') ?> – <?= __('End', 'wcs4') ?></span>
                 </th>
@@ -53,26 +55,20 @@ use WCS4\Helper\Output;
                     class="<?= $item->isVisible() ? 'active' : 'inactive' ?>">
                     <th scope="row" class="check-column">
                         <a href="#" class="wcs4-visibility-button"
-                           id="wcs4-<?php
-                           if ($item->isVisible()): ?>hide<?php
-                           else: ?>show<?php
-                           endif; ?>-button-<?php
-                           echo $item->getId(); ?>"
-                           data-visible="<?php
-                           if ($item->isVisible()): ?>true<?php
-                           else: ?>false<?php
-                           endif; ?>"
-                           data-lesson-id="<?php
-                           echo $item->getId(); ?>"
-                           data-day="<?php
-                           echo $item->getWeekday(); ?>">
-                            <em class="dashicons dashicons-<?php
-                            if ($item->isVisible()): ?>visibility<?php
-                            else: ?>hidden<?php
-                            endif; ?>"
-                                title="<?php
-                                echo $item->getVisibleText(); ?>"></em>
+                           id="wcs4-<?= ($item->isVisible()) ? 'hide' : 'show' ?>-button-<?= $item->getId(); ?>"
+                           data-visible="<?= ($item->isVisible()) ? 'true' : 'false' ?>"
+                           data-lesson-id="<?= $item->getId(); ?>"
+                           data-day="<?= $item->getWeekday(); ?>">
+                            <em class="dashicons dashicons-<?= ($item->isVisible()) ? 'visibility' : 'hidden' ?>"
+                                title="<?= $item->getVisibleText(); ?>"></em>
                         </a>
+                    </th>
+                    <th scope="row" class="check-column">
+                        <?php if($item->isIndependent()): ?>
+                            <span class="dashicons dashicons-calendar"></span>
+                        <?php else: ?>
+                            <span class="dashicons dashicons-shield-alt"></span>
+                        <?php endif; ?>
                     </th>
                     <td class="column-primary
                     <?= (current_user_can(WCS4_SCHEDULE_MANAGE_CAPABILITY)) ? 'has-row-actions' : '' ?>">
@@ -156,7 +152,8 @@ use WCS4\Helper\Output;
                         <?= $item->getNotes() ?>
                     </td>
                     <td data-colname="<?= __('Updated at', 'wcs4') ?>">
-                        <?php include __DIR__.'/../_common/updated_at.php' ?>
+                        <?php
+                        include __DIR__ . '/../_common/updated_at.php' ?>
                     </td>
                 </tr>
             <?php

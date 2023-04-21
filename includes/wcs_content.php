@@ -158,7 +158,7 @@ add_filter('the_content', static function ($content) {
                     $params[] = 'limit=' . $wcs4_settings[$post_type_key . '_journal_view'];
                     $content .= '[class_journal  ' . implode(' ', $params) . ']';
                     if ('yes' === $wcs4_settings[$post_type_key . '_journal_download_csv']) {
-                        $content .= '<a href="?format=csv">' . __('Download journals as CSV', 'wcs4') . '</a>';
+                        $content .= '<a href="?format=csv">' . __('Download Journals as CSV', 'wcs4') . '</a>';
                     }
                     if ('yes' === $wcs4_settings[$post_type_key . '_journal_download_html']) {
                         $content .= '<a href="?format=html">' . __('Download Journals as HTML', 'wcs4') . '</a>';

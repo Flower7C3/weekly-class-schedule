@@ -3,7 +3,7 @@
 use WCS4\Helper\Admin;
 
 ?>
-<form id="wcs4-journals-filter" class="results-filter" method="get" action="">
+<form id="wcs4-journals-filter" class="results-filter" method="get" action="<?= admin_url('admin.php') ?>">
     <input id="search_wcs4_page" type="hidden" name="page" value="<?= $_GET['page'] ?>"/>
     <div class="search-box">
         <div class="alignleft">
@@ -106,7 +106,7 @@ use WCS4\Helper\Admin;
                     formaction="<?= admin_url('admin-ajax.php') ?>"
             >
                 <span class="dashicons dashicons-download"></span>
-                <?= __('Download journals as CSV', 'wcs4') ?>
+                <?= __('Download Journals as CSV', 'wcs4') ?>
             </button>
             <button type="submit" id="wcs4-journals-download-html"
                     class="button button-secondary"

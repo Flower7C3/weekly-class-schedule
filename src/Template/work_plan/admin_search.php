@@ -1,4 +1,4 @@
-<form id="wcs4-work-plans-filter" class="results-filter" method="get" action="">
+<form id="wcs4-work-plans-filter" class="results-filter" method="get" action="<?= admin_url('admin.php') ?>">
     <input id="search_wcs4_page" type="hidden" name="page" value="<?php
 
     use WCS4\Helper\Admin;

@@ -3,7 +3,7 @@
 use WCS4\Helper\Admin;
 
 ?>
-<form id="wcs4-progresses-filter" class="results-filter" method="get" action="">
+<form id="wcs4-progresses-filter" class="results-filter" method="get" action="<?= admin_url('admin.php') ?>">
     <input id="search_wcs4_page" type="hidden" name="page" value="<?= $_GET['page'] ?>"/>
     <div class="search-box">
         <div class="alignleft">

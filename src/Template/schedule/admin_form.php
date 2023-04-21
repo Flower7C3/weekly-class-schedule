@@ -72,7 +72,17 @@ use WCS4\Helper\Admin;
         </fieldset>
         <fieldset class="form-field form-required form-field-visibility-wrap" id="wcs4_lesson_visibility">
             <label for="wcs4_lesson_visibility"><?= __('Visibility', 'wcs4') ?></label>
-            <?= Admin::generate_visibility_fields('wcs4_lesson_visibility', 'visible', true) ?>
+            <?= wcs4_select_radio(array(
+                'visible' => _x('Visible', 'visibility', 'wcs4'),
+                'hidden' => _x('Hidden', 'visibility', 'wcs4'),
+            ), 'wcs4_lesson_visibility', 'wcs4_lesson_visibility', 'visible', true) ?>
+        </fieldset>
+        <fieldset class="form-field form-required form-field-independent-wrap" id="wcs4_lesson_independent">
+            <label for="wcs4_lesson_independent"><?= __('Independence', 'wcs4') ?></label>
+            <?= wcs4_select_radio(array(
+                'no' => _x('No', 'independent', 'wcs4'),
+                'yes' => _x('Yes', 'independent', 'wcs4'),
+            ), 'wcs4_lesson_independent', 'wcs4_lesson_independent', 'no', true) ?>
         </fieldset>
         <fieldset class="form-field form-required form-field-notes-wrap">
             <label for="wcs4_lesson_notes"><?= __('Notes', 'wcs4') ?></label>

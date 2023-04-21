@@ -146,6 +146,13 @@ class Admin
     ): string {
         $values = [];
         switch ($package) {
+            case 'independent':
+                $values = [
+                    '' => _x('Select option', 'Independent as none', 'wcs4'),
+                    'yes' => _x('Yes', 'Independent as yes', 'wcs4'),
+                    'no' => _x('No', 'Independent as no', 'wcs4')
+                ];
+                break;
             case 'work_plan_type':
                 $values = [
                     '' => _x('Select type', 'Schedule type as none', 'wcs4'),

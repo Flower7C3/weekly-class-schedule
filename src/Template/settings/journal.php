@@ -145,7 +145,7 @@
         </tr>
         <tr>
             <th>
-                <?= _x('Download journals as CSV', 'options general settings', 'wcs4') ?>
+                <?= _x('Download Journals as CSV', 'options general settings', 'wcs4') ?>
                 <div class="wcs4-description">
                     <?= _x(
                         'Will display extra link to download journal as CSV.',

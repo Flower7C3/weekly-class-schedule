@@ -25,28 +25,30 @@
         });
         $(document).on('click.wcs4-lessons-search', '#wcs4-lessons-search', function (e) {
             e.preventDefault();
-            console.log('submit click')
             var page = $('#search_wcs4_page').val();
             var classroom = $('#search_wcs4_lesson_classroom_id').val();
             var teacher = $('#search_wcs4_lesson_teacher_id').val();
             var student = $('#search_wcs4_lesson_student_id').val();
             var subject = $('#search_wcs4_lesson_subject_id').val();
+            var independent = $('#search_wcs4_lesson_independent').val();
             var state = {
                 'page': page,
                 'classroom': classroom,
                 'teacher': teacher,
                 'student': student,
                 'subject': subject,
+                'independent': independent,
             };
-            var url = $(this).attr('action');
+            var url = $('#wcs4-lessons-filter').attr('action');
             url += '?page=' + page;
             url += '&classroom=' + classroom;
             url += '&teacher=' + teacher;
             url += '&student=' + student;
             url += '&subject=' + subject;
+            url += '&independent=' + independent;
             history.pushState(state, $('title').text(), url);
             for (var day = 0; day < 7; day++) {
-                reload_html_view(classroom, teacher, student, subject, day, 'fade');
+                reload_html_view(classroom, teacher, student, subject, day, independent, 'fade');
             }
         });
     };
@@ -71,6 +73,7 @@
                 start_time: $('#wcs4_lesson_start_time').val(),
                 end_time: $('#wcs4_lesson_end_time').val(),
                 visible: $('#wcs4_lesson_visibility :checked').val(),
+                independent: $('#wcs4_lesson_independent :checked').val(),
                 notes: $('#wcs4_lesson_notes').val()
             };
 
@@ -80,9 +83,10 @@
                     var teacher = $('#search_wcs4_lesson_teacher_id').val();
                     var student = $('#search_wcs4_lesson_student_id').val();
                     var subject = $('#search_wcs4_lesson_subject_id').val();
+                    var independent = $('#search_wcs4_lesson_independent').val();
                     // Let's refresh the day
                     for (var day_to_update in data.days_to_update) {
-                        reload_html_view(classroom, teacher, student, subject, day_to_update, 'fade');
+                        reload_html_view(classroom, teacher, student, subject, day_to_update, independent, 'fade');
                     }
 
                     // Clear notes.
@@ -112,8 +116,9 @@
                     const teacher = $('#search_wcs4_lesson_teacher_id').val();
                     const student = $('#search_wcs4_lesson_student_id').val();
                     const subject = $('#search_wcs4_lesson_subject_id').val();
+                    const independent = $('#search_wcs4_lesson_independent').val();
                     // Let's refresh the day
-                    reload_html_view(classroom, teacher, student, subject, day, 'fade');
+                    reload_html_view(classroom, teacher, student, subject, day, independent, 'fade');
                 }
             });
         });
@@ -149,8 +154,9 @@
                     const teacher = $('#search_wcs4_lesson_teacher_id').val();
                     const student = $('#search_wcs4_lesson_student_id').val();
                     const subject = $('#search_wcs4_lesson_subject_id').val();
+                    const independent = $('#search_wcs4_lesson_independent').val();
                     // Let's refresh the day
-                    reload_html_view(classroom, teacher, student, subject, day, 'remove');
+                    reload_html_view(classroom, teacher, student, subject, day, independent, 'remove');
                 }
             }, WCS4_AJAX_OBJECT['lesson'].delete_warning);
         });
@@ -159,7 +165,7 @@
     /**
      * Updates dynamically a specific day schedule.
      */
-    var reload_html_view = function (classroom, teacher, student, subject, day, action) {
+    var reload_html_view = function (classroom, teacher, student, subject, day, independent, action) {
         entry = {
             action: 'wcs_get_day_schedules_html',
             security: WCS4_AJAX_OBJECT.ajax_nonce,
@@ -167,7 +173,8 @@
             teacher: teacher ? '#' + teacher : null,
             student: student ? '#' + student : null,
             subject: subject ? '#' + subject : null,
-            weekday: day
+            weekday: day,
+            independent: independent
         };
         var $parent = $('#wcs4-schedule-day-' + day);
         WCS4_LIB.update_view($parent, entry, action)
@@ -188,14 +195,10 @@
             $('#wcs4_lesson_start_time').val(entry.start_time);
             $('#wcs4_lesson_end_time').val(entry.end_time);
 
-            var visibility;
-            if (entry.visible === '1') {
-                visibility = 'visible';
-            } else {
-                visibility = 'hidden';
-            }
-
+            var visibility = (entry.visible === '1') ? 'visible' : 'hidden';
+            var independent = (entry.independent === '1') ? 'yes' : 'no';
             $('#wcs4_lesson_visibility-' + visibility).prop('checked', true);
+            $('#wcs4_lesson_independent-' + independent).prop('checked', true);
             $('#wcs4_lesson_notes').val(entry.notes);
         } else {
             WCS4_LIB.show_message(WCS4_AJAX_OBJECT.ajax_error, 'error');

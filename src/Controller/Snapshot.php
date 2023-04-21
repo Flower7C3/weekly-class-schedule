@@ -62,7 +62,9 @@ class Snapshot
         $query = "SELECT
                 $table.id AS snapshot_id,
                 $table.created_at, $table.created_by, $table.updated_at, $table.updated_by,
-                $table.title, $table.query_string, $table.action, $table.html, $table.hash, $table.version
+                $table.title, $table.query_string, $table.query_hash, $table.action,
+                $table.content, $table.content_hash, $table.content_type,
+                $table.version
             FROM $table
         ";
 
@@ -75,8 +77,9 @@ class Snapshot
             $query_arr[] = '%' . $wpdb->esc_like($location) . '%';
         }
         if (!empty($queryString)) {
-            $where[] = 'query_string LIKE "%s"';
+            $where[] = '(query_string LIKE "%s" OR query_hash = "%s")';
             $query_arr[] = '%' . $wpdb->esc_like($queryString) . '%';
+            $query_arr[] = $wpdb->esc_like($queryString);
         }
         if (!empty($created_at_from)) {
             $where[] = 'created_at >= "%s"';
@@ -128,7 +131,7 @@ class Snapshot
         die();
     }
 
-    public static function add_item(array $queryString, string $title, string $html): void
+    public static function add_item(array $queryString, string $title, string $content, string $contentType): void
     {
         global $wpdb;
         $table = DB::get_snapshot_table_name();
@@ -140,19 +143,20 @@ class Snapshot
             }
         }
         $queryString = json_encode($urlParams);
-        $hash = md5($html);
+        $queryHash = md5($queryString);
+        $contentHash = md5($content);
         $version = 1;
 
         $row = $wpdb->get_row(
             $wpdb->prepare(
-                "SELECT id,hash,version FROM $table WHERE query_string = %s",
-                [$queryString],
+                "SELECT id,content_hash,version FROM $table WHERE query_hash = %s",
+                [$queryHash],
             ),
             ARRAY_A
         );
 
         if (!empty($row['id'])) {
-            if ($row['hash'] !== $hash) {
+            if ($row['content_hash'] !== $contentHash) {
                 $mode = 'create';
                 $version = $row['version'] + 1;
             } else {
@@ -168,13 +172,25 @@ class Snapshot
                 [
                     'title' => trim($title),
                     'query_string' => $queryString,
+                    'query_hash' => $queryHash,
                     'action' => $urlParams['action'],
-                    'html' => $html,
-                    'hash' => $hash,
+                    'content' => $content,
+                    'content_hash' => $contentHash,
+                    'content_type' => $contentType,
                     'created_by' => get_current_user_id(),
                     'version' => $version,
                 ],
-                ['%s', '%s', '%s', '%s', '%s', '%d', '%d']
+                [
+                    '%s',#title
+                    '%s',#query_string
+                    '%s',#query_hash
+                    '%s',#action
+                    '%s',#content
+                    '%s',#content_hash
+                    '%s',#content_type
+                    '%d',#created_by
+                    '%d',#version
+                ]
             );
         }
         if ('update' === $mode) {
@@ -193,7 +209,7 @@ class Snapshot
         }
     }
 
-    public static function callback_of_view_item(): void
+    public static function view_item(): void
     {
         global $wpdb;
         $table = DB::get_snapshot_table_name();
@@ -202,17 +218,25 @@ class Snapshot
             exit();
         }
         $id = sanitize_text_field($_GET['id']);
-        $html = $wpdb->get_var(
+        $row = $wpdb->get_row(
             $wpdb->prepare(
-                "SELECT html FROM $table WHERE id = %d",
+                "SELECT title,content,content_type FROM $table WHERE id = %d",
                 [$id],
-            )
+            ),
+            ARRAY_A
         );
-        if (empty($html)) {
+        if (empty($row)) {
             header('HTTP/1.0 404 Not Found');
             exit();
         }
-        echo $html;
+        switch ($row['content_type']) {
+            case Snapshot_Item::TYPE_CSV:
+                header('Content-Type: application/csv');
+                header('Content-Disposition: attachment; filename=' . $row['title']);
+                break;
+        }
+
+        echo $row['content'];
         exit;
     }
 
@@ -250,7 +274,7 @@ class Snapshot
             'response' => $response,
             'errors' => $errors,
             'result' => $errors ? 'error' : 'updated',
-            'scope' => 'lesson',
+            'scope' => 'snapshot',
             'id' => $row_id ?? null,
         ]);
         die();

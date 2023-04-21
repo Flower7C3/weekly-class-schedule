@@ -7,12 +7,16 @@ use WCS4\Entity\Trait\Timestampable_Trait;
 
 class Snapshot_Item
 {
+    public const TYPE_HTML = 'text/html';
+    public const TYPE_CSV = 'text/csv';
     private int $id;
     private string $title;
     private string $queryString;
+    private string $queryHash;
     private string $action;
-    private string $html;
-    private string $hash;
+    private string $content;
+    private string $contentHash;
+    private string $contentType;
     private int $version;
 
     use Blameable_Trait;
@@ -27,9 +31,11 @@ class Snapshot_Item
             ->setUpdatedBy($db_row->updated_by);
         $this->title = $db_row->title;
         $this->queryString = $db_row->query_string;
+        $this->queryHash = $db_row->query_hash;
         $this->action = $db_row->action;
-        $this->html = $db_row->html;
-        $this->hash = $db_row->hash;
+        $this->content = $db_row->content;
+        $this->contentHash = $db_row->content_hash;
+        $this->contentType = $db_row->content_type;
         $this->version = $db_row->version;
     }
 
@@ -49,19 +55,56 @@ class Snapshot_Item
         return $this->queryString;
     }
 
+    public function getQueryHash(): string
+    {
+        return $this->queryHash;
+    }
+
     public function getAction(): string
     {
         return $this->action;
     }
 
-    public function getHtml(): string
+    public function getActionLabel(): string
     {
-        return $this->html;
+        switch ($this->getAction()) {
+            default:
+                return $this->getAction();
+                break;
+            case 'wcs_download_journals_html':
+                return __('Download Journals as HTML', 'wcs4');
+                break;
+            case 'wcs_download_work_plans_html':
+                return __('Download Work Plans as HTML', 'wcs4');
+                break;
+            case 'wcs_download_progresses_html':
+                return __('Download Progresses as HTML', 'wcs4');
+                break;
+            case 'wcs_download_journals_csv':
+                return __('Download Journals as CSV', 'wcs4');
+                break;
+            case 'wcs_download_work_plans_csv':
+                return __('Download Work Plans as CSV', 'wcs4');
+                break;
+            case 'wcs_download_progresses_csv':
+                return __('Download Progresses as CSV', 'wcs4');
+                break;
+        }
     }
 
-    public function getHash(): string
+    public function getContent(): string
     {
-        return $this->hash;
+        return $this->content;
+    }
+
+    public function getContentHash(): string
+    {
+        return $this->contentHash;
+    }
+
+    public function getContentType(): string
+    {
+        return $this->contentType;
     }
 
     public function getVersion(): int

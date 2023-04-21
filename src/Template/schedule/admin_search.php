@@ -3,7 +3,7 @@
 use WCS4\Helper\Admin;
 
 ?>
-<form id="wcs4-lessons-filter" class="results-filter" method="get" action="">
+<form id="wcs4-lessons-filter" class="results-filter" method="get" action="<?= admin_url('admin.php') ?>">
     <input id="search_wcs4_page" type="hidden" name="page" value="<?= $_GET['page'] ?>"/>
     <div class="search-box">
         <div class="alignleft">
@@ -48,6 +48,17 @@ use WCS4\Helper\Admin;
                 'search_wcs4_lesson_classroom_id',
                 'classroom',
                 array_key_exists('classroom', $_GET) ? (int)$_GET['classroom'] : ''
+            ) ?>
+        </div>
+        <div class="alignleft">
+            <label for="search_wcs4_lesson_independent_id">
+                <?= __('Independence', 'wcs4') ?>
+            </label>
+            <?= Admin::generate_admin_select_list_options(
+                'independent',
+                'search_wcs4_lesson_independent',
+                'independent',
+                '',
             ) ?>
         </div>
         <div class="alignleft buttons">

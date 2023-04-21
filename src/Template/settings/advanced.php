@@ -11,36 +11,45 @@
             ) ?>
         </p>
         <button name="wcs_create_schema" id="wcs4_create_schema" class="button-primary">
+            <span class="dashicons dashicons-database-add"></span>
             <?= _x('Create DB schema', 'reset database', 'wcs4') ?>
         </button>
         <button name="wcs_load_example_data" id="wcs4_load_example_data" class="button-primary">
+            <span class="dashicons dashicons-database-add"></span>
             <?= _x('Install example data', 'reset database', 'wcs4') ?>
         </button>
         <br><br>
         <button name="wcs_clear_schedules" id="wcs4_clear_schedule" class="button-cancel wp-ui-notification">
+            <span class="dashicons dashicons-database-remove"></span>
             <?= _x('Clear Schedules', 'reset database', 'wcs4') ?>
         </button>
 
         <button name="wcs_clear_journals" id="wcs4_clear_journals" class="button-cancel wp-ui-notification">
+            <span class="dashicons dashicons-database-remove"></span>
             <?= _x('Clear Journals', 'reset database', 'wcs4') ?>
         </button>
 
         <button name="wcs_clear_work_plans" id="wcs4_clear_work_plans" class="button-cancel wp-ui-notification">
+            <span class="dashicons dashicons-database-remove"></span>
             <?= _x('Clear Work Plans', 'reset database', 'wcs4') ?>
         </button>
 
         <button name="wcs_clear_progresses" id="wcs4_clear_progresses" class="button-cancel wp-ui-notification">
+            <span class="dashicons dashicons-database-remove"></span>
             <?= _x('Clear Progresses', 'reset database', 'wcs4') ?>
         </button>
 
         <button name="wcs_clear_snapshots" id="wcs4_clear_snapshots" class="button-cancel wp-ui-notification">
+            <span class="dashicons dashicons-database-remove"></span>
             <?= _x('Clear Snapshots', 'reset database', 'wcs4') ?>
         </button>
 
         <button name="wcs_reset_settings" id="wcs4_reset_settings" class="button-cancel wp-ui-notification">
+            <span class="dashicons dashicons-database-remove"></span>
             <?= _x('Reset settings', 'reset database', 'wcs4') ?>
         </button>
         <button name="wcs_delete_everything" id="wcs4_delete_everything" class="button-cancel wp-ui-notification">
+            <span class="dashicons dashicons-database-remove"></span>
             <?= _x('Clear everything', 'reset database', 'wcs4') ?>
         </button>
         <span class="spinner"></span>
