@@ -156,7 +156,7 @@ class DB
             `end_time` time NOT NULL,
             `timezone` varchar(255) NOT NULL DEFAULT 'UTC',
             `visible` tinyint(1) NOT NULL DEFAULT '1',
-            `independent` tinyint(1) NOT NULL DEFAULT '1',
+            `collision_detection` tinyint(1) NOT NULL DEFAULT '1',
             `notes` text,
             `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
             `updated_at` DATETIME DEFAULT NULL,

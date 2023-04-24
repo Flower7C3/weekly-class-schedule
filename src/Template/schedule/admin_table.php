@@ -2,7 +2,7 @@
 /**
  * @var array $items
  * @var string $weekday
- * @var string $independent
+ * @var string $collisionDetection
  * @var string $order_field
  * @var string $order_direction
  */
@@ -12,15 +12,15 @@ use WCS4\Helper\Output;
 
 ?>
 <div class="wcs4-day-content-wrapper"
-     data-hash="<?= md5(serialize($items) .$independent. $order_field . $order_direction) ?>">
+     data-hash="<?= md5(serialize($items) . $collisionDetection . $order_field . $order_direction) ?>">
     <?php
     if ($items): ?>
         <table class="wp-list-table widefat fixed striped wcs4-admin-schedule-table"
                id="wcs4-admin-table-day-<?= $weekday ?>">
             <thead>
             <tr>
+                <th title="<?= __('Collision detection', 'wcs4') ?>" class="manage-column column-cb check-column"></th>
                 <th title="<?= __('Visibility', 'wcs4') ?>" class="manage-column column-cb check-column"></th>
-                <th title="<?= __('Independence', 'wcs4') ?>" class="manage-column column-cb check-column"></th>
                 <th class="column-primary">
                     <span><?= __('Start', 'wcs4') ?> – <?= __('End', 'wcs4') ?></span>
                 </th>
@@ -54,21 +54,25 @@ use WCS4\Helper\Output;
                     data-id="<?= $item->getId() ?>"
                     class="<?= $item->isVisible() ? 'active' : 'inactive' ?>">
                     <th scope="row" class="check-column">
-                        <a href="#" class="wcs4-visibility-button"
-                           id="wcs4-<?= ($item->isVisible()) ? 'hide' : 'show' ?>-button-<?= $item->getId(); ?>"
-                           data-visible="<?= ($item->isVisible()) ? 'true' : 'false' ?>"
-                           data-lesson-id="<?= $item->getId(); ?>"
-                           data-day="<?= $item->getWeekday(); ?>">
-                            <em class="dashicons dashicons-<?= ($item->isVisible()) ? 'visibility' : 'hidden' ?>"
-                                title="<?= $item->getVisibleText(); ?>"></em>
-                        </a>
+                        <em class="dashicons dashicons-<?= ($item->isCollisionDetection())
+                            ? 'shield-alt'
+                            : 'calendar' ?>"
+                            title="<?= $item->isCollisionDetection()
+                                ? __('Collisions free', 'wcs4')
+                                : __('Independent', 'wcs4') ?>"></em>
                     </th>
                     <th scope="row" class="check-column">
-                        <?php if($item->isIndependent()): ?>
-                            <span class="dashicons dashicons-calendar"></span>
-                        <?php else: ?>
-                            <span class="dashicons dashicons-shield-alt"></span>
-                        <?php endif; ?>
+                        <a href="#" class="wcs4-visibility-button"
+                           id="wcs4-<?= ($item->isVisible()) ? 'hide' : 'show' ?>-button-<?= $item->getId() ?>"
+                           data-visible="<?= ($item->isVisible()) ? 'true' : 'false' ?>"
+                        >
+                            <em class="dashicons dashicons-<?= ($item->isVisible())
+                                ? 'visibility'
+                                : 'hidden' ?>"
+                                title="<?= $item->isVisible()
+                                    ? __('Visible', 'wcs4')
+                                    : __('Hidden', 'wcs4') ?>"></em>
+                        </a>
                     </th>
                     <td class="column-primary
                     <?= (current_user_can(WCS4_SCHEDULE_MANAGE_CAPABILITY)) ? 'has-row-actions' : '' ?>">
@@ -106,7 +110,7 @@ use WCS4\Helper\Output;
                     <td data-colname="<?= __('Subject', 'wcs4') ?>">
                         <?php
                         Output::item_admin_link(
-                            'search_wcs4_lesson_subject_id',
+                            'search_wcs4_schedule_subject_id',
                             $item->getSubject()
                         ); ?>
                     </td>
@@ -117,7 +121,7 @@ use WCS4\Helper\Output;
                                 <li>
                                     <?php
                                     Output::item_admin_link(
-                                        'search_wcs4_lesson_teacher_id',
+                                        'search_wcs4_schedule_teacher_id',
                                         $item_teacher
                                     ); ?>
                                 </li>
@@ -132,7 +136,7 @@ use WCS4\Helper\Output;
                                 <li>
                                     <?php
                                     Output::item_admin_link(
-                                        'search_wcs4_lesson_student_id',
+                                        'search_wcs4_schedule_student_id',
                                         $item_student
                                     ); ?>
                                 </li>
@@ -143,7 +147,7 @@ use WCS4\Helper\Output;
                     <td data-colname="<?= __('Classroom', 'wcs4') ?>">
                         <?php
                         Output::item_admin_link(
-                            'search_wcs4_lesson_classroom_id',
+                            'search_wcs4_schedule_classroom_id',
                             $item->getClassroom
                             ()
                         ); ?>

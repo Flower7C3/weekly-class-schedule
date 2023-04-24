@@ -5,6 +5,8 @@ namespace WCS4\Entity;
 use WCS4\Entity\Trait\Blameable_Trait;
 use WCS4\Entity\Trait\Timestampable_Trait;
 
+use function json_decode;
+
 class Snapshot_Item
 {
     public const TYPE_HTML = 'text/html';
@@ -70,25 +72,18 @@ class Snapshot_Item
         switch ($this->getAction()) {
             default:
                 return $this->getAction();
-                break;
             case 'wcs_download_journals_html':
                 return __('Download Journals as HTML', 'wcs4');
-                break;
             case 'wcs_download_work_plans_html':
                 return __('Download Work Plans as HTML', 'wcs4');
-                break;
             case 'wcs_download_progresses_html':
                 return __('Download Progresses as HTML', 'wcs4');
-                break;
             case 'wcs_download_journals_csv':
                 return __('Download Journals as CSV', 'wcs4');
-                break;
             case 'wcs_download_work_plans_csv':
                 return __('Download Work Plans as CSV', 'wcs4');
-                break;
             case 'wcs_download_progresses_csv':
                 return __('Download Progresses as CSV', 'wcs4');
-                break;
         }
     }
 
@@ -116,7 +111,7 @@ class Snapshot_Item
     {
         return admin_url(
                 'admin-ajax.php'
-            ) . '?' . http_build_query(\json_decode($this->getQueryString(), true));
+            ) . '?' . http_build_query(json_decode($this->getQueryString(), true));
     }
 
 }

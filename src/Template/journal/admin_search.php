@@ -82,7 +82,7 @@ use WCS4\Helper\Admin;
             ); ?>
         </div>
         <div class="alignleft buttons">
-            <button type="submit" id="wcs4-journals-search"
+            <button type="submit" id="wcs4-journals-filter-submit"
                     class="button button-primary"
             >
                 <span class="dashicons dashicons-filter"></span>

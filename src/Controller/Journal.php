@@ -10,6 +10,8 @@ namespace WCS4\Controller;
 
 use DateTimeImmutable;
 use DateTimeZone;
+use Exception;
+use RuntimeException;
 use WCS4\Entity\Journal_Item;
 use WCS4\Entity\Snapshot_Item;
 use WCS4\Helper\DB;
@@ -93,7 +95,7 @@ class Journal
 
 
         # build csv
-        $handle = fopen('php://memory', 'w');
+        $handle = fopen('php://memory', 'wb');
         $delimiter = ";";
         [$thead_columns, $tbody_columns] = Output::extract_for_table($wcs4_options['journal_csv_table_columns']);
 
@@ -431,7 +433,7 @@ class Journal
                 $topic = sanitize_textarea_field($_POST['topic']);
             }
 
-            $days_to_update[$date] = true;
+            $days_to_update[] = $date;
 
             # Validate time logic
             $timezone = wcs4_get_system_timezone();
@@ -519,7 +521,7 @@ class Journal
 
                         $data['updated_at'] = date('Y-m-d H:i:s');
                         $data['updated_by'] = get_current_user_id();
-                        $days_to_update[$old_date] = true;
+                        $days_to_update[] = $old_date;
 
                         $r = $wpdb->update(
                             $table,
@@ -596,7 +598,7 @@ class Journal
             'response' => (is_array($response) ? implode('<br>', $response) : $response),
             'errors' => $errors,
             'result' => $errors ? 'error' : 'updated',
-            'days_to_update' => $days_to_update,
+            'days_to_update' => array_unique($days_to_update),
         ]);
         die();
     }

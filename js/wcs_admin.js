@@ -1,7 +1,7 @@
 /**
  * Javascript for WCS4 admin.
  */
-(function ($) {
+let WCS4_ADMIN = (function ($) {
 
     // WCS4_AJAX_OBJECT available
 
@@ -13,10 +13,72 @@
         load_editor();
     });
 
-    var bind_filter_handler = function () {
+    let search_form_process_and_push_history_state = function ($form) {
+        let state = $form.serializeArray();
+        let url = $form.attr('action') + '?';
+        let data = [];
+        state.forEach(function (item) {
+            url += item.name + '=' + item.value + '&'
+            data[item.name] = item.value;
+        });
+        history.pushState(state, $('title').text(), url);
+        return data;
+    }
+
+
+    let bind_search_handler = function (element, reload_html_view) {
+        $(document).on('click.' + element + 'filter-submit-button-primary', element + ' [type="submit"].button-primary', function (e) {
+            e.preventDefault();
+            let search_form_data = search_form_process_and_push_history_state($(this).closest('form'))
+            let $sortable = $('.sortable.sorted');
+            reload_html_view(search_form_data, 'fade',
+                $sortable.data('order-current-field'),
+                $sortable.data('order-current-direction')
+            );
+        });
+    };
+
+
+    /**
+     * Handles the Add Item button click event.
+     */
+    let bind_sort_handler = function (reload_html_view) {
+        $(document).on('click.wcs4-list-sort', '[data-order-field][data-order-direction]', function (e) {
+            let search_form_data = search_form_process_and_push_history_state($(this).closest('.col-right').find('form.results-filter'))
+            reload_html_view(search_form_data, 'fade',
+                $(this).data('order-field'),
+                $(this).data('order-direction')
+            );
+        });
+    };
+
+    let bind_edit_handler = function (scope, set_entry_data_to_form) {
+        $(document).on('click.wcs4-edit-' + scope + '-button', 'tr[data-type="' + scope + '"] .wcs4-edit-button', function (e) {
+            WCS4_LIB.fetch_entry_data_to_form(scope, $(this).closest('tr').data('id'), set_entry_data_to_form, WCS4_LIB.reset_to_edit_mode);
+        });
+    };
+
+    let bind_copy_handler = function (scope, set_entry_data_to_form) {
+        $(document).on('click.wcs4-copy-' + scope + '-button', 'tr[data-type="' + scope + '"] .wcs4-copy-button', function (e) {
+            WCS4_LIB.fetch_entry_data_to_form(scope, $(this).closest('tr').data('id'), set_entry_data_to_form, WCS4_LIB.reset_to_copy_mode)
+        });
+    };
+
+    let bind_delete_handler = function (scope, callback) {
+        $(document).on('click.wcs4-delete-' + scope + '-button', 'tr[data-type="' + scope + '"] .wcs4-delete-button', function (e) {
+            let entry = {
+                action: 'wcs_delete_' + scope + '_entry',
+                security: WCS4_AJAX_OBJECT.ajax_nonce,
+                row_id: $(this).closest('tr').data('id')
+            };
+            WCS4_LIB.modify_entry(scope, entry, callback, WCS4_AJAX_OBJECT[scope].delete_warning);
+        });
+    }
+
+    let bind_filter_handler = function () {
         $(document).on('click.wcs4-filter-toggle', '.search-filter', function (e) {
-            var select_id = $(this).data('select-id');
-            var value = $(this).data('option-val');
+            let select_id = $(this).data('select-id');
+            let value = $(this).data('option-val');
             $('#' + select_id).val(value).change();
             $('.results-filter .button-primary').click();
         });
@@ -31,7 +93,7 @@
     /**
      * Handles the Show form button click event.
      */
-    var bind_show_hide_handler = function () {
+    let bind_show_hide_handler = function () {
         $('#wcs4-show-form').click(function () {
             $('#wcs4-management-form-wrapper').toggleClass('is-open');
         });
@@ -52,9 +114,9 @@
     /**
      * Binds the colorpicker plugin to the selectors
      */
-    var bind_colorpickers = function () {
+    let bind_colorpickers = function () {
         $(document).on('click.wcs_colorpicker', '.wcs_colorpicker', function (index) {
-            var elementName = $(this).attr('id');
+            let elementName = $(this).attr('id');
             $(this).ColorPicker({
                 onChange: function (hsb, hex, rgb) {
                     $('#' + elementName).val(hex);
@@ -67,14 +129,14 @@
         });
     };
 
-    var bind_reset_settings = function () {
+    let bind_reset_settings = function () {
         $('#wcs4-reset-database button').click(function (e) {
             e.preventDefault();
             entry = {
                 action: $(this).attr('name'),
                 security: WCS4_AJAX_OBJECT.ajax_nonce,
             };
-            var confirm = window.confirm(WCS4_AJAX_OBJECT.reset_warning);
+            let confirm = window.confirm(WCS4_AJAX_OBJECT.reset_warning);
             if (!confirm) {
                 return;
             }
@@ -90,9 +152,9 @@
     };
 
 
-    var load_editor = function () {
+    let load_editor = function () {
         if ($('.code_editor').length) {
-            var editorSettings = wp.codeEditor.defaultSettings ? _.clone(wp.codeEditor.defaultSettings) : {};
+            let editorSettings = wp.codeEditor.defaultSettings ? _.clone(wp.codeEditor.defaultSettings) : {};
             editorSettings.codemirror = _.extend(
                 {},
                 editorSettings.codemirror,
@@ -103,9 +165,17 @@
                 }
             );
             $('.code_editor').each(function (k, v) {
-                wp.codeEditor.initialize($('.code_editor:eq('+k+')'), editorSettings);
+                wp.codeEditor.initialize($('.code_editor:eq(' + k + ')'), editorSettings);
             });
         }
     };
 
+    return {
+        bind_search_handler,
+        bind_sort_handler,
+        bind_edit_handler,
+        bind_copy_handler,
+        bind_delete_handler,
+        search_form_process_and_push_history_state,
+    }
 })(jQuery);

@@ -52,34 +52,34 @@ use WCS4\Helper\Output;
                             __('Start', 'wcs4') . ' - ' . __('End', 'wcs4'),
                             'time',
                             $order_direction,
-                            $order_field
+                            $order_field,
                         );
                         admin_th(
                             __('Subject', 'wcs4'),
                             'subject',
                             $order_direction,
-                            $order_field
+                            $order_field,
                         );
                         admin_th(
                             __('Teacher', 'wcs4'),
                             'teacher',
                             $order_direction,
-                            $order_field
+                            $order_field,
                         );
                         admin_th(
                             __('Student', 'wcs4'),
                             'student',
                             $order_direction,
-                            $order_field
+                            $order_field,
                         );
                         admin_th(
-                            __('Topic', 'wcs4')
+                            __('Topic', 'wcs4'),
                         );
                         admin_th(
                             __('Updated at', 'wcs4'),
                             'updated-at',
                             $order_direction,
-                            $order_field
+                            $order_field,
                         ); ?>
                     </tr>
                     </thead>

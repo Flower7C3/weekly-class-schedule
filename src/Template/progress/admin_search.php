@@ -93,7 +93,7 @@ use WCS4\Helper\Admin;
             ); ?>
         </div>
         <div class="alignleft buttons">
-            <button type="submit" id="wcs4-progresses-search"
+            <button type="submit" id="wcs4-progresses-filter-submit"
                     class="alignleft button button-primary"
             >
                 <span class="dashicons dashicons-filter"></span>

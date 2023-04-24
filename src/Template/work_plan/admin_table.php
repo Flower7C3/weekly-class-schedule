@@ -58,25 +58,25 @@ use WCS4\Helper\Output;
                             __('Type', 'wcs4') . ' / ' . __('Start', 'wcs4') . ' - ' . __('End', 'wcs4'),
                             'time',
                             $order_direction,
-                            $order_field
+                            $order_field,
                         );
                         admin_th(
                             __('Subject', 'wcs4'),
                             'subject',
                             $order_direction,
-                            $order_field
+                            $order_field,
                         );
                         admin_th(
                             __('Teacher', 'wcs4'),
                             'teacher',
                             $order_direction,
-                            $order_field
+                            $order_field,
                         );
                         admin_th(
                             __('Student', 'wcs4'),
                             'student',
                             $order_direction,
-                            $order_field
+                            $order_field,
                         );
                         admin_th(__('Diagnosis', 'wcs4'));
                         admin_th(__('Strengths', 'wcs4'));
@@ -86,7 +86,7 @@ use WCS4\Helper\Output;
                             __('Updated at', 'wcs4'),
                             'updated-at',
                             $order_direction,
-                            $order_field
+                            $order_field,
                         ); ?>
                     </tr>
                     </thead>
@@ -101,9 +101,11 @@ use WCS4\Helper\Output;
                                 <?= (current_user_can(WCS4_JOURNAL_MANAGE_CAPABILITY)) ? ' has-row-actions' : '' ?>">
                                 <?php
                                 if ($item->isTypePartial()): ?>
+                                    <span class="dashicons dashicons-editor-paragraph"></span>
                                     <?= _x('Partial', 'item type', 'wcs4') ?>
                                 <?php
                                 elseif ($item->isTypeCumulative()): ?>
+                                    <span class="dashicons dashicons-calendar-alt"></span>
                                     <?= _x('Cumulative', 'item type', 'wcs4') ?>
                                 <?php
                                 else: ?>

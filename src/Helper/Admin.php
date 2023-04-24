@@ -60,7 +60,7 @@ class Admin
                 break;
             default:
                 if (!$multiple) {
-                    $values[''] = _x('select option', 'manage schedule', 'wcs4');
+                    $values[''] = __('Select option', 'wcs4');
                 }
                 $querySelect = '';
                 break;
@@ -97,11 +97,7 @@ class Admin
 
         if (!empty($posts)) {
             foreach ($posts as $post) {
-                if (isset($post->ID)) {
-                    $post_id = $post->ID;
-                } else {
-                    $post_id = $post;
-                }
+                $post_id = $post->ID ?? $post;
                 $values[$post_id] = self::get_post_title_with_taxonomy($post, $tax_type);
             }
         }
@@ -130,7 +126,7 @@ class Admin
     public static function generate_layout_select_list(string $name = '', $default = null, $required = false): string
     {
         $layout = [
-            '' => _x('select option', 'manage schedule', 'wcs4'),
+            '' => __('Select option', 'wcs4'),
             'table' => _x('Table', 'Schedule layout as table', 'wcs4'),
             'list' => _x('List', 'Schedule layout as list', 'wcs4')
         ];
@@ -146,11 +142,12 @@ class Admin
     ): string {
         $values = [];
         switch ($package) {
-            case 'independent':
+            case 'visibility':
+            case 'collision_detection':
                 $values = [
-                    '' => _x('Select option', 'Independent as none', 'wcs4'),
-                    'yes' => _x('Yes', 'Independent as yes', 'wcs4'),
-                    'no' => _x('No', 'Independent as no', 'wcs4')
+                    '' => __('Select option', 'wcs4'),
+                    'yes' => __('Yes', 'wcs4'),
+                    'no' => __('No', 'wcs4')
                 ];
                 break;
             case 'work_plan_type':
@@ -185,24 +182,5 @@ class Admin
     {
         $days = wcs4_get_weekdays();
         return wcs4_select_list($days, $name, $name, null, $options['required']);
-    }
-
-    /**
-     * Generates the simple visibility list.
-     * @param string $name
-     * @param null $default
-     * @param bool $required
-     * @return string
-     */
-    public static function generate_visibility_fields(
-        string $name = '',
-        $default = null,
-        bool $required = false
-    ): string {
-        $values = array(
-            'visible' => _x('Visible', 'visibility', 'wcs4'),
-            'hidden' => _x('Hidden', 'visibility', 'wcs4'),
-        );
-        return wcs4_select_radio($values, $name, $name, $default, $required);
     }
 }

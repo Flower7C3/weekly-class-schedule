@@ -13,10 +13,10 @@
  */
 
 use WCS4\Controller\Journal;
-use WCS4\Controller\Snapshot;
 use WCS4\Controller\Progress;
 use WCS4\Controller\Schedule;
 use WCS4\Controller\Settings;
+use WCS4\Controller\Snapshot;
 use WCS4\Controller\WorkPlan;
 
 if (!defined('WCS4_SCHEDULE_VIEW_CAPABILITY')) {
@@ -266,8 +266,8 @@ add_action('admin_enqueue_scripts', static function () {
     wp_enqueue_script('wcs4_common_js');
     wp_register_script('wcs4_admin_js', WCS4_PLUGIN_URL . '/js/wcs_admin.js', array('jquery'), WCS4_VERSION);
     wp_enqueue_script('wcs4_admin_js');
-    wp_register_script('wcs4_lesson_js', WCS4_PLUGIN_URL . '/js/wcs_lesson.js', array('jquery'), WCS4_VERSION);
-    wp_enqueue_script('wcs4_lesson_js');
+    wp_register_script('wcs4_schedule_js', WCS4_PLUGIN_URL . '/js/wcs_schedule.js', array('jquery'), WCS4_VERSION);
+    wp_enqueue_script('wcs4_schedule_js');
     wp_register_script('wcs4_journal_js', WCS4_PLUGIN_URL . '/js/wcs_journal.js', array('jquery'), WCS4_VERSION);
     wp_enqueue_script('wcs4_journal_js');
     wp_register_script('wcs4_work_plan_js', WCS4_PLUGIN_URL . '/js/wcs_work_plan.js', array('jquery'), WCS4_VERSION);
@@ -634,12 +634,17 @@ function wcs4_help_placeholders_callback()
     <?php
 }
 
-function admin_th(string $name, ?string $key = null, ?string $order_direction = null, ?string $order_by = null): void
-{
+function admin_th(
+    string $name,
+    ?string $key = null,
+    ?string $order_direction = null,
+    ?string $order_by = null,
+    string $className = 'column-primary'
+): void {
     ?>
     <?php
     if (null === $key || null === $order_direction || null === $order_by): ?>
-        <th class="column-primary">
+        <th class="<?= $className ?>">
             <span><?= $name ?></span>
         </th>
     <?php
@@ -653,7 +658,7 @@ function admin_th(string $name, ?string $key = null, ?string $order_direction = 
             $new_direction = 'asc';
         }
         ?>
-        <th class="column-primary sortable <?= ($key === $order_by) ? ' sorted' : '' ?> <?= $curr_direction ?>"
+        <th class="<?= $className ?> sortable <?= ($key === $order_by) ? ' sorted' : '' ?> <?= $curr_direction ?>"
             data-order-current-field="<?= $key ?>"
             data-order-current-direction="<?= $curr_direction ?>"
         >

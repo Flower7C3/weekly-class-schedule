@@ -13,7 +13,7 @@ use WCS4\Helper\DB;
 add_action('wp_ajax_wcs_add_or_update_schedule_entry', [Schedule::class, 'save_item']);
 add_action('wp_ajax_wcs_delete_schedule_entry', [Schedule::class, 'delete_item']);
 add_action('wp_ajax_wcs_toggle_visibility_schedule_entry', [Schedule::class, 'toggle_visibility_item']);
-add_action('wp_ajax_wcs_get_lesson', [Schedule::class, 'get_item']);
+add_action('wp_ajax_wcs_get_schedule', [Schedule::class, 'get_item']);
 add_action('wp_ajax_wcs_get_day_schedules_html', [Schedule::class, 'get_ajax_html_with_schedules']);
 
 add_action('wp_ajax_wcs_add_or_update_journal_entry', [Journal::class, 'save_item']);
@@ -29,7 +29,7 @@ add_action('wp_ajax_wcs_add_or_update_work_plan_entry', [WorkPlan::class, 'save_
 add_action('wp_ajax_wcs_add_work_plan_entry', [WorkPlan::class, 'create_item']);
 add_action('wp_ajax_nopriv_wcs_add_work_plan_entry', [WorkPlan::class, 'create_item']);
 add_action('wp_ajax_wcs_delete_work_plan_entry', [WorkPlan::class, 'delete_item']);
-add_action('wp_ajax_wcs_get_work_plan', [WorkPlan::class, 'get_item']);
+add_action('wp_ajax_wcs_get_work-plan', [WorkPlan::class, 'get_item']);
 add_action('wp_ajax_wcs_get_work_plans_html', [WorkPlan::class, 'get_ajax_html']);
 add_action('wp_ajax_wcs_download_work_plans_csv', [WorkPlan::class, 'callback_of_export_csv_page']);
 add_action('wp_ajax_wcs_download_work_plans_html', [WorkPlan::class, 'callback_of_export_html_page']);

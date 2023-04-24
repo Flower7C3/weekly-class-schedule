@@ -4,109 +4,36 @@
 
 (function ($) {
 
-    // WCS4_AJAX_OBJECT available
+    let SCOPE = 'snapshot';
+    let FILTER_ID = '#wcs4-snapshots-filter';
 
     $(document).ready(function () {
-        bind_search_handler();
-        bind_sort_handler();
-        bind_delete_handler();
+        WCS4_ADMIN.bind_search_handler(FILTER_ID, reload_html_view);
+        WCS4_ADMIN.bind_sort_handler(FILTER_ID, reload_html_view);
+        WCS4_ADMIN.bind_delete_handler(SCOPE, function (data) {
+            let search_form_data = WCS4_ADMIN.search_form_process_and_push_history_state($(FILTER_ID))
+            let $sortable = $('.sortable.sorted');
+            reload_html_view(search_form_data, 'remove',
+                $sortable.data('order-current-field'),
+                $sortable.data('order-current-direction'));
+        });
     });
-
-    /**
-     * Handles the search button click event.
-     */
-    var bind_search_handler = function () {
-        $(document).on('click.wcs4-snapshots-search', '#wcs4-snapshots-search', function (e) {
-            e.preventDefault();
-            reload_html_view(
-                $('#search_wcs4_snapshot_location').val(),
-                $('#search_wcs4_snapshot_query_string').val(),
-                $('#search_wcs4_snapshot_created_at_from').val(),
-                $('#search_wcs4_snapshot_created_at_upto').val(),
-                $('.sortable.sorted').data('order-current-field'),
-                $('.sortable.sorted').data('order-current-direction'),
-                'fade'
-            );
-        });
-    };
-
-    /**
-     * Handles the Add Item button click event.
-     */
-    var bind_sort_handler = function () {
-        $(document).on('click.wcs4-snapshot-events-list-sort', '#wcs4-snapshot-events-list-wrapper [data-order-field][data-order-direction]', function (e) {
-            reload_html_view(
-                $('#search_wcs4_snapshot_location').val(),
-                $('#search_wcs4_snapshot_query_string').val(),
-                $('#search_wcs4_snapshot_created_at_from').val(),
-                $('#search_wcs4_snapshot_created_at_upto').val(),
-                $(this).data('order-field'),
-                $(this).data('order-direction'),
-                'fade')
-            ;
-        });
-    };
-
-    /**
-     * Handles the delete button click event.
-     */
-    var bind_delete_handler = function () {
-        $(document).on('click.wcs4-delete-snapshot-button', 'tr[data-type="snapshot"] .wcs4-delete-button', function (e) {
-            var entry = {
-                action: 'wcs_delete_snapshot_entry',
-                security: WCS4_AJAX_OBJECT.ajax_nonce,
-                row_id: $(this).closest('tr').data('id')
-            };
-            WCS4_LIB.modify_entry('snapshot', entry, function (data) {
-                // Let's refresh the date
-                reload_html_view(
-                    $('#search_wcs4_snapshot_location').val(),
-                    $('#search_wcs4_snapshot_query_string').val(),
-                    $('#search_wcs4_snapshot_created_at_from').val(),
-                    $('#search_wcs4_snapshot_created_at_upto').val(),
-                    $('.sortable.sorted').data('order-current-field'),
-                    $('.sortable.sorted').data('order-current-direction'),
-                    'remove'
-                );
-            }, WCS4_AJAX_OBJECT['snapshot'].delete_warning);
-        });
-    }
 
     /**
      * Updates dynamically a specific snapshot vi.
      */
-    var reload_html_view = function (location, query_string, created_at_from, created_at_upto, order_field, order_direction, action) {
-        var page = $('#search_wcs4_page').val();
-        var state = {
-            'page': page,
-            'location': location,
-            'query_string': query_string,
-            'created_at_from': created_at_from,
-            'created_at_upto': created_at_upto,
-            'order_field': order_field,
-            'order_direction': order_direction,
-        };
-        var url = $('#wcs4-snapshots-filter').attr('action')
-            + '?page=' + page
-            + '&location=' + location
-            + '&query_string=' + query_string
-            + '&created_at_from=' + created_at_from
-            + '&created_at_upto=' + created_at_upto
-            + '&order_field=' + order_field
-            + '&order_direction=' + order_direction
-        ;
-        history.pushState(state, $('title').text(), url);
-        entry = {
+    let reload_html_view = function (search_form_data, action, order_field, order_direction) {
+        let entry = {
             action: 'wcs_get_snapshots_html',
             security: WCS4_AJAX_OBJECT.ajax_nonce,
-            location: location,
-            query_string: query_string,
-            created_at_from: created_at_from,
-            created_at_upto: created_at_upto,
+            location: search_form_data.location,
+            query_string: search_form_data.query_string,
+            created_at_from: search_form_data.created_at_from,
+            created_at_upto: search_form_data.created_at_upto,
             order_field: order_field,
             order_direction: order_direction,
         };
-        var $parent = $('#wcs4-snapshot-events-list-wrapper');
+        let $parent = $('#wcs4-snapshot-events-list-wrapper');
         WCS4_LIB.update_view($parent, entry, action)
     }
 })(jQuery);

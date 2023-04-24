@@ -2,6 +2,7 @@
 
 namespace WCS4\Controller;
 
+use JetBrains\PhpStorm\NoReturn;
 use RuntimeException;
 use WCS4\Entity\Snapshot_Item;
 use WCS4\Helper\DB;
@@ -17,7 +18,7 @@ class Snapshot
             !empty($_GET['query_string']) ? $_GET['query_string'] : null,
             !empty($_GET['created_at_from']) ? sanitize_text_field($_GET['created_at_from']) : null,
             !empty($_GET['created_at_upto']) ? sanitize_text_field($_GET['created_at_upto']) : null,
-            !empty($_GET['order_field']) ? sanitize_text_field($_GET['order_field']) : 'created-at',
+            !empty($_GET['order_field']) ? sanitize_text_field($_GET['order_field']) : 'updated-at',
             !empty($_GET['order_direction']) ? sanitize_text_field($_GET['order_direction']) : 'desc'
         );
         include self::TEMPLATE_DIR . 'admin.php';
@@ -113,7 +114,7 @@ class Snapshot
     }
 
 
-    public static function get_ajax_html(): void
+    #[NoReturn] public static function get_ajax_html(): void
     {
         $html = __('You are no allowed to run this action', 'wcs4');
         if (current_user_can(WCS4_SNAPSHOT_MANAGE_CAPABILITY)) {
@@ -241,7 +242,7 @@ class Snapshot
     }
 
 
-    public static function delete_item(): void
+    #[NoReturn] public static function delete_item(): void
     {
         $errors = [];
         $response = __('You are no allowed to run this action', 'wcs4');

@@ -19,7 +19,7 @@ class Lesson_Item
     private string $start_time;
     private string $end_time;
     private bool $visible;
-    private bool $independent;
+    private bool $collisionDetection;
     private string $notes;
     private string $color = '';
     private int $position = 0;
@@ -33,45 +33,37 @@ class Lesson_Item
 
     /**
      * WCS4_Lesson constructor.
-     * @param array $dbrow
+     * @param object $dbRow
      * @param string $format
      */
-    public function __construct($dbrow, $format)
+    public function __construct(object $dbRow, string $format)
     {
-        $this->id = $dbrow->schedule_id;
-        $this->setCreatedAt($dbrow->created_at)
-            ->setCreatedBy($dbrow->created_by)
-            ->setUpdatedAt($dbrow->updated_at)
-            ->setUpdatedBy($dbrow->updated_by);
+        $this->id = $dbRow->schedule_id;
+        $this->setCreatedAt($dbRow->created_at)
+            ->setCreatedBy($dbRow->created_by)
+            ->setUpdatedAt($dbRow->updated_at)
+            ->setUpdatedBy($dbRow->updated_by);
 
-        $this->weekday = $dbrow->weekday;
+        $this->weekday = $dbRow->weekday;
 
-        $this->start_time = date($format, strtotime($dbrow->start_time));
-        $this->end_time = date($format, strtotime($dbrow->end_time));
-        $this->notes = $dbrow->notes;
-        $this->visible = $dbrow->visible ? true : false;
-        $this->independent = $dbrow->independent ? true : false;
+        $this->start_time = date($format, strtotime($dbRow->start_time));
+        $this->end_time = date($format, strtotime($dbRow->end_time));
+        $this->notes = $dbRow->notes;
+        $this->visible = (bool)$dbRow->visible;
+        $this->collisionDetection = (bool)$dbRow->collision_detection;
 
-        $this->teachers[$dbrow->teacher_id] = new Item(
-            $dbrow->teacher_id,
-            $dbrow->teacher_name,
-            $dbrow->teacher_desc
+        $this->teachers[$dbRow->teacher_id] = new Item(
+            $dbRow->teacher_id,
+            $dbRow->teacher_name,
+            $dbRow->teacher_desc
         );
-        $this->students[$dbrow->student_id] = new Item(
-            $dbrow->student_id,
-            $dbrow->student_name,
-            $dbrow->student_desc
+        $this->students[$dbRow->student_id] = new Item(
+            $dbRow->student_id,
+            $dbRow->student_name,
+            $dbRow->student_desc
         );
-        $this->setSubject($dbrow->subject_id, $dbrow->subject_name, $dbrow->subject_desc);
-        $this->setClassRoom($dbrow->classroom_id, $dbrow->classroom_name, $dbrow->classroom_desc);
-    }
-
-    /**
-     * @return string
-     */
-    public function getVisibleText()
-    {
-        return $this->isVisible() ? __('Visible', 'wcs4') : __('Hidden', 'wcs4');
+        $this->setSubject($dbRow->subject_id, $dbRow->subject_name, $dbRow->subject_desc);
+        $this->setClassRoom($dbRow->classroom_id, $dbRow->classroom_name, $dbRow->classroom_desc);
     }
 
     public function isVisible(): bool
@@ -79,9 +71,9 @@ class Lesson_Item
         return $this->visible;
     }
 
-    public function isIndependent(): bool|int
+    public function isCollisionDetection(): bool|int
     {
-        return $this->independent;
+        return $this->collisionDetection;
     }
 
     public function getPosition(): int
@@ -96,31 +88,22 @@ class Lesson_Item
     }
 
 
-    /**
-     * @return mixed
-     */
-    public function getNotes()
+    public function getNotes(): string
     {
         return $this->notes;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getColor()
+    public function getColor(): string
     {
         return $this->color;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getId()
+    public function getId(): int
     {
         return $this->id;
     }
 
-    public function getAllMinutes()
+    public function getAllMinutes(): array
     {
         $startMinutes = $this->getStartMinutes();
         $endMinutes = $this->getEndMinutes();
@@ -133,36 +116,24 @@ class Lesson_Item
         return $minutes;
     }
 
-    /**
-     * @return int
-     */
-    public function getStartMinutes()
+    public function getStartMinutes(): int
     {
         $time = explode(':', $this->getStartTime());
-        return $time[0] * 60 + $time[1];
+        return ((int)$time[0] * 60) + (int)$time[1];
     }
 
-    /**
-     * @return false|string
-     */
-    public function getStartTime()
+    public function getStartTime(): string
     {
         return $this->start_time;
     }
 
-    /**
-     * @return int
-     */
-    public function getEndMinutes(): float|int
+    public function getEndMinutes(): int
     {
         $time = explode(':', $this->getEndTime());
-        return (60 * $time[0]) + $time[1];
+        return ((int)$time[0] * 60) + (int)$time[1];
     }
 
-    /**
-     * @return false|string
-     */
-    public function getEndTime()
+    public function getEndTime(): string
     {
         return $this->end_time;
     }
@@ -175,10 +146,7 @@ class Lesson_Item
         ))->add(new DateInterval('P' . ($this->getWeekday() + $shiftDays) . 'D'));
     }
 
-    /**
-     * @return mixed
-     */
-    public function getWeekday()
+    public function getWeekday(): int
     {
         return $this->weekday;
     }

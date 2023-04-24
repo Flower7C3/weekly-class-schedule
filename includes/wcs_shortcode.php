@@ -48,7 +48,7 @@ add_shortcode('wcs', static function ($atts) {
         EXTR_OVERWRITE
     );
     # Get lessons
-    $lessons = Schedule::get_items($classroom, $teacher, $student, $subject, null, null, 1, $limit, $paged);
+    $lessons = Schedule::get_items($classroom, $teacher, $student, $subject, null, null, 'yes', $limit, $paged);
 
     # Classroom
     $schedule_key = 'wcs4-key-' . preg_replace(

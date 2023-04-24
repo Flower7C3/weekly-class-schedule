@@ -10,6 +10,9 @@ namespace WCS4\Controller;
 
 use DateTimeImmutable;
 use DateTimeZone;
+use Exception;
+use JetBrains\PhpStorm\NoReturn;
+use RuntimeException;
 use WCS4\Entity\Progress_Item;
 use WCS4\Entity\Snapshot_Item;
 use WCS4\Helper\DB;
@@ -95,7 +98,7 @@ class Progress
 
 
         # build csv
-        $handle = fopen('php://memory', 'w');
+        $handle = fopen('php://memory', 'wb');
         $delimiter = ";";
         [$thead_columns, $tbody_columns] = Output::extract_for_table($wcs4_options['progress_csv_table_columns']);
 
@@ -479,7 +482,7 @@ class Progress
             $wcs4_settings = Settings::load_settings();
 
             if (!empty($start_date)) {
-                $days_to_update[$start_date] = true;
+                $days_to_update[] = $start_date;
             }
 
             # Validate time logic
@@ -525,7 +528,7 @@ class Progress
 
                         $data['updated_at'] = date('Y-m-d H:i:s');
                         $data['updated_by'] = get_current_user_id();
-                        $days_to_update[$old_date] = true;
+                        $days_to_update[] = $old_date;
 
                         $r = $wpdb->update(
                             $table,
@@ -602,12 +605,12 @@ class Progress
             'response' => (is_array($response) ? implode('<br>', $response) : $response),
             'errors' => $errors,
             'result' => $errors ? 'error' : 'updated',
-            'days_to_update' => $days_to_update,
+            'days_to_update' => array_unique($days_to_update),
         ]);
         die();
     }
 
-    public static function get_item(): void
+    #[NoReturn] public static function get_item(): void
     {
         $errors = [];
         $response = __('You are no allowed to run this action', 'wcs4');
@@ -669,7 +672,7 @@ class Progress
         die();
     }
 
-    public static function delete_item(): void
+    #[NoReturn] public static function delete_item(): void
     {
         $errors = [];
         $response = __('You are no allowed to run this action', 'wcs4');
@@ -709,7 +712,7 @@ class Progress
         die();
     }
 
-    public static function get_ajax_html(): void
+    #[NoReturn] public static function get_ajax_html(): void
     {
         $html = __('You are no allowed to run this action', 'wcs4');
         if (current_user_can(WCS4_PROGRESS_MANAGE_CAPABILITY)) {

@@ -9,6 +9,9 @@ namespace WCS4\Controller;
 
 use DateTimeImmutable;
 use DateTimeZone;
+use Exception;
+use JetBrains\PhpStorm\NoReturn;
+use RuntimeException;
 use WCS4\Entity\Lesson_Item;
 use WCS4\Helper\DB;
 use WCS4\Helper\Output;
@@ -35,7 +38,8 @@ class Schedule
                     !empty($_GET['teacher']) ? '#' . $_GET['teacher'] : null,
                     !empty($_GET['student']) ? '#' . $_GET['student'] : null,
                     !empty($_GET['subject']) ? '#' . $_GET['subject'] : null,
-                    !empty($_GET['independent']) ? $_GET['independent'] : null,
+                    !empty($_GET['visibility']) ? $_GET['visibility'] : null,
+                    !empty($_GET['collision_detection']) ? $_GET['collision_detection'] : null,
                     $key
                 ),
             ];
@@ -133,11 +137,12 @@ class Schedule
         $teacher = 'all',
         $student = 'all',
         $subject = 'all',
-        $independent = null,
+        $visibility = null,
+        $collisionDetection = null,
         $weekday = null
     ): string {
         ob_start();
-        $items = self::get_items($classroom, $teacher, $student, $subject, $weekday, null, null, $independent);
+        $items = self::get_items($classroom, $teacher, $student, $subject, $weekday, null, $visibility, $collisionDetection);
         include self::TEMPLATE_DIR . 'admin_table.php';
         $result = ob_get_clean();
         return trim($result);
@@ -153,8 +158,8 @@ class Schedule
         $subject = 'all',
         int $weekday = null,
         int $time = null,
-        ?int $visible = 1,
-        ?string $independent = null,
+        ?string $visibility = 'yes',
+        ?string $collisionDetection = null,
         string $limit = null,
         string $paged = null
     ): array {
@@ -172,7 +177,7 @@ class Schedule
                 tea.ID AS teacher_id, tea.post_title AS teacher_name, tea.post_content AS teacher_desc,
                 stu.ID AS student_id, stu.post_title AS student_name, stu.post_content AS student_desc,
                 cls.ID AS classroom_id, cls.post_title AS classroom_name, cls.post_content AS classroom_desc,
-                weekday, start_time, end_time, visible, independent,
+                weekday, start_time, end_time, visible, collision_detection,
                 notes
             FROM $table 
             LEFT JOIN $table_teacher USING(id)
@@ -227,13 +232,13 @@ class Schedule
             $where[] = 'end_time >= %s';
             $query_arr[] = $time;
         }
-        if (null !== $visible) {
+        if (null !== $visibility && '' !== $visibility) {
             $where[] = 'visible = %d';
-            $query_arr[] = $visible;
+            $query_arr[] =  ('yes' === $visibility) ? 1 : 0;
         }
-        if (null !== $independent && '' !== $independent) {
-            $where[] = 'independent = %d';
-            $query_arr[] =  ('yes' === $independent) ? 1 : 0;
+        if (null !== $collisionDetection && '' !== $collisionDetection) {
+            $where[] = 'collision_detection = %d';
+            $query_arr[] =  ('yes' === $collisionDetection) ? 1 : 0;
         }
         return DB::get_items(
             Lesson_Item::class,
@@ -274,7 +279,7 @@ class Schedule
                 'start_time' => __('Start Time', 'wcs4'),
                 'end_time' => __('End Time', 'wcs4'),
                 'visible' => __('Visible', 'wcs4'),
-                'independent' => __('Independent', 'wcs4'),
+                'collision_detection' => __('Independent', 'wcs4'),
             );
 
             $errors = wcs4_verify_required_fields($required);
@@ -293,7 +298,7 @@ class Schedule
             $start_time = sanitize_text_field($_POST['start_time']);
             $end_time = sanitize_text_field($_POST['end_time']);
             $visible = ('visible' === sanitize_text_field($_POST['visible'])) ? 1 : 0;
-            $independent = ('yes' === sanitize_text_field($_POST['independent'])) ? 1 : 0;
+            $collisionDetection = ('yes' === sanitize_text_field($_POST['collision_detection'])) ? 1 : 0;
 
             $notes = '';
 
@@ -302,7 +307,7 @@ class Schedule
                 $notes = sanitize_textarea_field($_POST['notes']);
             }
 
-            $days_to_update[$weekday] = true;
+            $days_to_update[] = $weekday;
 
             # Validate time logic
             $timezone = wcs4_get_system_timezone();
@@ -312,7 +317,7 @@ class Schedule
 
             $wcs4_settings = Settings::load_settings();
 
-            if (empty($independent) && !empty($classroom_id) && $wcs4_settings['schedule_classroom_collision'] === 'yes') {
+            if (!empty($collisionDetection) && !empty($classroom_id) && $wcs4_settings['schedule_classroom_collision'] === 'yes') {
                 # Validate classroom collision (if applicable)
                 $schedule_classroom_collision = $wpdb->get_col(
                     $wpdb->prepare(
@@ -322,7 +327,7 @@ class Schedule
                      WHERE
                            classroom_id = %d
                        AND weekday = %d
-                       AND independent = 0
+                       AND collision_detection = 1
                        AND %s < end_time
                        AND %s > start_time
                        AND id != %d
@@ -335,7 +340,7 @@ class Schedule
                 }
             }
 
-            if (empty($independent) && !empty($teacher_id) && $wcs4_settings['schedule_teacher_collision'] === 'yes') {
+            if (!empty($collisionDetection) && !empty($teacher_id) && $wcs4_settings['schedule_teacher_collision'] === 'yes') {
                 # Validate teacher collision (if applicable)
                 $schedule_teacher_collision = $wpdb->get_col(
                     $wpdb->prepare(
@@ -346,7 +351,7 @@ class Schedule
                     WHERE
                           teacher_id IN (%s)
                       AND weekday = %d
-                      AND independent = 0
+                      AND collision_detection = 1
                       AND %s < end_time
                       AND %s > start_time
                       AND id != %d
@@ -359,7 +364,7 @@ class Schedule
                 }
             }
 
-            if (empty($independent) && !empty($student_id) && $wcs4_settings['schedule_student_collision'] === 'yes') {
+            if (!empty($collisionDetection) && !empty($student_id) && $wcs4_settings['schedule_student_collision'] === 'yes') {
                 # Validate student collision (if applicable)
                 $schedule_student_collision = $wpdb->get_col(
                     $wpdb->prepare(
@@ -370,7 +375,7 @@ class Schedule
                         WHERE
                               student_id IN (%s)
                           AND weekday = %d
-                          AND independent = 0
+                          AND collision_detection = 1
                           AND %s < end_time
                           AND %s > start_time
                           AND id != %d
@@ -397,7 +402,7 @@ class Schedule
                     'end_time' => $end_time,
                     'timezone' => $timezone,
                     'visible' => $visible,
-                    'independent' => $independent,
+                    'collision_detection' => $collisionDetection,
                     'notes' => $notes,
                 );
 
@@ -420,7 +425,7 @@ class Schedule
 
                         $data_schedule['updated_at'] = date('Y-m-d H:i:s');
                         $data_schedule['updated_by'] = get_current_user_id();
-                        $days_to_update[$old_weekday] = true;
+                        $days_to_update[] = $old_weekday;
 
                         $r = $wpdb->update(
                             $table,
@@ -500,12 +505,12 @@ class Schedule
             'response' => (is_array($response) ? implode('<br>', $response) : $response),
             'errors' => $errors,
             'result' => $errors ? 'error' : 'updated',
-            'days_to_update' => $days_to_update,
+            'days_to_update' => array_unique($days_to_update),
         ]);
         die();
     }
 
-    public static function get_item(): void
+    #[NoReturn] public static function get_item(): void
     {
         $errors = [];
         $response = __('You are no allowed to run this action', 'wcs4');
@@ -551,7 +556,7 @@ class Schedule
         die();
     }
 
-    public static function delete_item(): void
+    #[NoReturn] public static function delete_item(): void
     {
         $errors = [];
         $response = __('You are no allowed to run this action', 'wcs4');
@@ -594,7 +599,7 @@ class Schedule
         die();
     }
 
-    public static function toggle_visibility_item(): void
+    #[NoReturn] public static function toggle_visibility_item(): void
     {
         $errors = [];
         $response = __('You are no allowed to run this action', 'wcs4');
@@ -644,7 +649,7 @@ class Schedule
         die();
     }
 
-    public static function get_ajax_html_with_schedules(): void
+    #[NoReturn] public static function get_ajax_html_with_schedules(): void
     {
         $html = __('You are no allowed to run this action', 'wcs4');
         if (current_user_can(WCS4_SCHEDULE_MANAGE_CAPABILITY)) {
@@ -661,7 +666,8 @@ class Schedule
                     sanitize_text_field($_POST['teacher']),
                     sanitize_text_field($_POST['student']),
                     sanitize_text_field($_POST['subject']),
-                    sanitize_text_field($_POST['independent']),
+                    sanitize_text_field($_POST['visibility']),
+                    sanitize_text_field($_POST['collision_detection']),
                     sanitize_text_field($_POST['weekday'])
                 );
             }
@@ -760,7 +766,7 @@ class Schedule
         }
         echo '<style>';
         $endCol = 2;
-        foreach ($weekdays as $dayName => $dayIndex) {
+        foreach ($weekdays as $dayIndex) {
             $weekdayColumns = empty($weekMinutes[$dayIndex]) ? 1 : max($weekMinutes[$dayIndex]);
             $startCol = $endCol;
             $endCol = $startCol + $weekdayColumns;

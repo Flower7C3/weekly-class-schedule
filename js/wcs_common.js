@@ -2,13 +2,13 @@
  * The Weekly Class Schedule 4 common JavaScript library.
  */
 
-var WCS4_LIB = (function ($) {
+let WCS4_LIB = (function ($) {
     /**
      * Applies hover and qtip to table layouts.
      */
-    var apply_qtip = function () {
+    let apply_qtip = function () {
         jQuery('.wcs4-qtip-box').each(function () {
-            var html = jQuery('.wcs4-qtip-data', this).html();
+            let html = jQuery('.wcs4-qtip-data', this).html();
 
             jQuery('a.wcs4-qtip', this).qtip({
                 content: {
@@ -22,11 +22,11 @@ var WCS4_LIB = (function ($) {
         });
     }
 
-    var find_get_parameter = function (parameterName) {
-        var result = null,
+    let find_get_parameter = function (parameterName) {
+        let result = null,
             tmp = [];
-        var items = location.search.substr(1).split("&");
-        for (var index = 0; index < items.length; index++) {
+        let items = location.search.substr(1).split("&");
+        for (let index = 0; index < items.length; index++) {
             tmp = items[index].split("=");
             if (tmp[0] === parameterName) {
                 result = decodeURIComponent(tmp[1]);
@@ -41,7 +41,7 @@ var WCS4_LIB = (function ($) {
     /**
      * Handles the submit form click event.
      */
-    var submit_entry = function (entry, callback) {
+    let submit_entry = function (entry, callback) {
         WCS4_LIB.remove_message();
         if ($('#wcs4-row-id').length > 0) {
             // We've got a hidden row field, that means this is an update
@@ -65,14 +65,14 @@ var WCS4_LIB = (function ($) {
         });
     }
 
-    var modify_entry = function (scope, entry, callback, confirm_message) {
-        if (scope !== 'lesson' && scope !== 'journal' && scope !== 'work_plan' && scope !== 'progress' && scope !== 'snapshot') {
+    let modify_entry = function (scope, entry, callback, confirm_message) {
+        if (scope !== 'schedule' && scope !== 'journal' && scope !== 'work-plan' && scope !== 'progress' && scope !== 'snapshot') {
             show_message(WCS4_AJAX_OBJECT.ajax_error, 'error');
             return;
         }
         // Confirm delete operation.
         if ('undefined' !== typeof confirm_message && '' !== confirm_message) {
-            var confirm = window.confirm(confirm_message);
+            let confirm = window.confirm(confirm_message);
             if (!confirm) {
                 reset_to_add_mode(scope)
                 return;
@@ -94,13 +94,13 @@ var WCS4_LIB = (function ($) {
     /**
      * Fetch entry data for form
      */
-    var fetch_entry_data_to_form = function (scope, row_id, set_entry_data_to_form, reset_callback) {
-        if (scope !== 'lesson' && scope !== 'journal' && scope !== 'work_plan' && scope !== 'progress' && scope !== 'snapshot') {
+    let fetch_entry_data_to_form = function (scope, row_id, set_entry_data_to_form, reset_callback) {
+        if (scope !== 'schedule' && scope !== 'journal' && scope !== 'work-plan' && scope !== 'progress' && scope !== 'snapshot') {
             show_message(WCS4_AJAX_OBJECT.ajax_error, 'error');
             return;
         }
         reset_to_add_mode(scope)
-        var get_query;
+        let get_query;
         if (Array.isArray(row_id)) {
             row_id.forEach(function (id) {
                 $('tr#' + scope + '-' + id).addClass('is-active');
@@ -132,7 +132,7 @@ var WCS4_LIB = (function ($) {
         });
     };
 
-    var form_field_value = function (id) {
+    let form_field_value = function (id) {
         let $input = $('input#' + id);
         if ($input.length) {
             if ($input.attr('name').indexOf('[]') > 0) {
@@ -145,11 +145,11 @@ var WCS4_LIB = (function ($) {
             ? $selected.toArray().map(item => item.value)
             : $selected.val();
     };
-    var update_view = function ($parent, entry, action) {
+    let update_view = function ($parent, entry, action) {
         $parent.find('.spinner').addClass('is-active');
         $.post(WCS4_AJAX_OBJECT.ajax_url, entry, function (data) {
             // Rebuild table
-            var html = data.html;
+            let html = data.html;
             if (html.length > 0 && $('.wcs4-day-content-wrapper', $parent).data('hash') !== $(html).data('hash')) {
                 $('.wcs4-day-content-wrapper', $parent).fadeOut(300, function () {
                     $(this).remove();
@@ -175,7 +175,7 @@ var WCS4_LIB = (function ($) {
     /**
      * Enter edit mode
      */
-    var reset_to_edit_mode = function (scope, entry) {
+    let reset_to_edit_mode = function (scope, entry) {
         $('#wcs4-management-form-wrapper form').unbind('change.reset');
         // Add editing mode message
         $('#wcs4-management-form-title').text(WCS4_AJAX_OBJECT[scope].edit_mode)
@@ -189,12 +189,12 @@ var WCS4_LIB = (function ($) {
             $('#wcs4-row-id').attr('value', entry.id);
         } else {
             // Field does not exist.
-            var row_hidden_field = '<input type="hidden" id="wcs4-row-id" name="wcs4-row-id" value="' + entry.id + '">';
+            let row_hidden_field = '<input type="hidden" id="wcs4-row-id" name="wcs4-row-id" value="' + entry.id + '">';
             $('#wcs4-management-form-wrapper').append(row_hidden_field);
         }
         // Add cancel editing button
         if ($('#wcs4-cancel-editing-wrapper').length == 0) {
-            var cancel_button = '<span id="wcs4-cancel-editing-wrapper"><a href="#" id="wcs4-cancel-editing">' + WCS4_AJAX_OBJECT[scope].cancel_editing + '</a></span>';
+            let cancel_button = '<span id="wcs4-cancel-editing-wrapper"><a href="#" id="wcs4-cancel-editing">' + WCS4_AJAX_OBJECT[scope].cancel_editing + '</a></span>';
             $('#wcs4-reset-form').after(cancel_button);
             $('#wcs4-cancel-editing').click(function () {
                 reset_to_add_mode(scope);
@@ -202,7 +202,7 @@ var WCS4_LIB = (function ($) {
         }
     }
 
-    var reset_to_copy_mode = function (scope) {
+    let reset_to_copy_mode = function (scope) {
         $('#wcs4-management-form-wrapper form').unbind('change.reset');
         // Add copying mode message
         $('#wcs4-management-form-title').text(WCS4_AJAX_OBJECT[scope].copy_mode)
@@ -212,14 +212,14 @@ var WCS4_LIB = (function ($) {
         $('#wcs4-submit-form').attr('value', WCS4_AJAX_OBJECT[scope].add_item);
         // Add cancel copying button
         if ($('#wcs4-cancel-copying-wrapper').length == 0) {
-            var cancel_button = '<span id="wcs4-cancel-copying-wrapper"><a href="#" id="wcs4-cancel-copying">' + WCS4_AJAX_OBJECT[scope].cancel_copying + '</a></span>';
+            let cancel_button = '<span id="wcs4-cancel-copying-wrapper"><a href="#" id="wcs4-cancel-copying">' + WCS4_AJAX_OBJECT[scope].cancel_copying + '</a></span>';
             $('#wcs4-reset-form').after(cancel_button);
             $('#wcs4-cancel-copying').click(function () {
                 reset_to_add_mode(scope);
             })
         }
     }
-    var reset_to_create_mode = function (scope) {
+    let reset_to_create_mode = function (scope) {
         $('#wcs4-management-form-wrapper form').unbind('change.reset');
         // Add copying mode message
         $('#wcs4-management-form-title').text(WCS4_AJAX_OBJECT[scope].add_mode)
@@ -229,7 +229,7 @@ var WCS4_LIB = (function ($) {
         $('#wcs4-submit-form').attr('value', WCS4_AJAX_OBJECT[scope].add_item);
         // Add cancel copying button
         if ($('#wcs4-cancel-copying-wrapper').length == 0) {
-            var cancel_button = '<span id="wcs4-cancel-copying-wrapper"><a href="#" id="wcs4-cancel-copying">' + WCS4_AJAX_OBJECT[scope].cancel_copying + '</a></span>';
+            let cancel_button = '<span id="wcs4-cancel-copying-wrapper"><a href="#" id="wcs4-cancel-copying">' + WCS4_AJAX_OBJECT[scope].cancel_copying + '</a></span>';
             $('#wcs4-reset-form').after(cancel_button);
             $('#wcs4-cancel-copying').click(function () {
                 reset_to_add_mode(scope);
@@ -237,14 +237,16 @@ var WCS4_LIB = (function ($) {
         }
     }
 
-    var reset_to_add_mode = function (scope) {
+    let reset_to_add_mode = function (scope) {
         $('#wcs4-management-form-wrapper form')
             .one('change.reset', function () {
                 $('#wcs4-reset-form').show();
             })
             .get(0).reset();
         $('#wcs4-management-form-wrapper form select').scrollTop(0);
-        $('#wcs4-management-form-wrapper form').find('input,select').change();
+        $('#wcs4-management-form-wrapper form input').val('');
+        $('#wcs4-management-form-wrapper form textarea').val('');
+        $('#wcs4-management-form-wrapper form').find('input,textarea,select').change();
         $('#wcs4-management-form-title').text(WCS4_AJAX_OBJECT[scope].add_mode);
         $('#wcs4-row-id').remove();
         $('#wcs4-cancel-copying-wrapper').remove();
@@ -257,7 +259,7 @@ var WCS4_LIB = (function ($) {
     /**
      * Handles the Ajax UI messaging.
      */
-    var show_message = function (message, status, errors) {
+    let show_message = function (message, status, errors) {
         remove_message();
         if ('' !== message) {
             if (status == 'updated') {
@@ -270,15 +272,15 @@ var WCS4_LIB = (function ($) {
                 $('.wcs4-ajax-text').fadeOut('slow');
             }, 2000);
         }
-        for (var field_id in errors) {
+        for (let field_id in errors) {
             $('.form-field-' + field_id + '-wrap').addClass('form-invalid');
-            for (var error_id in errors[field_id]) {
-                var msg = $('<div class="error">').html(errors[field_id][error_id]);
+            for (let error_id in errors[field_id]) {
+                let msg = $('<div class="error">').html(errors[field_id][error_id]);
                 $('.form-field-' + field_id + '-wrap').append(msg);
             }
         }
     };
-    var remove_message = function () {
+    let remove_message = function () {
         $('.wcs4-ajax-text').html('').hide();
         $('.wcs4-ajax-text').removeClass('updated').removeClass('error')
         $('.form-field').removeClass('form-invalid');

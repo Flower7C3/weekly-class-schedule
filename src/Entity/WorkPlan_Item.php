@@ -3,6 +3,7 @@
 
 namespace WCS4\Entity;
 
+use DateTimeInterface;
 use WCS4\Entity\Trait\Student_Trait;
 use WCS4\Entity\Trait\Subjects_Trait;
 use WCS4\Entity\Trait\Teachers_Trait;
@@ -13,7 +14,7 @@ class WorkPlan_Item
 {
     public const TYPE_PARTIAL = 'type.partial';
     public const TYPE_CUMULATIVE = 'type.cumulative';
-    private int $id = 0;
+    private int $id;
     private ?string $start_date;
     private ?string $end_date;
     private string $diagnosis;

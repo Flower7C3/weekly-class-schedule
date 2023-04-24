@@ -21,8 +21,10 @@ class Output
      * @param string $template : user defined template from settings.
      * @return string|string[]
      */
-    public static function process_template($item, string $template): array|string
-    {
+    public static function process_template(
+        Item|Lesson_Item|Journal_Item|WorkPlan_Item|Progress_Item|array|null $item,
+        string $template
+    ): array|string {
         if ($item instanceof Item) {
             $template = str_replace([
                 '{name}',
@@ -162,12 +164,13 @@ class Output
                 nl2br($item->getStrengths()),
                 nl2br($item->getGoals()),
                 nl2br($item->getMethods()),
-                ($item->isTypeCumulative()
-                    ? _x('Cumulative', 'item type', 'wcs4')
-                    : ($item->isTypePartial()
-                        ? _x('Partial', 'item type', 'wcs4')
-                        : _x('undefined', 'item type', 'wcs4')
-                    )),
+                match ($item->isTypeCumulative()) {
+                    true => _x('Cumulative', 'item type', 'wcs4'),
+                    false => match ($item->isTypePartial()) {
+                        true => _x('Partial', 'item type', 'wcs4'),
+                        false => _x('undefined', 'item type', 'wcs4'),
+                    }
+                },
                 $item->getCreatedAt() ? $item->getCreatedAt()->format('Y-m-d H:i:s') : null,
                 $item->getCreatedAt() ? $item->getCreatedAt()->format('Y-m-d') : null,
                 $item->getCreatedBy() ? $item->getCreatedBy()->display_name : null,
@@ -196,12 +199,13 @@ class Output
                 $item->getEndDate(),
                 nl2br($item->getImprovements()),
                 nl2br($item->getIndications()),
-                ($item->isTypePeriodic()
-                    ? _x('Periodic', 'item type', 'wcs4')
-                    : ($item->isTypePartial()
-                        ? _x('Partial', 'item type', 'wcs4')
-                        : _x('undefined', 'item type', 'wcs4')
-                    )),
+                match ($item->isTypePeriodic()) {
+                    true => _x('Periodic', 'item type', 'wcs4'),
+                    false => match ($item->isTypePartial()) {
+                        true => _x('Partial', 'item type', 'wcs4'),
+                        false => _x('undefined', 'item type', 'wcs4'),
+                    }
+                },
                 $item->getCreatedAt() ? $item->getCreatedAt()->format('Y-m-d H:i:s') : null,
                 $item->getCreatedAt() ? $item->getCreatedAt()->format('Y-m-d') : null,
                 $item->getCreatedBy() ? $item->getCreatedBy()->display_name : null,

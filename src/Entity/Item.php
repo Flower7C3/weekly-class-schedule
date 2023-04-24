@@ -74,11 +74,11 @@ class Item
 
     /**
      * Make initials from sentence
-     * @param string $string
+     * @param string $text
      * @param bool $private
      * @return string
      */
-    private function convert_sentence_to_initials($text, $private = false): string
+    private function convert_sentence_to_initials(string $text, bool $private = false): string
     {
         $words = explode(' ', $text);
         $initials = [];

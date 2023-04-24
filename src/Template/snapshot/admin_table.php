@@ -50,22 +50,23 @@ use WCS4\Helper\Output;
                             __('Location', 'wcs4'),
                             'location',
                             $order_direction,
-                            $order_field
+                            $order_field,
                         );
                         admin_th(
-                            __('Title', 'wcs4')
+                            __('Title', 'wcs4'),
                         );
                         admin_th(
-                            __('Query', 'wcs4')
+                            __('Query', 'wcs4'),
                         );
                         admin_th(
-                            __('Version', 'wcs4')
+                            name: __('Version', 'wcs4'),
+                            className: 'check-column',
                         );
                         admin_th(
                             __('Updated at', 'wcs4'),
                             'updated-at',
                             $order_direction,
-                            $order_field
+                            $order_field,
                         ); ?>
                     </tr>
                     </thead>

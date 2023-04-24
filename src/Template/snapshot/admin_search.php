@@ -19,7 +19,7 @@ use WCS4\Helper\Admin;
             <label for="search_wcs4_snapshot_query_string">
                 <?= __('Query', 'wcs4') ?>
             </label>
-            <input type="text" name="url" id="search_wcs4_snapshot_query_string"
+            <input type="text" name="query_string" id="search_wcs4_snapshot_query_string"
                    placeholder="<?= __('Query', 'wcs4') ?>"
                    value="<?= array_key_exists('query_string', $_GET)
                        ? $_GET['query_string'] : '' ?>"/>
@@ -55,7 +55,7 @@ use WCS4\Helper\Admin;
             ); ?>
         </div>
         <div class="alignleft buttons">
-            <button type="submit" id="wcs4-snapshots-search"
+            <button type="submit" id="wcs4-snapshots-filter-submit"
                     class="alignleft button button-primary"
             >
                 <span class="dashicons dashicons-filter"></span>

@@ -395,7 +395,7 @@ function wcs4_js_i18n($handle)
 {
     wp_localize_script($handle, 'WCS4_AJAX_OBJECT', array(
         'ajax_error' => __('Error', 'wcs4'),
-        'lesson' => array(
+        'schedule' => array(
             'add_mode' => _x('Add New Lesson', 'page title', 'wcs4'),
             'edit_mode' => _x('Edit Lesson', 'page title', 'wcs4'),
             'copy_mode' => _x('Duplicate Lesson', 'page title', 'wcs4'),
@@ -415,7 +415,7 @@ function wcs4_js_i18n($handle)
             'cancel_copying' => _x('Exit copy journal mode', 'button text', 'wcs4'),
             'delete_warning' => _x('Are you sure you want to delete this journal?', 'manage schedule', 'wcs4'),
         ),
-        'work_plan' => array(
+        'work-plan' => array(
             'add_mode' => _x('Add New Work Plan', 'page title', 'wcs4'),
             'edit_mode' => _x('Edit Work Plan', 'page title', 'wcs4'),
             'copy_mode' => _x('Duplicate Work Plan', 'page title', 'wcs4'),

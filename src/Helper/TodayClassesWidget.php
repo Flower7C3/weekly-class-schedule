@@ -36,7 +36,7 @@ class TodayClassesWidget extends WP_Widget
      * @see WP_Widget::widget()
      *
      */
-    public function widget($args, $instance)
+    public function widget($args, $instance): void
     {
         $output = '';
 
@@ -52,7 +52,7 @@ class TodayClassesWidget extends WP_Widget
         $time = date('H:i:s');
         $classroom_ids = $instance['classroom'] ?: 'all';
         $max_lessons = (int)$instance['max_lessons'];
-        $limit = (is_int($max_lessons)) ? $max_lessons : null;
+        $limit = $max_lessons;
         $no_entries_msg = ($instance['no_entries_text'] !== '') ? $instance['no_entries_text'] : _x(
             'No lessons today',
             'widget settings',
@@ -60,7 +60,7 @@ class TodayClassesWidget extends WP_Widget
         );
         $template = $instance['template'];
 
-        $lessons = Schedule::get_items($classroom_ids, 'all', 'all', 'all', $today, $time, 1, $limit);
+        $lessons = Schedule::get_items($classroom_ids, 'all', 'all', 'all', $today, $time, 'yes', null, $limit);
 
         if (empty($lessons)) {
             $output .= '<div class="wcs4-no-lessons">' . $no_entries_msg . '</div>';
@@ -85,17 +85,17 @@ class TodayClassesWidget extends WP_Widget
      * @see WP_Widget::form()
      *
      */
-    public function form($instance)
+    public function form($instance): void
     {
-        $title = (isset($instance['title'])) ? $instance['title'] : _x("Today's Classes", 'widget settings', 'wcs4');
-        $max_lessons = (isset($instance['max_lessons'])) ? $instance['max_lessons'] : 5;
-        $classroom = (isset($instance['classroom'])) ? $instance['classroom'] : 'all';
-        $no_entries_text = (isset($instance['no_entries_text'])) ? $instance['no_entries_text'] : _x(
+        $title = $instance['title'] ?? _x("Today's Classes", 'widget settings', 'wcs4');
+        $max_lessons = $instance['max_lessons'] ?? 5;
+        $classroom = $instance['classroom'] ?? 'all';
+        $no_entries_text = $instance['no_entries_text'] ?? _x(
             'No lessons today',
             'widget settings',
             'wcs4'
         );
-        $template = (isset($instance['template'])) ? $instance['template'] : _x(
+        $template = $instance['template'] ?? _x(
             '{start time}: {subject link} @{classroom link}',
             'widget template',
             'wcs4'
@@ -173,7 +173,7 @@ class TodayClassesWidget extends WP_Widget
      * @see WP_Widget::update()
      *
      */
-    public function update($new_instance, $old_instance)
+    public function update($new_instance, $old_instance): array
     {
         $instance = array();
         $instance['title'] = strip_tags($new_instance['title']);

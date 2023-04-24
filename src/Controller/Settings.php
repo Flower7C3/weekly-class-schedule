@@ -157,7 +157,7 @@ class Settings
                 self::save_settings($wcs4_options);
 
                 global $wp_rewrite;
-                $wp_rewrite->flush_rules(true);
+                $wp_rewrite->flush_rules();
             }
         }
         include self::TEMPLATE_DIR . 'standard.php';

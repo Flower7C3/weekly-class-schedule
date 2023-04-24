@@ -10,6 +10,9 @@ namespace WCS4\Controller;
 
 use DateTimeImmutable;
 use DateTimeZone;
+use Exception;
+use JetBrains\PhpStorm\NoReturn;
+use RuntimeException;
 use WCS4\Entity\Snapshot_Item;
 use WCS4\Entity\WorkPlan_Item;
 use WCS4\Helper\DB;
@@ -36,7 +39,7 @@ class WorkPlan
         include self::TEMPLATE_DIR . 'admin.php';
     }
 
-    public static function callback_of_export_csv_page(): void
+    #[NoReturn] public static function callback_of_export_csv_page(): void
     {
         if (!current_user_can(WCS4_WORK_PLAN_EXPORT_CAPABILITY)) {
             header('HTTP/1.0 403 Forbidden');
@@ -95,7 +98,7 @@ class WorkPlan
 
 
         # build csv
-        $handle = fopen('php://memory', 'w');
+        $handle = fopen('php://memory', 'wb');
         $delimiter = ";";
         [$thead_columns, $tbody_columns] = Output::extract_for_table($wcs4_options['work_plan_csv_table_columns']);
 
@@ -128,7 +131,7 @@ class WorkPlan
         exit;
     }
 
-    public static function callback_of_export_html_page(): void
+    #[NoReturn] public static function callback_of_export_html_page(): void
     {
         if (!current_user_can(WCS4_WORK_PLAN_EXPORT_CAPABILITY)) {
             header('HTTP/1.0 403 Forbidden');
@@ -349,7 +352,7 @@ class WorkPlan
                 if (is_array($filter)) {
                     $where[] = $prefix . '.ID IN (' . implode(', ', array_fill(0, count($filter), '%s')) . ')';
                     $query_arr += $filter;
-                } elseif (preg_match('/^#/', $filter)) {
+                } elseif (str_starts_with($filter, '#')) {
                     $where[] = $prefix . '.ID = %s';
                     $query_arr[] = preg_replace('/^#/', '', $filter);
                 } else {
@@ -481,7 +484,7 @@ class WorkPlan
             $wcs4_settings = Settings::load_settings();
 
             if (!empty($start_date)) {
-                $days_to_update[$start_date] = true;
+                $days_to_update[] = $start_date;
             }
 
             # Validate time logic
@@ -529,7 +532,7 @@ class WorkPlan
 
                         $data['updated_at'] = date('Y-m-d H:i:s');
                         $data['updated_by'] = get_current_user_id();
-                        $days_to_update[$old_date] = true;
+                        $days_to_update[] = $old_date;
 
                         $r = $wpdb->update(
                             $table,
@@ -606,12 +609,12 @@ class WorkPlan
             'response' => (is_array($response) ? implode('<br>', $response) : $response),
             'errors' => $errors,
             'result' => $errors ? 'error' : 'updated',
-            'days_to_update' => $days_to_update,
+            'days_to_update' => array_unique($days_to_update),
         ]);
         die();
     }
 
-    public static function get_item(): void
+    #[NoReturn] public static function get_item(): void
     {
         $errors = [];
         $response = __('You are no allowed to run this action', 'wcs4');
@@ -673,7 +676,7 @@ class WorkPlan
         die();
     }
 
-    public static function delete_item(): void
+    #[NoReturn] public static function delete_item(): void
     {
         $errors = [];
         $response = __('You are no allowed to run this action', 'wcs4');
@@ -713,7 +716,7 @@ class WorkPlan
         die();
     }
 
-    public static function get_ajax_html(): void
+    #[NoReturn] public static function get_ajax_html(): void
     {
         $html = __('You are no allowed to run this action', 'wcs4');
         if (current_user_can(WCS4_WORK_PLAN_MANAGE_CAPABILITY)) {
