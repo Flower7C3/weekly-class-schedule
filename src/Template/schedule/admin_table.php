@@ -48,7 +48,7 @@ use WCS4\Helper\Output;
             <?php
             /** @var Lesson_Item $item */
             foreach ($items as $item): ?>
-                <tr id="lesson-<?= $item->getId() ?>"
+                <tr id="schedule-<?= $item->getId() ?>"
                     data-type="schedule"
                     data-day="<?= $item->getWeekday() ?>"
                     data-id="<?= $item->getId() ?>"

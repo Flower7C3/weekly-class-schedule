@@ -97,8 +97,8 @@
             $('#wcs4_schedule_weekday').val(entry.weekday);
             $('#wcs4_schedule_start_time').val(entry.start_time);
             $('#wcs4_schedule_end_time').val(entry.end_time);
-            $('#wcs4_schedule_visibility-' + (entry.visible === '1') ? 'visible' : 'hidden').prop('checked', true);
-            $('#wcs4_schedule_collision_detection-' + (entry.collision_detection === '1') ? 'yes' : 'no').prop('checked', true);
+            $('#wcs4_schedule_visibility-' + ((entry.visible === '1') ? 'visible' : 'hidden')).prop('checked', true);
+            $('#wcs4_schedule_collision_detection-' + ((entry.collision_detection === '1') ? 'yes' : 'no')).prop('checked', true);
             $('#wcs4_schedule_notes').val(entry.notes);
         } else {
             WCS4_LIB.show_message(WCS4_AJAX_OBJECT.ajax_error, 'error');

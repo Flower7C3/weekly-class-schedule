@@ -279,7 +279,7 @@ class Schedule
                 'start_time' => __('Start Time', 'wcs4'),
                 'end_time' => __('End Time', 'wcs4'),
                 'visible' => __('Visible', 'wcs4'),
-                'collision_detection' => __('Independent', 'wcs4'),
+                'collision_detection' => __('Collision detection', 'wcs4'),
             );
 
             $errors = wcs4_verify_required_fields($required);

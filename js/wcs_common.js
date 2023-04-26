@@ -243,10 +243,8 @@ let WCS4_LIB = (function ($) {
                 $('#wcs4-reset-form').show();
             })
             .get(0).reset();
-        $('#wcs4-management-form-wrapper form select').scrollTop(0);
-        $('#wcs4-management-form-wrapper form input').val('');
-        $('#wcs4-management-form-wrapper form textarea').val('');
-        $('#wcs4-management-form-wrapper form').find('input,textarea,select').change();
+        $('#wcs4-management-form-wrapper form').trigger("reset");
+        $('#wcs4-management-form-wrapper form').find('input,textarea,select').trigger("change");
         $('#wcs4-management-form-title').text(WCS4_AJAX_OBJECT[scope].add_mode);
         $('#wcs4-row-id').remove();
         $('#wcs4-cancel-copying-wrapper').remove();
