@@ -28,7 +28,7 @@ add_action('wp_ajax_wcs_download_journals_html', [Journal::class, 'callback_of_e
 add_action('wp_ajax_wcs_add_or_update_work_plan_entry', [WorkPlan::class, 'save_item']);
 add_action('wp_ajax_wcs_add_work_plan_entry', [WorkPlan::class, 'create_item']);
 add_action('wp_ajax_nopriv_wcs_add_work_plan_entry', [WorkPlan::class, 'create_item']);
-add_action('wp_ajax_wcs_delete_work_plan_entry', [WorkPlan::class, 'delete_item']);
+add_action('wp_ajax_wcs_delete_work-plan_entry', [WorkPlan::class, 'delete_item']);
 add_action('wp_ajax_wcs_get_work-plan', [WorkPlan::class, 'get_item']);
 add_action('wp_ajax_wcs_get_work_plans_html', [WorkPlan::class, 'get_ajax_html']);
 add_action('wp_ajax_wcs_download_work_plans_csv', [WorkPlan::class, 'callback_of_export_csv_page']);
