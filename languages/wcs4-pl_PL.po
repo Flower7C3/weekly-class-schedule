@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: Weekly Class Schedule\n"
 "Journal-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-09-04 11:57+0000\n"
-"PO-Revision-Date: 2023-04-21 11:53+0000\n"
+"PO-Revision-Date: 2023-04-26 15:41+0000\n"
 "Last-Translator: Bartłomiej Kwiatek\n"
 "Language-Team: Polski\n"
 "Language: pl_PL\n"
@@ -1109,7 +1109,7 @@ msgstr "Notatka"
 #: src/Template/settings/standard.php:15
 msgctxt "options"
 msgid "Save Settings"
-msgstr "💾Zapisz ustawienia"
+msgstr "Zapisz ustawienia"
 
 #: src/Template/settings/advanced.php:3
 msgctxt "options"
@@ -1770,7 +1770,7 @@ msgstr "Czy na pewno chcesz to wykonać?"
 #: src/Template/settings/advanced.php:53
 msgctxt "reset database"
 msgid "Clear everything"
-msgstr "🗑Wyczyść wszystko"
+msgstr "Wyczyść wszystko"
 
 #: src/Template/settings/advanced.php:29
 #| msgid "Clear journal"
@@ -1810,17 +1810,17 @@ msgstr ""
 #: src/Template/settings/advanced.php:15
 msgctxt "reset database"
 msgid "Create DB schema"
-msgstr "🆙Utwórz schemat bazy danych"
+msgstr "Utwórz schemat bazy danych"
 
 #: src/Template/settings/advanced.php:19
 msgctxt "reset database"
 msgid "Install example data"
-msgstr "🔡Zainstaluj dane przykładowe"
+msgstr "Zainstaluj dane przykładowe"
 
 #: src/Template/settings/advanced.php:49
 msgctxt "reset database"
 msgid "Reset settings"
-msgstr "⚙️Zresetuj ustawienia"
+msgstr "Zresetuj ustawienia"
 
 #: src/Template/work_plan/admin_search.php:117
 #: src/Template/journal/admin_search.php:95
