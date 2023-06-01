@@ -1,9 +1,9 @@
 <?php
 /**
- * Standard [wcs] shortcode
+ * Standard [wcs_schedule] shortcode
  *
  * Default:
- *     [wcs layout="table" classroom="all" subject="all" teacher="all" student="all" limit="" paged=""]
+ *     [wcs_schedule layout="table" classroom="all" subject="all" teacher="all" student="all" limit="" paged=""]
  * @param $atts
  * @return string
  */
@@ -15,7 +15,7 @@ use WCS4\Controller\Settings;
 use WCS4\Controller\WorkPlan;
 use WCS4\Helper\Output;
 
-add_shortcode('wcs', static function ($atts) {
+add_shortcode('wcs_schedule', static function ($atts) {
     $output = '';
     $buffer = '';
     $layout = '';
@@ -48,7 +48,7 @@ add_shortcode('wcs', static function ($atts) {
         EXTR_OVERWRITE
     );
     # Get lessons
-    $lessons = Schedule::get_items($classroom, $teacher, $student, $subject, null, null, 'yes', $limit, $paged);
+    $lessons = Schedule::get_items($classroom, $teacher, $student, $subject, null, null, 'visible',null,  $limit, $paged);
 
     # Classroom
     $schedule_key = 'wcs4-key-' . preg_replace(
@@ -60,7 +60,7 @@ add_shortcode('wcs', static function ($atts) {
 
     $output = apply_filters('wcs4_pre_render', $output, $style);
 
-    $output .= '<div class="wcs4-schedule-wrapper" id="' . $schedule_key . '">';
+    $output .= '<div class="wcs4_schedule_wrapper" id="' . $schedule_key . '">';
     if ($layout === 'table') {
         # Render table layout
         $weekdays = wcs4_get_indexed_weekdays($abbr = true);
@@ -117,14 +117,14 @@ add_shortcode('wcs', static function ($atts) {
 });
 
 /**
- * Standard [class_journal] shortcode
+ * Standard [wcs_journal] shortcode
  *
  * Default:
- *     [class_journal subject="all" teacher="all" student="all" date_from="" date_upto="" template="" limit="" paged=""]
+ *     [wcs_journal subject="all" teacher="all" student="all" date_from="" date_upto="" template="" limit="" paged=""]
  * @param $atts
  * @return string
  */
-add_shortcode('class_journal', static function ($atts) {
+add_shortcode('wcs_journal', static function ($atts) {
     $output = '';
     $buffer = '';
     $subject = '';
@@ -162,6 +162,7 @@ add_shortcode('class_journal', static function ($atts) {
         $date_upto,
         null,
         null,
+        null,
         $limit,
         $paged
     );
@@ -177,7 +178,7 @@ add_shortcode('class_journal', static function ($atts) {
     $output = apply_filters('wcs4_pre_render', $output, $style);
 
     # Render list layout
-    $output .= '<div class="wcs4-schedule-wrapper" id="' . $schedule_key . '">';
+    $output .= '<div class="wcs4_schedule_wrapper" id="' . $schedule_key . '">';
     $output .= Journal::get_html_of_journal_list($journals, $schedule_key, $template);
     $output .= '</div>';
 
@@ -194,7 +195,7 @@ add_shortcode('class_journal', static function ($atts) {
     return $output;
 });
 
-add_shortcode('class_journal_create', static function ($atts) {
+add_shortcode('wcs_journal_create', static function ($atts) {
     $subject = '';
     $teacher = '';
     $student = '';
@@ -245,8 +246,8 @@ add_shortcode('student_progress', static function ($atts) {
             'date_upto' => null,
             'limit' => null,
             'paged' => null,
-            'template_partial' => $wcs4_options['progress_shortcode_template_partial_type'],
-            'template_periodic' => $wcs4_options['progress_shortcode_template_periodic_type'],
+            'template_partial' => null,
+            'template_periodic'=> null,
         ), $atts),
         EXTR_OVERWRITE
     );
@@ -278,7 +279,7 @@ add_shortcode('student_progress', static function ($atts) {
     $output = apply_filters('wcs4_pre_render', $output, $style);
 
     # Render list layout
-    $output .= '<div class="wcs4-schedule-wrapper" id="' . $schedule_key . '">';
+    $output .= '<div class="wcs4_schedule_wrapper" id="' . $schedule_key . '">';
     $output .= Progress::get_html_of_progress_list_for_shortcode(
         $progresses,
         $schedule_key,
@@ -326,7 +327,7 @@ add_shortcode('student_progress_create', static function ($atts) {
     return trim($result);
 });
 
-add_shortcode('student_work_plan', static function ($atts) {
+add_shortcode('wcs_student_work_plan', static function ($atts) {
     $output = '';
     $buffer = '';
     $subject = '';
@@ -367,6 +368,7 @@ add_shortcode('student_work_plan', static function ($atts) {
         $date_upto,
         null,
         null,
+        null,
         $limit,
         $paged
     );
@@ -382,7 +384,7 @@ add_shortcode('student_work_plan', static function ($atts) {
     $output = apply_filters('wcs4_pre_render', $output, $style);
 
     # Render list layout
-    $output .= '<div class="wcs4-schedule-wrapper" id="' . $schedule_key . '">';
+    $output .= '<div class="wcs4_schedule_wrapper" id="' . $schedule_key . '">';
     $output .= WorkPlan::get_html_of_work_plan_list_for_shortcode(
         $work_plans,
         $schedule_key,
@@ -404,7 +406,7 @@ add_shortcode('student_work_plan', static function ($atts) {
     return $output;
 });
 
-add_shortcode('student_work_plan_create', static function ($atts) {
+add_shortcode('wcs_student_work_plan_create', static function ($atts) {
     $subject = '';
     $teacher = '';
     $student = '';

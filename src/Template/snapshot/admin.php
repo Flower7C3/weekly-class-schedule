@@ -13,11 +13,11 @@
         <div class="tablenav top">
             <div class="alignleft actions">
                 <?php
-                include 'admin_search.php'; ?>
+                require __DIR__ . '/../_common/admin_search.php'; ?>
             </div>
             <br class="clear">
         </div>
-        <div class="col-wrap" id="wcs4-snapshot-events-list-wrapper">
+        <div class="col-wrap" id="wcs4-snapshot-list-wrapper">
             <?php
             echo $table; ?>
         </div>

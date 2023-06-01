@@ -48,30 +48,21 @@ use WCS4\Helper\Output;
             <?php
             /** @var Lesson_Item $item */
             foreach ($items as $item): ?>
-                <tr id="schedule-<?= $item->getId() ?>"
-                    data-type="schedule"
+                <tr data-scope="schedule"
                     data-day="<?= $item->getWeekday() ?>"
                     data-id="<?= $item->getId() ?>"
                     class="<?= $item->isVisible() ? 'active' : 'inactive' ?>">
                     <th scope="row" class="check-column">
-                        <em class="dashicons dashicons-<?= ($item->isCollisionDetection())
-                            ? 'shield-alt'
-                            : 'calendar' ?>"
-                            title="<?= $item->isCollisionDetection()
-                                ? __('Collisions free', 'wcs4')
-                                : __('Independent', 'wcs4') ?>"></em>
+                        <em class="<?= Lesson_Item::collisionDetectionIcon($item->isCollisionDetection()) ?>"
+                            title="<?= Lesson_Item::collisionDetectionLabel($item->isCollisionDetection()) ?>"></em>
                     </th>
                     <th scope="row" class="check-column">
                         <a href="#" class="wcs4-visibility-button"
                            id="wcs4-<?= ($item->isVisible()) ? 'hide' : 'show' ?>-button-<?= $item->getId() ?>"
                            data-visible="<?= ($item->isVisible()) ? 'true' : 'false' ?>"
                         >
-                            <em class="dashicons dashicons-<?= ($item->isVisible())
-                                ? 'visibility'
-                                : 'hidden' ?>"
-                                title="<?= $item->isVisible()
-                                    ? __('Visible', 'wcs4')
-                                    : __('Hidden', 'wcs4') ?>"></em>
+                            <em class="<?= Lesson_Item::visibilityIcon($item->isVisible()) ?>"
+                                title="<?= Lesson_Item::visibilityLabel($item->isVisible()) ?>"></em>
                         </a>
                     </th>
                     <td class="column-primary

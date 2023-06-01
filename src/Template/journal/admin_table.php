@@ -39,7 +39,7 @@ use WCS4\Helper\Output;
         ?>
         <?php
         foreach ($groups as $groupName => $groupData): ?>
-            <section id="wcs4-journal-day-<?= $groupName ?>">
+            <section id="wcs4_journal_day-<?= $groupName ?>">
                 <h2>
                     <?= $groupName ?>
                     <span class="spinner"></span>
@@ -47,6 +47,7 @@ use WCS4\Helper\Output;
                 <table class="wp-list-table widefat fixed striped wcs4-admin-journal-table">
                     <thead>
                     <tr>
+                        <th title="<?= __('Type', 'wcs4') ?>" class="manage-column column-cb check-column"></th>
                         <?php
                         admin_th(
                             __('Start', 'wcs4') . ' - ' . __('End', 'wcs4'),
@@ -87,9 +88,12 @@ use WCS4\Helper\Output;
                     <?php
                     /** @var Journal_Item $item */
                     foreach ($groupData as $item): ?>
-                        <tr id="journal-<?= $item->getId() ?>"
-                            data-type="journal"
+                        <tr data-scope="journal"
                             data-id="<?= $item->getId() ?>">
+                            <th scope="row" class="check-column">
+                                <em class="<?= Journal_Item::typeIcon($item->getType()) ?>"
+                                    title="<?= Journal_Item::typeLabel($item->getType()) ?>"></em>
+                            </th>
                             <td class="column-primary
                                 <?= (current_user_can(WCS4_JOURNAL_MANAGE_CAPABILITY)) ? ' has-row-actions' : '' ?>">
                                 <?= $item->getStartTime() ?> – <?= $item->getEndTime() ?>

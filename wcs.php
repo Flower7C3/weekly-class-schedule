@@ -25,13 +25,17 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-const APP_DEVEL = false;
+const APP_DEVEL = true;
 
 if (APP_DEVEL) {
     opcache_reset();
+    if (isset($_GET['debug'])) {
+        error_reporting(E_ALL);
+        ini_set('display_errors', true);
+    }
     define('WCS4_VERSION', '4.devel.' . time());
 } else {
-    define('WCS4_VERSION', '4.57' . time());
+    define('WCS4_VERSION', '4.58' . time());
 }
 
 define('WCS4_REQUIRED_WP_VERSION', '4.0');
@@ -126,24 +130,24 @@ $wcs4_allowed_html = array(
     'acronym' => array(
         'title' => true,
     ),
-    'b' => array(),
+    'b' => [],
     'blockquote' => array(
         'cite' => true,
     ),
-    'cite' => array(),
-    'code' => array(),
+    'cite' => [],
+    'code' => [],
     'del' => array(
         'datetime' => true,
     ),
-    'small' => array(),
-    'br' => array(),
-    'em' => array(),
-    'i' => array(),
+    'small' => [],
+    'br' => [],
+    'em' => [],
+    'i' => [],
     'q' => array(
         'cite' => true,
     ),
-    'strike' => array(),
-    'strong' => array(),
+    'strike' => [],
+    'strong' => [],
 );
 
 /**

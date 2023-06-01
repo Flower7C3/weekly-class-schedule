@@ -60,7 +60,7 @@ class TodayClassesWidget extends WP_Widget
         );
         $template = $instance['template'];
 
-        $lessons = Schedule::get_items($classroom_ids, 'all', 'all', 'all', $today, $time, 'yes', null, $limit);
+        $lessons = Schedule::get_items($classroom_ids, 'all', 'all', 'all', $today, $time, 'visible', null, $limit);
 
         if (empty($lessons)) {
             $output .= '<div class="wcs4-no-lessons">' . $no_entries_msg . '</div>';
@@ -126,11 +126,10 @@ class TodayClassesWidget extends WP_Widget
         </p>
 
         <p>
-            <label for="<?php
-            echo $this->get_field_id('classroom'); ?>"><?php
-                _ex('Classrooms to display', 'widget settings', 'wcs4'); ?>:</label>
-            <?php
-            echo Admin::generate_admin_select_list(
+            <label for="<?= $this->get_field_id('classroom') ?>">
+                <?= _x('Classrooms to display', 'widget settings', 'wcs4') ?>:
+            </label>
+            <?= Admin::generate_admin_select_list(
                 'classroom',
                 $this->get_field_id('classroom'),
                 $this->get_field_name('classroom') . '[]',
@@ -138,7 +137,7 @@ class TodayClassesWidget extends WP_Widget
                 false,
                 true,
                 'widefat'
-            ); ?>
+            ) ?>
         </p>
 
         <p>
@@ -175,7 +174,7 @@ class TodayClassesWidget extends WP_Widget
      */
     public function update($new_instance, $old_instance): array
     {
-        $instance = array();
+        $instance = [];
         $instance['title'] = strip_tags($new_instance['title']);
         $instance['max_lessons'] = strip_tags($new_instance['max_lessons']);
         $instance['classroom'] = [];

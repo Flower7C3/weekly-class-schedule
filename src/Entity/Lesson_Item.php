@@ -5,11 +5,11 @@ namespace WCS4\Entity;
 
 use DateInterval;
 use DateTimeImmutable;
+use WCS4\Entity\Trait\Blameable_Trait;
 use WCS4\Entity\Trait\Classroom_Trait;
 use WCS4\Entity\Trait\Students_Trait;
 use WCS4\Entity\Trait\Subject_Trait;
 use WCS4\Entity\Trait\Teachers_Trait;
-use WCS4\Entity\Trait\Blameable_Trait;
 use WCS4\Entity\Trait\Timestampable_Trait;
 
 class Lesson_Item
@@ -66,6 +66,11 @@ class Lesson_Item
         $this->setClassRoom($dbRow->classroom_id, $dbRow->classroom_name, $dbRow->classroom_desc);
     }
 
+    public function getId(): int
+    {
+        return $this->id;
+    }
+
     public function isVisible(): bool
     {
         return $this->visible;
@@ -76,17 +81,49 @@ class Lesson_Item
         return $this->collisionDetection;
     }
 
+    public static function collisionDetectionIcon(bool $collisionDetection): string
+    {
+        return match ($collisionDetection) {
+            true => 'fa-fw fa-solid fa-shield',
+            false => 'fa-fw fa-solid fa-unlock',
+        };
+    }
+
+    public static function collisionDetectionLabel(bool $collisionDetection): string
+    {
+        return match ($collisionDetection) {
+            true => __('Collisions free', 'wcs4'),
+            false => __('Independent', 'wcs4'),
+        };
+    }
+
+    public static function visibilityIcon(bool $visible): string
+    {
+        return match ($visible) {
+            true => 'fa-fw fa-solid fa-eye',
+            false => 'fa-fw fa-solid fa-eye-slash',
+        };
+    }
+
+    public static function visibilityLabel(bool $visible): string
+    {
+        return match ($visible) {
+            true => __('Visible', 'wcs4'),
+            false => __('Hidden', 'wcs4'),
+        };
+    }
+
     public function getPosition(): int
     {
         return $this->position;
     }
+
 
     public function setPosition(int $position): self
     {
         $this->position = $position;
         return $this;
     }
-
 
     public function getNotes(): string
     {
@@ -96,11 +133,6 @@ class Lesson_Item
     public function getColor(): string
     {
         return $this->color;
-    }
-
-    public function getId(): int
-    {
-        return $this->id;
     }
 
     public function getAllMinutes(): array

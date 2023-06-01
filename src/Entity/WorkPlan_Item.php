@@ -4,10 +4,10 @@
 namespace WCS4\Entity;
 
 use DateTimeInterface;
+use WCS4\Entity\Trait\Blameable_Trait;
 use WCS4\Entity\Trait\Student_Trait;
 use WCS4\Entity\Trait\Subjects_Trait;
 use WCS4\Entity\Trait\Teachers_Trait;
-use WCS4\Entity\Trait\Blameable_Trait;
 use WCS4\Entity\Trait\Timestampable_Trait;
 
 class WorkPlan_Item
@@ -161,6 +161,24 @@ class WorkPlan_Item
     public function isTypePartial(): bool
     {
         return self::TYPE_PARTIAL === $this->getType();
+    }
+
+    public static function typeIcon(string $type): string
+    {
+        return match ($type) {
+            self::TYPE_PARTIAL => 'fa-fw fa-solid fa-calendar-day',
+            self::TYPE_CUMULATIVE => 'fa-fw fa-regular fa-calendar',
+            default => '',
+        };
+    }
+
+    public static function typeLabel(string $type): string
+    {
+        return match ($type) {
+            self::TYPE_PARTIAL => _x('Partial', 'item type', 'wcs4'),
+            self::TYPE_CUMULATIVE => _x('Cumulative', 'item type', 'wcs4'),
+            default => _x('undefined', 'item type', 'wcs4'),
+        };
     }
 
 }

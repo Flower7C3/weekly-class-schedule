@@ -2,6 +2,7 @@
 /**
  * @var array $thead_columns
  * @var array $tbody_columns
+ * @var array $tfoot_columns
  * @var array $items
  */
 
@@ -11,12 +12,14 @@ use WCS4\Helper\Output;
 
 $studentsData = [];
 $teachersData = [];
+$typesData = [];
+$rowspan = false;
 if (array_key_exists('student duration detailed', $thead_columns)) {
     /** @var Journal_Item $item */
     foreach ($items as $item) {
         /** @var Item $student */
         foreach ($item->getStudents() as $student) {
-            if (!array_key_exists($student->getId(), $studentsData)) {
+            if ($student instanceof Item && !array_key_exists($student->getId(), $studentsData)) {
                 $studentsData[$student->getId()] = [
                     'short_name' => $student->getNameShort(),
                     'duration' => 0,
@@ -26,6 +29,7 @@ if (array_key_exists('student duration detailed', $thead_columns)) {
         }
     }
     asort($studentsData);
+    $rowspan = true;
 }
 if (array_key_exists('teacher duration detailed', $thead_columns)) {
     /** @var Journal_Item $item */
@@ -42,6 +46,40 @@ if (array_key_exists('teacher duration detailed', $thead_columns)) {
         }
     }
     asort($teachersData);
+    $rowspan = true;
+}
+if (array_key_exists('type duration detailed', $thead_columns)
+    || array_key_exists('type duration simple', $thead_columns)) {
+    $types = [];
+    if (array_key_exists('type duration detailed', $thead_columns)) {
+        $types = [
+            Journal_Item::TYPE_NORMAL,
+            Journal_Item::TYPE_ABSENT_TEACHER_FREE_VACATION,
+            Journal_Item::TYPE_ABSENT_TEACHER_PAID_VACATION,
+            Journal_Item::TYPE_ABSENT_TEACHER_SICK_CHILDCARE,
+            Journal_Item::TYPE_ABSENT_TEACHER_HEALTHY_CHILDCARE,
+            Journal_Item::TYPE_ABSENT_TEACHER_SICK_LEAVE,
+            Journal_Item::TYPE_ABSENT_TEACHER,
+            Journal_Item::TYPE_ABSENT_STUDENT,
+            Journal_Item::TYPE_TEACHER_OFFICE_WORKS,
+        ];
+    } elseif (array_key_exists('type duration simple', $thead_columns)) {
+        $types = [
+            Journal_Item::TYPE_NORMAL,
+            Journal_Item::TYPE_ABSENT_TEACHER,
+            Journal_Item::TYPE_ABSENT_STUDENT,
+            Journal_Item::TYPE_TEACHER_OFFICE_WORKS,
+        ];
+    }
+    foreach ($types as $typeKey) {
+        $label = Journal_Item::typeLabel($typeKey);
+        $typesData[$typeKey] = [
+            'short_name' => $label,
+            'duration' => 0,
+            'events' => 0,
+        ];
+    }
+    $rowspan = true;
 }
 ?>
 <table>
@@ -51,32 +89,68 @@ if (array_key_exists('teacher duration detailed', $thead_columns)) {
         foreach ($thead_columns as $key => $th): ?>
             <?php
             if ('student duration detailed' === $key): ?>
-                <?php
-                foreach ($studentsData as $studentId => $studentData): ?>
-                    <th>
-                        <?= $studentData['short_name'] ?>
-                    </th>
-                <?php
-                endforeach; ?>
+                <th colspan="<?= count($studentsData) ?>">
+                    <?= $th ?>
+                </th>
             <?php
             elseif ('teacher duration detailed' === $key): ?>
-                <?php
-                foreach ($teachersData as $teacherId => $teacherData): ?>
-                    <th>
-                        <?= $teacherData['short_name'] ?>
-                    </th>
-                <?php
-                endforeach; ?>
+                <th colspan="<?= count($teachersData) ?>">
+                    <?= $th ?>
+                </th>
+            <?php
+            elseif ('type duration detailed' === $key || 'type duration simple' === $key): ?>
+                <th colspan="<?= count($typesData) ?>">
+                    <?= $th ?>
+                </th>
             <?php
             else: ?>
-                <th>
-                    <?= $th ?>
+                <th data-key="<?= $key ?>" rowspan="<?= $rowspan ? 2 : 1 ?>">
+                    <span><?= $th ?></span>
                 </th>
             <?php
             endif; ?>
         <?php
         endforeach; ?>
     </tr>
+    <?php
+    if (true === $rowspan): ?>
+        <tr>
+            <?php
+            foreach ($thead_columns as $key => $th): ?>
+                <?php
+                if ('student duration detailed' === $key): ?>
+                    <?php
+                    foreach ($studentsData as $studentId => $studentData): ?>
+                        <th data-key="<?= $key ?>" data-student-id="<?= $studentId ?>">
+                            <span><?= $studentData['short_name'] ?></span>
+                        </th>
+                    <?php
+                    endforeach; ?>
+                <?php
+                elseif ('teacher duration detailed' === $key): ?>
+                    <?php
+                    foreach ($teachersData as $teacherId => $teacherData): ?>
+                        <th data-key="<?= $key ?>" data-teacher-id="<?= $teacherId ?>">
+                            <span><?= $teacherData['short_name'] ?></span>
+                        </th>
+                    <?php
+                    endforeach; ?>
+                <?php
+                elseif ('type duration detailed' === $key || 'type duration simple' === $key): ?>
+                    <?php
+                    foreach ($typesData as $typeKey => $typeData): ?>
+                        <th data-key="<?= $key ?>" data-type-key="<?= $typeKey ?>">
+                            <span><?= $typeData['short_name'] ?></span>
+                        </th>
+                    <?php
+                    endforeach; ?>
+                <?php
+                endif; ?>
+            <?php
+            endforeach; ?>
+        </tr>
+    <?php
+    endif; ?>
     </thead>
     <tbody>
     <?php
@@ -90,15 +164,17 @@ if (array_key_exists('teacher duration detailed', $thead_columns)) {
                 if ('student duration detailed' === $key): ?>
                     <?php
                     foreach ($studentsData as $studentId => $studentData): ?>
-                        <td>
-                            <?php
-                            if (array_key_exists($studentId, $item->getStudents())) {
-                                $studentsData[$studentId]['duration'] += $item->getDurationTime();
-                                $studentsData[$studentId]['events']++;
-                                $row = Output::process_template($item, $td);
-                                echo $row;
-                            }
-                            ?>
+                        <td data-key="<?= $key ?>" data-student-id="<?= $studentId ?>">
+                            <span>
+                                <?php
+                                if (array_key_exists($studentId, $item->getStudents())) {
+                                    $studentsData[$studentId]['duration'] += $item->getDurationTime();
+                                    $studentsData[$studentId]['events']++;
+                                    $row = Output::process_template($item, $td);
+                                    echo $row;
+                                }
+                                ?>
+                            </span>
                         </td>
                     <?php
                     endforeach; ?>
@@ -106,26 +182,52 @@ if (array_key_exists('teacher duration detailed', $thead_columns)) {
                 elseif ('teacher duration detailed' === $key): ?>
                     <?php
                     foreach ($teachersData as $teacherId => $teacherData): ?>
-                        <td>
-                            <?php
-                            if (array_key_exists($teacherId, $item->getTeachers())) {
-                                $teachersData[$teacherId]['duration'] += $item->getDurationTime();
-                                $teachersData[$teacherId]['events']++;
-                                $row = Output::process_template($item, $td);
-                                echo $row;
-                            }
-                            ?>
+                        <td data-key="<?= $key ?>" data-teacher-id="<?= $teacherId ?>">
+                            <span>
+                                <?php
+                                if (array_key_exists($teacherId, $item->getTeachers())) {
+                                    $teachersData[$teacherId]['duration'] += $item->getDurationTime();
+                                    $teachersData[$teacherId]['events']++;
+                                    $row = Output::process_template($item, $td);
+                                    echo $row;
+                                }
+                                ?>
+                            </span>
+                        </td>
+                    <?php
+                    endforeach; ?>
+                <?php
+                elseif ('type duration detailed' === $key || 'type duration simple' === $key): ?>
+                    <?php
+                    foreach ($typesData as $typeKey => $typeData): ?>
+                        <td data-key="<?= $key ?>" data-type-key="<?= $typeKey ?>">
+                            <span>
+                                <?php
+                                if (
+                                    ('type duration detailed' === $key && $item->getType() === $typeKey)
+                                    ||
+                                    ('type duration simple' === $key && str_starts_with($item->getType(), $typeKey))
+                                ) {
+                                    $typesData[$typeKey]['duration'] += $item->getDurationTime();
+                                    $typesData[$typeKey]['events']++;
+                                    $row = Output::process_template($item, $td);
+                                    echo $row;
+                                }
+                                ?>
+                            </span>
                         </td>
                     <?php
                     endforeach; ?>
                 <?php
                 else: ?>
-                    <td>
-                        <?php
-                        $row = Output::process_template($item, $td);
-                        $row = str_replace(['{index}',], [$index,], $row);
-                        echo $row;
-                        ?>
+                    <td data-key="<?= $key ?>">
+                        <span>
+                            <?php
+                            $row = Output::process_template($item, $td);
+                            $row = str_replace(['{index}',], [$index,], $row);
+                            echo $row;
+                            ?>
+                        </span>
                     </td>
                 <?php
                 endif; ?>
@@ -139,13 +241,13 @@ if (array_key_exists('teacher duration detailed', $thead_columns)) {
     <tfoot>
     <tr>
         <?php
-        foreach ($thead_columns as $key => $th): ?>
+        foreach ($tfoot_columns as $key => $th): ?>
             <?php
             if ('student duration detailed' === $key): ?>
                 <?php
                 foreach ($studentsData as $studentId => $studentData): ?>
-                    <th>
-                        <?= Output::process_template($studentData, $th) ?>
+                    <th data-key="<?= $key ?>" data-student-id="<?= $studentId ?>">
+                        <span><?= Output::process_template($studentData, $th) ?></span>
                     </th>
                 <?php
                 endforeach; ?>
@@ -153,14 +255,23 @@ if (array_key_exists('teacher duration detailed', $thead_columns)) {
             elseif ('teacher duration detailed' === $key): ?>
                 <?php
                 foreach ($teachersData as $teacherId => $teacherData): ?>
-                    <th>
-                        <?= Output::process_template($teacherData, $th) ?>
+                    <th data-key="<?= $key ?>" data-teacher-id="<?= $teacherId ?>">
+                        <span><?= Output::process_template($teacherData, $th) ?></span>
+                    </th>
+                <?php
+                endforeach; ?>
+            <?php
+            elseif ('type duration detailed' === $key || 'type duration simple' === $key): ?>
+                <?php
+                foreach ($typesData as $typeKey => $typeData): ?>
+                    <th data-key="<?= $key ?>" data-type-key="<?= $typeKey ?>">
+                        <span><?= Output::process_template($typeData, $th) ?></span>
                     </th>
                 <?php
                 endforeach; ?>
             <?php
             else: ?>
-                <th></th>
+                <th data-key="<?= $key ?>"></th>
             <?php
             endif; ?>
         <?php

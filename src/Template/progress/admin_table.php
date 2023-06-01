@@ -45,7 +45,7 @@ use WCS4\Helper\Output;
         ?>
         <?php
         foreach ($groups as $groupName => $groupData): ?>
-            <section id="wcs4-progress-day-<?= $groupName ?>">
+            <section id="wcs4_progress_day-<?= $groupName ?>">
                 <h2>
                     <?= $groupName ?>
                     <span class="spinner"></span>
@@ -53,9 +53,10 @@ use WCS4\Helper\Output;
                 <table class="wp-list-table widefat fixed striped wcs4-admin-progress-table">
                     <thead>
                     <tr>
+                        <th title="<?= __('Type', 'wcs4') ?>" class="manage-column column-cb check-column"></th>
                         <?php
                         admin_th(
-                            __('Type', 'wcs4') . ' / ' . __('Start', 'wcs4') . ' - ' . __('End', 'wcs4'),
+                            __('Start', 'wcs4') . ' - ' . __('End', 'wcs4'),
                             'time',
                             $order_direction,
                             $order_field,
@@ -81,7 +82,8 @@ use WCS4\Helper\Output;
                         admin_th(
                             __('Indications', 'wcs4'),
                         );
-                        admin_th(__('Improvements', 'wcs4'),
+                        admin_th(
+                            __('Improvements', 'wcs4'),
                         );
                         admin_th(
                             __('Updated at', 'wcs4'),
@@ -95,29 +97,22 @@ use WCS4\Helper\Output;
                     <?php
                     /** @var Progress_Item $item */
                     foreach ($groupData as $item): ?>
-                        <tr id="progress-<?= $item->getId() ?>"
-                            data-type="progress"
+                        <tr data-scope="progress"
                             data-id="<?= $item->getId() ?>">
+                            <th scope="row" class="check-column">
+                                <em class="<?= Progress_Item::typeIcon($item->getType()) ?>"
+                                    title="<?= Progress_Item::typeLabel($item->getType()) ?>"></em>
+                            </th>
                             <td class="column-primary
                                 <?= (current_user_can(WCS4_JOURNAL_MANAGE_CAPABILITY)) ? ' has-row-actions' : '' ?>">
-                                <?php
-                                if ($item->isTypePartial()): ?>
-                                    <span class="dashicons dashicons-editor-paragraph"></span>
-                                    <?= _x('Partial', 'item type', 'wcs4') ?>
-                                <?php
-                                elseif ($item->isTypePeriodic()): ?>
-                                    <span class="dashicons dashicons-calendar-alt"></span>
-                                    <?= _x('Periodic', 'item type', 'wcs4') ?>
-                                <?php
-                                else: ?>
-                                    <?= _x('undefined', 'item type', 'wcs4') ?>
-                                <?php
-                                endif; ?>
                                 <?php
                                 if ($item->isTypePeriodic()): ?>
                                     <?= $item->getStartDate() ?>
                                     -
                                     <?= $item->getEndDate() ?>
+                                <?php
+                                else: ?>
+                                    <?= Progress_Item::typeLabel($item->getType()) ?>
                                 <?php
                                 endif; ?>
                                 <?php
@@ -127,10 +122,10 @@ use WCS4\Helper\Output;
                                         if ($item->isTypePeriodic()): ?>
                                             <span class="download hide-if-no-js">
                                             <a href="<?= admin_url(
-                                                'admin-ajax.php'
-                                            ) ?>?action=wcs_download_progresses_html&nonce=<?= wp_create_nonce(
-                                                'progress'
-                                            ) ?>&id=<?= $item->getId() ?>"
+                                                'admin-ajax.php?action=wcs_download_progresses_html'
+                                                . '&nonce=' . wp_create_nonce('progress')
+                                                . '&id=' . $item->getId()
+                                            ) ?>"
                                                target="_blank"
                                                class="wcs4-download-progress-button"
                                             >

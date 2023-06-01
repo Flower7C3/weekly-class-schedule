@@ -72,7 +72,7 @@ add_action('admin_menu', static function () {
         'wcs4',
         array(Schedule::class, "callback_of_management_page"),
         'dashicons-schedule',
-        50
+        25
     );
     $page_journal = add_submenu_page(
         'wcs4',
@@ -129,10 +129,10 @@ add_action('admin_menu', static function () {
         'title' => _x('Using shortcode', 'help title', 'wcs4'),
         'callback' => 'wcs4_help_wcs_shortcode_callback',
     ];
-    $help_tabs['class_journal_shortcode'] = [
+    $help_tabs['wcs_journal_shortcode'] = [
         'id' => 'wcs4_help_shortcode',
         'title' => _x('Using shortcode', 'help title', 'wcs4'),
-        'callback' => 'wcs4_help_class_journal_shortcode_callback',
+        'callback' => 'wcs4_help_journal_shortcode_callback',
     ];
     $help_tabs['placeholders'] = [
         'id' => 'wcs4_help_placeholders',
@@ -156,7 +156,7 @@ add_action('admin_menu', static function () {
     add_action('load-' . $page_journal, static function () use ($help_tabs) {
         $screen = get_current_screen();
         if (null !== $screen) {
-            $tabs = array($help_tabs['class_journal_shortcode'], $help_tabs['placeholders']);
+            $tabs = array($help_tabs['wcs_journal_shortcode'], $help_tabs['placeholders']);
             foreach ($tabs as $tab) {
                 $screen->add_help_tab($tab);
             }
@@ -305,7 +305,7 @@ function wcs4_help_wcs_shortcode_callback()
                 'help',
                 'wcs4'
             ),
-            '[wcs]'
+            '[wcs_schedule]'
         ); ?>
     </h3>
     <hr>
@@ -317,7 +317,7 @@ function wcs4_help_wcs_shortcode_callback()
                 'help',
                 'wcs4'
             ),
-            '[wcs layout=list]'
+            '[wcs_schedule layout=list]'
         ); ?>
         <?php
         printf(_x('You can also specify layout template.', 'help', 'wcs4')); ?>
@@ -328,12 +328,12 @@ function wcs4_help_wcs_shortcode_callback()
         <li><?php
             printf(
                 _x('Custom template for table layout: <code>%1$s</code>', 'help', 'wcs4'),
-                '[wcs layout=table template_table_short="CODE" template_table_details="CODE"]'
+                '[wcs_schedule layout=table template_table_short="CODE" template_table_details="CODE"]'
             ); ?></li>
         <li><?php
             printf(
                 _x('Custom template for list layout: <code>%1$s</code>', 'help', 'wcs4'),
-                '[wcs layout=list template_list="CODE"]'
+                '[wcs_schedule layout=list template_list="CODE"]'
             ); ?></li>
     </ul>
     <p>
@@ -359,25 +359,25 @@ function wcs4_help_wcs_shortcode_callback()
         <li><?php
             printf(
                 _x('Only display lessons of "%2$s" subject: <code>%1$s</code>', 'help', 'wcs4'),
-                '[wcs subject="Yoga"]',
+                '[wcs_schedule subject="Yoga"]',
                 'Yoga'
             ); ?></li>
         <li><?php
             printf(
                 _x('Only display lessons by "%2$s" teacher: <code>%1$s</code>', 'help', 'wcs4'),
-                '[wcs teacher="John Doe"]',
+                '[wcs_schedule teacher="John Doe"]',
                 'John Doe'
             ); ?></li>
         <li><?php
             printf(
                 _x('Only display lessons for "%2$s" student: <code>%1$s</code>', 'help', 'wcs4'),
-                '[wcs student="Jane Doe"]',
+                '[wcs_schedule student="Jane Doe"]',
                 'Jane Doe'
             ); ?></li>
         <li><?php
             printf(
                 _x('Only display lessons in "%2$s" classroom: <code>%1$s</code>', 'help', 'wcs4'),
-                '[wcs classroom="Classroom A"]',
+                '[wcs_schedule classroom="Classroom A"]',
                 'Classroom A'
             ); ?></li>
     </ul>
@@ -386,13 +386,13 @@ function wcs4_help_wcs_shortcode_callback()
         <?php
         printf(
             _x('A finalized shortcode may look something like <code>%1$s</code>', 'help', 'wcs4'),
-            '[wcs classroom="Classroom A" layout=list limit="" paged=""]'
+            '[wcs_schedule classroom="Classroom A" layout=list limit="" paged=""]'
         ); ?>
     </p>
     <?php
 }
 
-function wcs4_help_class_journal_shortcode_callback()
+function wcs4_help_journal_shortcode_callback()
 {
     ?>
     <h3>
@@ -403,7 +403,7 @@ function wcs4_help_class_journal_shortcode_callback()
                 'help',
                 'wcs4'
             ),
-            '[class_journal]'
+            '[wcs_journal]'
         ); ?>
     </h3>
     <hr>
@@ -417,7 +417,7 @@ function wcs4_help_class_journal_shortcode_callback()
         <li><?php
             printf(
                 _x('Custom template for journal layout: <code>%1$s</code>', 'help', 'wcs4'),
-                '[class_journal template="CODE"]'
+                '[wcs_journal template="CODE"]'
             ); ?></li>
     </ul>
     <p>
@@ -443,31 +443,31 @@ function wcs4_help_class_journal_shortcode_callback()
         <li><?php
             printf(
                 _x('Only display journals of "%2$s" subject: <code>%1$s</code>', 'help', 'wcs4'),
-                '[class_journal subject="Yoga"]',
+                '[wcs_journal subject="Yoga"]',
                 'Yoga'
             ); ?></li>
         <li><?php
             printf(
                 _x('Only display journals by "%2$s" teacher: <code>%1$s</code>', 'help', 'wcs4'),
-                '[class_journal teacher="John Doe"]',
+                '[wcs_journal teacher="John Doe"]',
                 'John Doe'
             ); ?></li>
         <li><?php
             printf(
                 _x('Only display journals for "%2$s" student: <code>%1$s</code>', 'help', 'wcs4'),
-                '[class_journal student="Jane Doe"]',
+                '[wcs_journal student="Jane Doe"]',
                 'Jane Doe'
             ); ?></li>
         <li><?php
             printf(
                 _x('Only display journals in "%2$s" date from: <code>%1$s</code>', 'help', 'wcs4'),
-                '[class_journal date_from="2020-01-01"]',
+                '[wcs_journal date_from="2020-01-01"]',
                 '2020-01-01'
             ); ?></li>
         <li><?php
             printf(
                 _x('Only display journals in "%2$s" date upto: <code>%1$s</code>', 'help', 'wcs4'),
-                '[class_journal date_upto="2020-01-31"]',
+                '[wcs_journal date_upto="2020-01-31"]',
                 '2020-01-31'
             ); ?></li>
     </ul>
@@ -476,7 +476,7 @@ function wcs4_help_class_journal_shortcode_callback()
         <?php
         printf(
             _x('A finalized shortcode may look something like <code>%1$s</code>', 'help', 'wcs4'),
-            '[class_journal classroom="Classroom A" limit="" paged=""]'
+            '[wcs_journal classroom="Classroom A" limit="" paged=""]'
         ); ?>
     </p>
     <?php
@@ -535,6 +535,8 @@ function wcs4_help_placeholders_callback()
                         '{end time}',
                         '{duration time}',
                         '{topic}',
+                        '{type}',
+                        '{type icon}',
                         '{created at}',
                         '{created by}',
                         '{updated at}',
@@ -558,6 +560,7 @@ function wcs4_help_placeholders_callback()
                         '{goals}',
                         '{methods}',
                         '{type}',
+                        '{type icon}',
                         '{created at}',
                         '{created at date}',
                         '{created by}',
@@ -581,6 +584,7 @@ function wcs4_help_placeholders_callback()
                         '{improvements}',
                         '{indications}',
                         '{type}',
+                        '{type icon}',
                         '{created at}',
                         '{created at date}',
                         '{created by}',

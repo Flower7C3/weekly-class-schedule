@@ -31,6 +31,12 @@ add_filter('post_password_required', static function ($required, $post) {
         return false;
     }
     /**
+     * Satisfy for logged CMS user.
+     */
+    if (array_key_exists($post->post_type, WCS4_POST_TYPES_WHITELIST) && is_user_logged_in() && is_single()) {
+        return false;
+    }
+    /**
      * Is access cookie exists
      * and check session exists
      * then set satisfy session variable
@@ -97,12 +103,16 @@ add_filter('the_content', static function ($content) {
             exit;
         }
         $post_id = get_the_id();
-        if (array_key_exists(WCS_POST_ACCESS_COOKIE_NAME, $_COOKIE) || !post_password_required($post_id)) {
-            $content .= '<a href="?logout">'
+        if (
+            array_key_exists(WCS_POST_ACCESS_COOKIE_NAME, $_COOKIE)
+            ||
+            (!post_password_required($post_id) && !empty($post->post_password))
+        ) {
+            $content .= '<p><a href="?logout">'
                 . '<em class="dashicons dashicons-lock"></em>'
                 . __('Log out')
                 . ' ' . $_SESSION[WCS_SESSION_SATISFY_POST]['title']
-                . '</a><br>';
+                . '</a></p>';
         }
         if (!post_password_required($post_id)) {
             $wcs4_settings = Settings::load_settings();
@@ -110,6 +120,7 @@ add_filter('the_content', static function ($content) {
             ### SCHEDULE
             $layout = $wcs4_settings[$post_type_key . '_schedule_layout'];
             if ('none' !== $layout && null !== $layout) {
+                $content .= '<div id="wcs_schedule-shortcode-wrapper">';
                 $content .= '<h2>' . __('Schedule', 'wcs4') . '</h2>';
                 $schedule_template_table_short = $wcs4_settings[$post_type_key . '_schedule_template_table_short'];
                 $schedule_template_table_details = $wcs4_settings[$post_type_key . '_schedule_template_table_details'];
@@ -117,16 +128,17 @@ add_filter('the_content', static function ($content) {
                 $params = [];
                 $params[] = '' . $post_type_key . '="#' . $post_id . '"';
                 $params[] = 'layout="' . $layout . '"';
-                $params[] = 'schedule_template_table_short="' . $schedule_template_table_short . '"';
-                $params[] = 'schedule_template_table_details="' . $schedule_template_table_details . '"';
-                $params[] = 'schedule_template_list="' . $schedule_template_list . '"';
-                $content .= '[wcs  ' . implode(' ', $params) . ']';
+                $params[] = 'template_table_short="' . $schedule_template_table_short . '"';
+                $params[] = 'template_table_details="' . $schedule_template_table_details . '"';
+                $params[] = 'template_list="' . $schedule_template_list . '"';
+                $content .= '[wcs_schedule  ' . implode(' ', $params) . ']';
                 if ('yes' === $wcs4_settings[$post_type_key . '_schedule_download_ical']) {
                     $content .= __('Download iCal:', 'wcs4') . ' ';
                     $content .= '<a href="?format=ical">' . __('Download iCal for current week', 'wcs4') . '</a>';
                     $content .= ', ';
                     $content .= '<a href="?format=ical&week=1">' . __('Download iCal for next week', 'wcs4') . '</a>';
                 }
+                $content .= '</div>';
             }
 
             ### JOURNAL VIEW
@@ -148,7 +160,7 @@ add_filter('the_content', static function ($content) {
             }
 
             if (true === $journal_view_access || true === $journal_create_access) {
-                $content .= '<details class="wcs4">';
+                $content .= '<details class="wcs4" id="wcs_journal-shortcode-wrapper">';
                 if (true === $journal_view_access) {
                     $content .= '<summary>' . __('Journals', 'wcs4') . '</summary>';
                     $template = $wcs4_settings[$post_type_key . '_journal_shortcode_template'];
@@ -156,7 +168,7 @@ add_filter('the_content', static function ($content) {
                     $params[] = $post_type_key . '="#' . $post_id . '"';
                     $params[] = 'template="' . $template . '"';
                     $params[] = 'limit=' . $wcs4_settings[$post_type_key . '_journal_view'];
-                    $content .= '[class_journal  ' . implode(' ', $params) . ']';
+                    $content .= '[wcs_journal  ' . implode(' ', $params) . ']';
                     if ('yes' === $wcs4_settings[$post_type_key . '_journal_download_csv']) {
                         $content .= '<a href="?format=csv">' . __('Download Journals as CSV', 'wcs4') . '</a>';
                     }
@@ -167,7 +179,7 @@ add_filter('the_content', static function ($content) {
                 if (true === $journal_create_access) {
                     $params = [];
                     $params[] = $post_type_key . '="' . $post_id . '"';
-                    $content .= '[class_journal_create  ' . implode(' ', $params) . ']';
+                    $content .= '[wcs_journal_create  ' . implode(' ', $params) . ']';
                 }
                 $content .= '</details>';
             }
@@ -194,7 +206,7 @@ add_filter('the_content', static function ($content) {
                     $work_plan_create_access = true;
                 }
                 if (!empty($work_plan_view_access) || (true === $work_plan_create_access)) {
-                    $content .= '<details class="wcs4">';
+                    $content .= '<details class="wcs4" id="wcs_student_work_plan-shortcode-wrapper">';
                     if (!empty($work_plan_view_access)) {
                         $content .= '<summary><strong>' . __('Work Plans', 'wcs4') . '</strong></summary>';
                         $params = [];
@@ -202,7 +214,7 @@ add_filter('the_content', static function ($content) {
                         $params[] = 'template_partial="' . $wcs4_settings['work_plan_shortcode_template_partial_type'] . '"';
                         $params[] = 'template_periodic="' . $wcs4_settings['work_plan_shortcode_template_periodic_type'] . '"';
                         $params[] = 'limit=' . $work_plan_view_access;
-                        $content .= '[student_work_plan  ' . implode(' ', $params) . ']';
+                        $content .= '[wcs_student_work_plan  ' . implode(' ', $params) . ']';
                     }
 
                     if (true === $work_plan_create_access) {
@@ -216,7 +228,7 @@ add_filter('the_content', static function ($content) {
                             );
                             $params[] = $type . '="' . $_SESSION[WCS_SESSION_SATISFY_POST]['ID'] . '"';
                         }
-                        $content .= '[student_work_plan_create  ' . implode(' ', $params) . ']';
+                        $content .= '[wcs_student_work_plan_create  ' . implode(' ', $params) . ']';
                     }
                     $content .= '</details>';
                 }
@@ -300,18 +312,34 @@ add_filter('single_template', static function ($single) {
 /**
  * Order custom types by title
  */
+add_filter('posts_orderby', static function ($orderby, $query) {
+    if (empty($query->tax_query)) {
+        return;
+    }
+    if (empty($query->tax_query->queries)) {
+        return;
+    }
+
+    if (!array_key_exists($query->tax_query->queries[0]['taxonomy'], WCS4_TAXONOMY_TYPES_WHITELIST)) {
+        return;
+    }
+    global $wpdb;
+    return "{$wpdb->posts}.post_title ASC";
+}, 99, 2);
+
 add_action('pre_get_posts', static function ($query) {
     if (isset($query->query_vars['post_type'])
         && (
-            (!is_array($query->query_vars['post_type']) && array_key_exists(
-                    $query->query_vars['post_type'],
-                    WCS4_POST_TYPES_WHITELIST
-                ))
+            (
+                !is_array($query->query_vars['post_type'])
+                && array_key_exists($query->query_vars['post_type'], WCS4_POST_TYPES_WHITELIST)
+            )
             ||
-            (is_array($query->query_vars['post_type']) && array_intersect(
-                    $query->query_vars['post_type'],
-                    array_keys(WCS4_POST_TYPES_WHITELIST)
-                ))
+            (
+                is_array($query->query_vars['post_type'])
+                &&
+                array_intersect($query->query_vars['post_type'], array_keys(WCS4_POST_TYPES_WHITELIST))
+            )
         )
     ) {
         $query->set('orderby', 'title');

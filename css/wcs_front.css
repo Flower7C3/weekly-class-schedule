@@ -6,7 +6,13 @@
     margin-bottom: 20px;
 }
 
-.wcs4-schedule-grid {
+.wcs4_schedule_grid:fullscreen {
+    width: 100vw;
+    height: 100vh;
+    background: white;
+}
+
+.wcs4_schedule_grid {
     display: grid;
     grid-gap: 5px;
     width: 100%;
@@ -19,7 +25,7 @@
     line-height: 1.4;
 }
 
-.wcs4-schedule-grid .wcs4-grid-weekday {
+.wcs4_schedule_grid .wcs4-grid-weekday {
     text-align: center;
     margin-bottom: 10px;
     border-bottom: 1px solid black;
@@ -27,7 +33,7 @@
     grid-row: days;
 }
 
-.wcs4-schedule-grid .wcs4-grid-hour {
+.wcs4_schedule_grid .wcs4-grid-hour {
     text-align: right;
     padding: 5px;
     grid-column: hours;
@@ -36,6 +42,15 @@
 .wcs4-grid-lesson {
     padding: 5px;
     position: relative;
+}
+
+.wcs4-grid-lesson p {
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+.wcs4-grid-lesson p + p {
+    margin-top: 1rem;
 }
 
 .wcs4-grid-lesson .wcs4-details-box-container {
@@ -85,4 +100,109 @@
 
 .wcs4-form-wrap fieldset:first-child {
     margin-top: 0;
+}
+
+.spinner {
+    background: url(/wp-admin/images/spinner.gif) no-repeat;
+    background-size: 20px 20px;
+    display: inline-block;
+    visibility: hidden;
+    float: right;
+    vertical-align: middle;
+    opacity: 0.7;
+    filter: alpha(opacity=70);
+    width: 20px;
+    height: 20px;
+    margin: 4px 10px 0;
+}
+
+.spinner.is-active {
+    visibility: visible;
+}
+
+.error {
+    color: red;
+}
+
+/** print **/
+
+
+@media print {
+    @page {
+        size: A4;
+        margin: 0;
+    }
+
+    html, body {
+        width: 210mm;
+        height: 297mm;
+    }
+
+    body {
+        font-size: 0.8em;
+    }
+
+    body.single-wcs4_subject #tc-page-wrap > header,
+    body.single-wcs4_teacher #tc-page-wrap > header,
+    body.single-wcs4_student #tc-page-wrap > header,
+    body.single-wcs4_classroom #tc-page-wrap > header {
+        display: none;
+    }
+
+    body.single-wcs4_subject .header-bottom,
+    body.single-wcs4_teacher .header-bottom,
+    body.single-wcs4_student .header-bottom,
+    body.single-wcs4_classroom .header-bottom {
+        display: none;
+    }
+
+    body.single-wcs4_subject .btn,
+    body.single-wcs4_teacher .btn,
+    body.single-wcs4_student .btn,
+    body.single-wcs4_classroom .btn {
+        display: none;
+    }
+
+    body.single-wcs4_subject details,
+    body.single-wcs4_teacher details,
+    body.single-wcs4_student details,
+    body.single-wcs4_classroom details {
+        display: none;
+    }
+
+    body.single-wcs4_subject footer,
+    body.single-wcs4_teacher footer,
+    body.single-wcs4_student footer,
+    body.single-wcs4_classroom footer {
+        display: none;
+    }
+
+    body.single-wcs4_subject aside,
+    body.single-wcs4_teacher aside,
+    body.single-wcs4_student aside,
+    body.single-wcs4_classroom aside {
+        display: none;
+    }
+
+    body.single-wcs4_subject nav,
+    body.single-wcs4_teacher nav,
+    body.single-wcs4_student nav,
+    body.single-wcs4_classroom nav {
+        display: none;
+    }
+
+    body.single-wcs4_subject .czr-wp-the-content > p,
+    body.single-wcs4_teacher .czr-wp-the-content > p,
+    body.single-wcs4_student .czr-wp-the-content > p,
+    body.single-wcs4_classroom .czr-wp-the-content > p {
+        display: none;
+    }
+
+    body.single-wcs4_subject .wcs4_schedule_grid,
+    body.single-wcs4_teacher .wcs4_schedule_grid,
+    body.single-wcs4_student .wcs4_schedule_grid,
+    body.single-wcs4_classroom .wcs4_schedule_grid {
+        overflow: unset;
+    }
+
 }

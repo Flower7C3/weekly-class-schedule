@@ -2,6 +2,7 @@
 /**
  * @var array $table
  */
+
 ?>
 <div class="wrap wcs4-management-page-callback">
     <h1 class="wp-heading-inline"><?php
@@ -16,7 +17,7 @@
             <div id="col-left">
                 <div class="col-wrap">
                     <?php
-                    include  'admin_form.php';?>
+                    include 'admin_form.php'; ?>
                 </div>
             </div><!-- /col-left -->
             <?php
@@ -25,14 +26,14 @@
             <div class="tablenav top">
                 <div class="alignleft actions">
                     <?php
-                    include  'admin_search.php';?>
+                    require __DIR__ . '/../_common/admin_search.php'; ?>
                 </div>
                 <br class="clear">
             </div>
-            <div class="col-wrap" id="wcs4-schedule-events-list-wrapper">
+            <div class="col-wrap" id="wcs4-schedules-list-wrapper">
                 <?php
                 foreach ($table as $key => $dayData): ?>
-                    <section id="wcs4-schedule-day-<?php
+                    <section id="wcs4_schedule_day-<?php
                     echo $key; ?>">
                         <h2>
                             <?php

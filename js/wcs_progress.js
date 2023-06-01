@@ -6,10 +6,11 @@
 
     let SCOPE = 'progress';
     let FILTER_ID = '#wcs4-progresses-filter';
+    let LIST_ID = '#wcs4-progresses-list-wrapper';
 
     $(document).ready(function () {
         WCS4_ADMIN.bind_search_handler(FILTER_ID, reload_html_view);
-        WCS4_ADMIN.bind_sort_handler(FILTER_ID, reload_html_view);
+        WCS4_ADMIN.bind_sort_handler(LIST_ID, FILTER_ID, reload_html_view);
         WCS4_ADMIN.bind_edit_handler(SCOPE, set_entry_data_to_form);
         WCS4_ADMIN.bind_copy_handler(SCOPE, set_entry_data_to_form);
         WCS4_ADMIN.bind_delete_handler(SCOPE, function (data) {
@@ -20,6 +21,12 @@
                 $sortable.data('order-current-direction'));
         });
         bind_submit_handler();
+        $(document).on('change.wcs4_progress_type', '#wcs4-progress-form [name="type"]', function () {
+            bind_form_handler();
+        });
+        $(document).on('reset.wcs4_progress_type', '#wcs4-progress-form', function () {
+            bind_form_handler();
+        });
         bind_form_handler();
         bind_create_handler();
     });
@@ -28,23 +35,23 @@
      * Handles the Add Item button click event.
      */
     let bind_submit_handler = function () {
-        $('.wcs4-submit-progress-form').click(function (e) {
-            let entry;
+        let $form = $('#wcs4-progress-form');
+        $form.find('#wcs4-submit-form').click(function (e) {
             e.preventDefault();
-            entry = {
+            let entry = {
                 action: 'wcs_add_or_update_progress_entry',
                 security: WCS4_AJAX_OBJECT.ajax_nonce,
-                subject_id: WCS4_LIB.form_field_value('wcs4_progress_subject'),
-                teacher_id: WCS4_LIB.form_field_value('wcs4_progress_teacher'),
-                student_id: WCS4_LIB.form_field_value('wcs4_progress_student'),
-                start_date: $('#wcs4_progress_start_date').val(),
-                end_date: $('#wcs4_progress_end_date').val(),
-                improvements: $('#wcs4_progress_improvements').val(),
-                indications: $('#wcs4_progress_indications').val(),
-                type: $('#wcs4_progress_type').val(),
+                subject_id: WCS4_LIB.form_field_value($form, 'subject'),
+                teacher_id: WCS4_LIB.form_field_value($form, 'teacher'),
+                student_id: WCS4_LIB.form_field_value($form, 'student'),
+                start_date: WCS4_LIB.form_field_value($form, 'start_date'),
+                end_date: WCS4_LIB.form_field_value($form, 'end_date'),
+                improvements: WCS4_LIB.form_field_value($form, 'improvements'),
+                indications: WCS4_LIB.form_field_value($form, 'indications'),
+                type: WCS4_LIB.form_field_value($form, 'type'),
             };
-            WCS4_LIB.submit_entry(entry, function (data) {
-                if (data.result === 'updated') {
+            WCS4_LIB.submit_entry(entry, function (data, status) {
+                if (200 <= status && status < 300) {
                     // Let's refresh the day
                     let search_form_data = WCS4_ADMIN.search_form_process_and_push_history_state($(FILTER_ID))
                     reload_html_view(search_form_data, 'fade',
@@ -57,48 +64,6 @@
             });
         });
     }
-    /**
-     * Fill up form with entry data
-     */
-    let set_entry_data_to_form = function (entry) {
-        if (Array.isArray(entry)) {
-            $('#wcs4_progress_type').val('type.periodic').change();
-            let teacher_ids = [];
-            let student_id = null;
-            let improvements = '';
-            let indications = '';
-            entry.forEach(function (item) {
-                if (Array.isArray(item.teacher_id)) {
-                    item.teacher_id.forEach(function (id) {
-                        teacher_ids.push(id);
-                    });
-                } else {
-                    teacher_ids.push(item.teacher_id);
-                }
-                student_id = item.student_id;
-                improvements += item.improvements + "\n";
-                indications += item.indications + "\n";
-            });
-            $('#wcs4_progress_teacher').val(teacher_ids);
-            $('#wcs4_progress_student').val(student_id);
-            $('#wcs4_progress_start_date').val(null);
-            $('#wcs4_progress_end_date').val(null);
-            $('#wcs4_progress_improvements').val(improvements);
-            $('#wcs4_progress_indications').val(indications);
-        } else if (entry.hasOwnProperty('id')) {
-            $('#wcs4_progress_type').val(entry.type).change();
-            $('#wcs4_progress_subject').val(entry.subject_id);
-            $('#wcs4_progress_teacher').val(entry.teacher_id);
-            $('#wcs4_progress_student').val(entry.student_id);
-            $('#wcs4_progress_start_date').val(entry.start_date);
-            $('#wcs4_progress_end_date').val(entry.end_date);
-            $('#wcs4_progress_improvements').val(entry.improvements);
-            $('#wcs4_progress_indications').val(entry.indications);
-        } else {
-            WCS4_LIB.show_message(WCS4_AJAX_OBJECT.ajax_error, 'error');
-        }
-    };
-
     /**
      * Updates dynamically a specific progress vi.
      */
@@ -117,36 +82,93 @@
             order_field: order_field,
             order_direction: order_direction,
         };
-        let $parent = $('#wcs4-progress-events-list-wrapper');
+        let $parent = $('#wcs4-progresses-list-wrapper');
         WCS4_LIB.update_view($parent, entry, action);
         update_create_button();
     }
+
+    /**
+     * Fill up form with entry data
+     */
+    let set_entry_data_to_form = function (entry) {
+        let $form = $('#wcs4-progress-form');
+        if (Array.isArray(entry)) {
+            $form.find('[name="type"][value="' + 'type.periodic' + '"]').prop('checked', true).change();
+            let teacher_ids = [];
+            let student_id = null;
+            let improvements = '';
+            let indications = '';
+            entry.forEach(function (item) {
+                if (Array.isArray(item.teacher_id)) {
+                    item.teacher_id.forEach(function (id) {
+                        teacher_ids.push(id);
+                    });
+                } else {
+                    teacher_ids.push(item.teacher_id);
+                }
+                student_id = item.student_id;
+                improvements += item.improvements + "\n";
+                indications += item.indications + "\n";
+            });
+            $form.find('[name="teacher"]').val(teacher_ids);
+            $form.find('[name="student"]').val(student_id);
+            $form.find('[name="start_date"]').val(null);
+            $form.find('[name="end_date"]').val(null);
+            $form.find('[name="improvements"]').val(improvements);
+            $form.find('[name="indications"]').val(indications);
+        } else if (entry.hasOwnProperty('id')) {
+            $form.find('[name="type"][value="' + entry.type + '"]').prop('checked', true).change();
+            $form.find('[name="subject"]').val(entry.subject_id);
+            $form.find('[name="teacher"]').val(entry.teacher_id);
+            $form.find('[name="student"]').val(entry.student_id);
+            $form.find('[name="start_date"]').val(entry.start_date);
+            $form.find('[name="end_date"]').val(entry.end_date);
+            $form.find('[name="improvements"]').val(entry.improvements);
+            $form.find('[name="indications"]').val(entry.indications);
+        } else {
+            WCS4_LIB.show_message(WCS4_AJAX_OBJECT.ajax_error, 'error');
+        }
+    };
     /**
      * Handles the search button click event.
      */
     let bind_form_handler = function () {
-        $(document).on('change.wcs4_progress_type', '#wcs4_progress_type', function () {
-            switch ($(this).val()) {
-                default:
-                    $('#wcs4_progress_subject').closest('fieldset').show();
-                    $('#wcs4_progress_teacher').attr('multiple', false).attr('size', null);
-                    $('#wcs4_progress_start_date').closest('fieldset').show();
-                    $('#wcs4_progress_end_date').closest('fieldset').show();
-                    break;
-                case 'type.partial':
-                    $('#wcs4_progress_subject').closest('fieldset').show();
-                    $('#wcs4_progress_teacher').attr('multiple', false).attr('size', null);
-                    $('#wcs4_progress_start_date').closest('fieldset').hide();
-                    $('#wcs4_progress_end_date').closest('fieldset').hide();
-                    break;
-                case 'type.periodic':
-                    $('#wcs4_progress_subject').closest('fieldset').hide();
-                    $('#wcs4_progress_teacher').attr('multiple', true).attr('size', 10);
-                    $('#wcs4_progress_start_date').closest('fieldset').show();
-                    $('#wcs4_progress_end_date').closest('fieldset').show();
-                    break;
-            }
-        })
+        let $form = $('#wcs4-progress-form');
+        switch ($form.find('[name="type"]:checked').val()) {
+            default:
+                $('#wcs4_progress_subject').closest('fieldset').hide();
+                $('#wcs4_progress_student').closest('fieldset').hide();
+                $('#wcs4_progress_teacher').closest('fieldset').hide();
+                $('#wcs4_progress_teacher').attr('multiple', false).attr('size', null);
+                $('#wcs4_progress_start_date').closest('fieldset').hide();
+                $('#wcs4_progress_end_date').closest('fieldset').hide();
+                $('#wcs4_progress_improvements').closest('fieldset').hide();
+                $('#wcs4_progress_indications').closest('fieldset').hide();
+                $('#wcs4_progress_buttons-wrapper button').attr('disabled', true).change();
+                break;
+            case 'type.partial':
+                $('#wcs4_progress_subject').closest('fieldset').show();
+                $('#wcs4_progress_student').closest('fieldset').show();
+                $('#wcs4_progress_teacher').closest('fieldset').show();
+                $('#wcs4_progress_teacher').attr('multiple', false).attr('size', null);
+                $('#wcs4_progress_start_date').closest('fieldset').hide();
+                $('#wcs4_progress_end_date').closest('fieldset').hide();
+                $('#wcs4_progress_improvements').closest('fieldset').show();
+                $('#wcs4_progress_indications').closest('fieldset').show();
+                $('#wcs4_progress_buttons-wrapper button').attr('disabled', false).change();
+                break;
+            case 'type.periodic':
+                $('#wcs4_progress_subject').closest('fieldset').hide();
+                $('#wcs4_progress_student').closest('fieldset').show();
+                $('#wcs4_progress_teacher').closest('fieldset').show();
+                $('#wcs4_progress_teacher').attr('multiple', true).attr('size', 10);
+                $('#wcs4_progress_start_date').closest('fieldset').show();
+                $('#wcs4_progress_end_date').closest('fieldset').show();
+                $('#wcs4_progress_improvements').closest('fieldset').show();
+                $('#wcs4_progress_indications').closest('fieldset').show();
+                $('#wcs4_progress_buttons-wrapper button').attr('disabled', false).change();
+                break;
+        }
     };
 
     let bind_create_handler = function () {
@@ -172,9 +194,9 @@
 
     let update_create_button = function () {
         if ('' === $('#search_wcs4_progress_student_id').val()) {
-            $('#wcs4-progresses-filter  [data-action="generate"]').attr('disabled', true)
+            $('#wcs4-progresses-filter [data-action="generate"]').attr('disabled', true)
         } else {
-            $('#wcs4-progresses-filter  [data-action="generate"]').attr('disabled', false)
+            $('#wcs4-progresses-filter [data-action="generate"]').attr('disabled', false)
         }
     }
 

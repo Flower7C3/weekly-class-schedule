@@ -357,7 +357,7 @@ class Settings
                 'subject_post_pass_satisfy_any' => 'no',
                 'subject_schedule_layout' => 'table',
                 'subject_schedule_template_table_short' => _x(
-                    '<small>{start time}-{end time}</small><br>{tea}/{stu} @{class}',
+                    '<small>{start time}-{end time}</small><br>{tea}/{stu} @{cls}',
                     'template table short for subject',
                     'wcs4'
                 ),
@@ -390,7 +390,7 @@ class Settings
                 'teacher_post_pass_satisfy_any' => 'no',
                 'teacher_schedule_layout' => 'table',
                 'teacher_schedule_template_table_short' => _x(
-                    '<small>{start time}-{end time}</small><br>{subject} @{class} ({stu})',
+                    '<small>{start time}-{end time}</small><br>{subject} @{cls} ({stu})',
                     'template table short for teacher',
                     'wcs4'
                 ),
@@ -423,7 +423,7 @@ class Settings
                 'student_post_pass_satisfy_any' => 'no',
                 'student_schedule_layout' => 'table',
                 'student_schedule_template_table_short' => _x(
-                    '<small>{start time}-{end time}</small><br>{subject} ({tea}) @{class}',
+                    '<small>{start time}-{end time}</small><br>{subject} ({tea}) @{cls}',
                     'template table short for student',
                     'wcs4'
                 ),

@@ -2,6 +2,8 @@
 
 namespace WCS4\Helper;
 
+use WCS4\Entity\Journal_Item;
+use WCS4\Entity\Lesson_Item;
 use WCS4\Entity\Progress_Item;
 use WCS4\Entity\WorkPlan_Item;
 
@@ -31,7 +33,7 @@ class Admin
         $table_teacher = DB::get_schedule_teacher_table_name();
         $table_student = DB::get_schedule_student_table_name();
 
-        $values = array();
+        $values = [];
 
         switch ($key) {
             case 'subject':
@@ -140,32 +142,19 @@ class Admin
         $default = null,
         bool $required = false
     ): string {
-        $values = [];
-        switch ($package) {
-            case 'visibility':
-            case 'collision_detection':
-                $values = [
-                    '' => __('Select option', 'wcs4'),
-                    'yes' => __('Yes', 'wcs4'),
-                    'no' => __('No', 'wcs4')
-                ];
-                break;
-            case 'work_plan_type':
-                $values = [
-                    '' => _x('Select type', 'Schedule type as none', 'wcs4'),
-                    WorkPlan_Item::TYPE_PARTIAL => _x('Partial', 'Schedule type as partial', 'wcs4'),
-                    WorkPlan_Item::TYPE_CUMULATIVE => _x('Cumulative', 'Schedule type as cumulative', 'wcs4')
-                ];
-                break;
-            case 'progress_type':
-                $values = [
-                    '' => _x('Select type', 'Schedule type as none', 'wcs4'),
-                    Progress_Item::TYPE_PARTIAL => _x('Partial', 'Schedule type as partial', 'wcs4'),
-                    Progress_Item::TYPE_PERIODIC => _x('Periodic', 'Schedule type as full', 'wcs4')
-                ];
-                break;
-        }
-        return wcs4_select_list($values, $id, $name, $default, $required);
+        return wcs4_select_list(self::list_values($package), $id, $name, $default, $required);
+    }
+
+    public static function generate_admin_radio_options(
+        string $package,
+        string $id = '',
+        string $name = '',
+        $default = null,
+        bool $required = false
+    ): string {
+        $values = self::list_values($package, true);
+        unset($values['']);
+        return wcs4_select_radio($values, $id, $name, $default, $required);
     }
 
     public static function generate_date_select_list($id, $name, array $options = []): string
@@ -178,9 +167,118 @@ class Admin
         return wcs4_timefield($id, $name, $options);
     }
 
-    public static function generate_weekday_select_list($name, array $options = []): string
+    public static function generate_weekday_select_list($id, $name, array $options = []): string
     {
         $days = wcs4_get_weekdays();
-        return wcs4_select_list($days, $name, $name, null, $options['required']);
+        return wcs4_select_list($days, $id, $name, null, $options['required']);
+    }
+
+    private static function list_values(string $package, bool $prependIcon = false): array
+    {
+        return match ($package) {
+            'schedule_visibility' => [
+                '' => __('Select option', 'wcs4'),
+                'visible' =>
+                    (true === $prependIcon
+                        ? '<em class="' . Lesson_Item::visibilityIcon(true) . '"></em>'
+                        : '')
+                    . Lesson_Item::visibilityLabel(true),
+                'hidden' =>
+                    (true === $prependIcon
+                        ? '<em class="' . Lesson_Item::visibilityIcon(false) . '"></em>'
+                        : '')
+                    . Lesson_Item::visibilityLabel(false),
+            ],
+            'schedule_collision_detection' => [
+                '' => __('Select option', 'wcs4'),
+                'yes' =>
+                    (true === $prependIcon
+                        ? '<em class="' . Lesson_Item::collisionDetectionIcon(true) . '"></em>'
+                        : '')
+                    . Lesson_Item::collisionDetectionLabel(true),
+                'no' =>
+                    (true === $prependIcon
+                        ? '<em class="' . Lesson_Item::collisionDetectionIcon(false) . '"></em>'
+                        : '')
+                    . Lesson_Item::collisionDetectionLabel(false),
+            ],
+            'journal_type' => [
+                '' => __('Select type', 'wcs4'),
+                Journal_Item::TYPE_NORMAL =>
+                    (true === $prependIcon
+                        ? '<em class="' . Journal_Item::typeIcon(Journal_Item::TYPE_NORMAL) . '"></em>'
+                        : '')
+                    . Journal_Item::typeLabel(Journal_Item::TYPE_NORMAL),
+                Journal_Item::TYPE_ABSENT_TEACHER_FREE_VACATION =>
+                    (true === $prependIcon
+                        ? '<em class="' . Journal_Item::typeIcon(Journal_Item::TYPE_ABSENT_TEACHER_FREE_VACATION) . '"></em>'
+                        : '')
+                    . Journal_Item::typeLabel(Journal_Item::TYPE_ABSENT_TEACHER_FREE_VACATION),
+                Journal_Item::TYPE_ABSENT_TEACHER_PAID_VACATION =>
+                    (true === $prependIcon
+                        ? '<em class="' . Journal_Item::typeIcon(Journal_Item::TYPE_ABSENT_TEACHER_PAID_VACATION) . '"></em>'
+                        : '')
+                    . Journal_Item::typeLabel(Journal_Item::TYPE_ABSENT_TEACHER_PAID_VACATION),
+                Journal_Item::TYPE_ABSENT_TEACHER_SICK_CHILDCARE =>
+                    (true === $prependIcon
+                        ? '<em class="' . Journal_Item::typeIcon(Journal_Item::TYPE_ABSENT_TEACHER_SICK_CHILDCARE) . '"></em>'
+                        : '')
+                    . Journal_Item::typeLabel(Journal_Item::TYPE_ABSENT_TEACHER_SICK_CHILDCARE),
+                Journal_Item::TYPE_ABSENT_TEACHER_HEALTHY_CHILDCARE =>
+                    (true === $prependIcon
+                        ? '<em class="' . Journal_Item::typeIcon(Journal_Item::TYPE_ABSENT_TEACHER_HEALTHY_CHILDCARE) . '"></em>'
+                        : '')
+                    . Journal_Item::typeLabel(Journal_Item::TYPE_ABSENT_TEACHER_HEALTHY_CHILDCARE),
+                Journal_Item::TYPE_ABSENT_TEACHER_SICK_LEAVE =>
+                    (true === $prependIcon
+                        ? '<em class="' . Journal_Item::typeIcon(Journal_Item::TYPE_ABSENT_TEACHER_SICK_LEAVE) . '"></em>'
+                        : '')
+                    . Journal_Item::typeLabel(Journal_Item::TYPE_ABSENT_TEACHER_SICK_LEAVE),
+                Journal_Item::TYPE_ABSENT_TEACHER =>
+                    (true === $prependIcon
+                        ? '<em class="' . Journal_Item::typeIcon(Journal_Item::TYPE_ABSENT_TEACHER) . '"></em>'
+                        : '')
+                    . Journal_Item::typeLabel(Journal_Item::TYPE_ABSENT_TEACHER),
+                Journal_Item::TYPE_ABSENT_STUDENT =>
+                    (true === $prependIcon
+                        ? '<em class="' . Journal_Item::typeIcon(Journal_Item::TYPE_ABSENT_STUDENT) . '"></em>'
+                        : '')
+                    . Journal_Item::typeLabel(Journal_Item::TYPE_ABSENT_STUDENT),
+                Journal_Item::TYPE_TEACHER_OFFICE_WORKS =>
+                    (true === $prependIcon
+                        ? '<em class="' . Journal_Item::typeIcon(Journal_Item::TYPE_TEACHER_OFFICE_WORKS) . '"></em>'
+                        : '')
+                    . Journal_Item::typeLabel(Journal_Item::TYPE_TEACHER_OFFICE_WORKS),
+            ],
+            'work_plan_type' => [
+                '' =>
+                    __('Select type', 'wcs4'),
+                WorkPlan_Item::TYPE_PARTIAL =>
+                    (true === $prependIcon
+                        ? '<em class="' . WorkPlan_Item::typeIcon(WorkPlan_Item::TYPE_PARTIAL) . '"></em>'
+                        : '')
+                    . WorkPlan_Item::typeLabel(WorkPlan_Item::TYPE_PARTIAL),
+                WorkPlan_Item::TYPE_CUMULATIVE =>
+                    (true === $prependIcon
+                        ? '<em class="' . WorkPlan_Item::typeIcon(WorkPlan_Item::TYPE_CUMULATIVE) . '"></em>'
+                        : '')
+                    . WorkPlan_Item::typeLabel(WorkPlan_Item::TYPE_CUMULATIVE),
+            ],
+            'progress_type' => [
+                '' =>
+                    __('Select type', 'wcs4'),
+                Progress_Item::TYPE_PARTIAL =>
+                    (true === $prependIcon
+                        ? '<em class="' . Progress_Item::typeIcon(Progress_Item::TYPE_PARTIAL) . '"></em>'
+                        : '')
+                    . Progress_Item::typeLabel(Progress_Item::TYPE_PARTIAL),
+                Progress_Item::TYPE_PERIODIC =>
+                    (true === $prependIcon
+                        ? '<em class="' . Progress_Item::typeIcon(Progress_Item::TYPE_PERIODIC) . '"></em>'
+                        : '')
+                    . Progress_Item::typeLabel(Progress_Item::TYPE_PERIODIC),
+            ],
+            default => [],
+        };
     }
 }

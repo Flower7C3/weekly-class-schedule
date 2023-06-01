@@ -40,16 +40,16 @@ add_action('wp_head', static function () {
         border: 1px solid #$border;
         
     }
-    .wcs4-schedule-wrapper table th {
+    .wcs4_schedule_wrapper table th {
         background-color: #$heading_bg;
         color: #$heading_text;
     }
-    .wcs4-schedule-wrapper table {
+    .wcs4_schedule_wrapper table {
             background-color: #$bg;
     }
-    .wcs4-schedule-wrapper table,
-    .wcs4-schedule-wrapper table td,
-    .wcs4-schedule-wrapper table th {
+    .wcs4_schedule_wrapper table,
+    .wcs4_schedule_wrapper table td,
+    .wcs4_schedule_wrapper table th {
         border: 1px solid #$border;
     }
 CSS;

@@ -5,7 +5,17 @@ use WCS4\Helper\Admin;
 ?>
 <div class="wcs4-form-wrap" id="wcs4-management-form-wrapper">
     <h2 id="wcs4-management-form-title"><?= _x('Add New Journal', 'page title', 'wcs4') ?></h2>
-    <form id="wcs4-journal-management-form" class="czr-form" action="<?= $_SERVER['PHP_SELF'] ?>" method="post">
+    <form id="wcs4-journal-form" class="czr-form" action="<?= $_SERVER['PHP_SELF'] ?>" method="post">
+        <fieldset class="form-field form-required form-field-type-wrap">
+            <label for="wcs4_journal_type"><?php
+                _e('Type', 'wcs4'); ?></label>
+            <?php
+            echo Admin::generate_admin_radio_options(
+                'journal_type',
+                'wcs4_journal_type',
+                'type'
+            ); ?>
+        </fieldset>
         <?php
         if (empty($subject)): ?>
             <fieldset class="form-field form-required form-field-subject_id-wrap">
@@ -13,7 +23,7 @@ use WCS4\Helper\Admin;
                 <?= Admin::generate_admin_select_list(
                     'subject',
                     'wcs4_journal_subject',
-                    'wcs4_journal_subject',
+                    'subject',
                     $subject ?? null,
                     true,
                     false,
@@ -23,7 +33,7 @@ use WCS4\Helper\Admin;
             </fieldset>
         <?php
         else: ?>
-            <input type="hidden" id="wcs4_journal_subject" name="wcs4_journal_subject" value="<?= $subject ?>"/>
+            <input type="hidden" id="wcs4_journal_subject" name="subject" value="<?= $subject ?>"/>
         <?php
         endif; ?>
         <?php
@@ -33,7 +43,7 @@ use WCS4\Helper\Admin;
                 <?= Admin::generate_admin_select_list(
                     'teacher',
                     'wcs4_journal_teacher',
-                    'wcs4_journal_teacher',
+                    'teacher',
                     $teacher ?? null,
                     true,
                     true,
@@ -43,7 +53,7 @@ use WCS4\Helper\Admin;
             </fieldset>
         <?php
         else: ?>
-            <input type="hidden" id="wcs4_journal_teacher" name="wcs4_journal_teacher[]" value="<?=$teacher ?>"/>
+            <input type="hidden" id="wcs4_journal_teacher" name="teacher[]" value="<?= $teacher ?>"/>
         <?php
         endif; ?>
         <?php
@@ -53,7 +63,7 @@ use WCS4\Helper\Admin;
                 <?= Admin::generate_admin_select_list(
                     'student',
                     'wcs4_journal_student',
-                    'wcs4_journal_student',
+                    'student',
                     $student ?? null,
                     true,
                     true,
@@ -63,7 +73,7 @@ use WCS4\Helper\Admin;
             </fieldset>
         <?php
         else: ?>
-            <input type="hidden" id="wcs4_journal_student" name="wcs4_journal_student[]" value="<?= $student ?>"/>
+            <input type="hidden" id="wcs4_journal_student" name="student[]" value="<?= $student ?>"/>
         <?php
         endif; ?>
         <fieldset class="form-field row">
@@ -71,7 +81,7 @@ use WCS4\Helper\Admin;
                 <label for="wcs4_journal_date"><?= __('Date', 'wcs4') ?></label>
                 <?= Admin::generate_date_select_list(
                     'wcs4_journal_date',
-                    'wcs4_journal_date',
+                    'date',
                     ['default' => date('Y-m-d'), 'required' => true]
                 ) ?>
             </div>
@@ -79,7 +89,7 @@ use WCS4\Helper\Admin;
                 <label for="wcs4_journal_start_time"><?= __('Start Time', 'wcs4') ?></label>
                 <?= Admin::generate_time_select_list(
                     'wcs4_journal_start_time',
-                    'wcs4_journal_start_time',
+                    'start_time',
                     ['default' => date('H:00', strtotime('-1 hour')), 'required' => true, 'step' => 300]
                 ) ?>
             </div>
@@ -87,21 +97,23 @@ use WCS4\Helper\Admin;
                 <label for="wcs4_journal_end_time"><?= __('End Time', 'wcs4') ?></label>
                 <?= Admin::generate_time_select_list(
                     'wcs4_journal_end_time',
-                    'wcs4_journal_end_time',
+                    'end_time',
                     ['default' => date('H:00'), 'required' => true, 'step' => 300]
                 ) ?>
             </div>
         </fieldset>
         <fieldset class="form-field form-required form-field-topic-wrap">
             <label for="wcs4_journal_topic"><?= __('Topic', 'wcs4') ?></label>
-            <textarea rows="3" id="wcs4_journal_topic" name="wcs4_journal_topic"></textarea>
+            <textarea rows="3" id="wcs4_journal_topic" name="topic"></textarea>
         </fieldset>
-        <fieldset class="submit" id="wcs4-journal-buttons-wrapper">
+        <fieldset class="submit" id="wcs4_journal_buttons-wrapper">
             <span class="spinner"></span>
-            <input id="wcs4-submit-form" type="submit" class="button-primary wcs4-submit-journal-form"
-                   value="<?php
-                   _ex('Add Journal', 'button text', 'wcs4') ?>" name="wcs4-submit"/>
-            <button id="wcs4-reset-form" type="reset" class="button-link wcs4-reset-journal-form"
+            <button id="wcs4-submit-form" type="submit" class="button button-primary wcs4-submit-journal-form"
+                    name="wcs4-submit">
+                <span class="dashicons dashicons-plus-alt"></span>
+                <?= _x('Add Journal', 'button text', 'wcs4') ?>
+            </button>
+            <button id="wcs4-reset-form" type="reset" class="button button-link wcs4-reset-journal-form"
                     style="display: none;">
                 <?= _x('Reset form', 'button text', 'wcs4') ?>
             </button>

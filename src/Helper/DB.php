@@ -181,6 +181,7 @@ class DB
             `end_time` time NOT NULL,
             `timezone` varchar(255) NOT NULL DEFAULT 'UTC',
             `topic` text,
+            `type` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
             `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
             `updated_at` DATETIME DEFAULT NULL,
             `created_by` INT NULL,
@@ -203,6 +204,7 @@ class DB
             `end_date` date NOT NULL,
             `improvements` text,
             `indications` text,
+            `type` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
             `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
             `updated_at` DATETIME DEFAULT NULL,
             `created_by` INT NULL,
@@ -486,7 +488,9 @@ class DB
         $response = [];
         if ($result) {
             foreach ($result as $key => $val) {
-                $response[$key] = preg_match('/([,]+)/', $val) ? explode(',', $val) : $val;
+                $response[$key] = (null !== $val && preg_match('/([,]+)/', $val))
+                    ? explode(',', $val)
+                    : $val;
             }
         }
         return $response;
@@ -494,7 +498,7 @@ class DB
 
     public static function get_items(
         string $className,
-        string $query,
+        string $query_str,
         array $where,
         array $query_arr,
         array $order_field,
@@ -503,23 +507,23 @@ class DB
     ): array {
         global $wpdb;
         if (!empty($where)) {
-            $query .= ' WHERE ' . implode(' AND ', $where);
+            $query_str .= ' WHERE ' . implode(' AND ', $where);
         }
         $order = [];
         foreach ($order_field as $field => $direction) {
             $direction = ($direction === 'asc' || $direction === 'ASC') ? 'ASC' : 'DESC';
             $order[] = sprintf('%s %s', $field, $direction);
         }
-        $query .= ' ORDER BY ' . implode(', ', $order);
+        $query_str .= ' ORDER BY ' . implode(', ', $order);
         if (null !== $limit) {
-            $query .= ' LIMIT %d';
+            $query_str .= ' LIMIT %d';
             $query_arr[] = $limit;
             if (null !== $paged) {
-                $query .= ' OFFSET %d';
+                $query_str .= ' OFFSET %d';
                 $query_arr[] = $limit * ($paged - 1);
             }
         }
-        $query = $wpdb->prepare($query, $query_arr);
+        $query = $wpdb->prepare($query_str, $query_arr);
         $results = $wpdb->get_results($query);
         $format = get_option('time_format');
         $items = [];

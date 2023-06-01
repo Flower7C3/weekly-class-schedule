@@ -54,8 +54,8 @@ add_action('init', static function () {
         ),
         'hierarchical' => false,
         'public' => true, # also: publicly_queryable, show_ui, show_in_admin_bar
-        'exclude_from_search' => $wcs4_settings['subject_archive_slug'] ? true : false,
-        'show_in_nav_menus' => $wcs4_settings['subject_post_slug'] ? true : false,
+        'exclude_from_search' => (bool)$wcs4_settings['subject_archive_slug'],
+        'show_in_nav_menus' => (bool)$wcs4_settings['subject_post_slug'],
         'has_archive' => $wcs4_settings['subject_archive_slug'] ?: false,
         'rewrite' => array(
             'slug' => $wcs4_settings['subject_post_slug'] ?: false,
@@ -120,8 +120,8 @@ add_action('init', static function () {
         ),
         'hierarchical' => false,
         'public' => true, # also: publicly_queryable, show_ui, show_in_admin_bar
-        'exclude_from_search' => $wcs4_settings['teacher_archive_slug'] ? true : false,
-        'show_in_nav_menus' => $wcs4_settings['teacher_post_slug'] ? true : false,
+        'exclude_from_search' => (bool)$wcs4_settings['teacher_archive_slug'],
+        'show_in_nav_menus' => (bool)$wcs4_settings['teacher_post_slug'],
         'has_archive' => $wcs4_settings['teacher_archive_slug'] ?: false,
         'rewrite' => array(
             'slug' => $wcs4_settings['teacher_post_slug'] ?: false,
@@ -182,8 +182,8 @@ add_action('init', static function () {
         ),
         'hierarchical' => false,
         'public' => true, # also: publicly_queryable, show_ui, show_in_admin_bar
-        'exclude_from_search' => $wcs4_settings['student_archive_slug'] ? true : false,
-        'show_in_nav_menus' => $wcs4_settings['student_post_slug'] ? true : false,
+        'exclude_from_search' => (bool)$wcs4_settings['student_archive_slug'],
+        'show_in_nav_menus' => (bool)$wcs4_settings['student_post_slug'],
         'has_archive' => $wcs4_settings['student_archive_slug'] ?: false,
         'rewrite' => array(
             'slug' => $wcs4_settings['student_post_slug'] ?: false,
@@ -248,8 +248,8 @@ add_action('init', static function () {
         ),
         'hierarchical' => false,
         'public' => true, # also: publicly_queryable, show_ui, show_in_admin_bar
-        'exclude_from_search' => $wcs4_settings['classroom_archive_slug'] ? true : false,
-        'show_in_nav_menus' => $wcs4_settings['classroom_post_slug'] ? true : false,
+        'exclude_from_search' => (bool)$wcs4_settings['classroom_archive_slug'],
+        'show_in_nav_menus' => (bool)$wcs4_settings['classroom_post_slug'],
         'has_archive' => $wcs4_settings['classroom_archive_slug'] ?: false,
         'rewrite' => array(
             'slug' => $wcs4_settings['classroom_post_slug'] ?: false,
@@ -335,20 +335,6 @@ function wcs4_actions($actions, $the_post)
             __('Journals', 'wcs4')
         );
     }
-    if (current_user_can(WCS4_JOURNAL_EXPORT_CAPABILITY)) {
-        $actions[] = sprintf(
-            '<a href="%s">%s</a>',
-            'admin-ajax.php?' . http_build_query([
-                'action' => 'wcs_download_journals_html',
-                $type => $the_post->ID,
-                'date_from' => date('Y-m-01'),
-                'date_upto' => date('Y-m-d'),
-                'order_field' => 'time',
-                'order_direction' => 'asc',
-            ]),
-            __('Download Journals as HTML', 'wcs4')
-        );
-    }
     if (current_user_can(WCS4_WORK_PLAN_VIEW_CAPABILITY)) {
         $actions[] = sprintf(
             '<a href="%s">%s</a>',
@@ -359,18 +345,6 @@ function wcs4_actions($actions, $the_post)
             __('Work Plans', 'wcs4')
         );
     }
-    if (current_user_can(WCS4_WORK_PLAN_EXPORT_CAPABILITY)) {
-        $actions[] = sprintf(
-            '<a href="%s">%s</a>',
-            'admin-ajax.php?' . http_build_query([
-                'action' => 'wcs_download_work_plans_html',
-                $type => $the_post->ID,
-                'date_from' => date('Y-m-01'),
-                'date_upto' => date('Y-m-d'),
-            ]),
-            __('Download Work Plans as HTML', 'wcs4')
-        );
-    }
     if (current_user_can(WCS4_PROGRESS_VIEW_CAPABILITY)) {
         $actions[] = sprintf(
             '<a href="%s">%s</a>',
@@ -379,18 +353,6 @@ function wcs4_actions($actions, $the_post)
                 $type => $the_post->ID,
             ]),
             __('Progresses', 'wcs4')
-        );
-    }
-    if (current_user_can(WCS4_PROGRESS_EXPORT_CAPABILITY)) {
-        $actions[] = sprintf(
-            '<a href="%s">%s</a>',
-            'admin-ajax.php?' . http_build_query([
-                'action' => 'wcs_download_progresses_html',
-                $type => $the_post->ID,
-                'date_from' => date('Y-m-01'),
-                'date_upto' => date('Y-m-d'),
-            ]),
-            __('Download Progresses as HTML', 'wcs4')
         );
     }
     return $actions;

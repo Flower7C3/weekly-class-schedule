@@ -42,9 +42,9 @@ let WCS4_ADMIN = (function ($) {
     /**
      * Handles the Add Item button click event.
      */
-    let bind_sort_handler = function (reload_html_view) {
-        $(document).on('click.wcs4-list-sort', '[data-order-field][data-order-direction]', function (e) {
-            let search_form_data = search_form_process_and_push_history_state($(this).closest('.col-right').find('form.results-filter'))
+    let bind_sort_handler = function (list_id, filter_id, reload_html_view) {
+        $(document).on('click.' + list_id + 'wcs4-list-sort', list_id + ' [data-order-field][data-order-direction]', function (e) {
+            let search_form_data = search_form_process_and_push_history_state($(filter_id))
             reload_html_view(search_form_data, 'fade',
                 $(this).data('order-field'),
                 $(this).data('order-direction')
@@ -53,24 +53,26 @@ let WCS4_ADMIN = (function ($) {
     };
 
     let bind_edit_handler = function (scope, set_entry_data_to_form) {
-        $(document).on('click.wcs4-edit-' + scope + '-button', 'tr[data-type="' + scope + '"] .wcs4-edit-button', function (e) {
+        $(document).on('click.wcs4-edit-' + scope + '-button', 'tr[data-scope="' + scope + '"] .wcs4-edit-button', function (e) {
             WCS4_LIB.fetch_entry_data_to_form(scope, $(this).closest('tr').data('id'), set_entry_data_to_form, WCS4_LIB.reset_to_edit_mode);
         });
     };
 
     let bind_copy_handler = function (scope, set_entry_data_to_form) {
-        $(document).on('click.wcs4-copy-' + scope + '-button', 'tr[data-type="' + scope + '"] .wcs4-copy-button', function (e) {
+        $(document).on('click.wcs4-copy-' + scope + '-button', 'tr[data-scope="' + scope + '"] .wcs4-copy-button', function (e) {
             WCS4_LIB.fetch_entry_data_to_form(scope, $(this).closest('tr').data('id'), set_entry_data_to_form, WCS4_LIB.reset_to_copy_mode)
         });
     };
 
     let bind_delete_handler = function (scope, callback) {
-        $(document).on('click.wcs4-delete-' + scope + '-button', 'tr[data-type="' + scope + '"] .wcs4-delete-button', function (e) {
+        $(document).on('click.wcs4-delete-' + scope + '-button', 'tr[data-scope="' + scope + '"] .wcs4-delete-button', function (e) {
+            let row_id = $(this).closest('tr').data('id');
             let entry = {
                 action: 'wcs_delete_' + scope + '_entry',
                 security: WCS4_AJAX_OBJECT.ajax_nonce,
-                row_id: $(this).closest('tr').data('id')
+                row_id: row_id
             };
+            WCS4_LIB.lock_tr(scope, row_id)
             WCS4_LIB.modify_entry(scope, entry, callback, WCS4_AJAX_OBJECT[scope].delete_warning);
         });
     }

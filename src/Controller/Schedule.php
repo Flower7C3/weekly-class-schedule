@@ -13,19 +13,16 @@ use Exception;
 use JetBrains\PhpStorm\NoReturn;
 use RuntimeException;
 use WCS4\Entity\Lesson_Item;
+use WCS4\Exception\AccessDeniedException;
+use WCS4\Exception\ValidationException;
+use WCS4\Helper\Admin;
 use WCS4\Helper\DB;
 use WCS4\Helper\Output;
 
-/**
- * Schedule specific functions.
- */
 class Schedule
 {
     private const TEMPLATE_DIR = __DIR__ . '/../Template/schedule/';
 
-    /**
-     * Callback for generating the schedule management page.
-     */
     public static function callback_of_management_page(): void
     {
         $table = [];
@@ -34,22 +31,64 @@ class Schedule
             $table[$key] = [
                 'day' => $day,
                 'table' => self::get_html_of_admin_table(
-                    !empty($_GET['classroom']) ? '#' . $_GET['classroom'] : null,
-                    !empty($_GET['teacher']) ? '#' . $_GET['teacher'] : null,
-                    !empty($_GET['student']) ? '#' . $_GET['student'] : null,
-                    !empty($_GET['subject']) ? '#' . $_GET['subject'] : null,
-                    !empty($_GET['visibility']) ? $_GET['visibility'] : null,
-                    !empty($_GET['collision_detection']) ? $_GET['collision_detection'] : null,
+                    (isset($_GET['classroom']) && '' !== $_GET['classroom']) ? '#' . $_GET['classroom'] : null,
+                    (isset($_GET['teacher']) && '' !== $_GET['teacher']) ? '#' . $_GET['teacher'] : null,
+                    (isset($_GET['student']) && '' !== $_GET['student']) ? '#' . $_GET['student'] : null,
+                    (isset($_GET['subject']) && '' !== $_GET['subject']) ? '#' . $_GET['subject'] : null,
+                    $_GET['visibility'] ?? null,
+                    $_GET['collision_detection'] ?? null,
                     $key
                 ),
             ];
         }
+        $search = [
+            'id' => 'wcs4_schedule_filter',
+            'submit' => __('Search lessons', 'wcs4'),
+            'fields' => [
+                'search_wcs4_schedule_subject_id' => [
+                    'label' => __('Subject', 'wcs4'),
+                    'name' => 'subject',
+                    'type' => 'generate_admin_select_list',
+                ],
+                'search_wcs4_schedule_teacher_id' => [
+                    'label' => __('Teacher', 'wcs4'),
+                    'name' => 'teacher',
+                    'type' => 'generate_admin_select_list',
+
+                ],
+                'search_wcs4_schedule_student_id' => [
+                    'label' => __('Student', 'wcs4'),
+                    'name' => 'student',
+                    'type' => 'generate_admin_select_list',
+                ],
+                'search_wcs4_schedule_classroom_id' => [
+                    'label' => __('Classroom', 'wcs4'),
+                    'name' => 'classroom',
+                    'type' => 'generate_admin_select_list',
+                ],
+                'search_wcs4_schedule_visibility' => [
+                    'label' => __('Visibility', 'wcs4'),
+                    'input' => Admin::generate_admin_select_list_options(
+                        package: 'schedule_visibility',
+                        id: 'search_wcs4_schedule_visibility',
+                        name: 'visibility',
+                        default: '',
+                    ),
+                ],
+                'search_wcs4_schedule_collision_detection' => [
+                    'label' => __('Collision detection', 'wcs4'),
+                    'input' => Admin::generate_admin_select_list_options(
+                        package: 'schedule_collision_detection',
+                        id: 'search_wcs4_schedule_collision_detection',
+                        name: 'collision_detection',
+                        default: '',
+                    ),
+                ],
+            ],
+        ];
         include self::TEMPLATE_DIR . 'admin.php';
     }
 
-    /**
-     * Callback for generating the calendar page.
-     */
     public static function callback_of_calendar_page()
     {
         # get user data
@@ -74,7 +113,12 @@ class Schedule
         $shiftDays = (int)abs($_GET['week'] ?: 0) * 7;
 
         # get lessons
-        $lessons = self::get_items($classroom, $teacher, $student, $subject);
+        $items = self::get_items(
+            $classroom,
+            $teacher,
+            $student,
+            $subject
+        );
 
         # build filename
         $filename_params = [];
@@ -111,7 +155,7 @@ class Schedule
         $line[] = 'PRODID:-//hacksw/handcal//NONSGML v1.0//EN';
         $line[] = '';
         /** @var Lesson_Item $lesson */
-        foreach ($lessons as $lesson) {
+        foreach ($items as $lesson) {
             $description = [];
             $description[] = __('Teacher', 'wcs4') . ':';
             $description[] = $lesson->getTeacher()->getName() . ',';
@@ -142,15 +186,21 @@ class Schedule
         $weekday = null
     ): string {
         ob_start();
-        $items = self::get_items($classroom, $teacher, $student, $subject, $weekday, null, $visibility, $collisionDetection);
+        $items = self::get_items(
+            $classroom,
+            $teacher,
+            $student,
+            $subject,
+            $weekday,
+            null,
+            $visibility,
+            $collisionDetection
+        );
         include self::TEMPLATE_DIR . 'admin_table.php';
-        $result = ob_get_clean();
-        return trim($result);
+        $response = ob_get_clean();
+        return trim($response);
     }
 
-    /**
-     * Gets all the visible subjects from the database including teachers, students and classrooms.
-     */
     public static function get_items(
         $classroom,
         $teacher = 'all',
@@ -158,7 +208,7 @@ class Schedule
         $subject = 'all',
         int $weekday = null,
         int $time = null,
-        ?string $visibility = 'yes',
+        ?string $visibility = 'visible',
         ?string $collisionDetection = null,
         string $limit = null,
         string $paged = null
@@ -234,35 +284,28 @@ class Schedule
         }
         if (null !== $visibility && '' !== $visibility) {
             $where[] = 'visible = %d';
-            $query_arr[] =  ('yes' === $visibility) ? 1 : 0;
+            $query_arr[] = ('visible' === $visibility) ? 1 : 0;
         }
         if (null !== $collisionDetection && '' !== $collisionDetection) {
             $where[] = 'collision_detection = %d';
-            $query_arr[] =  ('yes' === $collisionDetection) ? 1 : 0;
+            $query_arr[] = ('yes' === $collisionDetection) ? 1 : 0;
         }
-        return DB::get_items(
-            Lesson_Item::class,
-            $query,
-            $where,
-            $query_arr,
-            ['weekday' => 'ASC', 'start_time' => 'ASC'],
-            $limit,
-            $paged
-        );
+        $order_field = ['weekday' => 'ASC', 'start_time' => 'ASC'];
+        return DB::get_items(Lesson_Item::class, $query, $where, $query_arr, $order_field, $limit, $paged);
     }
 
-    public static function save_item($force_insert = false): void
+    public static function save_item(): void
     {
-        $response = __('You are no allowed to run this action', 'wcs4');
-        $errors = [];
-        $days_to_update = array();
+        global $wpdb;
+        $days_to_update = [];
+        $response = [];
 
-        wcs4_verify_nonce();
-
-        if (current_user_can(WCS4_SCHEDULE_MANAGE_CAPABILITY)) {
-            global $wpdb;
-
-            $response = [];
+        $wpdb->query('START TRANSACTION');
+        try {
+            if (!current_user_can(WCS4_SCHEDULE_MANAGE_CAPABILITY)) {
+                throw new AccessDeniedException();
+            }
+            wcs4_verify_nonce();
 
             $update_request = false;
             $row_id = null;
@@ -283,6 +326,9 @@ class Schedule
             );
 
             $errors = wcs4_verify_required_fields($required);
+            if (!empty($errors)) {
+                throw new ValidationException($errors);
+            }
 
             if (isset($_POST['row_id'])) {
                 # This is an update request and not an insert.
@@ -393,287 +439,308 @@ class Schedule
                 # Invalid subject time
                 $errors['start_time'][] = __('A class cannot start before it ends', 'wcs4');
             }
-            if (empty($errors)) {
-                $data_schedule = array(
-                    'subject_id' => $subject_id,
-                    'classroom_id' => $classroom_id,
-                    'weekday' => $weekday,
-                    'start_time' => $start_time,
-                    'end_time' => $end_time,
-                    'timezone' => $timezone,
-                    'visible' => $visible,
-                    'collision_detection' => $collisionDetection,
-                    'notes' => $notes,
-                );
+            if (!empty($errors)) {
+                throw new ValidationException($errors);
+            }
+            $data_schedule = array(
+                'subject_id' => $subject_id,
+                'classroom_id' => $classroom_id,
+                'weekday' => $weekday,
+                'start_time' => $start_time,
+                'end_time' => $end_time,
+                'timezone' => $timezone,
+                'visible' => $visible,
+                'collision_detection' => $collisionDetection,
+                'notes' => $notes,
+            );
 
-                $wpdb->query('START TRANSACTION');
-                #$wpdb->show_errors();
-                try {
-                    if ($update_request) {
-                        $old_weekday = $wpdb->get_var(
-                            $wpdb->prepare(
-                                "
+            if ($update_request) {
+                $old_weekday = $wpdb->get_var(
+                    $wpdb->prepare(
+                        "
                     SELECT weekday
                     FROM $table
                     WHERE id = %d;
                     ",
-                                array(
-                                    $row_id,
-                                )
-                            )
-                        );
+                        array(
+                            $row_id,
+                        )
+                    )
+                );
 
-                        $data_schedule['updated_at'] = date('Y-m-d H:i:s');
-                        $data_schedule['updated_by'] = get_current_user_id();
-                        $days_to_update[] = $old_weekday;
+                $data_schedule['updated_at'] = date('Y-m-d H:i:s');
+                $data_schedule['updated_by'] = get_current_user_id();
+                $days_to_update[] = $old_weekday;
 
-                        $r = $wpdb->update(
-                            $table,
-                            $data_schedule,
-                            array('id' => $row_id),
-                            array('%d', '%d', '%d', '%s', '%s', '%s', '%d', '%d', '%s', '%s', '%d'),
-                            array('%d')
-                        );
-                        if (false === $r) {
-                            throw new RuntimeException($wpdb->last_error, 1);
-                        }
-
-                        $r = $wpdb->delete($table_teacher, array('id' => $row_id));
-                        if (false === $r) {
-                            throw new RuntimeException($wpdb->last_error, 2);
-                        }
-
-                        $r = $wpdb->delete($table_student, array('id' => $row_id));
-                        if (false === $r) {
-                            throw new RuntimeException($wpdb->last_error, 3);
-                        }
-
-                        foreach ($teacher_id as $_id) {
-                            $data_teacher = array('id' => $row_id, 'teacher_id' => $_id);
-                            $r = $wpdb->insert($table_teacher, $data_teacher);
-                            if (false === $r) {
-                                throw new RuntimeException($wpdb->last_error, 4);
-                            }
-                        }
-                        foreach ($student_id as $_id) {
-                            $data_teacher = array('id' => $row_id, 'student_id' => $_id);
-                            $r = $wpdb->insert($table_student, $data_teacher);
-                            if (false === $r) {
-                                throw new RuntimeException($wpdb->last_error, 5);
-                            }
-                        }
-                        $response = __('Schedule entry updated successfully', 'wcs4');
-                        $status = 'updated';
-                    } else {
-                        $data_schedule['created_by'] = get_current_user_id();
-                        $r = $wpdb->insert(
-                            $table,
-                            $data_schedule,
-                            array('%d', '%d', '%d', '%s', '%s', '%s', '%d', '%d', '%s', '%d')
-                        );
-                        if (false === $r) {
-                            throw new RuntimeException($wpdb->last_error, 6);
-                        }
-                        $row_id = $wpdb->insert_id;
-                        foreach ($teacher_id as $_id) {
-                            $data_teacher = array('id' => $row_id, 'teacher_id' => $_id);
-                            $r = $wpdb->insert($table_teacher, $data_teacher);
-                            if (false === $r) {
-                                throw new RuntimeException($wpdb->last_error, 7);
-                            }
-                        }
-
-                        foreach ($student_id as $_id) {
-                            $data_teacher = array('id' => $row_id, 'student_id' => $_id);
-                            $r = $wpdb->insert($table_student, $data_teacher);
-                            if (false === $r) {
-                                throw new RuntimeException($wpdb->last_error, 8);
-                            }
-                        }
-                        $response = __('Schedule entry added successfully', 'wcs4');
-                    }
-                    #$wpdb->hide_errors();
-                    $wpdb->query('COMMIT');
-                } catch (Exception $e) {
-                    $response = $e->getMessage() . ' [' . $e->getCode() . ']';
-                    $wpdb->query('ROLLBACK');
+                $r = $wpdb->update(
+                    $table,
+                    $data_schedule,
+                    array('id' => $row_id),
+                    array('%d', '%d', '%d', '%s', '%s', '%s', '%d', '%d', '%s', '%s', '%d'),
+                    array('%d')
+                );
+                if (false === $r) {
+                    throw new RuntimeException($wpdb->last_error, 1);
                 }
+
+                $r = $wpdb->delete($table_teacher, array('id' => $row_id));
+                if (false === $r) {
+                    throw new RuntimeException($wpdb->last_error, 2);
+                }
+
+                $r = $wpdb->delete($table_student, array('id' => $row_id));
+                if (false === $r) {
+                    throw new RuntimeException($wpdb->last_error, 3);
+                }
+
+                foreach ($teacher_id as $_id) {
+                    $data_teacher = array('id' => $row_id, 'teacher_id' => $_id);
+                    $r = $wpdb->insert($table_teacher, $data_teacher);
+                    if (false === $r) {
+                        throw new RuntimeException($wpdb->last_error, 4);
+                    }
+                }
+                foreach ($student_id as $_id) {
+                    $data_teacher = array('id' => $row_id, 'student_id' => $_id);
+                    $r = $wpdb->insert($table_student, $data_teacher);
+                    if (false === $r) {
+                        throw new RuntimeException($wpdb->last_error, 5);
+                    }
+                }
+                $response['response'] = __('Schedule entry updated successfully', 'wcs4');
+                $status = \WP_Http::OK;
+            } else {
+                $data_schedule['created_by'] = get_current_user_id();
+                $r = $wpdb->insert(
+                    $table,
+                    $data_schedule,
+                    array('%d', '%d', '%d', '%s', '%s', '%s', '%d', '%d', '%s', '%d')
+                );
+                if (false === $r) {
+                    throw new RuntimeException($wpdb->last_error, 6);
+                }
+                $row_id = $wpdb->insert_id;
+                foreach ($teacher_id as $_id) {
+                    $data_teacher = array('id' => $row_id, 'teacher_id' => $_id);
+                    $r = $wpdb->insert($table_teacher, $data_teacher);
+                    if (false === $r) {
+                        throw new RuntimeException($wpdb->last_error, 7);
+                    }
+                }
+
+                foreach ($student_id as $_id) {
+                    $data_teacher = array('id' => $row_id, 'student_id' => $_id);
+                    $r = $wpdb->insert($table_student, $data_teacher);
+                    if (false === $r) {
+                        throw new RuntimeException($wpdb->last_error, 8);
+                    }
+                }
+                $response['response'] = __('Schedule entry added successfully', 'wcs4');
+                $status = \WP_Http::CREATED;
             }
+            $response['days_to_update'] = array_unique($days_to_update);
+            $wpdb->query('COMMIT');
+        } catch (ValidationException $e) {
+            $response['response'] = $e->getMessage();
+            $response['errors'] = $e->getErrors();
+            $status = \WP_Http::BAD_REQUEST;
+        } catch (AccessDeniedException|Exception $e) {
+            $response['response'] = $e->getMessage() . ' [' . $e->getCode() . ']';
+            $status = \WP_Http::BAD_REQUEST;
+            $wpdb->query('ROLLBACK');
         }
 
-        wcs4_json_response([
-            'response' => (is_array($response) ? implode('<br>', $response) : $response),
-            'errors' => $errors,
-            'result' => $errors ? 'error' : 'updated',
-            'days_to_update' => array_unique($days_to_update),
-        ]);
-        die();
+        wcs4_json_response($response, $status);
     }
 
     #[NoReturn] public static function get_item(): void
     {
-        $errors = [];
-        $response = __('You are no allowed to run this action', 'wcs4');
-        if (current_user_can(WCS4_SCHEDULE_MANAGE_CAPABILITY)) {
+        global $wpdb;
+        $response = [];
+        try {
+            if (!current_user_can(WCS4_SCHEDULE_MANAGE_CAPABILITY)) {
+                throw new AccessDeniedException();
+            }
             wcs4_verify_nonce();
-
-            global $wpdb;
-            $response = [];
-
-            $table = DB::get_schedule_table_name();
-            $table_teacher = DB::get_schedule_teacher_table_name();
-            $table_student = DB::get_schedule_student_table_name();
 
             $required = array(
                 'row_id' => __('Row ID'),
             );
-
             $errors = wcs4_verify_required_fields($required);
-            if (empty($errors)) {
-                $row_id = sanitize_text_field($_POST['row_id']);
+            if (!empty($errors)) {
+                throw new ValidationException($errors);
+            }
 
-                $result = $wpdb->get_row(
-                    $wpdb->prepare(
-                        "
+            $row_id = sanitize_text_field($_POST['row_id']);
+            $table = DB::get_schedule_table_name();
+            $table_teacher = DB::get_schedule_teacher_table_name();
+            $table_student = DB::get_schedule_student_table_name();
+            $db_result = $wpdb->get_row(
+                $wpdb->prepare(
+                    "
                             SELECT *, GROUP_CONCAT(teacher_id) AS teacher_id, GROUP_CONCAT(student_id) AS student_id
                             FROM $table
                             LEFT JOIN $table_teacher USING (id)
                             LEFT JOIN $table_student USING (id)
                             WHERE id = %d
                             GROUP BY id",
-                        $row_id
-                    ),
-                    ARRAY_A
-                );
-                $response = DB::parse_query($result);
-            }
+                    $row_id
+                ),
+                ARRAY_A
+            );
+            $response['response'] = DB::parse_query($db_result);
+            $status = \WP_Http::OK;
+        } catch (ValidationException $e) {
+            $response['response'] = $e->getMessage();
+            $response['errors'] = $e->getErrors();
+            $status = \WP_Http::BAD_REQUEST;
+        } catch (AccessDeniedException|Exception $e) {
+            $response['response'] = $e->getMessage() . ' [' . $e->getCode() . ']';
+            $status = \WP_Http::BAD_REQUEST;
+            $wpdb->query('ROLLBACK');
         }
-        wcs4_json_response([
-            'response' => $response,
-            'errors' => $errors,
-            'result' => $errors ? 'error' : 'success',
-        ]);
-        die();
+
+        wcs4_json_response($response, $status);
     }
 
     #[NoReturn] public static function delete_item(): void
     {
-        $errors = [];
-        $response = __('You are no allowed to run this action', 'wcs4');
-        if (current_user_can(WCS4_SCHEDULE_MANAGE_CAPABILITY)) {
+        global $wpdb;
+        $response = [];
+        try {
+            if (!current_user_can(WCS4_SCHEDULE_MANAGE_CAPABILITY)) {
+                throw new AccessDeniedException();
+            }
             wcs4_verify_nonce();
-
-            global $wpdb;
-
-            $table = DB::get_schedule_table_name();
-            $table_teacher = DB::get_schedule_teacher_table_name();
-            $table_student = DB::get_schedule_student_table_name();
 
             $required = array(
                 'row_id' => __('Row ID'),
             );
-
             $errors = wcs4_verify_required_fields($required);
-            if (empty($errors)) {
-                $row_id = sanitize_text_field($_POST['row_id']);
-
-                $result = $wpdb->delete($table, array('id' => $row_id), array('%d'));
-                $result_teacher = $wpdb->delete($table_teacher, array('id' => $row_id), array('%d'));
-                $result_student = $wpdb->delete($table_student, array('id' => $row_id), array('%d'));
-
-                if (0 === $result || 0 === $result_teacher || 0 === $result_student) {
-                    $response = __('Failed to delete entry', 'wcs4');
-                    $errors = true;
-                } else {
-                    $response = __('Schedule entry deleted successfully', 'wcs4');
-                }
+            if (!empty($errors)) {
+                throw new ValidationException($errors);
             }
+
+            $row_id = sanitize_text_field($_POST['row_id']);
+            $table = DB::get_schedule_table_name();
+            $table_teacher = DB::get_schedule_teacher_table_name();
+            $table_student = DB::get_schedule_student_table_name();
+            $db_result = $wpdb->delete($table, array('id' => $row_id), array('%d'));
+            $db_result_teacher = $wpdb->delete($table_teacher, array('id' => $row_id), array('%d'));
+            $db_result_student = $wpdb->delete($table_student, array('id' => $row_id), array('%d'));
+
+            if (0 === $db_result || 0 === $db_result_teacher || 0 === $db_result_student) {
+                $response['response'] = __('Failed to delete entry', 'wcs4');
+                $status = \WP_Http::BAD_REQUEST;
+            } else {
+                $response['response'] = __('Schedule entry deleted successfully', 'wcs4');
+                $status = \WP_Http::OK;
+            }
+            $response['scope'] = 'schedule';
+            $response['id'] = $row_id;
+        } catch (ValidationException $e) {
+            $response['response'] = $e->getMessage();
+            $response['errors'] = $e->getErrors();
+            $status = \WP_Http::BAD_REQUEST;
+        } catch (AccessDeniedException|Exception $e) {
+            $response['response'] = $e->getMessage() . ' [' . $e->getCode() . ']';
+            $status = \WP_Http::BAD_REQUEST;
         }
-        wcs4_json_response([
-            'response' => $response,
-            'errors' => $errors,
-            'result' => $errors ? 'error' : 'updated',
-            'scope' => 'lesson',
-            'id' => $row_id ?? null,
-        ]);
-        die();
+
+        wcs4_json_response($response, $status);
     }
 
     #[NoReturn] public static function toggle_visibility_item(): void
     {
-        $errors = [];
-        $response = __('You are no allowed to run this action', 'wcs4');
-        if (current_user_can(WCS4_SCHEDULE_MANAGE_CAPABILITY)) {
+        global $wpdb;
+        $response = [];
+        try {
+            if (!current_user_can(WCS4_SCHEDULE_MANAGE_CAPABILITY)) {
+                throw new AccessDeniedException();
+            }
             wcs4_verify_nonce();
-
-            global $wpdb;
-
-            $table = DB::get_schedule_table_name();
 
             $required = array(
                 'row_id' => __('Row ID'),
                 'visible' => __('Visibility'),
             );
-
             $errors = wcs4_verify_required_fields($required);
-            if (empty($errors)) {
-                $row_id = (int)sanitize_text_field($_POST['row_id']);
-                $data_schedule = [];
-                $data_schedule['updated_at'] = date('Y-m-d H:i:s');
-                $data_schedule['updated_by'] = get_current_user_id();
-                $data_schedule['visible'] = sanitize_text_field($_POST['visible']);
-
-                $result = $wpdb->update(
-                    $table,
-                    $data_schedule,
-                    array('id' => $row_id),
-                    array('%s', '%d', '%d'),
-                    array('%d')
-                );
-
-                if (0 === $result) {
-                    $response = __('Failed to toggle visibility for entry', 'wcs4');
-                    $errors = true;
-                } else {
-                    $response = __('Schedule entry visibility toggled successfully', 'wcs4');
-                }
+            if (!empty($errors)) {
+                throw new ValidationException($errors);
             }
+
+            $row_id = (int)sanitize_text_field($_POST['row_id']);
+            $data_schedule = [];
+            $data_schedule['updated_at'] = date('Y-m-d H:i:s');
+            $data_schedule['updated_by'] = get_current_user_id();
+            $data_schedule['visible'] = sanitize_text_field($_POST['visible']);
+
+            $table = DB::get_schedule_table_name();
+            $db_result = $wpdb->update(
+                $table,
+                $data_schedule,
+                array('id' => $row_id),
+                array('%s', '%d', '%d'),
+                array('%d')
+            );
+
+            if (0 === $db_result) {
+                $response['response'] = __('Failed to toggle visibility for entry', 'wcs4');
+                $status = \WP_Http::BAD_REQUEST;
+            } else {
+                $response['response'] = __('Schedule entry visibility toggled successfully', 'wcs4');
+                $status = \WP_Http::OK;
+            }
+            $response['scope'] = 'schedule';
+            $response['id'] = $row_id;
+        } catch (ValidationException $e) {
+            $response['response'] = $e->getMessage();
+            $response['errors'] = $e->getErrors();
+            $status = \WP_Http::BAD_REQUEST;
+        } catch (AccessDeniedException|Exception $e) {
+            $response['response'] = $e->getMessage() . ' [' . $e->getCode() . ']';
+            $status = \WP_Http::BAD_REQUEST;
         }
-        wcs4_json_response([
-            'response' => $response,
-            'errors' => $errors,
-            'result' => $errors ? 'error' : 'updated',
-            'scope' => 'lesson',
-            'id' => $row_id ?? null,
-        ]);
-        die();
+
+        wcs4_json_response($response, $status);
     }
 
-    #[NoReturn] public static function get_ajax_html_with_schedules(): void
+    #[NoReturn] public static function get_ajax_html(): void
     {
-        $html = __('You are no allowed to run this action', 'wcs4');
-        if (current_user_can(WCS4_SCHEDULE_MANAGE_CAPABILITY)) {
+        $response = [];
+        try {
+            if (!current_user_can(WCS4_SCHEDULE_MANAGE_CAPABILITY)) {
+                throw new AccessDeniedException();
+            }
             wcs4_verify_nonce();
             $required = array(
                 'weekday' => __('Day'),
             );
             $errors = wcs4_verify_required_fields($required);
             if (!empty($errors)) {
-                $html = implode('<br>', $errors);
+                $response['html'] = implode('<br>', $errors);
+                $status = \WP_Http::BAD_REQUEST;
             } else {
-                $html = self::get_html_of_admin_table(
+                $response['html'] = self::get_html_of_admin_table(
                     sanitize_text_field($_POST['classroom']),
                     sanitize_text_field($_POST['teacher']),
                     sanitize_text_field($_POST['student']),
                     sanitize_text_field($_POST['subject']),
                     sanitize_text_field($_POST['visibility']),
                     sanitize_text_field($_POST['collision_detection']),
-                    sanitize_text_field($_POST['weekday'])
+                    sanitize_text_field($_POST['weekday']),
                 );
+                $status = \WP_Http::OK;
             }
+        } catch (ValidationException $e) {
+            $response['response'] = $e->getMessage();
+            $response['errors'] = $e->getErrors();
+            $status = \WP_Http::BAD_REQUEST;
+        } catch (AccessDeniedException|Exception $e) {
+            $response['response'] = $e->getMessage() . ' [' . $e->getCode() . ']';
+            $status = \WP_Http::BAD_REQUEST;
         }
-        wcs4_json_response(['html' => $html,]);
-        die();
+        wcs4_json_response($response, $status);
     }
 
     /**
@@ -688,7 +755,7 @@ class Schedule
     public static function get_html_of_schedule_list_for_shortcode(
         array $lessons,
         array $weekdays,
-        string $schedule_key,
+        string $key,
         string $template_list
     ): string {
         if (empty($lessons)) {
@@ -701,7 +768,7 @@ class Schedule
             $weekdaysWithLessons[$lesson->getWeekday()][] = $lesson;
         }
 
-        $output = '<div class="wcs4-schedule-list-layout">';
+        $output = '<div class="wcs4_schedule_list-layout" id="' . $key . '">';
         # Classes are grouped by indexed weekdays.
         foreach ($weekdays as $dayIndex => $dayName) {
             $lessons = $weekdaysWithLessons[$dayIndex];
@@ -724,7 +791,7 @@ class Schedule
     /**
      * Renders table layout
      *
-     * @param array $lessons : lessons array as returned by wcs4_get_lessons().
+     * @param array $items : lessons array as returned by wcs4_get_lessons().
      * @param array $weekdays : indexed weekday array.
      * @param string $schedule_key
      * @param string $template_table_short
@@ -732,20 +799,20 @@ class Schedule
      * @return string
      */
     public static function get_html_of_schedule_table_for_shortcode(
-        array $lessons,
+        array $items,
         array $weekdays,
         string $schedule_key,
         string $template_table_short,
         string $template_table_details
     ): string {
-        if (empty($lessons)) {
+        if (empty($items)) {
             return '<p class="wcs4-no-items-message">' . __('No lessons scheduled', 'wcs4') . '</p>';
         }
 
         $weekMinutes = [];
         $hours = [];
         /** @var Lesson_Item $lesson */
-        foreach ($lessons as $lesson) {
+        foreach ($items as $lesson) {
             $hourVal = $lesson->getStartTime();
             $hourKey = str_replace(':', '-', $hourVal);
             $hours[$hourKey] = $hourVal;
@@ -815,7 +882,15 @@ class Schedule
             <?php
         }
         echo '</style>';
-        $output = '<div class="wcs4-schedule-grid">';
+        $output = '<a href="javascript://void()" class="btn btn-skin inverted fa-solid fa-maximize toggle" title="' . __(
+                'Toggle full screen',
+                'wcs4'
+            ) . '"></a> ';
+        $output .= '<a href="javascript://void()" class="btn btn-skin inverted fa-solid fa-download download" title="' . __(
+                'Download PNG',
+                'wcs4'
+            ) . '"></a>';
+        $output .= '<div class="wcs4_schedule_grid" id="' . $schedule_key . '">';
         foreach ($weekdays as $dayName => $dayIndex) {
             $output .= '<div class="wcs4-grid-weekday wcs4-grid-weekday-' . $dayIndex . '">' . $dayName . '</div>';
         }
@@ -823,7 +898,7 @@ class Schedule
             $output .= '<div class="wcs4-grid-hour wcs4-grid-hour-' . $hourKey . '">' . $hourValue . '</div>';
         }
         /** @var Lesson_Item $lesson */
-        foreach ($lessons as $lesson) {
+        foreach ($items as $lesson) {
             $style = null;
             if (null !== $lesson->getColor()) {
                 $style = ' style="background-color: #' . $lesson->getColor() . '; "';

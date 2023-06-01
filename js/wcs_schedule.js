@@ -5,7 +5,7 @@
 (function ($) {
 
     let SCOPE = 'schedule';
-    let FILTER_ID = '#wcs4-schedule-filter';
+    let FILTER_ID = '#wcs4_schedule_filter';
 
     $(document).ready(function () {
         WCS4_ADMIN.bind_search_handler(FILTER_ID, reload_html_view);
@@ -13,8 +13,7 @@
         WCS4_ADMIN.bind_edit_handler(SCOPE, set_entry_data_to_form);
         WCS4_ADMIN.bind_copy_handler(SCOPE, set_entry_data_to_form);
         WCS4_ADMIN.bind_delete_handler(SCOPE, function (data) {
-            const elem = '#' + data.scope + '-' + data.id;
-            const day = $(elem).data('day');
+            const day = $('[data-scope="' + data.scope + '"][data-id="' + data.id + '"]').data('day');
             if (day !== false) {
                 let search_form_data = WCS4_ADMIN.search_form_process_and_push_history_state($(FILTER_ID))
                 reload_html_view(search_form_data, 'remove', [day]);
@@ -29,25 +28,26 @@
      * Handles the Add Item button click event.
      */
     let bind_submit_handler = function () {
-        $('.wcs4-submit-schedule-form').click(function (e) {
+        let $form = $('#wcs4_schedule_management-form');
+        $form.find('#wcs4-submit-form').click(function (e) {
             e.preventDefault();
             let entry = {
                 action: 'wcs_add_or_update_schedule_entry',
                 security: WCS4_AJAX_OBJECT.ajax_nonce,
-                subject_id: WCS4_LIB.form_field_value('wcs4_schedule_subject'),
-                teacher_id: WCS4_LIB.form_field_value('wcs4_schedule_teacher'),
-                student_id: WCS4_LIB.form_field_value('wcs4_schedule_student'),
-                classroom_id: $('#wcs4_schedule_classroom[multiple]').length ? $('#wcs4_schedule_classroom option:selected').toArray().map(item => item.value) : $('#wcs4_schedule_classroom option:selected').val(),
-                weekday: $('#wcs4_schedule_weekday option:selected').val(),
-                start_time: $('#wcs4_schedule_start_time').val(),
-                end_time: $('#wcs4_schedule_end_time').val(),
-                visible: $('#wcs4_schedule_visibility :checked').val(),
-                collision_detection: $('#wcs4_schedule_collision_detection :checked').val(),
-                notes: $('#wcs4_schedule_notes').val()
+                subject_id: WCS4_LIB.form_field_value($form, 'subject'),
+                teacher_id: WCS4_LIB.form_field_value($form, 'teacher'),
+                student_id: WCS4_LIB.form_field_value($form, 'student'),
+                classroom_id: WCS4_LIB.form_field_value($form, 'classroom'),
+                weekday: WCS4_LIB.form_field_value($form, 'weekday'),
+                start_time: WCS4_LIB.form_field_value($form, 'start_time'),
+                end_time: WCS4_LIB.form_field_value($form, 'end_time'),
+                visible: WCS4_LIB.form_field_value($form, 'visibility'),
+                collision_detection: WCS4_LIB.form_field_value($form, 'collision_detection'),
+                notes: WCS4_LIB.form_field_value($form, 'notes'),
             };
 
-            WCS4_LIB.submit_entry(entry, function (data) {
-                if (data.result === 'updated') {
+            WCS4_LIB.submit_entry(entry, function (data, status) {
+                if (200 <= status && status < 300) {
                     // Let's refresh the day
                     let search_form_data = WCS4_ADMIN.search_form_process_and_push_history_state($(FILTER_ID))
                     reload_html_view(search_form_data, 'fade', data.days_to_update);
@@ -78,7 +78,7 @@
                 visibility: search_form_data.visibility,
                 collision_detection: search_form_data.collision_detection
             };
-            let $parent = $('#wcs4-schedule-day-' + day);
+            let $parent = $('#wcs4_schedule_day-' + day);
             WCS4_LIB.update_view($parent, entry, action);
         });
     }
@@ -88,18 +88,21 @@
      */
     let set_entry_data_to_form = function (entry) {
         // prepare form data
+        let $form = $('#wcs4_schedule_management-form');
         if (entry.hasOwnProperty('id')) {
             // We got an entry.
-            $('#wcs4_schedule_subject').val(entry.subject_id);
-            $('#wcs4_schedule_teacher').val(entry.teacher_id);
-            $('#wcs4_schedule_student').val(entry.student_id);
-            $('#wcs4_schedule_classroom').val(entry.classroom_id);
-            $('#wcs4_schedule_weekday').val(entry.weekday);
-            $('#wcs4_schedule_start_time').val(entry.start_time);
-            $('#wcs4_schedule_end_time').val(entry.end_time);
-            $('#wcs4_schedule_visibility-' + ((entry.visible === '1') ? 'visible' : 'hidden')).prop('checked', true);
-            $('#wcs4_schedule_collision_detection-' + ((entry.collision_detection === '1') ? 'yes' : 'no')).prop('checked', true);
-            $('#wcs4_schedule_notes').val(entry.notes);
+            $form.find('[name="subject"]').val(entry.subject_id);
+            $form.find('[name="teacher"]').val(entry.teacher_id);
+            $form.find('[name="student"]').val(entry.student_id);
+            $form.find('[name="classroom"]').val(entry.classroom_id);
+            $form.find('[name="weekday"]').val(entry.weekday);
+            $form.find('[name="start_time"]').val(entry.start_time);
+            $form.find('[name="end_time"]').val(entry.end_time);
+            $form.find('[name="visibility"][value="' + ((entry.visible === '1') ? 'visible' : 'hidden') + '"]').prop('checked', true);
+            $form.find('[name="collision_detection"][value="' + ((entry.collision_detection === '1') ? 'yes' : 'no') + '"]').prop('checked', true);
+            $form.find('[name="notes"]').val(entry.notes);
+            $form.find('[name="type"][value="' + entry.type + '"]').prop('checked', true).change();
+
         } else {
             WCS4_LIB.show_message(WCS4_AJAX_OBJECT.ajax_error, 'error');
         }
@@ -109,7 +112,7 @@
      * Handles the edit button click event.
      */
     let bind_visibility_handler = function () {
-        $(document).on('click.wcs4-visibility-schedule-button', 'tr[data-type="schedule"] .wcs4-visibility-button', function (e) {
+        $(document).on('click.wcs4-visibility-schedule-button', 'tr[data-scope="schedule"] .wcs4-visibility-button', function (e) {
             let entry = {
                 action: 'wcs_toggle_visibility_schedule_entry',
                 security: WCS4_AJAX_OBJECT.ajax_nonce,

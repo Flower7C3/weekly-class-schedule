@@ -18,7 +18,9 @@ trait Students_Trait
 
     public function setStudents($student_id, $student_name, $student_desc): self
     {
-        $this->students[$student_id] = new Item($student_id, $student_name, $student_desc);
+        if(null !== $student_id) {
+            $this->students[$student_id] = new Item($student_id, $student_name, $student_desc);
+        }
         return $this;
     }
 
@@ -38,7 +40,7 @@ trait Students_Trait
             $link_name = [];
             $link_short = [];
             /** @var Item $_student */
-            foreach ($this->students as $_student) {
+            foreach ($this->getStudents() as $_student) {
                 $name[] = $_student->getName();
                 $short[] = $_student->getNameShort();
                 $long[] = $_student->getInfo();

@@ -110,8 +110,9 @@ class Snapshot_Item
     public function getUrl(): string
     {
         return admin_url(
-                'admin-ajax.php'
-            ) . '?' . http_build_query(json_decode($this->getQueryString(), true));
+            'admin-ajax.php'
+            . '?' . http_build_query(json_decode($this->getQueryString(), true))
+        );
     }
 
 }

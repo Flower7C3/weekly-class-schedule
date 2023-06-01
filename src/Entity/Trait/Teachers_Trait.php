@@ -18,10 +18,11 @@ trait Teachers_Trait
 
     public function setTeachers($teacher_id, $teacher_name, $teacher_desc): self
     {
-        $this->teachers[$teacher_id] = new Item($teacher_id, $teacher_name, $teacher_desc);
+        if (null !== $teacher_id) {
+            $this->teachers[$teacher_id] = new Item($teacher_id, $teacher_name, $teacher_desc);
+        }
         return $this;
     }
-
 
     public function getTeachers(): array
     {

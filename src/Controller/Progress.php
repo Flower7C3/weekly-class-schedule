@@ -14,7 +14,9 @@ use Exception;
 use JetBrains\PhpStorm\NoReturn;
 use RuntimeException;
 use WCS4\Entity\Progress_Item;
-use WCS4\Entity\Snapshot_Item;
+use WCS4\Exception\AccessDeniedException;
+use WCS4\Exception\ValidationException;
+use WCS4\Helper\Admin;
 use WCS4\Helper\DB;
 use WCS4\Helper\Output;
 
@@ -25,17 +27,103 @@ class Progress
     public static function callback_of_management_page(): void
     {
         $table = self::get_html_of_admin_table(
-            !empty($_GET['teacher']) ? '#' . $_GET['teacher'] : null,
-            !empty($_GET['student']) ? '#' . $_GET['student'] : null,
-            !empty($_GET['subject']) ? '#' . $_GET['subject'] : null,
-            !empty($_GET['date_from']) ? sanitize_text_field($_GET['date_from']) : null,
-            !empty($_GET['date_upto']) ? sanitize_text_field($_GET['date_upto']) : null,
-            $_GET['type'] ?? null,
-            !empty($_GET['created_at_from']) ? sanitize_text_field($_GET['created_at_from']) : date('Y-m-01'),
-            !empty($_GET['created_at_upto']) ? sanitize_text_field($_GET['created_at_upto']) : date('Y-m-d'),
-            !empty($_GET['order_field']) ? sanitize_text_field($_GET['order_field']) : 'updated-at',
-            !empty($_GET['order_direction']) ? sanitize_text_field($_GET['order_direction']) : 'desc'
+            (isset($_GET['teacher']) && '' !== $_GET['teacher']) ? '#' . sanitize_text_field($_GET['teacher']) : null,
+            (isset($_GET['student']) && '' !== $_GET['student']) ? '#' . sanitize_text_field($_GET['student']) : null,
+            (isset($_GET['subject']) && '' !== $_GET['subject']) ? '#' . sanitize_text_field($_GET['subject']) : null,
+            sanitize_text_field($_GET['date_from'] ?? null),
+            sanitize_text_field($_GET['date_upto'] ?? null),
+            sanitize_text_field($_GET['type'] ?? null),
+            sanitize_text_field($_GET['created_at_from'] ?? date('Y-m-01')),
+            sanitize_text_field($_GET['created_at_upto'] ?? date('Y-m-d')),
+            sanitize_text_field($_GET['order_field'] ?? 'updated-at'),
+            sanitize_text_field($_GET['order_direction'] ?? 'desc'),
         );
+
+        $search = [
+            'id' => 'wcs4-progresses-filter',
+            'submit' => __('Search Progresses', 'wcs4'),
+            'fields' => [
+                'search_wcs4_progress_subject_id' => [
+                    'label' => __('Subject', 'wcs4'),
+                    'type' => 'generate_admin_select_list',
+                    'name' => 'subject',
+                ],
+                'search_wcs4_progress_teacher_id' => [
+                    'label' => __('Teacher', 'wcs4'),
+                    'type' => 'generate_admin_select_list',
+                    'name' => 'teacher',
+                ],
+                'search_wcs4_progress_student_id' => [
+                    'label' => __('Student', 'wcs4'),
+                    'type' => 'generate_admin_select_list',
+                    'name' => 'student',
+                ],
+                'search_wcs4_progress_type' => [
+                    'label' => __('Type', 'wcs4'),
+                    'input' => Admin::generate_admin_select_list_options(
+                        'progress_type',
+                        'search_wcs4_progress_type',
+                        'type',
+                        $_GET['type'] ?? ''
+                    ),
+                ],
+                'search_wcs4_progress_date_from' => [
+                    'label' => __('Date from', 'wcs4'),
+                    'input' => Admin::generate_date_select_list(
+                        'search_wcs4_progress_date_from',
+                        'date_from',
+                        ['default' => $_GET['date_from'] ?? '']
+                    ),
+                ],
+                'search_wcs4_progress_date_upto' => [
+                    'label' => __('Date to', 'wcs4'),
+                    'input' => Admin::generate_date_select_list(
+                        'search_wcs4_progress_date_upto',
+                        'date_upto',
+                        ['default' => $_GET['date_upto'] ?? '']
+                    ),
+                ],
+                'search_wcs4_progress_created_at_from' => [
+                    'label' => __('Created at from', 'wcs4'),
+                    'input' => Admin::generate_date_select_list(
+                        'search_wcs4_progress_created_at_from',
+                        'created_at_from',
+                        [
+                            'default' => $_GET['created_at_from'] ?? date('Y-m-01')
+                        ]
+                    ),
+                ],
+                'search_wcs4_progress_created_at_upto' => [
+                    'label' => __('Created at to', 'wcs4'),
+                    'input' => Admin::generate_date_select_list(
+                        'search_wcs4_progress_created_at_upto',
+                        'created_at_upto',
+                        [
+                            'default' => $_GET['created_at_upto'] ?? date('Y-m-d')
+                        ]
+                    ),
+                ],
+            ],
+        ];
+        if (current_user_can(WCS4_PROGRESS_EXPORT_CAPABILITY)) {
+            $search['buttons'][] = [
+                'action' => 'wcs_download_progresses_csv',
+                'icon' => 'dashicons dashicons-download',
+                'label' => __('Download Progresses as CSV', 'wcs4'),
+            ];
+            $search['buttons'][] = [
+                'action' => 'wcs_download_progresses_html',
+                'formtarget' => '_blank',
+                'icon' => 'dashicons dashicons-download',
+                'label' => __('Download Progresses as HTML', 'wcs4'),
+            ];
+            $search['buttons'][] = [
+                'type' => 'button',
+                'data-action' => 'generate',
+                'icon' => 'dashicons dashicons-plus-alt',
+                'label' => __('Generate Periodic Progress', 'wcs4'),
+            ];
+        }
         include self::TEMPLATE_DIR . 'admin.php';
     }
 
@@ -65,7 +153,15 @@ class Progress
                 break;
         }
 
-        $items = self::get_items(null, $teacher, $student, $subject, $date_from, $date_upto, $type);
+        $items = self::get_items(
+            null,
+            $teacher,
+            $student,
+            $subject,
+            $date_from,
+            $date_upto,
+            $type
+        );
 
         $wcs4_options = Settings::load_settings();
 
@@ -93,7 +189,7 @@ class Progress
             $filename_params[] = 'to';
             $filename_params[] = str_replace('-', '', $date_upto);
         }
-        $filename_key = 'wcs4-progress-' . preg_replace('/[^A-Za-z0-9]/', '-', implode('-', $filename_params));
+        $filename_key = 'wcs4_progress_' . preg_replace('/[^A-Za-z0-9]/', '-', implode('-', $filename_params));
         $filename_key = strtolower($filename_key) . '.csv';
 
 
@@ -120,13 +216,7 @@ class Progress
         }
 
         # submit content to browser
-        ob_start();
-        fseek($handle, 0);
-        fpassthru($handle);
-        $content = ob_get_clean();
-        Snapshot::add_item($_GET, $filename_key, $content, Snapshot_Item::TYPE_CSV);
-        echo $content;
-        exit;
+        Output::save_snapshot_and_render_csv($handle, $filename_key);
     }
 
     public static function callback_of_export_html_page(): void
@@ -184,31 +274,31 @@ class Progress
             if ($item->isTypePeriodic()) {
                 $template_style = wp_unslash($wcs4_options['progress_html_template_style']);
                 $template_code = wp_kses_stripslashes($wcs4_options['progress_html_template_code_periodic_type']);
-                ob_start();
-                include self::TEMPLATE_DIR . 'export_type_periodic.html.php';
-                $content = ob_get_clean();
-                Snapshot::add_item($_GET, $item->getId(), $content, Snapshot_Item::TYPE_HTML);
-                echo $content;
-                exit;
+                Output::save_snapshot_and_render_html(
+                    self::TEMPLATE_DIR . 'export_type_periodic.html.php',
+                    $template_style,
+                    $template_code,
+                    $item->getid()
+                );
             }
         }
 
-        [$thead_columns, $tbody_columns] = Output::extract_for_table($wcs4_options['progress_html_table_columns']);
+        [$thead_columns, $tbody_columns, $tfoot_columns] = Output::extract_for_table($wcs4_options['progress_html_table_columns']);
 
         $subject_item = '';
         $student_item = '';
         $teacher_item = '';
         if (!empty($subject)) {
             $subject_item = DB::get_item($subject);
-            unset($thead_columns['subject'], $tbody_columns['subject']);
+            unset($thead_columns['subject'], $tbody_columns['subject'], $tfoot_columns['subject']);
         }
         if (!empty($student)) {
             $student_item = DB::get_item($student);
-            unset($thead_columns['student'], $tbody_columns['student']);
+            unset($thead_columns['student'], $tbody_columns['student'], $tfoot_columns['student']);
         }
         if (!empty($teacher)) {
             $teacher_item = DB::get_item($teacher);
-            unset($thead_columns['teacher'], $tbody_columns['teacher']);
+            unset($thead_columns['teacher'], $tbody_columns['teacher'], $tfoot_columns['teacher']);
         }
 
         ob_start();
@@ -240,12 +330,12 @@ class Progress
             $table,
         ], $template_code);
 
-        ob_start();
-        include self::TEMPLATE_DIR . 'export_type_partial.html.php';
-        $content = ob_get_clean();
-        Snapshot::add_item($_GET, $heading, $content, Snapshot_Item::TYPE_HTML);
-        echo $content;
-        exit;
+        Output::save_snapshot_and_render_html(
+            self::TEMPLATE_DIR . 'export_type_partial.html.php',
+            $template_style,
+            $template_code,
+            $heading
+        );
     }
 
     public static function get_html_of_shortcode_form(
@@ -255,8 +345,8 @@ class Progress
     ): string {
         ob_start();
         include self::TEMPLATE_DIR . 'shortcode_form.php';
-        $result = ob_get_clean();
-        return trim($result);
+        $response = ob_get_clean();
+        return trim($response);
     }
 
     public static function get_html_of_admin_table(
@@ -286,8 +376,8 @@ class Progress
             $order_direction
         );
         include self::TEMPLATE_DIR . 'admin_table.php';
-        $result = ob_get_clean();
-        return trim($result);
+        $response = ob_get_clean();
+        return trim($response);
     }
 
     public static function get_items(
@@ -409,15 +499,7 @@ class Progress
                 $order_field = ['updated_at' => $order_direction];
                 break;
         }
-        return DB::get_items(
-            Progress_Item::class,
-            $query,
-            $where,
-            $query_arr,
-            $order_field,
-            $limit,
-            $paged
-        );
+        return DB::get_items(Progress_Item::class, $query, $where, $query_arr, $order_field, $limit, $paged);
     }
 
     public static function create_item(): void
@@ -427,32 +509,23 @@ class Progress
 
     public static function save_item(bool $force_insert = false): void
     {
-        $response = __('You are no allowed to run this action', 'wcs4');
-        $errors = [];
-        $days_to_update = array();
+        global $wpdb;
+        $days_to_update = [];
+        $response = [];
 
-        wcs4_verify_nonce();
-
-        if (true === $force_insert || current_user_can(WCS4_PROGRESS_MANAGE_CAPABILITY)) {
-            global $wpdb;
-
-            $response = [];
+        $wpdb->query('START TRANSACTION');
+        try {
+            if (true !== $force_insert && !current_user_can(WCS4_PROGRESS_MANAGE_CAPABILITY)) {
+                throw new AccessDeniedException();
+            }
+            wcs4_verify_nonce();
 
             $update_request = false;
             $row_id = null;
             $table = DB::get_progress_table_name();
             $table_subject = DB::get_progress_subject_table_name();
             $table_teacher = DB::get_progress_teacher_table_name();
-
-            $subject_id = ($_POST['subject_id']);
-            $teacher_id = ($_POST['teacher_id']);
-            $student_id = ($_POST['student_id']);
-            $start_date = sanitize_text_field($_POST['start_date'] ?: null);
-
-            $end_date = sanitize_text_field($_POST['end_date'] ?: null);
-            $improvements = sanitize_textarea_field($_POST['improvements']);
-            $indications = sanitize_textarea_field($_POST['indications']);
-            $type = sanitize_text_field($_POST['type']);
+            $type = sanitize_text_field($_POST['type'] ?? null);
 
             $required = array(
                 'teacher_id' => __('Teacher', 'wcs4'),
@@ -472,6 +545,18 @@ class Progress
             }
 
             $errors = wcs4_verify_required_fields($required);
+            if (!empty($errors)) {
+                throw new ValidationException($errors);
+            }
+
+            $subject_id = ($_POST['subject_id']);
+            $teacher_id = ($_POST['teacher_id']);
+            $student_id = ($_POST['student_id']);
+            $start_date = sanitize_text_field($_POST['start_date'] ?: null);
+
+            $end_date = sanitize_text_field($_POST['end_date'] ?: null);
+            $improvements = sanitize_textarea_field($_POST['improvements']);
+            $indications = sanitize_textarea_field($_POST['indications']);
 
             if (isset($_POST['row_id'])) {
                 # This is an update request and not an insert.
@@ -498,226 +583,238 @@ class Progress
                 }
             }
 
-            if (empty($errors)) {
-                $data = array(
-                    'student_id' => $student_id,
-                    'start_date' => ('' === $start_date ? null : $start_date),
-                    'end_date' => ('' === $end_date ? null : $end_date),
-                    'improvements' => $improvements,
-                    'indications' => $indications,
-                    'type' => $type,
-                );
+            if (!empty($errors)) {
+                throw new ValidationException($errors);
+            }
+            $data = [
+                'student_id' => $student_id,
+                'start_date' => ('' === $start_date ? null : $start_date),
+                'end_date' => ('' === $end_date ? null : $end_date),
+                'improvements' => $improvements,
+                'indications' => $indications,
+                'type' => $type,
+            ];
 
-                $wpdb->query('START TRANSACTION');
-                #$wpdb->show_errors();
-                try {
-                    if (!is_array($teacher_id)) {
-                        $teacher_id = [$teacher_id];
-                    }
-                    if (!$force_insert && $update_request) {
-                        $old_date = $wpdb->get_var(
-                            $wpdb->prepare(
-                                "
+            if (!is_array($teacher_id)) {
+                $teacher_id = [$teacher_id];
+            }
+            if (!$force_insert && $update_request) {
+                $old_date = $wpdb->get_var(
+                    $wpdb->prepare(
+                        "
                             SELECT created_at
                             FROM $table
                             WHERE id = %d;
                             ",
-                                array($row_id,)
-                            )
-                        );
+                        array($row_id,)
+                    )
+                );
 
-                        $data['updated_at'] = date('Y-m-d H:i:s');
-                        $data['updated_by'] = get_current_user_id();
-                        $days_to_update[] = $old_date;
+                $data['updated_at'] = date('Y-m-d H:i:s');
+                $data['updated_by'] = get_current_user_id();
+                $days_to_update[] = $old_date;
 
-                        $r = $wpdb->update(
-                            $table,
-                            $data,
-                            array('id' => $row_id),
-                            array('%d', '%s', '%s', '%s', '%s', '%s', '%s', '%d'),
-                            array('%d')
-                        );
-                        if (false === $r) {
-                            throw new RuntimeException($wpdb->last_error, 1);
-                        }
-                        $r = $wpdb->delete($table_subject, array('id' => $row_id));
-                        if (false === $r) {
-                            throw new RuntimeException($wpdb->last_error, 2);
-                        }
-                        foreach ($subject_id as $_id) {
-                            $data_subject = array('id' => $row_id, 'subject_id' => $_id);
-                            $r = $wpdb->insert($table_subject, $data_subject);
-                            if (false === $r) {
-                                throw new RuntimeException($wpdb->last_error, 4);
-                            }
-                        }
-                        $r = $wpdb->delete($table_teacher, array('id' => $row_id));
-                        if (false === $r) {
-                            throw new RuntimeException($wpdb->last_error, 2);
-                        }
-                        foreach ($teacher_id as $_id) {
-                            $data_teacher = array('id' => $row_id, 'teacher_id' => $_id);
-                            $r = $wpdb->insert($table_teacher, $data_teacher);
-                            if (false === $r) {
-                                throw new RuntimeException($wpdb->last_error, 4);
-                            }
-                        }
-                        $response = __('Progress entry updated successfully', 'wcs4');
-                    } else {
-                        $data['created_by'] = get_current_user_id();
-                        $data['updated_at'] = date('Y-m-d H:i:s');
-                        $data['updated_by'] = get_current_user_id();
-                        $r = $wpdb->insert(
-                            $table,
-                            $data,
-                            array('%d', '%s', '%s', '%s', '%s', '%s', '%d', '%s', '%d')
-                        );
-                        if (false === $r) {
-                            throw new RuntimeException($wpdb->last_error, 6);
-                        }
-                        $row_id = $wpdb->insert_id;
-                        foreach ($subject_id as $_id) {
-                            $data_subject = array('id' => $row_id, 'subject_id' => $_id);
-                            $r = $wpdb->insert($table_subject, $data_subject);
-                            if (false === $r) {
-                                throw new RuntimeException($wpdb->last_error, 7);
-                            }
-                        }
-                        foreach ($teacher_id as $_id) {
-                            $data_teacher = array('id' => $row_id, 'teacher_id' => $_id);
-                            $r = $wpdb->insert($table_teacher, $data_teacher);
-                            if (false === $r) {
-                                throw new RuntimeException($wpdb->last_error, 7);
-                            }
-                        }
-                        $response = __('Progress entry added successfully', 'wcs4');
-                    }
-                    #$wpdb->hide_errors();
-                    $wpdb->query('COMMIT');
-                } catch (Exception $e) {
-                    $response = $e->getMessage() . ' [' . $e->getCode() . ']';
-                    $wpdb->query('ROLLBACK');
+                $r = $wpdb->update(
+                    $table,
+                    $data,
+                    array('id' => $row_id),
+                    array('%d', '%s', '%s', '%s', '%s', '%s', '%s', '%d'),
+                    array('%d')
+                );
+                if (false === $r) {
+                    throw new RuntimeException($wpdb->last_error, 1);
                 }
+                $r = $wpdb->delete($table_subject, array('id' => $row_id));
+                if (false === $r) {
+                    throw new RuntimeException($wpdb->last_error, 2);
+                }
+                foreach ($subject_id as $_id) {
+                    $data_subject = array('id' => $row_id, 'subject_id' => $_id);
+                    $r = $wpdb->insert($table_subject, $data_subject);
+                    if (false === $r) {
+                        throw new RuntimeException($wpdb->last_error, 4);
+                    }
+                }
+                $r = $wpdb->delete($table_teacher, array('id' => $row_id));
+                if (false === $r) {
+                    throw new RuntimeException($wpdb->last_error, 2);
+                }
+                foreach ($teacher_id as $_id) {
+                    $data_teacher = array('id' => $row_id, 'teacher_id' => $_id);
+                    $r = $wpdb->insert($table_teacher, $data_teacher);
+                    if (false === $r) {
+                        throw new RuntimeException($wpdb->last_error, 4);
+                    }
+                }
+                $response['response'] = __('Progress entry updated successfully', 'wcs4');
+                $status = \WP_Http::OK;
+            } else {
+                $data['created_by'] = get_current_user_id();
+                $data['updated_at'] = date('Y-m-d H:i:s');
+                $data['updated_by'] = get_current_user_id();
+                $r = $wpdb->insert(
+                    $table,
+                    $data,
+                    array('%d', '%s', '%s', '%s', '%s', '%s', '%d', '%s', '%d')
+                );
+                if (false === $r) {
+                    throw new RuntimeException($wpdb->last_error, 6);
+                }
+                $row_id = $wpdb->insert_id;
+                foreach ($subject_id as $_id) {
+                    $data_subject = array('id' => $row_id, 'subject_id' => $_id);
+                    $r = $wpdb->insert($table_subject, $data_subject);
+                    if (false === $r) {
+                        throw new RuntimeException($wpdb->last_error, 7);
+                    }
+                }
+                foreach ($teacher_id as $_id) {
+                    $data_teacher = array('id' => $row_id, 'teacher_id' => $_id);
+                    $r = $wpdb->insert($table_teacher, $data_teacher);
+                    if (false === $r) {
+                        throw new RuntimeException($wpdb->last_error, 7);
+                    }
+                }
+                $response['response'] = __('Progress entry added successfully', 'wcs4');
+                $status = \WP_Http::CREATED;
             }
+            $response['days_to_update'] = array_unique($days_to_update);
+            $wpdb->query('COMMIT');
+        } catch (ValidationException $e) {
+            $response['response'] = $e->getMessage();
+            $response['errors'] = $e->getErrors();
+            $status = \WP_Http::BAD_REQUEST;
+        } catch (AccessDeniedException|Exception $e) {
+            $response['response'] = $e->getMessage() . ' [' . $e->getCode() . ']';
+            $status = \WP_Http::BAD_REQUEST;
+            $wpdb->query('ROLLBACK');
         }
 
-        wcs4_json_response([
-            'response' => (is_array($response) ? implode('<br>', $response) : $response),
-            'errors' => $errors,
-            'result' => $errors ? 'error' : 'updated',
-            'days_to_update' => array_unique($days_to_update),
-        ]);
-        die();
+        wcs4_json_response($response, $status);
     }
 
-    #[NoReturn] public static function get_item(): void
+    public static function get_item(): void
     {
-        $errors = [];
-        $response = __('You are no allowed to run this action', 'wcs4');
-        if (current_user_can(WCS4_PROGRESS_MANAGE_CAPABILITY)) {
+        global $wpdb;
+        $response = [];
+        try {
+            if (!current_user_can(WCS4_PROGRESS_MANAGE_CAPABILITY)) {
+                throw new AccessDeniedException();
+            }
             wcs4_verify_nonce();
-
-            global $wpdb;
-            $response = [];
-
-            $table = DB::get_progress_table_name();
-            $table_subject = DB::get_progress_subject_table_name();
-            $table_teacher = DB::get_progress_teacher_table_name();
 
             $required = array(
                 'row_id' => __('Row ID'),
             );
-
             $errors = wcs4_verify_required_fields($required);
-            if (empty($errors)) {
-                $row_id = $_POST['row_id'];
-                if (is_array($row_id)) {
-                    $query = $wpdb->prepare(
-                        "
+            if (!empty($errors)) {
+                throw new ValidationException($errors);
+            }
+            $row_id = $_POST['row_id'];
+            $table = DB::get_progress_table_name();
+            $table_subject = DB::get_progress_subject_table_name();
+            $table_teacher = DB::get_progress_teacher_table_name();
+            if (is_array($row_id)) {
+                $query = $wpdb->prepare(
+                    "
                             SELECT $table.*, GROUP_CONCAT(subject_id) AS subject_id, GROUP_CONCAT(teacher_id) AS teacher_id
                             FROM $table
                             LEFT JOIN $table_subject USING (id)
                             LEFT JOIN $table_teacher USING (id)
                             WHERE id IN (" . implode(',', array_fill(0, count($row_id), '%d')) . ")
                             GROUP BY id",
-                        $row_id
-                    );
-                    $results = $wpdb->get_results($query, ARRAY_A);
-                    if ($results) {
-                        foreach ($results as $id => $result) {
-                            $response[$id] = DB::parse_query($result);
-                        }
+                    $row_id
+                );
+                $db_results = $wpdb->get_results($query, ARRAY_A);
+                if ($db_results) {
+                    foreach ($db_results as $id => $db_result) {
+                        $response['response'][$id] = DB::parse_query($db_result);
                     }
-                } else {
-                    $query = $wpdb->prepare(
-                        "
+                }
+            } else {
+                $query = $wpdb->prepare(
+                    "
                             SELECT $table.*, GROUP_CONCAT(subject_id) AS subject_id, GROUP_CONCAT(teacher_id) AS teacher_id
                             FROM $table
                             LEFT JOIN $table_subject USING (id)
                             LEFT JOIN $table_teacher USING (id)
                             WHERE id = %d
                             GROUP BY id",
-                        $row_id
-                    );
-                    $result = $wpdb->get_row($query, ARRAY_A);
-                    $response = DB::parse_query($result);
-                }
+                    $row_id
+                );
+                $db_result = $wpdb->get_row($query, ARRAY_A);
+                $response['response'] = DB::parse_query($db_result);
             }
+            $status = \WP_Http::OK;
+        } catch (ValidationException $e) {
+            $response['response'] = $e->getMessage();
+            $response['errors'] = $e->getErrors();
+            $status = \WP_Http::BAD_REQUEST;
+        } catch (AccessDeniedException|Exception $e) {
+            $response['response'] = $e->getMessage() . ' [' . $e->getCode() . ']';
+            $status = \WP_Http::BAD_REQUEST;
+            $wpdb->query('ROLLBACK');
         }
-        wcs4_json_response([
-            'response' => $response,
-            'errors' => $errors,
-            'result' => $errors ? 'error' : 'success',
-        ]);
-        die();
+
+        wcs4_json_response($response, $status);
     }
 
     #[NoReturn] public static function delete_item(): void
     {
-        $errors = [];
-        $response = __('You are no allowed to run this action', 'wcs4');
-        if (current_user_can(WCS4_PROGRESS_MANAGE_CAPABILITY)) {
+        global $wpdb;
+        $response = [];
+        try {
+            if (!current_user_can(WCS4_PROGRESS_MANAGE_CAPABILITY)) {
+                throw new AccessDeniedException();
+            }
             wcs4_verify_nonce();
-
-            global $wpdb;
-
-            $table = DB::get_progress_table_name();
-            $table_subject = DB::get_progress_subject_table_name();
-            $table_teacher = DB::get_progress_teacher_table_name();
 
             $required = array(
                 'row_id' => __('Row ID'),
             );
-
             $errors = wcs4_verify_required_fields($required);
-            if (empty($errors)) {
-                $row_id = sanitize_text_field($_POST['row_id']);
-
-                $result = $wpdb->delete($table, array('id' => $row_id), array('%d'));
-                $result_subject = $wpdb->delete($table_subject, array('id' => $row_id), array('%d'));
-                $result_teacher = $wpdb->delete($table_teacher, array('id' => $row_id), array('%d'));
-                if (0 === $result || 0 === $result_subject || 0 === $result_teacher) {
-                    $response = __('Failed to delete entry', 'wcs4');
-                    $errors = true;
-                } else {
-                    $response = __('Progress entry deleted successfully', 'wcs4');
-                }
+            if (!empty($errors)) {
+                throw new ValidationException($errors);
             }
+
+            $row_id = sanitize_text_field($_POST['row_id']);
+            $table = DB::get_progress_table_name();
+            $table_subject = DB::get_progress_subject_table_name();
+            $table_teacher = DB::get_progress_teacher_table_name();
+            $db_result = $wpdb->delete($table, array('id' => $row_id), array('%d'));
+            $db_result_subject = $wpdb->delete($table_subject, array('id' => $row_id), array('%d'));
+            $db_result_teacher = $wpdb->delete($table_teacher, array('id' => $row_id), array('%d'));
+            if (0 === $db_result || 0 === $db_result_subject || 0 === $db_result_teacher) {
+                $response['response'] = __('Failed to delete entry', 'wcs4');
+                $status = \WP_Http::BAD_REQUEST;
+            } else {
+                $response['response'] = __('Progress entry deleted successfully', 'wcs4');
+                $status = \WP_Http::OK;
+            }
+            $response['scope'] = 'progress';
+            $response['id'] = $row_id;
+        } catch (ValidationException $e) {
+            $response['response'] = $e->getMessage();
+            $response['errors'] = $e->getErrors();
+            $status = \WP_Http::BAD_REQUEST;
+        } catch (AccessDeniedException|Exception $e) {
+            $response['response'] = $e->getMessage() . ' [' . $e->getCode() . ']';
+            $status = \WP_Http::BAD_REQUEST;
         }
-        wcs4_json_response([
-            'response' => $response,
-            'errors' => $errors,
-            'result' => $errors ? 'error' : 'updated',
-        ]);
-        die();
+
+        wcs4_json_response($response, $status);
     }
 
     #[NoReturn] public static function get_ajax_html(): void
     {
-        $html = __('You are no allowed to run this action', 'wcs4');
-        if (current_user_can(WCS4_PROGRESS_MANAGE_CAPABILITY)) {
+        $response = [];
+        try {
+            if (!current_user_can(WCS4_PROGRESS_MANAGE_CAPABILITY)) {
+                throw new AccessDeniedException();
+            }
             wcs4_verify_nonce();
-            $html = self::get_html_of_admin_table(
+
+            $response['html'] = self::get_html_of_admin_table(
                 sanitize_text_field($_POST['teacher']),
                 sanitize_text_field($_POST['student']),
                 sanitize_text_field($_POST['subject']),
@@ -726,42 +823,49 @@ class Progress
                 sanitize_text_field($_POST['type']),
                 sanitize_text_field($_POST['created_at_from']),
                 sanitize_text_field($_POST['created_at_upto']),
-                sanitize_text_field($_POST['order_field']),
-                sanitize_text_field($_POST['order_direction'])
+                sanitize_text_field($_POST['order_field'] ?? 'updated-at'),
+                sanitize_text_field($_POST['order_direction'] ?? 'desc'),
             );
+            $status = \WP_Http::OK;
+        } catch (ValidationException $e) {
+            $response['response'] = $e->getMessage();
+            $response['errors'] = $e->getErrors();
+            $status = \WP_Http::BAD_REQUEST;
+        } catch (AccessDeniedException|Exception $e) {
+            $response['response'] = $e->getMessage() . ' [' . $e->getCode() . ']';
+            $status = \WP_Http::BAD_REQUEST;
         }
-        wcs4_json_response(['html' => $html,]);
-        die();
+        wcs4_json_response($response, $status);
     }
 
     /**
      * Renders list layout
      *
-     * @param array $progresses : lessons array as returned by wcs4_get_lessons().
-     * @param string $progress_key
+     * @param array $items
+     * @param string $key
      * @param string $template_partial
      * @param string $template_periodic
      * @return string
      */
     public static function get_html_of_progress_list_for_shortcode(
-        array $progresses,
-        string $progress_key,
+        array $items,
+        string $key,
         string $template_partial,
         string $template_periodic
     ): string {
-        if (empty($progresses)) {
+        if (empty($items)) {
             return '<p class="wcs4-no-items-message">' . __('No progresses', 'wcs4') . '</p>';
         }
 
         $dateWithLessons = [];
         /** @var Progress_Item $progress */
-        foreach ($progresses as $progress) {
+        foreach ($items as $progress) {
             $dateWithLessons[$progress->getDate()][] = $progress;
         }
         krsort($dateWithLessons);
 
         $weekdays = wcs4_get_weekdays();
-        $output = '<div class="wcs4-progress-list-layout">';
+        $output = '<div class="wcs4_progress_list-layout" id="' . $key . '">';
         # Classes are grouped by indexed weekdays.
         foreach ($dateWithLessons as $date => $dayProgresses) {
             if (!empty($dayProgresses)) {
