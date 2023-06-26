@@ -23,7 +23,8 @@ class Admin
         bool $required = false,
         bool $multiple = false,
         string $classname = null,
-        array $filter = []
+        array $filter = [],
+        bool $includeOnlyScheduled = false
     ): string {
         global $wpdb;
         $post_type = 'wcs4_' . $key;
@@ -68,7 +69,11 @@ class Admin
                 break;
         }
 
-        if (!empty($querySelect)) {
+        if (
+            (!empty($filter['subject']) || !empty($filter['teacher']) || !empty($filter['student']))
+            &&
+            !empty($querySelect)
+        ) {
             $queryWhere = [];
             $queryParams = [];
             if (!empty($filter['subject'])) {
@@ -83,10 +88,26 @@ class Admin
                 $queryWhere[] = 'student_id IN (%s)';
                 $queryParams[] = $filter['student'];
             }
-            $queryString = "SELECT DISTINCT $querySelect FROM $table LEFT JOIN $table_teacher USING (id) LEFT JOIN $table_student USING (id) WHERE "
-                . implode(" AND ", $queryWhere);
-            $query = $wpdb->prepare($queryString, $queryParams);
-            $include_ids = $wpdb->get_col($query);
+            if (true === $includeOnlyScheduled) {
+                $queryEventsString = "SELECT DISTINCT id FROM $table LEFT JOIN $table_teacher USING (id) LEFT JOIN $table_student USING (id)";
+                if (!empty($queryWhere)) {
+                    $queryEventsString .= ' WHERE ' . implode(" AND ", $queryWhere);
+                }
+                $queryEventsPrepared = $wpdb->prepare($queryEventsString, $queryParams);
+                $eventsIds = $wpdb->get_col($queryEventsPrepared);
+                $queryString = "SELECT DISTINCT $querySelect FROM $table LEFT JOIN $table_teacher USING (id) LEFT JOIN $table_student USING (id) WHERE id IN ("
+                    . implode(',', $eventsIds)
+                    . ")";
+                $queryPrepared = $wpdb->prepare($queryString);
+                $include_ids = $wpdb->get_col($queryPrepared);
+            } else {
+                $queryString = "SELECT DISTINCT $querySelect FROM $table LEFT JOIN $table_teacher USING (id) LEFT JOIN $table_student USING (id)";
+                if (!empty($queryWhere)) {
+                    $queryString .= ' WHERE ' . implode(" AND ", $queryWhere);
+                }
+                $query = $wpdb->prepare($queryString, $queryParams);
+                $include_ids = $wpdb->get_col($query);
+            }
         } else {
             $include_ids = [];
         }
@@ -211,27 +232,37 @@ class Admin
                     . Journal_Item::typeLabel(Journal_Item::TYPE_NORMAL),
                 Journal_Item::TYPE_ABSENT_TEACHER_FREE_VACATION =>
                     (true === $prependIcon
-                        ? '<em class="' . Journal_Item::typeIcon(Journal_Item::TYPE_ABSENT_TEACHER_FREE_VACATION) . '"></em>'
+                        ? '<em class="' . Journal_Item::typeIcon(
+                            Journal_Item::TYPE_ABSENT_TEACHER_FREE_VACATION
+                        ) . '"></em>'
                         : '')
                     . Journal_Item::typeLabel(Journal_Item::TYPE_ABSENT_TEACHER_FREE_VACATION),
                 Journal_Item::TYPE_ABSENT_TEACHER_PAID_VACATION =>
                     (true === $prependIcon
-                        ? '<em class="' . Journal_Item::typeIcon(Journal_Item::TYPE_ABSENT_TEACHER_PAID_VACATION) . '"></em>'
+                        ? '<em class="' . Journal_Item::typeIcon(
+                            Journal_Item::TYPE_ABSENT_TEACHER_PAID_VACATION
+                        ) . '"></em>'
                         : '')
                     . Journal_Item::typeLabel(Journal_Item::TYPE_ABSENT_TEACHER_PAID_VACATION),
                 Journal_Item::TYPE_ABSENT_TEACHER_SICK_CHILDCARE =>
                     (true === $prependIcon
-                        ? '<em class="' . Journal_Item::typeIcon(Journal_Item::TYPE_ABSENT_TEACHER_SICK_CHILDCARE) . '"></em>'
+                        ? '<em class="' . Journal_Item::typeIcon(
+                            Journal_Item::TYPE_ABSENT_TEACHER_SICK_CHILDCARE
+                        ) . '"></em>'
                         : '')
                     . Journal_Item::typeLabel(Journal_Item::TYPE_ABSENT_TEACHER_SICK_CHILDCARE),
                 Journal_Item::TYPE_ABSENT_TEACHER_HEALTHY_CHILDCARE =>
                     (true === $prependIcon
-                        ? '<em class="' . Journal_Item::typeIcon(Journal_Item::TYPE_ABSENT_TEACHER_HEALTHY_CHILDCARE) . '"></em>'
+                        ? '<em class="' . Journal_Item::typeIcon(
+                            Journal_Item::TYPE_ABSENT_TEACHER_HEALTHY_CHILDCARE
+                        ) . '"></em>'
                         : '')
                     . Journal_Item::typeLabel(Journal_Item::TYPE_ABSENT_TEACHER_HEALTHY_CHILDCARE),
                 Journal_Item::TYPE_ABSENT_TEACHER_SICK_LEAVE =>
                     (true === $prependIcon
-                        ? '<em class="' . Journal_Item::typeIcon(Journal_Item::TYPE_ABSENT_TEACHER_SICK_LEAVE) . '"></em>'
+                        ? '<em class="' . Journal_Item::typeIcon(
+                            Journal_Item::TYPE_ABSENT_TEACHER_SICK_LEAVE
+                        ) . '"></em>'
                         : '')
                     . Journal_Item::typeLabel(Journal_Item::TYPE_ABSENT_TEACHER_SICK_LEAVE),
                 Journal_Item::TYPE_ABSENT_TEACHER =>

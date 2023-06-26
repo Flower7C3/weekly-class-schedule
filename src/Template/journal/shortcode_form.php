@@ -23,66 +23,45 @@ use WCS4\Helper\Admin;
         </fieldset>
         <fieldset class="form-field form-required form-field-subject_id-wrap">
             <label for="wcs4_journal_subject"><?= __('Subject', 'wcs4') ?></label>
-            <?php
-            if (empty($subject)): ?>
-                <?= Admin::generate_admin_select_list(
-                    'subject',
-                    'wcs4_journal_subject',
-                    'subject',
-                    null,
-                    true,
-                    false,
-                    null,
-                    ['subject' => $subject, 'teacher' => $teacher, 'student' => $student]
-                ) ?>
-            <?php
-            else: ?>
-                <input readonly value="<?= get_post($subject)->post_title ?>"/>
-                <input type="hidden" id="wcs4_journal_subject" name="subject" value="<?= $subject ?>"/>
-            <?php
-            endif; ?>
+            <?= Admin::generate_admin_select_list(
+                'subject',
+                'wcs4_journal_subject',
+                'subject',
+                null,
+                true,
+                false,
+                null,
+                ['subject' => $subject, 'teacher' => $teacher, 'student' => $student],
+                true
+            ) ?>
         </fieldset>
         <fieldset class="form-field form-required form-field-teacher_id-wrap">
             <label for="wcs4_journal_teacher"><?= __('Teacher', 'wcs4') ?></label>
-            <?php
-            if (empty($teacher)): ?>
-                <?= Admin::generate_admin_select_list(
-                    'teacher',
-                    'wcs4_journal_teacher',
-                    'teacher',
-                    null,
-                    true,
-                    true,
-                    null,
-                    ['subject' => $subject, 'teacher' => $teacher, 'student' => $student]
-                ) ?>
-            <?php
-            else: ?>
-                <input readonly value="<?= get_post($teacher)->post_title ?>"/>
-                <input type="hidden" id="wcs4_journal_teacher" name="teacher[]" value="<?= $teacher ?>"/>
-            <?php
-            endif; ?>
+            <?= Admin::generate_admin_select_list(
+                'teacher',
+                'wcs4_journal_teacher',
+                'teacher',
+                null,
+                true,
+                true,
+                null,
+                ['subject' => $subject, 'teacher' => $teacher, 'student' => $student],
+                true
+            ) ?>
         </fieldset>
         <fieldset class="form-field form-required form-field-student_id-wrap">
             <label for="wcs4_journal_student"><?= __('Student', 'wcs4') ?></label>
-            <?php
-            if (empty($student)): ?>
-                <?= Admin::generate_admin_select_list(
-                    'student',
-                    'wcs4_journal_student',
-                    'student',
-                    null,
-                    true,
-                    true,
-                    null,
-                    ['subject' => $subject, 'teacher' => $teacher, 'student' => $student]
-                ) ?>
-            <?php
-            else: ?>
-                <input readonly value="<?= get_post($student)->post_title ?>"/>
-                <input type="hidden" id="wcs4_journal_student" name="student[]" value="<?= $student ?>"/>
-            <?php
-            endif; ?>
+            <?= Admin::generate_admin_select_list(
+                'student',
+                'wcs4_journal_student',
+                'student',
+                null,
+                true,
+                true,
+                null,
+                ['subject' => $subject, 'teacher' => $teacher, 'student' => $student],
+                true
+            ) ?>
         </fieldset>
         <fieldset class="form-field row">
             <div class="form-field form-required form-field-date-wrap col-6">

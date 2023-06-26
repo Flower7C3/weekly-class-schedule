@@ -183,7 +183,7 @@ class Snapshot
 
         $row = $wpdb->get_row(
             $wpdb->prepare(
-                "SELECT id,content_hash,version FROM $table WHERE query_hash = %s",
+                "SELECT id,content_hash,version FROM $table WHERE query_hash = %s ORDER BY version DESC",
                 [$queryHash],
             ),
             ARRAY_A
@@ -192,7 +192,7 @@ class Snapshot
         if (!empty($row['id'])) {
             if ($row['content_hash'] !== $contentHash) {
                 $mode = 'create';
-                $version = $row['version'] + 1;
+                $version = (int)$row['version'] + 1;
             } else {
                 $mode = 'update';
             }
