@@ -21,8 +21,8 @@ class Snapshot
             sanitize_text_field($_GET['log_action'] ?? null),
             sanitize_text_field($_GET['log_title'] ?? null),
             sanitize_text_field($_GET['log_location'] ?? null),
-            sanitize_text_field($_GET['created_at_from'] ?? null),
-            sanitize_text_field($_GET['created_at_upto'] ?? null),
+            sanitize_text_field($_GET['created_at_from'] ?? date('Y-m-01')),
+            sanitize_text_field($_GET['created_at_upto'] ?? date('Y-m-d')),
             sanitize_text_field($_GET['order_field'] ?? 'updated-at'),
             sanitize_text_field($_GET['order_direction'] ?? 'desc'),
         );

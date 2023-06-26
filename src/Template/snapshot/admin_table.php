@@ -28,6 +28,11 @@ use WCS4\Helper\Output;
             }
             $groups[$key][] = $item;
         }
+        if ($order_direction === 'desc') {
+            krsort($groups);
+        } else {
+            ksort($groups);
+        }
         foreach ($groups as $key => $group) {
             if ($order_direction === 'desc') {
                 krsort($groups[$key]);
