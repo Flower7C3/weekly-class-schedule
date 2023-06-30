@@ -80,10 +80,10 @@ use WCS4\Helper\Output;
                             $order_field,
                         );
                         admin_th(
-                            __('Indications', 'wcs4'),
+                            __('Improvements', 'wcs4'),
                         );
                         admin_th(
-                            __('Improvements', 'wcs4'),
+                            __('Indications', 'wcs4'),
                         );
                         admin_th(
                             __('Updated at', 'wcs4'),
@@ -203,11 +203,11 @@ use WCS4\Helper\Output;
                                     $item->getStudent()
                                 ); ?>
                             </td>
-                            <td data-colname="<?= __('Indications', 'wcs4') ?>">
-                                <?= $item->getIndications() ?>
-                            </td>
                             <td data-colname="<?= __('Improvements', 'wcs4') ?>">
                                 <?= $item->getImprovements() ?>
+                            </td>
+                            <td data-colname="<?= __('Indications', 'wcs4') ?>">
+                                <?= $item->getIndications() ?>
                             </td>
                             <td data-colname="<?= __('Updated at', 'wcs4') ?>">
                                 <?php

@@ -76,13 +76,13 @@ use WCS4\Helper\Admin;
             endif; ?>
         </fieldset>
         <input type="hidden" id="wcs4_progress_type" value="<?= Progress_Item::TYPE_PARTIAL; ?>"/>
-        <fieldset class="form-field form-required form-field-indications-wrap">
-            <label for="wcs4_progress_indications"><?= __('Indications', 'wcs4') ?></label>
-            <textarea rows="5" id="wcs4_progress_indications" name="indications"></textarea>
-        </fieldset>
         <fieldset class="form-field form-required form-field-improvements-wrap">
             <label for="wcs4_progress_improvements"><?= __('Improvements', 'wcs4') ?></label>
             <textarea rows="5" id="wcs4_progress_improvements" name="improvements"></textarea>
+        </fieldset>
+        <fieldset class="form-field form-required form-field-indications-wrap">
+            <label for="wcs4_progress_indications"><?= __('Indications', 'wcs4') ?></label>
+            <textarea rows="5" id="wcs4_progress_indications" name="indications"></textarea>
         </fieldset>
         <fieldset class="submit" id="wcs4_progress_buttons-wrapper">
             <button id="wcs4-submit-form" type="submit" class="button button-primary wcs4-submit-progress-form"

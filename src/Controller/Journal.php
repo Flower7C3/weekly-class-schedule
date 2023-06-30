@@ -252,7 +252,9 @@ class Journal
         );
 
         $wcs4_options = Settings::load_settings();
-        [$thead_columns, $tbody_columns, $tfoot_columns] = Output::extract_for_table($wcs4_options['journal_html_table_columns']);
+        [$thead_columns, $tbody_columns, $tfoot_columns] = Output::extract_for_table(
+            $wcs4_options['journal_html_table_columns']
+        );
 
         $subject_item = '';
         $student_item = '';
@@ -327,6 +329,7 @@ class Journal
         $order_field = null,
         $order_direction = null
     ): string {
+
         ob_start();
         $items = self::get_items(
             $teacher,
@@ -340,9 +343,65 @@ class Journal
             $order_field,
             $order_direction
         );
+        $summary = self::get_summary(
+            $date_from,
+            $date_upto
+        );
         include self::TEMPLATE_DIR . 'admin_table.php';
         $response = ob_get_clean();
         return trim($response);
+    }
+
+    public static function get_summary(
+        $date_from = null,
+        $date_upto = null,
+
+    ) {
+        global $wpdb;
+        $table = DB::get_journal_table_name();
+        $table_teacher = DB::get_journal_teacher_table_name();
+        $table_posts = $wpdb->prefix . 'posts';
+        $table_meta = $wpdb->prefix . 'postmeta';
+
+        $query_str = "SELECT 
+                sub.ID AS subject_id, sub.post_title AS subject_name, sub.post_content AS subject_desc,
+                tea.ID AS teacher_id, tea.post_title AS teacher_name, tea.post_content AS teacher_desc
+            FROM $table 
+            LEFT JOIN $table_teacher USING(id)
+            LEFT JOIN $table_posts sub ON subject_id = sub.ID
+            LEFT JOIN $table_posts tea ON teacher_id = tea.ID";
+
+        $query_str = apply_filters(
+            'wcs4_filter_get_journals_query',
+            $query_str,
+            $table,
+            $table_posts,
+            $table_meta
+        );
+
+        # Add IDs by default (post filter)
+        $pattern = '/^\s?SELECT/';
+        $replacement = 'SELECT sub.ID AS subject_id, tea.ID as teacher_id, ';
+        $query_str = preg_replace($pattern, $replacement, $query_str);
+        $where = [];
+        $query_arr = [];
+
+        # Filters
+        if (!empty($date_from)) {
+            $where[] = 'date >= "%s"';
+            $query_arr[] = $date_from;
+        }
+        if (!empty($date_upto)) {
+            $where[] = 'date <= "%s"';
+            $query_arr[] = $date_upto;
+        }
+        if (!empty($where)) {
+            $query_str .= ' WHERE ' . implode(' AND ', $where);
+        }
+        $query_str .= " GROUP BY concat(sub.ID, tea.ID)";
+        $query_str .= " ORDER BY subject_name, teacher_name";
+        $query = $wpdb->prepare($query_str, $query_arr);
+        return $wpdb->get_results($query);
     }
 
     public static function get_items(

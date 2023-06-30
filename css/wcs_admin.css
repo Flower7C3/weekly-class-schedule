@@ -23,6 +23,10 @@
     }
 }
 
+.wcs4-management-page-callback .col-wrap {
+    padding: 0 !important;
+}
+
 #wcs4-management-form-wrapper .form-field select,
 #wcs4-management-form-wrapper .form-field input[type=text],
 #wcs4-management-form-wrapper .form-field input[type=tel],
@@ -239,6 +243,7 @@ form.readonly select, form[readonly] select, select.readonly, select[readonly] {
 fieldset label, .alignleft > label {
     display: block;
 }
+
 .buttons {
     padding-top: 18px;
 }

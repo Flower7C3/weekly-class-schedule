@@ -78,7 +78,17 @@ let WCS4_ADMIN = (function ($) {
     }
 
     let bind_filter_handler = function () {
-        $(document).on('click.wcs4-filter-toggle', '.search-filter', function (e) {
+        $(document).on('change.wcs4-filter-select', 'select.search-filter', function (e) {
+            let $selected = $(this).find('option:selected');
+            let select_subject_id = $(this).data('select-subject-id');
+            let value_subject = $selected.data('option-subject-val');
+            $('#' + select_subject_id).val(value_subject).change();
+            let select_teacher_id = $(this).data('select-teacher-id');
+            let value_teacher = $selected.data('option-teacher-val');
+            $('#' + select_teacher_id).val(value_teacher).change();
+            $('.results-filter .button-primary').click();
+        });
+        $(document).on('click.wcs4-filter-toggle', 'a.search-filter', function (e) {
             let select_id = $(this).data('select-id');
             let value = $(this).data('option-val');
             $('#' + select_id).val(value).change();

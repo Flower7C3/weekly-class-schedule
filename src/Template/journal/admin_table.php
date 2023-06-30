@@ -1,5 +1,6 @@
 <?php
 /**
+ * @var array $summary
  * @var array $items
  * @var string $order_field
  * @var string $order_direction
@@ -10,6 +11,32 @@ use WCS4\Helper\Output;
 
 ?>
 <div class="wcs4-day-content-wrapper" data-hash="<?= md5(serialize($items) . $order_field . $order_direction) ?>">
+    <div class="search-box">
+        <div class="alignleft">
+            <label for="search_filter"><?= __('Quick filter', 'wcs4') ?> </label>
+            <select id="search_filter" class="search-filter"
+                    data-select-subject-id="search_wcs4_journal_subject_id"
+                    data-select-teacher-id="search_wcs4_journal_teacher_id"
+            >
+                <option
+                        data-option-subject-val=""
+                        data-option-teacher-val=""
+                ><?= __('Select option', 'wcs4') ?></option>
+                <?php
+                foreach ($summary as $row): ?>
+                    <option
+                            data-option-subject-val="<?= $row->subject_id ?>"
+                            data-option-teacher-val="<?= $row->teacher_id ?>"
+                        <?= ('#' . $row->subject_id === $subject && '#' . $row->teacher_id === $teacher) ? 'selected' : '' ?>
+                    >
+                        <?= $row->subject_name ?> - <?= $row->teacher_name ?>
+                    </option>
+                <?php
+                endforeach; ?>
+            </select>
+        </div>
+        <br class="clear">
+    </div>
     <?php
     if ($items): ?>
         <?php

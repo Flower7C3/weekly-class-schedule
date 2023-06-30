@@ -87,13 +87,13 @@ use WCS4\Helper\Admin;
             <label for="wcs4_progress_end_date"><?= __('End date', 'wcs4') ?></label>
             <input type="date" id="wcs4_progress_end_date" name="end_date"/>
         </fieldset>
-        <fieldset class="form-field form-required form-field-indications-wrap" style="display: none;">
-            <label for="wcs4_progress_indications"><?= __('Indications', 'wcs4') ?></label>
-            <textarea rows="6" id="wcs4_progress_indications" name="indications"></textarea>
-        </fieldset>
         <fieldset class="form-field form-required form-field-improvements-wrap" style="display: none;">
             <label for="wcs4_progress_improvements"><?= __('Improvements', 'wcs4') ?></label>
             <textarea rows="6" id="wcs4_progress_improvements" name="improvements"></textarea>
+        </fieldset>
+        <fieldset class="form-field form-required form-field-indications-wrap" style="display: none;">
+            <label for="wcs4_progress_indications"><?= __('Indications', 'wcs4') ?></label>
+            <textarea rows="6" id="wcs4_progress_indications" name="indications"></textarea>
         </fieldset>
         <fieldset class="submit" id="wcs4_progress_buttons-wrapper">
             <span class="spinner"></span>
