@@ -10,7 +10,6 @@ use WCS4\Helper\Output;
 
 $subject_filter_field_id = 'search_wcs4_journal_subject_id';
 $teacher_filter_field_id = 'search_wcs4_journal_teacher_id';
-
 ?>
 <div class="wcs4-day-content-wrapper" data-hash="<?= md5(serialize($items) . $order_field . $order_direction) ?>">
     <?php

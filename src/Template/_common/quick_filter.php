@@ -22,16 +22,16 @@
                         data-option-teacher-val=""
                 ><?= __('Select option', 'wcs4') ?></option>
                 <?php
-                foreach ($filter['groups'] as $group): ?>
-                    <optgroup label="<?= $group['name'] ?>">
+                foreach ($filter->groups as $group): ?>
+                    <optgroup label="<?= $group->name ?>">
                         <?php
-                        foreach ($group['rows'] as $row): ?>
+                        foreach ($group->rows as $row): ?>
                             <option
-                                    data-option-<?=$filter['types']['group']?>-val="<?= $group['id'] ?>"
-                                    data-option-<?=$filter['types']['row']?>-val="<?= $row['id'] ?>"
-                                <?= ('#' . $group['id'] === ${$filter['types']['group']} && '#' . $row['id'] === ${$filter['types']['row']}) ? 'selected' : '' ?>
+                                    data-option-<?= $filter->types['group'] ?>-val="<?= $group->id ?>"
+                                    data-option-<?= $filter->types['row'] ?>-val="<?= $row->id ?>"
+                                <?= ('#' . $group->id === ${$filter->types['group']} && '#' . $row->id === ${$filter->types['row']}) ? 'selected' : '' ?>
                             >
-                                <?= $row['name'] ?>
+                                <?= $row->name ?>
                             </option>
                         <?php
                         endforeach; ?>

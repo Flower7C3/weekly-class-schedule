@@ -499,56 +499,49 @@ class DB
     public static function get_summary(
         string $query_str,
         array $query_arr = [],
-        $groupBy = 'concat(sub.ID, tea.ID)',
-        $orderBy = 'subject_name, teacher_name'
+        string $groupBy = 'concat(sub.ID, tea.ID)'
     ): array {
         global $wpdb;
-        $summary = [];
-        $results = $wpdb->get_results(
-            $wpdb->prepare($query_str . " GROUP BY $groupBy ORDER BY subject_name, teacher_name", $query_arr)
-        );
-        $summary[0] = [
-            'types' => [
-                'group' => 'subject',
-                'row' => 'teacher',
+        $summary = [
+            (object)[
+                'types' => [
+                    'group' => 'subject',
+                    'row' => 'teacher',
+                ],
+                'groups' => [],
             ],
-            'groups' => [],
+            (object)[
+                'types' => [
+                    'group' => 'teacher',
+                    'row' => 'subject',
+                ],
+                'groups' => [],
+            ],
         ];
-        foreach ($results as $row) {
-            if (!isset($summary[0]['groups'][$row->subject_id])) {
-                $summary[0]['groups'][$row->subject_id] = [
-                    'id' => $row->subject_id,
-                    'name' => $row->subject_name,
-                    'rows' => [],
+        foreach ($summary as $filter) {
+            $groupKey = $filter->types['group'];
+            $groupKeyId = "${groupKey}_id";
+            $groupKeyName = "${groupKey}_name";
+            $rowKey = $filter->types['row'];
+            $rowKeyId = "${rowKey}_id";
+            $rowKeyName = "${rowKey}_name";
+            $orderBy = $groupKeyName . ', ' . $rowKeyName;
+            $results = $wpdb->get_results(
+                $wpdb->prepare($query_str . " GROUP BY $groupBy ORDER BY $orderBy", $query_arr)
+            );
+            foreach ($results as $row) {
+                if (!isset($filter->groups[$row->$groupKeyId])) {
+                    $filter->groups[$row->$groupKeyId] = (object)[
+                        'id' => $row->$groupKeyId,
+                        'name' => $row->$groupKeyName,
+                        'rows' => [],
+                    ];
+                }
+                $filter->groups[$row->$groupKeyId]->rows[$row->$rowKeyId] = (object)[
+                    'id' => $row->$rowKeyId,
+                    'name' => $row->$rowKeyName,
                 ];
             }
-            $summary[0]['groups'][$row->subject_id]['rows'][] = [
-                'id' => $row->teacher_id,
-                'name' => $row->teacher_name,
-            ];
-        }
-        $results = $wpdb->get_results(
-            $wpdb->prepare($query_str . " GROUP BY $groupBy ORDER BY teacher_name, subject_name", $query_arr)
-        );
-        $summary[1] = [
-            'types' => [
-                'group' => 'teacher',
-                'row' => 'subject',
-            ],
-            'groups' => [],
-        ];
-        foreach ($results as $row) {
-            if (!isset($summary[1]['groups'][$row->teacher_id])) {
-                $summary[1]['groups'][$row->teacher_id] = [
-                    'id' => $row->teacher_id,
-                    'name' => $row->teacher_name,
-                    'rows' => [],
-                ];
-            }
-            $summary[1]['groups'][$row->teacher_id]['rows'][] = [
-                'id' => $row->subject_id,
-                'name' => $row->subject_name,
-            ];
         }
         return $summary;
     }
