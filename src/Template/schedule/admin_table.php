@@ -10,9 +10,13 @@
 use WCS4\Entity\Lesson_Item;
 use WCS4\Helper\Output;
 
+$subject_filter_field_id = 'search_wcs4_schedule_subject_id';
+$teacher_filter_field_id = 'search_wcs4_schedule_teacher_id';
 ?>
 <div class="wcs4-day-content-wrapper"
      data-hash="<?= md5(serialize($items) . $collisionDetection . $order_field . $order_direction) ?>">
+    <?php
+    include __DIR__ . '/../_common/quick_filter.php'; ?>
     <?php
     if ($items): ?>
         <table class="wp-list-table widefat fixed striped wcs4-admin-schedule-table"

@@ -329,7 +329,6 @@ class Journal
         $order_field = null,
         $order_direction = null
     ): string {
-
         ob_start();
         $items = self::get_items(
             $teacher,
@@ -355,8 +354,7 @@ class Journal
     public static function get_summary(
         $date_from = null,
         $date_upto = null,
-
-    ) {
+    ): array {
         global $wpdb;
         $table = DB::get_journal_table_name();
         $table_teacher = DB::get_journal_teacher_table_name();
@@ -398,10 +396,8 @@ class Journal
         if (!empty($where)) {
             $query_str .= ' WHERE ' . implode(' AND ', $where);
         }
-        $query_str .= " GROUP BY concat(sub.ID, tea.ID)";
-        $query_str .= " ORDER BY subject_name, teacher_name";
-        $query = $wpdb->prepare($query_str, $query_arr);
-        return $wpdb->get_results($query);
+
+        return DB::get_summary($query_str, $query_arr);
     }
 
     public static function get_items(

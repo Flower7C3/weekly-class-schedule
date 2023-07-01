@@ -196,9 +196,37 @@ class Schedule
             $visibility,
             $collisionDetection
         );
+        $summary = self::get_summary();
         include self::TEMPLATE_DIR . 'admin_table.php';
         $response = ob_get_clean();
         return trim($response);
+    }
+
+    public static function get_summary(): array
+    {
+        global $wpdb;
+        $table = DB::get_schedule_table_name();
+        $table_teacher = DB::get_schedule_teacher_table_name();
+        $table_posts = $wpdb->prefix . 'posts';
+        $table_meta = $wpdb->prefix . 'postmeta';
+
+        $query_str = "SELECT 
+                sub.ID AS subject_id, sub.post_title AS subject_name, sub.post_content AS subject_desc,
+                tea.ID AS teacher_id, tea.post_title AS teacher_name, tea.post_content AS teacher_desc
+            FROM $table 
+            LEFT JOIN $table_teacher USING(id)
+            LEFT JOIN $table_posts sub ON subject_id = sub.ID
+            LEFT JOIN $table_posts tea ON teacher_id = tea.ID";
+
+        $query_str = apply_filters(
+            'wcs4_filter_get_lessons_query',
+            $query_str,
+            $table,
+            $table_posts,
+            $table_meta
+        );
+
+        return DB::get_summary($query_str);
     }
 
     public static function get_items(

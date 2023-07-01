@@ -496,6 +496,63 @@ class DB
         return $response;
     }
 
+    public static function get_summary(
+        string $query_str,
+        array $query_arr = [],
+        $groupBy = 'concat(sub.ID, tea.ID)',
+        $orderBy = 'subject_name, teacher_name'
+    ): array {
+        global $wpdb;
+        $summary = [];
+        $results = $wpdb->get_results(
+            $wpdb->prepare($query_str . " GROUP BY $groupBy ORDER BY subject_name, teacher_name", $query_arr)
+        );
+        $summary[0] = [
+            'types' => [
+                'group' => 'subject',
+                'row' => 'teacher',
+            ],
+            'groups' => [],
+        ];
+        foreach ($results as $row) {
+            if (!isset($summary[0]['groups'][$row->subject_id])) {
+                $summary[0]['groups'][$row->subject_id] = [
+                    'id' => $row->subject_id,
+                    'name' => $row->subject_name,
+                    'rows' => [],
+                ];
+            }
+            $summary[0]['groups'][$row->subject_id]['rows'][] = [
+                'id' => $row->teacher_id,
+                'name' => $row->teacher_name,
+            ];
+        }
+        $results = $wpdb->get_results(
+            $wpdb->prepare($query_str . " GROUP BY $groupBy ORDER BY teacher_name, subject_name", $query_arr)
+        );
+        $summary[1] = [
+            'types' => [
+                'group' => 'teacher',
+                'row' => 'subject',
+            ],
+            'groups' => [],
+        ];
+        foreach ($results as $row) {
+            if (!isset($summary[1]['groups'][$row->teacher_id])) {
+                $summary[1]['groups'][$row->teacher_id] = [
+                    'id' => $row->teacher_id,
+                    'name' => $row->teacher_name,
+                    'rows' => [],
+                ];
+            }
+            $summary[1]['groups'][$row->teacher_id]['rows'][] = [
+                'id' => $row->subject_id,
+                'name' => $row->subject_name,
+            ];
+        }
+        return $summary;
+    }
+
     public static function get_items(
         string $className,
         string $query_str,
