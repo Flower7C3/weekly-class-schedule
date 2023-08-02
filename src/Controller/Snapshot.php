@@ -81,8 +81,8 @@ class Snapshot
         $location = null,
         $created_at_from = null,
         $created_at_upto = null,
-        $order_field = null,
-        $order_direction = null
+        $orderField = null,
+        $orderDirection = null
     ): string {
         ob_start();
         $items = self::get_items(
@@ -91,8 +91,8 @@ class Snapshot
             $location,
             $created_at_from,
             $created_at_upto,
-            $order_field,
-            $order_direction
+            $orderField,
+            $orderDirection
         );
         include self::TEMPLATE_DIR . 'admin_table.php';
         $response = ob_get_clean();
@@ -105,63 +105,66 @@ class Snapshot
         $location = null,
         $created_at_from = null,
         $created_at_upto = null,
-        $order_field = null,
-        $order_direction = null,
+        $orderField = null,
+        $orderDirection = null,
         $limit = null,
         $paged = null
     ): array {
         global $wpdb;
         $table = DB::get_snapshot_table_name();
 
-        $query = "SELECT
-                $table.id AS snapshot_id,
-                $table.created_at, $table.created_by, $table.updated_at, $table.updated_by,
-                $table.title, $table.query_string, $table.query_hash, $table.action,
-                $table.content, $table.content_hash, $table.content_type,
-                $table.version
-            FROM $table
+        $queryStr = "SELECT
+                {$table}.id AS snapshot_id,
+                {$table}.created_at, {$table}.created_by, {$table}.updated_at, {$table}.updated_by,
+                {$table}.title, {$table}.query_string, {$table}.query_hash, {$table}.action,
+                {$table}.content, {$table}.content_hash, {$table}.content_type,
+                {$table}.version
+            FROM {$table}
         ";
 
-        # Add IDs by default (post filter)
+        # Filters
+        $filters = [];
+
+        # Where
         $where = [];
-        $query_arr = [];
+        $queryArr = [];
         if (!empty($action)) {
             $where[] = 'action LIKE "%s"';
-            $query_arr[] = '%' . $wpdb->esc_like($action) . '%';
+            $queryArr[] = '%' . $wpdb->esc_like($action) . '%';
         }
         if (!empty($title)) {
             $where[] = 'title LIKE "%s"';
-            $query_arr[] = '%' . $wpdb->esc_like($title) . '%';
+            $queryArr[] = '%' . $wpdb->esc_like($title) . '%';
         }
         if (!empty($location)) {
             $where[] = '(query_string LIKE "%s" OR query_hash = "%s")';
-            $query_arr[] = '%' . $wpdb->esc_like($location) . '%';
-            $query_arr[] = $wpdb->esc_like($location);
+            $queryArr[] = '%' . $wpdb->esc_like($location) . '%';
+            $queryArr[] = $wpdb->esc_like($location);
         }
         if (!empty($created_at_from)) {
             $where[] = 'created_at >= "%s"';
-            $query_arr[] = $created_at_from . ' 00:00:00';
+            $queryArr[] = $created_at_from . ' 00:00:00';
         }
         if (!empty($created_at_upto)) {
             $where[] = 'created_at <= "%s"';
-            $query_arr[] = $created_at_upto . ' 23:59:59';
+            $queryArr[] = $created_at_upto . ' 23:59:59';
         }
-        switch ($order_field) {
+        switch ($orderField) {
             case 'action':
-                $order_field = ['action' => $order_direction];
+                $orderField = ['action' => $orderDirection];
                 break;
             case 'title':
-                $order_field = ['title' => $order_direction];
+                $orderField = ['title' => $orderDirection];
                 break;
             case 'created-at':
-                $order_field = ['created_at' => $order_direction];
+                $orderField = ['created_at' => $orderDirection];
                 break;
             default:
             case 'updated-at':
-                $order_field = ['updated_at' => $order_direction];
+                $orderField = ['updated_at' => $orderDirection];
                 break;
         }
-        return DB::get_items(Snapshot_Item::class, $query, $where, $query_arr, $order_field, $limit, $paged);
+        return DB::get_items(Snapshot_Item::class, $queryStr, $filters, $where, $queryArr, $orderField, $limit, $paged);
     }
 
 

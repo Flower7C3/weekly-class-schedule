@@ -1,8 +1,8 @@
 <?php
 /**
  * @var array $items
- * @var string $order_field
- * @var string $order_direction
+ * @var string $orderField
+ * @var string $orderDirection
  */
 
 use WCS4\Entity\Snapshot_Item;
@@ -10,14 +10,14 @@ use WCS4\Helper\Output;
 
 ?>
 <div class="wcs4-day-content-wrapper"
-     data-hash="<?= md5(serialize($items) . time() . $order_field . $order_direction) ?>">
+     data-hash="<?= md5(serialize($items) . time() . $orderField . $orderDirection) ?>">
     <?php
     if ($items): ?>
         <?php
         $groups = [];
         /** @var Snapshot_Item $item */
         foreach ($items as $item) {
-            switch ($order_field) {
+            switch ($orderField) {
                 case 'operation':
                     $key = $item->getOperationLabel();
                     break;
@@ -28,13 +28,13 @@ use WCS4\Helper\Output;
             }
             $groups[$key][] = $item;
         }
-        if ($order_direction === 'desc') {
+        if ($orderDirection === 'desc') {
             krsort($groups);
         } else {
             ksort($groups);
         }
         foreach ($groups as $key => $group) {
-            if ($order_direction === 'desc') {
+            if ($orderDirection === 'desc') {
                 krsort($groups[$key]);
             } else {
                 ksort($groups[$key]);
@@ -56,14 +56,14 @@ use WCS4\Helper\Output;
                         admin_th(
                             __('Action', 'wcs4'),
                             'action',
-                            $order_direction,
-                            $order_field,
+                            $orderDirection,
+                            $orderField,
                         );
                         admin_th(
                             __('Title', 'wcs4'),
                             'title',
-                            $order_direction,
-                            $order_field,
+                            $orderDirection,
+                            $orderField,
                         );
                         admin_th(
                             __('Location', 'wcs4'),
@@ -75,8 +75,8 @@ use WCS4\Helper\Output;
                         admin_th(
                             __('Updated at', 'wcs4'),
                             'updated-at',
-                            $order_direction,
-                            $order_field,
+                            $orderDirection,
+                            $orderField,
                         ); ?>
                     </tr>
                     </thead>

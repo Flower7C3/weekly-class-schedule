@@ -1,22 +1,22 @@
 <?php
 /**
  * @var array $items
- * @var string $order_field
- * @var string $order_direction
+ * @var string $orderField
+ * @var string $orderDirection
  */
 
 use WCS4\Entity\Progress_Item;
 use WCS4\Helper\Output;
 
 ?>
-<div class="wcs4-day-content-wrapper" data-hash="<?= md5(serialize($items) . $order_field . $order_direction) ?>">
+<div class="wcs4-day-content-wrapper" data-hash="<?= md5(serialize($items) . $orderField . $orderDirection) ?>">
     <?php
     if ($items): ?>
         <?php
         $groups = [];
         /** @var Progress_Item $item */
         foreach ($items as $item) {
-            switch ($order_field) {
+            switch ($orderField) {
                 case 'time':
                     $key = $item->getStartOrType();
                     break;
@@ -36,7 +36,7 @@ use WCS4\Helper\Output;
             }
             $groups[$key][] = $item;
         }
-        if ($order_direction === 'desc') {
+        if ($orderDirection === 'desc') {
             krsort($groups);
         } else {
             ksort($groups);
@@ -58,26 +58,26 @@ use WCS4\Helper\Output;
                         admin_th(
                             __('Start', 'wcs4') . ' - ' . __('End', 'wcs4'),
                             'time',
-                            $order_direction,
-                            $order_field,
+                            $orderDirection,
+                            $orderField,
                         );
                         admin_th(
                             __('Subject', 'wcs4'),
                             'subject',
-                            $order_direction,
-                            $order_field,
+                            $orderDirection,
+                            $orderField,
                         );
                         admin_th(
                             __('Teacher', 'wcs4'),
                             'teacher',
-                            $order_direction,
-                            $order_field,
+                            $orderDirection,
+                            $orderField,
                         );
                         admin_th(
                             __('Student', 'wcs4'),
                             'student',
-                            $order_direction,
-                            $order_field,
+                            $orderDirection,
+                            $orderField,
                         );
                         admin_th(
                             __('Improvements', 'wcs4'),
@@ -88,8 +88,8 @@ use WCS4\Helper\Output;
                         admin_th(
                             __('Updated at', 'wcs4'),
                             'updated-at',
-                            $order_direction,
-                            $order_field,
+                            $orderDirection,
+                            $orderField,
                         ); ?>
                     </tr>
                     </thead>

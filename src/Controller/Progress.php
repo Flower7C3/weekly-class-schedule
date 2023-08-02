@@ -234,8 +234,8 @@ class Progress
         $date_from = empty($_GET['date_from']) ? null : sanitize_text_field($_GET['date_from']);
         $date_upto = empty($_GET['date_upto']) ? null : sanitize_text_field($_GET['date_upto']);
         $type = empty($_GET['type']) ? null : sanitize_text_field($_GET['type']);
-        $order_field = empty($_GET['order_field']) ? 'time' : sanitize_text_field($_GET['order_field']);
-        $order_direction = empty($_GET['order_direction']) ? 'asc' : sanitize_text_field($_GET['order_direction']);
+        $orderField = empty($_GET['order_field']) ? 'time' : sanitize_text_field($_GET['order_field']);
+        $orderDirection = empty($_GET['order_direction']) ? 'asc' : sanitize_text_field($_GET['order_direction']);
         switch (get_post_type()) {
             case 'wcs4_teacher':
                 $teacher = '#' . get_the_id();
@@ -259,8 +259,8 @@ class Progress
             $type,
             null,
             null,
-            $order_field,
-            $order_direction
+            $orderField,
+            $orderDirection
         );
         $wcs4_options = Settings::load_settings();
 
@@ -283,7 +283,9 @@ class Progress
             }
         }
 
-        [$thead_columns, $tbody_columns, $tfoot_columns] = Output::extract_for_table($wcs4_options['progress_html_table_columns']);
+        [$thead_columns, $tbody_columns, $tfoot_columns] = Output::extract_for_table(
+            $wcs4_options['progress_html_table_columns']
+        );
 
         $subject_item = '';
         $student_item = '';
@@ -358,8 +360,8 @@ class Progress
         $type = null,
         $created_at_from = null,
         $created_at_upto = null,
-        $order_field = null,
-        $order_direction = null
+        $orderField = null,
+        $orderDirection = null
     ): string {
         ob_start();
         $items = self::get_items(
@@ -372,8 +374,8 @@ class Progress
             $type,
             $created_at_from,
             $created_at_upto,
-            $order_field,
-            $order_direction
+            $orderField,
+            $orderDirection
         );
         include self::TEMPLATE_DIR . 'admin_table.php';
         $response = ob_get_clean();
@@ -390,8 +392,8 @@ class Progress
         $type = null,
         $created_at_from = null,
         $created_at_upto = null,
-        $order_field = null,
-        $order_direction = null,
+        $orderField = null,
+        $orderDirection = null,
         $limit = null,
         $paged = null
     ): array {
@@ -403,103 +405,96 @@ class Progress
         $table_posts = $wpdb->prefix . 'posts';
         $table_meta = $wpdb->prefix . 'postmeta';
 
-        $query = "SELECT
-                $table.id AS progress_id, $table.created_at, $table.updated_at, $table.created_by, $table.updated_by,
+        $queryStr = "SELECT
+                {$table}.id AS progress_id, {$table}.created_at, {$table}.updated_at, {$table}.created_by, {$table}.updated_by,
                 sub.ID AS subject_id, sub.post_title AS subject_name, sub.post_content AS subject_desc,
                 tea.ID AS teacher_id, tea.post_title AS teacher_name, tea.post_content AS teacher_desc,
                 stu.ID AS student_id, stu.post_title AS student_name, stu.post_content AS student_desc,
-                start_date, end_date,
-                improvements, indications, type
-            FROM $table 
-            LEFT JOIN $table_subject USING(id)
-            LEFT JOIN $table_teacher USING(id)
-            LEFT JOIN $table_posts sub ON subject_id = sub.ID
-            LEFT JOIN $table_posts tea ON teacher_id = tea.ID
-            LEFT JOIN $table_posts stu ON student_id = stu.ID
+                {$table}.start_date, {$table}.end_date,
+                {$table}.improvements, {$table}.indications, {$table}.type
+            FROM {$table} 
+            LEFT JOIN {$table_subject} USING(id)
+            LEFT JOIN {$table_teacher} USING(id)
+            LEFT JOIN {$table_posts} sub ON subject_id = sub.ID
+            LEFT JOIN {$table_posts} tea ON teacher_id = tea.ID
+            LEFT JOIN {$table_posts} stu ON student_id = stu.ID
         ";
-
-        $query = apply_filters(
+        $queryStr = apply_filters(
             'wcs4_filter_get_progresses_query',
-            $query,
+            $queryStr,
             $table,
             $table_posts,
             $table_meta
         );
-
-        # Add IDs by default (post filter)
         $pattern = '/^\s?SELECT/';
         $replacement = 'SELECT sub.ID AS subject_id, tea.ID as teacher_id, stu.ID as student_id,';
-        $query = preg_replace($pattern, $replacement, $query);
-        $where = [];
-        $query_arr = [];
+        $queryStr = preg_replace($pattern, $replacement, $queryStr);
 
         # Filters
-        $filters = array(
-            'sub' => $subject,
-            'tea' => $teacher,
-            'stu' => $student,
-        );
-        foreach ($filters as $prefix => $filter) {
-            if ('all' !== $filter && '' !== $filter && null !== $filter) {
-                if (is_array($filter)) {
-                    $where[] = $prefix . '.ID IN (' . implode(', ', array_fill(0, count($filter), '%s')) . ')';
-                    $query_arr += $filter;
-                } elseif (preg_match('/^#/', $filter)) {
-                    $where[] = $prefix . '.ID = %s';
-                    $query_arr[] = preg_replace('/^#/', '', $filter);
-                } else {
-                    $where[] = $prefix . '.post_title = %s';
-                    $query_arr[] = $filter;
-                }
-            }
-        }
+        $filters = [
+            [
+                'prefix' => 'sub',
+                'value' => $subject,
+                'searchById' => "{$table}.id IN (SELECT id FROM {$table_subject} WHERE subject_id = %s)"
+            ],
+            [
+                'prefix' => 'tea',
+                'value' => $teacher,
+                'searchById' => "{$table}.id IN (SELECT id FROM {$table_teacher} WHERE teacher_id = %s)"
+            ],
+            ['prefix' => 'stu', 'value' => $student, 'searchById' => "stu.ID = %s"],
+        ];
+
+        # Where
+        $where = [];
+        $queryArr = [];
         if (!empty($id)) {
             $where[] = "$table.id = %d";
-            $query_arr[] = $id;
+            $queryArr[] = $id;
         }
         if (!empty($type)) {
             $where[] = "$table.type = '%s'";
-            $query_arr[] = $type;
+            $queryArr[] = $type;
         }
         if (!empty($date_from)) {
             $where[] = 'start_date >= "%s"';
-            $query_arr[] = $date_from;
+            $queryArr[] = $date_from;
         }
         if (!empty($date_upto)) {
             $where[] = 'start_date <= "%s"';
-            $query_arr[] = $date_upto;
+            $queryArr[] = $date_upto;
         }
         if (!empty($created_at_from)) {
             $where[] = 'created_at >= "%s"';
-            $query_arr[] = $created_at_from . ' 00:00:00';
+            $queryArr[] = $created_at_from . ' 00:00:00';
         }
         if (!empty($created_at_upto)) {
             $where[] = 'created_at <= "%s"';
-            $query_arr[] = $created_at_upto . ' 23:59:59';
+            $queryArr[] = $created_at_upto . ' 23:59:59';
         }
 
-        switch ($order_field) {
+        switch ($orderField) {
             case 'time':
-                $order_field = ['start_date' => $order_direction];
+                $orderField = ['start_date' => $orderDirection];
                 break;
             case 'subject':
-                $order_field = ['subject_name' => $order_direction];
+                $orderField = ['subject_name' => $orderDirection];
                 break;
             case 'teacher':
-                $order_field = ['teacher_name' => $order_direction];
+                $orderField = ['teacher_name' => $orderDirection];
                 break;
             case 'student':
-                $order_field = ['student_name' => $order_direction];
+                $orderField = ['student_name' => $orderDirection];
                 break;
             case 'created-at':
-                $order_field = ['created_at' => $order_direction];
+                $orderField = ['created_at' => $orderDirection];
                 break;
             default:
             case 'updated-at':
-                $order_field = ['updated_at' => $order_direction];
+                $orderField = ['updated_at' => $orderDirection];
                 break;
         }
-        return DB::get_items(Progress_Item::class, $query, $where, $query_arr, $order_field, $limit, $paged);
+        return DB::get_items(Progress_Item::class, $queryStr, $filters, $where, $queryArr, $orderField, $limit, $paged);
     }
 
     public static function create_item(): void

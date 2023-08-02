@@ -5,8 +5,8 @@
  * @var string $subject
  * @var string $teacher
  * @var string $collisionDetection
- * @var string $order_field
- * @var string $order_direction
+ * @var string $orderField
+ * @var string $orderDirection
  */
 
 use WCS4\Entity\Lesson_Item;
@@ -16,7 +16,7 @@ $subject_filter_field_id = 'search_wcs4_schedule_subject_id';
 $teacher_filter_field_id = 'search_wcs4_schedule_teacher_id';
 ?>
 <div class="wcs4-day-content-wrapper"
-     data-hash="<?= md5(serialize($items) . $collisionDetection. $subject .$teacher  . $order_field . $order_direction) ?>">
+     data-hash="<?= md5(serialize($items) . $collisionDetection. $subject .$teacher  . $orderField . $orderDirection) ?>">
     <?php
     include __DIR__ . '/../_common/quick_filter.php'; ?>
     <?php

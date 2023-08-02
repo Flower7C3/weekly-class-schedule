@@ -473,9 +473,9 @@ class DB
             FROM $table_posts item
             WHERE item.ID = %d
         ";
-        $query_arr = [];
-        $query_arr[] = str_replace('#', '', $id);
-        $query = $wpdb->prepare($query, $query_arr);
+        $queryArr = [];
+        $queryArr[] = str_replace('#', '', $id);
+        $query = $wpdb->prepare($query, $queryArr);
         $dbrow = $wpdb->get_row($query);
         if (null === $dbrow) {
             return null;
@@ -498,7 +498,7 @@ class DB
 
     public static function get_summary(
         string $query_str,
-        array $query_arr = [],
+        array $queryArr = [],
         string $groupBy = 'concat(sub.ID, tea.ID)'
     ): array {
         global $wpdb;
@@ -527,7 +527,7 @@ class DB
             $rowKeyName = "${rowKey}_name";
             $orderBy = $groupKeyName . ', ' . $rowKeyName;
             $results = $wpdb->get_results(
-                $wpdb->prepare($query_str . " GROUP BY $groupBy ORDER BY $orderBy", $query_arr)
+                $wpdb->prepare($query_str . " GROUP BY $groupBy ORDER BY $orderBy", $queryArr)
             );
             foreach ($results as $row) {
                 if (!isset($filter->groups[$row->$groupKeyId])) {
@@ -547,44 +547,62 @@ class DB
     }
 
     public static function get_items(
-        string $className,
+        string $class_name,
         string $query_str,
+        array $filters,
         array $where,
-        array $query_arr,
-        array $order_field,
+        array $queryArr,
+        array $orderField,
         ?string $limit = null,
         ?int $paged = 1
     ): array {
         global $wpdb;
+        foreach ($filters as $filter) {
+            $prefix = $filter['prefix'];
+            $value = $filter['value'];
+            $searchById = $filter['searchById'];
+            if ('all' !== $value && '' !== $value && null !== $value) {
+                if (is_array($value)) {
+                    $where[] = $prefix . '.ID IN (' . implode(', ', array_fill(0, count($value), '%s')) . ')';
+                    $queryArr += $value;
+                } elseif (str_starts_with($value, '#')) {
+                    $where[] = $searchById;
+                    $queryArr[] = preg_replace('/^#/', '', $value);
+                } else {
+                    $where[] = $prefix . '.post_title = %s';
+                    $queryArr[] = $value;
+                }
+            }
+        }
         if (!empty($where)) {
             $query_str .= ' WHERE ' . implode(' AND ', $where);
         }
         $order = [];
-        foreach ($order_field as $field => $direction) {
+        foreach ($orderField as $field => $direction) {
             $direction = ($direction === 'asc' || $direction === 'ASC') ? 'ASC' : 'DESC';
             $order[] = sprintf('%s %s', $field, $direction);
         }
         $query_str .= ' ORDER BY ' . implode(', ', $order);
         if (null !== $limit) {
             $query_str .= ' LIMIT %d';
-            $query_arr[] = $limit;
+            $queryArr[] = $limit;
             if (null !== $paged) {
                 $query_str .= ' OFFSET %d';
-                $query_arr[] = $limit * ($paged - 1);
+                $queryArr[] = $limit * ($paged - 1);
             }
         }
-        $query = $wpdb->prepare($query_str, $query_arr);
+        $query = $wpdb->prepare($query_str, $queryArr);
         $results = $wpdb->get_results($query);
         $format = get_option('time_format');
         $items = [];
         if ($results) {
             foreach ($results as $row) {
-                $item = new $className($row, $format);
+                $item = new $class_name($row, $format);
                 $item = apply_filters('wcs4_format_class', $item);
                 if (!isset($items[$item->getId()])) {
                     $items[$item->getId()] = $item;
                 } else {
-                    switch ($className) {
+                    switch ($class_name) {
                         case Lesson_Item::class:
                             /** @var Lesson_Item $_item */
                             $_item = $items[$item->getId()];

@@ -223,8 +223,8 @@ class Journal
         $date_from = sanitize_text_field($_GET['date_from']);
         $date_upto = sanitize_text_field($_GET['date_upto']);
         $type = sanitize_text_field($_GET['type']);
-        $order_field = empty($_GET['order_field']) ? 'time' : sanitize_text_field($_GET['order_field']);
-        $order_direction = empty($_GET['order_direction']) ? 'asc' : sanitize_text_field($_GET['order_direction']);
+        $orderField = empty($_GET['order_field']) ? 'time' : sanitize_text_field($_GET['order_field']);
+        $orderDirection = empty($_GET['order_direction']) ? 'asc' : sanitize_text_field($_GET['order_direction']);
         switch (get_post_type()) {
             case 'wcs4_teacher':
                 $teacher = '#' . get_the_id();
@@ -247,8 +247,8 @@ class Journal
             $type,
             null,
             null,
-            $order_field,
-            $order_direction
+            $orderField,
+            $orderDirection
         );
 
         $wcs4_options = Settings::load_settings();
@@ -326,8 +326,8 @@ class Journal
         $type = null,
         $created_at_from = null,
         $created_at_upto = null,
-        $order_field = null,
-        $order_direction = null
+        $orderField = null,
+        $orderDirection = null
     ): string {
         ob_start();
         $items = self::get_items(
@@ -339,8 +339,8 @@ class Journal
             $type,
             $created_at_from,
             $created_at_upto,
-            $order_field,
-            $order_direction
+            $orderField,
+            $orderDirection
         );
         $summary = self::get_summary(
             $date_from,
@@ -382,22 +382,22 @@ class Journal
         $replacement = 'SELECT sub.ID AS subject_id, tea.ID as teacher_id, ';
         $query_str = preg_replace($pattern, $replacement, $query_str);
         $where = [];
-        $query_arr = [];
+        $queryArr = [];
 
         # Filters
         if (!empty($date_from)) {
             $where[] = 'date >= "%s"';
-            $query_arr[] = $date_from;
+            $queryArr[] = $date_from;
         }
         if (!empty($date_upto)) {
             $where[] = 'date <= "%s"';
-            $query_arr[] = $date_upto;
+            $queryArr[] = $date_upto;
         }
         if (!empty($where)) {
             $query_str .= ' WHERE ' . implode(' AND ', $where);
         }
 
-        return DB::get_summary($query_str, $query_arr);
+        return DB::get_summary($query_str, $queryArr);
     }
 
     public static function get_items(
@@ -409,8 +409,8 @@ class Journal
         $type = null,
         $created_at_from = null,
         $created_at_upto = null,
-        $order_field = null,
-        $order_direction = null,
+        $orderField = null,
+        $orderDirection = null,
         $limit = null,
         $paged = null
     ): array {
@@ -422,98 +422,91 @@ class Journal
         $table_posts = $wpdb->prefix . 'posts';
         $table_meta = $wpdb->prefix . 'postmeta';
 
-        $query = "SELECT
-                $table.id AS journal_id, $table.created_at, $table.updated_at, $table.created_by, $table.updated_by,
+        $queryStr = "SELECT
+                {$table}.id AS journal_id, {$table}.created_at, {$table}.updated_at, {$table}.created_by, {$table}.updated_by,
                 sub.ID AS subject_id, sub.post_title AS subject_name, sub.post_content AS subject_desc,
                 tea.ID AS teacher_id, tea.post_title AS teacher_name, tea.post_content AS teacher_desc,
                 stu.ID AS student_id, stu.post_title AS student_name, stu.post_content AS student_desc,
-                date, start_time, end_time,
-                topic, type
-            FROM $table 
-            LEFT JOIN $table_teacher USING(id)
-            LEFT JOIN $table_student USING(id)
-            LEFT JOIN $table_posts sub ON subject_id = sub.ID
-            LEFT JOIN $table_posts tea ON teacher_id = tea.ID
-            LEFT JOIN $table_posts stu ON student_id = stu.ID
+                {$table}.date, {$table}.start_time, {$table}.end_time,
+                {$table}.topic, {$table}.type
+            FROM {$table}
+            LEFT JOIN {$table_teacher} USING(id)
+            LEFT JOIN {$table_student} USING(id)
+            LEFT JOIN {$table_posts} sub ON subject_id = sub.ID
+            LEFT JOIN {$table_posts} tea ON teacher_id = tea.ID
+            LEFT JOIN {$table_posts} stu ON student_id = stu.ID
         ";
-
-        $query = apply_filters(
+        $queryStr = apply_filters(
             'wcs4_filter_get_journals_query',
-            $query,
+            $queryStr,
             $table,
             $table_posts,
             $table_meta
         );
-
-        # Add IDs by default (post filter)
         $pattern = '/^\s?SELECT/';
         $replacement = 'SELECT sub.ID AS subject_id, tea.ID as teacher_id, stu.ID as student_id,';
-        $query = preg_replace($pattern, $replacement, $query);
-        $where = [];
-        $query_arr = [];
+        $queryStr = preg_replace($pattern, $replacement, $queryStr);
 
         # Filters
-        $filters = array(
-            'sub' => $subject,
-            'tea' => $teacher,
-            'stu' => $student,
-        );
-        foreach ($filters as $prefix => $filter) {
-            if ('all' !== $filter && '' !== $filter && null !== $filter) {
-                if (is_array($filter)) {
-                    $where[] = $prefix . '.ID IN (' . implode(', ', array_fill(0, count($filter), '%s')) . ')';
-                    $query_arr += $filter;
-                } elseif (str_starts_with($filter, '#')) {
-                    $where[] = $prefix . '.ID = %s';
-                    $query_arr[] = preg_replace('/^#/', '', $filter);
-                } else {
-                    $where[] = $prefix . '.post_title = %s';
-                    $query_arr[] = $filter;
-                }
-            }
-        }
+        $filters = [
+            ['prefix' => 'sub', 'value' => $subject, 'searchById' => "sub.ID = %s"],
+            [
+                'prefix' => 'tea',
+                'value' => $teacher,
+                'searchById' => "{$table}.id IN (SELECT id FROM {$table_teacher} WHERE teacher_id = %s)"
+            ],
+            [
+                'prefix' => 'stu',
+                'value' => $student,
+                'searchById' => "{$table}.id IN (SELECT id FROM {$table_student} WHERE student_id = %s)"
+            ],
+        ];
+
+        # Where
+        $where = [];
+        $queryArr = [];
         if (!empty($date_from)) {
             $where[] = 'date >= "%s"';
-            $query_arr[] = $date_from;
+            $queryArr[] = $date_from;
         }
         if (!empty($date_upto)) {
             $where[] = 'date <= "%s"';
-            $query_arr[] = $date_upto;
+            $queryArr[] = $date_upto;
         }
         if (!empty($created_at_from)) {
             $where[] = 'created_at >= "%s"';
-            $query_arr[] = $created_at_from . ' 00:00:00';
+            $queryArr[] = $created_at_from . ' 00:00:00';
         }
         if (!empty($created_at_upto)) {
             $where[] = 'created_at <= "%s"';
-            $query_arr[] = $created_at_upto . ' 23:59:59';
+            $queryArr[] = $created_at_upto . ' 23:59:59';
         }
         if (!empty($type)) {
             $where[] = 'type = "%s"';
-            $query_arr[] = $type;
+            $queryArr[] = $type;
         }
-        switch ($order_field) {
+        switch ($orderField) {
             case 'time':
-                $order_field = ['date' => $order_direction, 'start_time' => $order_direction];
+                $orderField = ['date' => $orderDirection, 'start_time' => $orderDirection];
                 break;
             case 'subject':
-                $order_field = ['subject_name' => $order_direction];
+                $orderField = ['subject_name' => $orderDirection];
                 break;
             case 'teacher':
-                $order_field = ['teacher_name' => $order_direction];
+                $orderField = ['teacher_name' => $orderDirection];
                 break;
             case 'student':
-                $order_field = ['student_name' => $order_direction];
+                $orderField = ['student_name' => $orderDirection];
                 break;
             case 'created-at':
-                $order_field = ['created_at' => $order_direction];
+                $orderField = ['created_at' => $orderDirection];
                 break;
             default:
             case 'updated-at':
-                $order_field = ['updated_at' => $order_direction];
+                $orderField = ['updated_at' => $orderDirection];
                 break;
         }
-        return DB::get_items(Journal_Item::class, $query, $where, $query_arr, $order_field, $limit, $paged);
+        return DB::get_items(Journal_Item::class, $queryStr, $filters, $where, $queryArr, $orderField, $limit, $paged);
     }
 
     public static function create_item(): void

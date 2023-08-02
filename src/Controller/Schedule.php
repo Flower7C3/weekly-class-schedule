@@ -249,7 +249,7 @@ class Schedule
         $table_posts = $wpdb->prefix . 'posts';
         $table_meta = $wpdb->prefix . 'postmeta';
 
-        $query = "SELECT
+        $queryStr = "SELECT
                 $table.id AS schedule_id, $table.created_at, $table.updated_at, $table.created_by, $table.updated_by,
                 sub.ID AS subject_id, sub.post_title AS subject_name, sub.post_content AS subject_desc,
                 tea.ID AS teacher_id, tea.post_title AS teacher_name, tea.post_content AS teacher_desc,
@@ -265,61 +265,55 @@ class Schedule
             LEFT JOIN $table_posts stu ON student_id = stu.ID
             LEFT JOIN $table_posts cls ON classroom_id = cls.ID
         ";
-
-        $query = apply_filters(
+        $queryStr = apply_filters(
             'wcs4_filter_get_lessons_query',
-            $query,
+            $queryStr,
             $table,
             $table_posts,
             $table_meta
         );
-
-        # Add IDs by default (post filter)
         $pattern = '/^\s?SELECT/';
         $replacement = 'SELECT sub.ID AS subject_id, tea.ID as teacher_id, stu.ID as student_id, cls.ID as classroom_id,';
-        $query = preg_replace($pattern, $replacement, $query);
-        $where = [];
-        $query_arr = [];
+        $queryStr = preg_replace($pattern, $replacement, $queryStr);
 
         # Filters
-        $filters = array(
-            'sub' => $subject,
-            'tea' => $teacher,
-            'stu' => $student,
-            'cls' => $classroom,
-        );
-        foreach ($filters as $prefix => $filter) {
-            if ('all' !== $filter && '' !== $filter && null !== $filter) {
-                if (is_array($filter)) {
-                    $where[] = $prefix . '.ID IN (' . implode(', ', array_fill(0, count($filter), '%s')) . ')';
-                    $query_arr += $filter;
-                } elseif (preg_match('/^#/', $filter)) {
-                    $where[] = $prefix . '.ID = %s';
-                    $query_arr[] = preg_replace('/^#/', '', $filter);
-                } else {
-                    $where[] = $prefix . '.post_title = %s';
-                    $query_arr[] = $filter;
-                }
-            }
-        }
+        $filters = [
+            ['prefix' => 'sub', 'value' => $subject, 'searchById' => "sub.ID = %s"],
+            [
+                'prefix' => 'tea',
+                'value' => $teacher,
+                'searchById' => "{$table}.id IN (SELECT id FROM {$table_teacher} WHERE teacher_id = %s)"
+            ],
+            [
+                'prefix' => 'stu',
+                'value' => $student,
+                'searchById' => "{$table}.id IN (SELECT id FROM {$table_student} WHERE student_id = %s)"
+            ],
+            ['prefix' => 'cls', 'value' => $classroom, 'searchById' => "cls.ID = %s"],
+        ];
+
+        # Where
+        $where = [];
+        $queryArr = [];
         if (null !== $weekday) {
             $where[] = 'weekday = %d';
-            $query_arr[] = $weekday;
+            $queryArr[] = $weekday;
         }
         if (null !== $time) {
             $where[] = 'end_time >= %s';
-            $query_arr[] = $time;
+            $queryArr[] = $time;
         }
         if (null !== $visibility && '' !== $visibility) {
             $where[] = 'visible = %d';
-            $query_arr[] = ('visible' === $visibility) ? 1 : 0;
+            $queryArr[] = ('visible' === $visibility) ? 1 : 0;
         }
         if (null !== $collisionDetection && '' !== $collisionDetection) {
             $where[] = 'collision_detection = %d';
-            $query_arr[] = ('yes' === $collisionDetection) ? 1 : 0;
+            $queryArr[] = ('yes' === $collisionDetection) ? 1 : 0;
         }
-        $order_field = ['weekday' => 'ASC', 'start_time' => 'ASC'];
-        return DB::get_items(Lesson_Item::class, $query, $where, $query_arr, $order_field, $limit, $paged);
+        $orderField = ['weekday' => 'ASC', 'start_time' => 'ASC'];
+
+        return DB::get_items(Lesson_Item::class, $queryStr, $filters, $where, $queryArr, $orderField, $limit, $paged);
     }
 
     public static function save_item(): void

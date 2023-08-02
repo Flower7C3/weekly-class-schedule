@@ -1,8 +1,8 @@
 <?php
 /**
  * @var array $items
- * @var string $order_field
- * @var string $order_direction
+ * @var string $orderField
+ * @var string $orderDirection
  */
 
 use WCS4\Entity\Journal_Item;
@@ -11,7 +11,7 @@ use WCS4\Helper\Output;
 $subject_filter_field_id = 'search_wcs4_journal_subject_id';
 $teacher_filter_field_id = 'search_wcs4_journal_teacher_id';
 ?>
-<div class="wcs4-day-content-wrapper" data-hash="<?= md5(serialize($items) . $order_field . $order_direction) ?>">
+<div class="wcs4-day-content-wrapper" data-hash="<?= md5(serialize($items) . $orderField . $orderDirection) ?>">
     <?php
     include __DIR__ . '/../_common/quick_filter.php'; ?>
     <?php
@@ -20,7 +20,7 @@ $teacher_filter_field_id = 'search_wcs4_journal_teacher_id';
         $groups = [];
         /** @var Journal_Item $item */
         foreach ($items as $item) {
-            switch ($order_field) {
+            switch ($orderField) {
                 case 'time':
                     $key = $item->getDate();
                     break;
@@ -56,26 +56,26 @@ $teacher_filter_field_id = 'search_wcs4_journal_teacher_id';
                         admin_th(
                             __('Start', 'wcs4') . ' - ' . __('End', 'wcs4'),
                             'time',
-                            $order_direction,
-                            $order_field,
+                            $orderDirection,
+                            $orderField,
                         );
                         admin_th(
                             __('Subject', 'wcs4'),
                             'subject',
-                            $order_direction,
-                            $order_field,
+                            $orderDirection,
+                            $orderField,
                         );
                         admin_th(
                             __('Teacher', 'wcs4'),
                             'teacher',
-                            $order_direction,
-                            $order_field,
+                            $orderDirection,
+                            $orderField,
                         );
                         admin_th(
                             __('Student', 'wcs4'),
                             'student',
-                            $order_direction,
-                            $order_field,
+                            $orderDirection,
+                            $orderField,
                         );
                         admin_th(
                             __('Topic', 'wcs4'),
@@ -83,8 +83,8 @@ $teacher_filter_field_id = 'search_wcs4_journal_teacher_id';
                         admin_th(
                             __('Updated at', 'wcs4'),
                             'updated-at',
-                            $order_direction,
-                            $order_field,
+                            $orderDirection,
+                            $orderField,
                         ); ?>
                     </tr>
                     </thead>
