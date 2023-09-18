@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: Weekly Class Schedule\n"
 "Journal-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-09-04 11:57+0000\n"
-"PO-Revision-Date: 2023-06-30 14:38+0000\n"
+"PO-Revision-Date: 2023-09-18 13:27+0000\n"
 "Last-Translator: Bartłomiej Kwiatek\n"
 "Language-Team: Polski\n"
 "Language: pl_PL\n"
@@ -13,14 +13,14 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Loco https://localise.biz/\n"
-"X-Loco-Version: 2.6.4; wp-6.2.2\n"
+"X-Loco-Version: 2.6.6; wp-6.3.1\n"
 "Report-Msgid-Bugs-To: "
 
-#: src/Controller/Schedule.php:440 src/Controller/Journal.php:607
+#: src/Controller/Schedule.php:462 src/Controller/Journal.php:614
 msgid "A class cannot start before it ends"
 msgstr "Zajęcia nie mogą zacząć się przed końcem"
 
-#: src/Controller/WorkPlan.php:581 src/Controller/Progress.php:582
+#: src/Controller/WorkPlan.php:576 src/Controller/Progress.php:579
 msgid "A progress cannot start before it ends"
 msgstr "Postęp nie może zacząć się po końcu"
 
@@ -199,19 +199,19 @@ msgstr "Wybierz spośród najczęściej używanych lokalizacji"
 msgid "Choose from the most used specializations"
 msgstr "Wybierz spośród najczęściej używanych specjalizacji"
 
-#: src/Controller/Schedule.php:65 src/Controller/Schedule.php:320
-#: src/Template/schedule/admin_table.php:37
-#: src/Template/schedule/admin_table.php:138
+#: src/Controller/Schedule.php:65 src/Controller/Schedule.php:342
+#: src/Template/schedule/admin_table.php:43
+#: src/Template/schedule/admin_table.php:144
 #: src/Template/schedule/admin_form.php:42
 msgid "Classroom"
 msgstr "Sala"
 
-#: src/Controller/Schedule.php:385
+#: src/Controller/Schedule.php:407
 msgid "Classroom is not available at this time"
 msgstr "Sala jest w tej chwili niedostępna"
 
-#: src/Controller/Schedule.php:79 src/Controller/Schedule.php:325
-#: src/Template/schedule/admin_table.php:22
+#: src/Controller/Schedule.php:79 src/Controller/Schedule.php:347
+#: src/Template/schedule/admin_table.php:28
 #: src/Template/schedule/admin_form.php:85
 msgid "Collision detection"
 msgstr "Detekcja kolizji"
@@ -341,7 +341,7 @@ msgstr "Utworzono od"
 msgid "Created at to"
 msgstr "Utworzono do"
 
-#: src/Controller/Journal.php:551 src/Template/journal/admin_form.php:81
+#: src/Controller/Journal.php:558 src/Template/journal/admin_form.php:81
 #: src/Template/journal/shortcode_form.php:68
 msgid "Date"
 msgstr "Data"
@@ -357,44 +357,51 @@ msgid "Date to"
 msgstr "Data do"
 
 #: src/Template/work_plan/admin_table.php:150
-#: src/Template/journal/admin_table.php:144
+#: src/Template/journal/admin_table.php:121
 #: src/Template/snapshot/admin_table.php:124
-#: src/Template/schedule/admin_table.php:91
+#: src/Template/schedule/admin_table.php:97
 #: src/Template/progress/admin_table.php:152
 msgid "Delete"
 msgstr "Usuń"
 
-#: src/Controller/WorkPlan.php:530 src/Template/work_plan/admin_table.php:82
+#: src/Controller/WorkPlan.php:525 src/Template/work_plan/admin_table.php:82
 #: src/Template/work_plan/admin_table.php:204
 #: src/Template/work_plan/admin_form.php:107
 #: src/Template/work_plan/shortcode_form.php:88
 msgid "Diagnosis"
 msgstr "Diagnoza"
 
-#: includes/wcs_content.php:152
+#: includes/wcs_content.php:149
 msgid "Download iCal for current week"
 msgstr "ten tydzień"
 
-#: includes/wcs_content.php:154
+#: includes/wcs_content.php:151
 msgid "Download iCal for next week"
 msgstr "następny tydzień"
 
-#: includes/wcs_content.php:151
+#: includes/wcs_content.php:148
 msgid "Download iCal:"
 msgstr "🗓Pobierz w formacie iCal:"
 
-#: includes/wcs_content.php:193 src/Entity/Snapshot_Item.php:82
+#: includes/wcs_content.php:190 src/Entity/Snapshot_Item.php:82
 #: src/Controller/Journal.php:108
 msgid "Download Journals as CSV"
 msgstr "Pobierz dzienniki (CSV)"
 
-#: includes/wcs_content.php:196 src/Entity/Snapshot_Item.php:76
-#: src/Controller/Journal.php:114
+#: includes/wcs_content.php:193 src/Entity/Snapshot_Item.php:76
 #| msgid "Download journals as HTML"
 msgid "Download Journals as HTML"
 msgstr "Pobierz dzienniki (HTML)"
 
-#: src/Controller/Schedule.php:889
+#: src/Controller/Journal.php:114
+msgid "Download Journals as HTML Complex"
+msgstr "Pobierz dzienniki szczegółowe (HTML)"
+
+#: src/Controller/Journal.php:120
+msgid "Download Journals as HTML Simple"
+msgstr "Pobierz dzienniki uproszczone (HTML)"
+
+#: src/Controller/Schedule.php:911
 msgid "Download PNG"
 msgstr "Pobierz jako PNG"
 
@@ -418,15 +425,15 @@ msgid "Download Work Plans as HTML"
 msgstr "Pobierz plany pracy (HTML)"
 
 #: src/Template/work_plan/admin_table.php:144
-#: src/Template/journal/admin_table.php:138
-#: src/Template/schedule/admin_table.php:84
+#: src/Template/journal/admin_table.php:115
+#: src/Template/schedule/admin_table.php:90
 #: src/Template/progress/admin_table.php:146
 msgid "Duplicate"
 msgstr "Kopiuj"
 
 #: src/Template/work_plan/admin_table.php:138
-#: src/Template/journal/admin_table.php:132
-#: src/Template/schedule/admin_table.php:77
+#: src/Template/journal/admin_table.php:109
+#: src/Template/schedule/admin_table.php:83
 #: src/Template/progress/admin_table.php:140
 msgid "Edit"
 msgstr "Edytuj"
@@ -448,19 +455,19 @@ msgid "Edit Specialization"
 msgstr "Edytuj specjalizację"
 
 #: src/Template/work_plan/admin_table.php:59
-#: src/Template/journal/admin_table.php:80
-#: src/Template/schedule/admin_table.php:25
+#: src/Template/journal/admin_table.php:57
+#: src/Template/schedule/admin_table.php:31
 #: src/Template/progress/admin_table.php:59
 msgid "End"
 msgstr "Koniec"
 
-#: src/Controller/WorkPlan.php:542 src/Controller/Progress.php:543
+#: src/Controller/WorkPlan.php:537 src/Controller/Progress.php:540
 #: src/Template/work_plan/admin_form.php:102
 #: src/Template/progress/admin_form.php:87
 msgid "End date"
 msgstr "Data końcowa"
 
-#: src/Controller/Schedule.php:323 src/Controller/Journal.php:553
+#: src/Controller/Schedule.php:345 src/Controller/Journal.php:560
 #: src/Template/journal/admin_form.php:97
 #: src/Template/journal/shortcode_form.php:84
 #: src/Template/schedule/admin_form.php:65
@@ -471,13 +478,13 @@ msgstr "Koniec"
 msgid "Error"
 msgstr "Błąd"
 
-#: src/Controller/WorkPlan.php:792 src/Controller/Schedule.php:633
-#: src/Controller/Journal.php:844 src/Controller/Progress.php:788
-#: src/Controller/Snapshot.php:297
+#: src/Controller/WorkPlan.php:787 src/Controller/Schedule.php:655
+#: src/Controller/Journal.php:851 src/Controller/Progress.php:785
+#: src/Controller/Snapshot.php:300
 msgid "Failed to delete entry"
 msgstr "Nie udało się usunąć wpisu"
 
-#: src/Controller/Schedule.php:688
+#: src/Controller/Schedule.php:710
 msgid "Failed to toggle visibility for entry"
 msgstr "Nie udało się przełączyć widoczności wpisu"
 
@@ -489,7 +496,7 @@ msgstr "Generuj zbiorczy plan pracy"
 msgid "Generate Periodic Progress"
 msgstr "Generuj postęp okresowy"
 
-#: src/Controller/WorkPlan.php:532 src/Template/work_plan/admin_table.php:84
+#: src/Controller/WorkPlan.php:527 src/Template/work_plan/admin_table.php:84
 #: src/Template/work_plan/admin_table.php:210
 #: src/Template/work_plan/admin_form.php:117
 #: src/Template/work_plan/shortcode_form.php:98
@@ -766,7 +773,7 @@ msgstr "Ukryte"
 msgid "https://kwiatek.pro"
 msgstr "https://kwiatek.pro"
 
-#: src/Controller/Progress.php:533 src/Template/progress/admin_table.php:83
+#: src/Controller/Progress.php:530 src/Template/progress/admin_table.php:83
 #: src/Template/progress/admin_table.php:206
 #: src/Template/progress/admin_form.php:91
 #: src/Template/progress/shortcode_form.php:80
@@ -777,7 +784,7 @@ msgstr "Postępy"
 msgid "Independent"
 msgstr "Niezależny"
 
-#: src/Controller/Progress.php:534 src/Template/progress/admin_table.php:86
+#: src/Controller/Progress.php:531 src/Template/progress/admin_table.php:86
 #: src/Template/progress/admin_table.php:209
 #: src/Template/progress/admin_form.php:95
 #: src/Template/progress/shortcode_form.php:84
@@ -809,28 +816,48 @@ msgstr "niezdefiniowany"
 msgid "Journal"
 msgstr "Dziennik"
 
-#: src/Controller/Journal.php:750
+#: src/Controller/Journal.php:757
 msgid "Journal entry added successfully"
 msgstr "Pomyślnie dodano nowy dziennik"
 
-#: src/Controller/Journal.php:847
+#: src/Controller/Journal.php:854
 msgid "Journal entry deleted successfully"
 msgstr "Pomyślnie usunięto Dziennik"
 
-#: src/Controller/Journal.php:723
+#: src/Controller/Journal.php:730
 msgid "Journal entry updated successfully"
 msgstr "Pomyślnie zaktualizowano dziennik"
 
 #: src/Template/work_plan/export_heading.html.php:11
-#: src/Template/journal/export_heading.html.php:11
+#: src/Template/journal/export_complex_heading.html.php:11
+#: src/Template/journal/export_simple_heading.html.php:11
 #: src/Template/progress/export_heading.html.php:11
 #, php-format
 msgctxt "journal template"
 msgid "by %s teacher"
 msgstr "przez %s"
 
+#: src/Template/work_plan/export_heading.html.php:35
+#: src/Template/journal/export_complex_heading.html.php:35
+#: src/Template/journal/export_simple_heading.html.php:35
+#: src/Template/progress/export_heading.html.php:35
+#, php-format
+msgctxt "journal template"
+msgid "created from %s"
+msgstr "utworzono od %s"
+
+#: src/Template/work_plan/export_heading.html.php:41
+#: src/Template/journal/export_complex_heading.html.php:41
+#: src/Template/journal/export_simple_heading.html.php:41
+#: src/Template/progress/export_heading.html.php:41
+#, php-format
+msgctxt "journal template"
+msgid "created upto %s"
+msgstr "do %s"
+
 #: src/Template/work_plan/export_heading.html.php:17
-#: src/Template/journal/export_heading.html.php:17
+#: src/Template/journal/export_complex_heading.html.php:17
+#: src/Template/journal/export_simple_heading.html.php:17
 #: src/Template/progress/export_heading.html.php:17
 #, php-format
 msgctxt "journal template"
@@ -838,7 +865,8 @@ msgid "for %s student"
 msgstr "dla %s"
 
 #: src/Template/work_plan/export_heading.html.php:23
-#: src/Template/journal/export_heading.html.php:23
+#: src/Template/journal/export_complex_heading.html.php:23
+#: src/Template/journal/export_simple_heading.html.php:23
 #: src/Template/progress/export_heading.html.php:23
 #, php-format
 msgctxt "journal template"
@@ -846,7 +874,8 @@ msgid "from %s"
 msgstr "od %s"
 
 #: src/Template/work_plan/export_heading.html.php:5
-#: src/Template/journal/export_heading.html.php:5
+#: src/Template/journal/export_complex_heading.html.php:5
+#: src/Template/journal/export_simple_heading.html.php:5
 #: src/Template/progress/export_heading.html.php:5
 #, php-format
 msgctxt "journal template"
@@ -854,7 +883,8 @@ msgid "of %s subject"
 msgstr "z przedmiotu %s"
 
 #: src/Template/work_plan/export_heading.html.php:29
-#: src/Template/journal/export_heading.html.php:29
+#: src/Template/journal/export_complex_heading.html.php:29
+#: src/Template/journal/export_simple_heading.html.php:29
 #: src/Template/progress/export_heading.html.php:29
 #, php-format
 msgctxt "journal template"
@@ -907,7 +937,7 @@ msgid "Office works"
 msgstr "Prace biurowe (dokumentacja, etc.)"
 
 #: includes/wcs_admin_hooks.php:79 includes/wcs_admin_hooks.php:80
-#: includes/wcs_content.php:185 includes/wcs_init.php:335
+#: includes/wcs_content.php:182 includes/wcs_init.php:335
 msgid "Journals"
 msgstr "Dzienniki"
 
@@ -1039,14 +1069,14 @@ msgctxt "menu"
 msgid "Teachers"
 msgstr "Pedagodzy"
 
-#: src/Controller/WorkPlan.php:533 src/Template/work_plan/admin_table.php:85
+#: src/Controller/WorkPlan.php:528 src/Template/work_plan/admin_table.php:85
 #: src/Template/work_plan/admin_table.php:213
 #: src/Template/work_plan/admin_form.php:122
 #: src/Template/work_plan/shortcode_form.php:103
 msgid "Methods"
 msgstr "Działania oraz metody pracy z beneficjentem"
 
-#: includes/wcs_content.php:111
+#: includes/wcs_content.php:108
 #| msgid "Profile page"
 msgid "My profile page"
 msgstr "Moja strona"
@@ -1083,19 +1113,19 @@ msgstr "Nie znaleziono grup."
 msgid "No groups."
 msgstr "Brak grup."
 
-#: src/Template/journal/admin_table.php:208
+#: src/Template/journal/admin_table.php:185
 msgid "No journals"
 msgstr "Brak dzienników dla wybranego filtru wyszukiwania."
 
-#: src/Template/schedule/admin_table.php:161
+#: src/Template/schedule/admin_table.php:167
 msgid "No lessons"
 msgstr "Brak lekcji dla wybranego filtru wyszukiwania."
 
-#: src/Controller/Journal.php:908
+#: src/Controller/Journal.php:915
 msgid "No lessons journaled"
 msgstr "Brak zaraportowanych zajęć dla wybranego filtru wyszukiwania."
 
-#: src/Controller/Schedule.php:762 src/Controller/Schedule.php:809
+#: src/Controller/Schedule.php:784 src/Controller/Schedule.php:831
 msgid "No lessons scheduled"
 msgstr "Brak zaplanowanych zajęć dla wybranego filtru wyszukiwania."
 
@@ -1107,7 +1137,7 @@ msgstr "Nie znaleziono lokalizacji."
 msgid "No locations."
 msgstr "Brak lokalizacji."
 
-#: src/Controller/WorkPlan.php:860 src/Controller/Progress.php:857
+#: src/Controller/WorkPlan.php:855 src/Controller/Progress.php:854
 #: src/Template/progress/admin_table.php:227
 msgid "No progresses"
 msgstr "Brak postępów dla wybranego filtru wyszukiwania."
@@ -1142,8 +1172,8 @@ msgstr "Nie znaleziono"
 msgid "Not found in Trash"
 msgstr "Nie znaleziono w Koszu"
 
-#: src/Template/schedule/admin_table.php:40
-#: src/Template/schedule/admin_table.php:146
+#: src/Template/schedule/admin_table.php:46
+#: src/Template/schedule/admin_table.php:152
 #: src/Template/schedule/admin_form.php:95
 msgid "Notes"
 msgstr "Notatka"
@@ -1777,20 +1807,20 @@ msgstr "Pedagog"
 msgid "Progress"
 msgstr "Postęp"
 
-#: src/Controller/WorkPlan.php:679 src/Controller/Progress.php:678
+#: src/Controller/WorkPlan.php:674 src/Controller/Progress.php:675
 msgid "Progress entry added successfully"
 msgstr "Pomyślnie dodano nowy postęp"
 
-#: src/Controller/WorkPlan.php:795 src/Controller/Progress.php:791
+#: src/Controller/WorkPlan.php:790 src/Controller/Progress.php:788
 msgid "Progress entry deleted successfully"
 msgstr "Pomyślnie usunięto Postęp"
 
-#: src/Controller/WorkPlan.php:650 src/Controller/Progress.php:649
+#: src/Controller/WorkPlan.php:645 src/Controller/Progress.php:646
 msgid "Progress entry updated successfully"
 msgstr "Pomyślnie zaktualizowano postęp"
 
 #: includes/wcs_admin_hooks.php:95 includes/wcs_admin_hooks.php:96
-#: includes/wcs_content.php:301 includes/wcs_init.php:355
+#: includes/wcs_content.php:298 includes/wcs_init.php:355
 msgid "Progresses"
 msgstr "Postępy"
 
@@ -1798,7 +1828,7 @@ msgstr "Postępy"
 msgid "Progresses Settings"
 msgstr "Ustawienia Postępów"
 
-#: src/Template/journal/admin_table.php:16
+#: src/Template/_common/quick_filter.php:15
 msgid "Quick filter"
 msgstr "Szybki filtr"
 
@@ -1866,24 +1896,24 @@ msgstr "Zresetuj ustawienia"
 msgid "Reset form"
 msgstr "Resetuj"
 
-#: includes/wcs_admin_hooks.php:70 includes/wcs_content.php:139
+#: includes/wcs_admin_hooks.php:70 includes/wcs_content.php:136
 #: includes/wcs_init.php:323
 msgid "Schedule"
 msgstr "Plan zajęć"
 
-#: src/Controller/Schedule.php:538
+#: src/Controller/Schedule.php:560
 msgid "Schedule entry added successfully"
 msgstr "Pomyślnie dodano nową lekcję"
 
-#: src/Controller/Schedule.php:636
+#: src/Controller/Schedule.php:658
 msgid "Schedule entry deleted successfully"
 msgstr "Pomyślnie usunięto Lekcję"
 
-#: src/Controller/Schedule.php:510
+#: src/Controller/Schedule.php:532
 msgid "Schedule entry updated successfully"
 msgstr "Pomyślnie zaktualizowano lekcję"
 
-#: src/Controller/Schedule.php:691
+#: src/Controller/Schedule.php:713
 msgid "Schedule entry visibility toggled successfully"
 msgstr "Widoczność wpisu harmonogramu została pomyślnie włączona"
 
@@ -1959,7 +1989,7 @@ msgid "Search Work Plans"
 msgstr "Szukaj plany pracy"
 
 #: src/Helper/Admin.php:66 src/Helper/Admin.php:152 src/Helper/Admin.php:201
-#: src/Helper/Admin.php:214 src/Template/journal/admin_table.php:24
+#: src/Helper/Admin.php:214 src/Template/_common/quick_filter.php:23
 msgid "Select option"
 msgstr "Wybierz opcję"
 
@@ -1983,7 +2013,7 @@ msgstr "Oddziel lokalizacje za pomocą przecinka"
 msgid "Separate specializations with commas"
 msgstr "Oddziel specjalizacje za pomocą przecinka"
 
-#: src/Controller/Snapshot.php:300
+#: src/Controller/Snapshot.php:303
 msgid "Snapshot entry deleted successfully"
 msgstr "Pomyślnie usunięto wpis"
 
@@ -2000,46 +2030,46 @@ msgid "Standard Options"
 msgstr "Konfiguracja"
 
 #: src/Template/work_plan/admin_table.php:59
-#: src/Template/journal/admin_table.php:80
-#: src/Template/schedule/admin_table.php:25
+#: src/Template/journal/admin_table.php:57
+#: src/Template/schedule/admin_table.php:31
 #: src/Template/progress/admin_table.php:59
 msgid "Start"
 msgstr "Początek"
 
-#: src/Controller/WorkPlan.php:541 src/Controller/Progress.php:542
+#: src/Controller/WorkPlan.php:536 src/Controller/Progress.php:539
 #: src/Template/work_plan/admin_form.php:97
 #: src/Template/progress/admin_form.php:83
 msgid "Start date"
 msgstr "Data początkowa"
 
-#: src/Controller/Schedule.php:322 src/Controller/Journal.php:552
+#: src/Controller/Schedule.php:344 src/Controller/Journal.php:559
 #: src/Template/journal/admin_form.php:89
 #: src/Template/journal/shortcode_form.php:76
 #: src/Template/schedule/admin_form.php:57
 msgid "Start Time"
 msgstr "Początek"
 
-#: src/Controller/WorkPlan.php:531 src/Template/work_plan/admin_table.php:83
+#: src/Controller/WorkPlan.php:526 src/Template/work_plan/admin_table.php:83
 #: src/Template/work_plan/admin_table.php:207
 #: src/Template/work_plan/admin_form.php:112
 #: src/Template/work_plan/shortcode_form.php:93
 msgid "Strengths"
 msgstr "Mocne strony"
 
-#: src/Controller/WorkPlan.php:57 src/Controller/WorkPlan.php:529
+#: src/Controller/WorkPlan.php:57 src/Controller/WorkPlan.php:524
 #: src/Controller/Schedule.php:60 src/Controller/Schedule.php:162
-#: src/Controller/Schedule.php:319 src/Controller/Journal.php:55
-#: src/Controller/Journal.php:563 src/Controller/Progress.php:57
-#: src/Controller/Progress.php:532 src/Template/work_plan/admin_table.php:77
+#: src/Controller/Schedule.php:341 src/Controller/Journal.php:55
+#: src/Controller/Journal.php:570 src/Controller/Progress.php:57
+#: src/Controller/Progress.php:529 src/Template/work_plan/admin_table.php:77
 #: src/Template/work_plan/admin_table.php:197
 #: src/Template/work_plan/admin_form.php:76
 #: src/Template/work_plan/shortcode_form.php:64
 #: src/Template/journal/admin_form.php:62
 #: src/Template/journal/shortcode_form.php:53
-#: src/Template/journal/admin_table.php:98
-#: src/Template/journal/admin_table.php:175
-#: src/Template/schedule/admin_table.php:34
-#: src/Template/schedule/admin_table.php:123
+#: src/Template/journal/admin_table.php:75
+#: src/Template/journal/admin_table.php:152
+#: src/Template/schedule/admin_table.php:40
+#: src/Template/schedule/admin_table.php:129
 #: src/Template/schedule/admin_form.php:31
 #: src/Template/progress/admin_table.php:77
 #: src/Template/progress/admin_table.php:199
@@ -2048,24 +2078,24 @@ msgstr "Mocne strony"
 msgid "Student"
 msgstr "Uczeń"
 
-#: src/Controller/Schedule.php:433 src/Controller/Journal.php:654
+#: src/Controller/Schedule.php:455 src/Controller/Journal.php:661
 msgid "Student is not available at this time"
 msgstr "Uczeń jest w tej chwili niedostępny"
 
-#: src/Controller/WorkPlan.php:47 src/Controller/WorkPlan.php:536
-#: src/Controller/Schedule.php:49 src/Controller/Schedule.php:317
-#: src/Controller/Journal.php:45 src/Controller/Journal.php:549
-#: src/Controller/Progress.php:47 src/Controller/Progress.php:537
+#: src/Controller/WorkPlan.php:47 src/Controller/WorkPlan.php:531
+#: src/Controller/Schedule.php:49 src/Controller/Schedule.php:339
+#: src/Controller/Journal.php:45 src/Controller/Journal.php:556
+#: src/Controller/Progress.php:47 src/Controller/Progress.php:534
 #: src/Template/work_plan/admin_table.php:65
 #: src/Template/work_plan/admin_table.php:160
 #: src/Template/work_plan/admin_form.php:30
 #: src/Template/work_plan/shortcode_form.php:18
 #: src/Template/journal/admin_form.php:22
 #: src/Template/journal/shortcode_form.php:25
-#: src/Template/journal/admin_table.php:86
-#: src/Template/journal/admin_table.php:153
-#: src/Template/schedule/admin_table.php:28
-#: src/Template/schedule/admin_table.php:101
+#: src/Template/journal/admin_table.php:63
+#: src/Template/journal/admin_table.php:130
+#: src/Template/schedule/admin_table.php:34
+#: src/Template/schedule/admin_table.php:107
 #: src/Template/schedule/admin_form.php:10
 #: src/Template/progress/admin_table.php:65
 #: src/Template/progress/admin_table.php:162
@@ -2114,20 +2144,20 @@ msgctxt "taxonomy singular name"
 msgid "Specialization"
 msgstr "Specjalizacja"
 
-#: src/Controller/WorkPlan.php:52 src/Controller/WorkPlan.php:528
+#: src/Controller/WorkPlan.php:52 src/Controller/WorkPlan.php:523
 #: src/Controller/Schedule.php:54 src/Controller/Schedule.php:160
-#: src/Controller/Schedule.php:318 src/Controller/Journal.php:50
-#: src/Controller/Journal.php:550 src/Controller/Progress.php:52
-#: src/Controller/Progress.php:531 src/Template/work_plan/admin_table.php:71
+#: src/Controller/Schedule.php:340 src/Controller/Journal.php:50
+#: src/Controller/Journal.php:557 src/Controller/Progress.php:52
+#: src/Controller/Progress.php:528 src/Template/work_plan/admin_table.php:71
 #: src/Template/work_plan/admin_table.php:182
 #: src/Template/work_plan/admin_form.php:53
 #: src/Template/work_plan/shortcode_form.php:41
 #: src/Template/journal/admin_form.php:42
 #: src/Template/journal/shortcode_form.php:39
-#: src/Template/journal/admin_table.php:92
-#: src/Template/journal/admin_table.php:160
-#: src/Template/schedule/admin_table.php:31
-#: src/Template/schedule/admin_table.php:108
+#: src/Template/journal/admin_table.php:69
+#: src/Template/journal/admin_table.php:137
+#: src/Template/schedule/admin_table.php:37
+#: src/Template/schedule/admin_table.php:114
 #: src/Template/schedule/admin_form.php:20
 #: src/Template/progress/admin_table.php:71
 #: src/Template/progress/admin_table.php:184
@@ -2136,7 +2166,7 @@ msgstr "Specjalizacja"
 msgid "Teacher"
 msgstr "Pedagog"
 
-#: src/Controller/Schedule.php:409 src/Controller/Journal.php:631
+#: src/Controller/Schedule.php:431 src/Controller/Journal.php:638
 msgid "Teacher is not available at this time"
 msgstr "Pedagog jest w tej chwili niedostępny"
 
@@ -2312,25 +2342,25 @@ msgstr ""
 msgid "Title"
 msgstr "Tytuł"
 
-#: src/Controller/Schedule.php:885
+#: src/Controller/Schedule.php:907
 msgid "Toggle full screen"
 msgstr "Włącz pełen ekran"
 
-#: src/Controller/Journal.php:562 src/Template/journal/admin_form.php:106
+#: src/Controller/Journal.php:569 src/Template/journal/admin_form.php:106
 #: src/Template/journal/shortcode_form.php:93
-#: src/Template/journal/admin_table.php:104
-#: src/Template/journal/admin_table.php:190
+#: src/Template/journal/admin_table.php:81
+#: src/Template/journal/admin_table.php:167
 msgid "Topic"
 msgstr "Temat"
 
-#: src/Controller/WorkPlan.php:62 src/Controller/WorkPlan.php:539
-#: src/Controller/Journal.php:93 src/Controller/Journal.php:554
-#: src/Controller/Progress.php:62 src/Controller/Progress.php:540
+#: src/Controller/WorkPlan.php:62 src/Controller/WorkPlan.php:534
+#: src/Controller/Journal.php:93 src/Controller/Journal.php:561
+#: src/Controller/Progress.php:62 src/Controller/Progress.php:537
 #: src/Template/work_plan/admin_table.php:56
 #: src/Template/work_plan/admin_form.php:18
 #: src/Template/journal/admin_form.php:11
 #: src/Template/journal/shortcode_form.php:16
-#: src/Template/journal/admin_table.php:77
+#: src/Template/journal/admin_table.php:54
 #: src/Template/progress/admin_table.php:56
 #: src/Template/progress/admin_form.php:15
 msgid "Type"
@@ -2342,12 +2372,12 @@ msgstr "Nieobsługiwany układ"
 
 #: src/Template/work_plan/admin_table.php:87
 #: src/Template/work_plan/admin_table.php:216
-#: src/Template/journal/admin_table.php:107
-#: src/Template/journal/admin_table.php:193
+#: src/Template/journal/admin_table.php:84
+#: src/Template/journal/admin_table.php:170
 #: src/Template/snapshot/admin_table.php:76
 #: src/Template/snapshot/admin_table.php:148
-#: src/Template/schedule/admin_table.php:43
-#: src/Template/schedule/admin_table.php:149
+#: src/Template/schedule/admin_table.php:49
+#: src/Template/schedule/admin_table.php:155
 #: src/Template/progress/admin_table.php:89
 #: src/Template/progress/admin_table.php:212
 msgid "Updated at"
@@ -2372,32 +2402,32 @@ msgstr "Błąd walidacji."
 msgid "Version"
 msgstr "Wersja"
 
-#: src/Controller/Schedule.php:70 src/Template/schedule/admin_table.php:23
+#: src/Controller/Schedule.php:70 src/Template/schedule/admin_table.php:29
 #: src/Template/schedule/admin_form.php:74
 msgid "Visibility"
 msgstr "Widoczność"
 
-#: src/Entity/Lesson_Item.php:111 src/Controller/Schedule.php:324
+#: src/Entity/Lesson_Item.php:111 src/Controller/Schedule.php:346
 msgid "Visible"
 msgstr "Widoczne"
 
-#: includes/wcs_actions.php:188
+#: includes/wcs_actions.php:189
 msgid "WCS Progresses truncated successfully."
 msgstr "Postępy zostały wyczyszczone."
 
-#: includes/wcs_actions.php:204
+#: includes/wcs_actions.php:205
 msgid "WCS Snapshots truncated successfully."
 msgstr "Historia pobrań została wyczyszczona."
 
-#: includes/wcs_actions.php:172
+#: includes/wcs_actions.php:173
 msgid "WCS Work Plans truncated successfully."
 msgstr "Plany pracy zostały wyczyszczone."
 
-#: src/Controller/Schedule.php:321 src/Template/schedule/admin_form.php:53
+#: src/Controller/Schedule.php:343 src/Template/schedule/admin_form.php:53
 msgid "Weekday"
 msgstr "Dzień"
 
-#: includes/wcs_actions.php:156
+#: includes/wcs_actions.php:157
 #| msgid "Weekly Class Journal truncated successfully."
 msgid "Weekly Class Journals truncated successfully."
 msgstr "Dzienniki zostały wyczyszczone."
@@ -2406,11 +2436,11 @@ msgstr "Dzienniki zostały wyczyszczone."
 msgid "Weekly Class Schedule"
 msgstr "Tygodniowy harmonogram zajęć"
 
-#: includes/wcs_actions.php:102
+#: includes/wcs_actions.php:103
 msgid "Weekly Class Schedule deleted successfully."
 msgstr "Tygodniowy harmonogram zajęć został pomyślnie usunięty."
 
-#: includes/wcs_actions.php:83
+#: includes/wcs_actions.php:84
 msgid "Weekly Class Schedule example data loaded successfully."
 msgstr "Przykładowe dane dla zostały pomyślnie zaimportowane."
 
@@ -2424,15 +2454,15 @@ msgstr ""
 "łatwy sposób zarządzania i aktualizowania harmonogramu oraz bazy danych "
 "przedmiotów, nauczycieli, uczniów i klas."
 
-#: includes/wcs_actions.php:64
+#: includes/wcs_actions.php:65
 msgid "Weekly Class Schedule installed successfully."
 msgstr "Tygodniowy harmonogram zajęć został pomyślnie zainstalowany."
 
-#: includes/wcs_actions.php:121
+#: includes/wcs_actions.php:122
 msgid "Weekly Class Schedule settings resetted."
 msgstr "Ustawienia harmonogramu zajęć tygodniowych zostały zresetowane."
 
-#: includes/wcs_actions.php:140
+#: includes/wcs_actions.php:141
 msgid "Weekly Class Schedule truncated successfully."
 msgstr "Tygodniowy harmonogram zajęć został pomyślnie wyczyszczone."
 
@@ -2494,7 +2524,7 @@ msgid "Work Plan"
 msgstr "Plan Pracy"
 
 #: includes/wcs_admin_hooks.php:87 includes/wcs_admin_hooks.php:88
-#: includes/wcs_content.php:248 includes/wcs_init.php:345
+#: includes/wcs_content.php:245 includes/wcs_init.php:345
 msgid "Work Plans"
 msgstr "Plany Pracy"
 

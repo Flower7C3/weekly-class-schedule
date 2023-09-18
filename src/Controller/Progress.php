@@ -233,6 +233,8 @@ class Progress
         $subject = empty($_GET['subject']) ? null : '#' . sanitize_text_field($_GET['subject']);
         $date_from = empty($_GET['date_from']) ? null : sanitize_text_field($_GET['date_from']);
         $date_upto = empty($_GET['date_upto']) ? null : sanitize_text_field($_GET['date_upto']);
+        $created_at_from = empty($_GET['created_at_from']) ? null : sanitize_text_field($_GET['created_at_from']);
+        $created_at_upto = empty($_GET['created_at_upto']) ? null : sanitize_text_field($_GET['created_at_upto']);
         $type = empty($_GET['type']) ? null : sanitize_text_field($_GET['type']);
         $orderField = empty($_GET['order_field']) ? 'time' : sanitize_text_field($_GET['order_field']);
         $orderDirection = empty($_GET['order_direction']) ? 'asc' : sanitize_text_field($_GET['order_direction']);
@@ -257,8 +259,8 @@ class Progress
             $date_from,
             $date_upto,
             $type,
-            null,
-            null,
+            $created_at_from,
+            $created_at_upto,
             $orderField,
             $orderDirection
         );

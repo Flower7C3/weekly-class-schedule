@@ -592,6 +592,9 @@ class DB
             }
         }
         $query = $wpdb->prepare($query_str, $queryArr);
+        if (isset($_GET['debug'])) {
+            dump($query);
+        }
         $results = $wpdb->get_results($query);
         $format = get_option('time_format');
         $items = [];

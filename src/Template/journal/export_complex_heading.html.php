@@ -29,3 +29,15 @@ if (!empty($date_upto)): ?>
     printf(_x('upto %s', 'journal template', 'wcs4'), $date_upto); ?>
 <?php
 endif; ?>
+<?php
+if (!empty($created_at_from)): ?>
+    <?php
+    printf(_x('created from %s', 'journal template', 'wcs4'), $created_at_from); ?>
+<?php
+endif; ?>
+<?php
+if (!empty($created_at_upto)): ?>
+    <?php
+    printf(_x('created upto %s', 'journal template', 'wcs4'), $created_at_upto); ?>
+<?php
+endif; ?>

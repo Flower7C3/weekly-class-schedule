@@ -229,7 +229,15 @@ class Output
         }
         if (is_array($item)) {
             if (array_key_exists('duration', $item)) {
-                $template = str_replace('{duration time}', $item['duration'], $template);
+                $template = str_replace([
+                    '{duration time}',
+                    '{duration hours}',
+                    '{duration minutes}',
+                ], [
+                    $item['duration'],
+                    floor($item['duration'] / 60),
+                    $item['duration'] % 60
+                ], $template);
             }
             if (array_key_exists('events', $item)) {
                 $template = str_replace('{events}', $item['events'], $template);
@@ -370,8 +378,12 @@ class Output
         exit;
     }
 
-    #[NoReturn] public static function save_snapshot_and_render_html(string $filepath, string  $template_style, string $template_code, string $title): void
-    {
+    #[NoReturn] public static function save_snapshot_and_render_html(
+        string $filepath,
+        string $template_style,
+        string $template_code,
+        string $title
+    ): void {
         ob_start();
         include $filepath;
         $content = ob_get_clean();

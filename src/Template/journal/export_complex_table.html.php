@@ -91,16 +91,19 @@ if (array_key_exists('type duration detailed', $thead_columns)
             if ('student duration detailed' === $key): ?>
                 <th colspan="<?= count($studentsData) ?>">
                     <?= $th ?>
+                    (<?= count($studentsData) ?>)
                 </th>
             <?php
             elseif ('teacher duration detailed' === $key): ?>
                 <th colspan="<?= count($teachersData) ?>">
                     <?= $th ?>
+                    (<?= count($teachersData) ?>)
                 </th>
             <?php
             elseif ('type duration detailed' === $key || 'type duration simple' === $key): ?>
                 <th colspan="<?= count($typesData) ?>">
                     <?= $th ?>
+                    (<?= count($typesData) ?>)
                 </th>
             <?php
             else: ?>

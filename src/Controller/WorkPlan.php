@@ -234,6 +234,8 @@ class WorkPlan
         $subject = empty($_GET['subject']) ? null : '#' . sanitize_text_field($_GET['subject']);
         $date_from = sanitize_text_field($_GET['date_from'] ?? null);
         $date_upto = sanitize_text_field($_GET['date_upto'] ?? null);
+        $created_at_from = sanitize_text_field($_GET['created_at_from'] ?? null);
+        $created_at_upto = sanitize_text_field($_GET['created_at_upto'] ?? null);
         $type = sanitize_text_field($_GET['type'] ?? null);
         $orderField = empty($_GET['order_field']) ? 'time' : sanitize_text_field($_GET['order_field']);
         $orderDirection = empty($_GET['order_direction']) ? 'asc' : sanitize_text_field($_GET['order_direction']);
@@ -258,8 +260,8 @@ class WorkPlan
             $date_from,
             $date_upto,
             $type,
-            null,
-            null,
+            $created_at_from,
+            $created_at_upto,
             $orderField,
             $orderDirection
         );
@@ -427,17 +429,17 @@ class WorkPlan
 
         # Filters
         $filters = [
-            ['prefix' => 'sub', 'value' => $subject, 'searchById' => "sub.ID = %s"],
+            [
+                'prefix' => 'sub',
+                'value' => $subject,
+                'searchById' => "{$table}.id IN (SELECT id FROM {$table_subject} WHERE subject_id = %s)"
+            ],
             [
                 'prefix' => 'tea',
                 'value' => $teacher,
                 'searchById' => "{$table}.id IN (SELECT id FROM {$table_teacher} WHERE teacher_id = %s)"
             ],
-            [
-                'prefix' => 'stu',
-                'value' => $student,
-                'searchById' => "{$table}.id IN (SELECT id FROM {$table_student} WHERE student_id = %s)"
-            ],
+            ['prefix' => 'stu', 'value' => $student, 'searchById' => "stu.ID = %s"],
         ];
 
         # Where

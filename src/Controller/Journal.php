@@ -103,15 +103,21 @@ class Journal
         if (current_user_can(WCS4_JOURNAL_EXPORT_CAPABILITY)) {
             $search['buttons'][] = [
                 'action' => 'wcs_download_journals_csv',
-                'formtarget' => 'wcs_download_journals_html',
+                'formtarget' => '_blank',
                 'icon' => 'dashicons dashicons-download',
                 'label' => __('Download Journals as CSV', 'wcs4'),
             ];
             $search['buttons'][] = [
-                'action' => 'wcs_download_journals_html',
+                'action' => 'wcs_download_journals_html_complex',
                 'formtarget' => '_blank',
                 'icon' => 'dashicons dashicons-download',
-                'label' => __('Download Journals as HTML', 'wcs4'),
+                'label' => __('Download Journals as HTML Complex', 'wcs4'),
+            ];
+            $search['buttons'][] = [
+                'action' => 'wcs_download_journals_html_simple',
+                'formtarget' => '_blank',
+                'icon' => 'dashicons dashicons-download',
+                'label' => __('Download Journals as HTML Simple', 'wcs4'),
             ];
         }
 
@@ -209,7 +215,17 @@ class Journal
         Output::save_snapshot_and_render_csv($handle, $filename_key);
     }
 
-    public static function callback_of_export_html_page(): void
+    public static function callback_of_export_html_complex_page(): void
+    {
+        self::callback_of_export_html_page('complex');
+    }
+
+    public static function callback_of_export_html_simple_page(): void
+    {
+        self::callback_of_export_html_page('simple');
+    }
+
+    private static function callback_of_export_html_page($mode): void
     {
         if (!current_user_can(WCS4_JOURNAL_EXPORT_CAPABILITY)) {
             header('HTTP/1.0 403 Forbidden');
@@ -222,6 +238,8 @@ class Journal
         $subject = empty($_GET['subject']) ? null : '#' . sanitize_text_field($_GET['subject']);
         $date_from = sanitize_text_field($_GET['date_from']);
         $date_upto = sanitize_text_field($_GET['date_upto']);
+        $created_at_from = sanitize_text_field($_GET['created_at_from']);
+        $created_at_upto = sanitize_text_field($_GET['created_at_upto']);
         $type = sanitize_text_field($_GET['type']);
         $orderField = empty($_GET['order_field']) ? 'time' : sanitize_text_field($_GET['order_field']);
         $orderDirection = empty($_GET['order_direction']) ? 'asc' : sanitize_text_field($_GET['order_direction']);
@@ -245,8 +263,8 @@ class Journal
             $date_from,
             $date_upto,
             $type,
-            null,
-            null,
+            $created_at_from,
+            $created_at_upto,
             $orderField,
             $orderDirection
         );
@@ -273,11 +291,11 @@ class Journal
         }
 
         ob_start();
-        include self::TEMPLATE_DIR . 'export_heading.html.php';
+        include self::TEMPLATE_DIR . 'export_' . $mode . '_heading.html.php';
         $heading = ob_get_clean();
 
         ob_start();
-        include self::TEMPLATE_DIR . 'export_table.html.php';
+        include self::TEMPLATE_DIR . 'export_' . $mode . '_table.html.php';
         $table = ob_get_clean();
 
         $template_style = wp_unslash($wcs4_options['journal_html_template_style']);
