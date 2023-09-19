@@ -132,8 +132,8 @@ add_filter('the_content', static function ($content) {
             ### SCHEDULE
             $layout = $wcs4_settings[$post_type_key . '_schedule_layout'];
             if ('none' !== $layout && null !== $layout) {
-                $content .= '<div id="wcs_schedule-shortcode-wrapper">';
-                $content .= '<h2>' . __('Schedule', 'wcs4') . '</h2>';
+                $content .= '<details open id="wcs_schedule-shortcode-wrapper">';
+                $content .= '<summary>' . __('Schedule', 'wcs4') . '</summary>';
                 $schedule_template_table_short = $wcs4_settings[$post_type_key . '_schedule_template_table_short'];
                 $schedule_template_table_details = $wcs4_settings[$post_type_key . '_schedule_template_table_details'];
                 $schedule_template_list = $wcs4_settings[$post_type_key . '_schedule_template_list'];
@@ -150,7 +150,7 @@ add_filter('the_content', static function ($content) {
                     $content .= ', ';
                     $content .= '<a href="?format=ical&week=1">' . __('Download iCal for next week', 'wcs4') . '</a>';
                 }
-                $content .= '</div>';
+                $content .= '</details>';
             }
 
             ### JOURNAL VIEW
@@ -329,7 +329,7 @@ add_filter('single_template', static function ($single) {
         }
         if ('html' === $_GET['format'] && 'yes' === $wcs4_settings[$post_type_key . '_journal_download_html']
             && current_user_can(WCS4_JOURNAL_EXPORT_CAPABILITY)) {
-            Journal::callback_of_export_html_page();
+            Journal::callback_of_export_html_complex_page();
         }
     }
     return $single;

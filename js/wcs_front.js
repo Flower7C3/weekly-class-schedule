@@ -56,9 +56,10 @@
             };
             WCS4_LIB.submit_entry(entry, function (data, status) {
                 $spinner.removeClass('is-active');
-                // if (200 <= status && status < 300) {
-                //     jQuery('#wcs4-journal-form').get(0).reset()
-                // }
+                if (200 <= status && status < 300) {
+                    jQuery('#wcs4-journal-form').get(0).reset();
+                    jQuery('#wcs4-journal-modal').modal('hide');
+                }
             });
         });
     }
@@ -98,9 +99,10 @@
             };
             WCS4_LIB.submit_entry(entry, function (data, status) {
                 $spinner.removeClass('is-active');
-                // if (200 <= status && status < 300) {
-                //     jQuery('#wcs4-work-plan-form').get(0).reset()
-                // }
+                if (200 <= status && status < 300) {
+                    jQuery('#wcs4-work-plan-form').get(0).reset();
+                    jQuery('#wcs4-work-plan-modal').modal('hide');
+                }
             });
         });
     }
@@ -124,9 +126,10 @@
             };
             WCS4_LIB.submit_entry(entry, function (data, status) {
                 $spinner.removeClass('is-active');
-                // if (200 <= status && status < 300) {
-                //     jQuery('#wcs4-progress-form').get(0).reset()
-                // }
+                if (200 <= status && status < 300) {
+                    jQuery('#wcs4-progress-form').get(0).reset();
+                    jQuery('#wcs4-progress-modal').modal('hide');
+                }
             });
         });
     }

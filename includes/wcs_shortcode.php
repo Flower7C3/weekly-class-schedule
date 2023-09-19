@@ -48,7 +48,18 @@ add_shortcode('wcs_schedule', static function ($atts) {
         EXTR_OVERWRITE
     );
     # Get lessons
-    $lessons = Schedule::get_items($classroom, $teacher, $student, $subject, null, null, 'visible',null,  $limit, $paged);
+    $lessons = Schedule::get_items(
+        $classroom,
+        $teacher,
+        $student,
+        $subject,
+        null,
+        null,
+        'visible',
+        null,
+        $limit,
+        $paged
+    );
 
     # Classroom
     $schedule_key = 'wcs4-key-' . preg_replace(
@@ -209,16 +220,17 @@ add_shortcode('wcs_journal_create', static function ($atts) {
         EXTR_OVERWRITE
     );
 
-    $result = Journal::get_html_of_shortcode_form($subject, $teacher, $student);
+    $modal = Journal::get_html_of_shortcode_form($subject, $teacher, $student);
 
     # Only load front end scripts and styles if it's our shortcode
-    add_action('wp_footer', static function () {
+    add_action('wp_footer', static function () use ($modal) {
         $wcs4_options = Settings::load_settings();
         $wcs4_js_data = [];
         $wcs4_js_data['options'] = $wcs4_options;
         Output::load_frontend_scripts($wcs4_js_data);
+        echo trim($modal);
     });
-    return trim($result);
+    return Journal::get_html_of_shortcode_button($subject, $teacher, $student);
 });
 
 add_shortcode('student_progress', static function ($atts) {
@@ -247,7 +259,7 @@ add_shortcode('student_progress', static function ($atts) {
             'limit' => null,
             'paged' => null,
             'template_partial' => null,
-            'template_periodic'=> null,
+            'template_periodic' => null,
         ), $atts),
         EXTR_OVERWRITE
     );
@@ -315,16 +327,18 @@ add_shortcode('student_progress_create', static function ($atts) {
         EXTR_OVERWRITE
     );
 
-    $result = Progress::get_html_of_shortcode_form($subject, $teacher, $student);
+    $modal = Progress::get_html_of_shortcode_form($subject, $teacher, $student);
 
     # Only load front end scripts and styles if it's our shortcode
-    add_action('wp_footer', static function () {
+    add_action('wp_footer', static function () use ($modal) {
         $wcs4_options = Settings::load_settings();
         $wcs4_js_data = [];
         $wcs4_js_data['options'] = $wcs4_options;
         Output::load_frontend_scripts($wcs4_js_data);
+        echo trim($modal);
     });
-    return trim($result);
+
+    return Progress::get_html_of_shortcode_button($subject, $teacher, $student);
 });
 
 add_shortcode('wcs_student_work_plan', static function ($atts) {
@@ -420,16 +434,17 @@ add_shortcode('wcs_student_work_plan_create', static function ($atts) {
         EXTR_OVERWRITE
     );
 
-    $result = WorkPlan::get_html_of_shortcode_form($subject, $teacher, $student);
+    $modal = WorkPlan::get_html_of_shortcode_form($subject, $teacher, $student);
 
     # Only load front end scripts and styles if it's our shortcode
-    add_action('wp_footer', static function () {
+    add_action('wp_footer', static function () use ($modal) {
         $wcs4_options = Settings::load_settings();
         $wcs4_js_data = [];
         $wcs4_js_data['options'] = $wcs4_options;
         Output::load_frontend_scripts($wcs4_js_data);
+        echo $modal;
     });
-    return trim($result);
+    return WorkPlan::get_html_of_shortcode_button($subject, $teacher, $student);
 });
 
 

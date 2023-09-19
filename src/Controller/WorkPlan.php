@@ -339,6 +339,16 @@ class WorkPlan
         );
     }
 
+    public static function get_html_of_shortcode_button(
+        $subject = null,
+        $teacher = null,
+        $student = null
+    ): string {
+        ob_start();
+        include self::TEMPLATE_DIR . 'shortcode_button.php';
+        $response = ob_get_clean();
+        return trim($response);
+    }
     public static function get_html_of_shortcode_form(
         $subject = null,
         $teacher = null,

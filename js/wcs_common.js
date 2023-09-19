@@ -59,7 +59,7 @@ let WCS4_LIB = (function ($) {
         }).fail(function (err) {
             WCS4_LIB.show_message(err.responseJSON.response, err.status, err.responseJSON.errors ?? []);
         }).always(function () {
-            $('#wcs4-management-form-wrapper .spinner').removeClass('is-active');
+            $('.spinner').removeClass('is-active');
         });
     }
 
