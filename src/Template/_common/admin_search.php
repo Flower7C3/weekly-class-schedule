@@ -55,7 +55,7 @@ use WCS4\Helper\Admin;
                             name="action"
                             value="<?= $button['action'] ?>"
                             formaction="<?= admin_url('admin-ajax.php') ?>"
-                            formtarget="<?= $button['formtarget'] ?>"
+                            formtarget="<?= $button['formtarget']??'' ?>"
                         <?php
                         else: ?>
                             data-action="<?= $button['data-action'] ?>"
