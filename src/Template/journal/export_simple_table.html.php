@@ -4,7 +4,8 @@
  * @var array $tbody_columns
  * @var array $tfoot_columns
  * @var array $items
- */
+ * @var int $student
+ * */
 
 use WCS4\Entity\Item;
 use WCS4\Entity\Journal_Item;
@@ -17,11 +18,14 @@ $rowspan = false;
 if (array_key_exists('student duration detailed', $thead_columns)) {
     /** @var Journal_Item $item */
     foreach ($items as $item) {
-        /** @var Item $student */
-        foreach ($item->getStudents() as $student) {
-            if ($student instanceof Item && !array_key_exists($student->getId(), $studentsData)) {
-                $studentsData[$student->getId()] = [
-                    'short_name' => $student->getName(),
+        /** @var Item $studentItem */
+        foreach ($item->getStudents() as $studentItem) {
+            if ($studentItem instanceof Item
+                &&
+                !array_key_exists($studentItem->getId(), $studentsData)
+            ) {
+                $studentsData[$studentItem->getId()] = [
+                    'short_name' => $studentItem->getName(),
                     'duration' => 0,
                     'events' => 0,
                 ];
@@ -34,11 +38,11 @@ if (array_key_exists('student duration detailed', $thead_columns)) {
 if (array_key_exists('teacher duration detailed', $thead_columns)) {
     /** @var Journal_Item $item */
     foreach ($items as $item) {
-        /** @var Item $teacher */
-        foreach ($item->getTeachers() as $teacher) {
-            if (!array_key_exists($teacher->getId(), $teachersData)) {
-                $teachersData[$teacher->getId()] = [
-                    'short_name' => $teacher->getName(),
+        /** @var Item $teacherItem */
+        foreach ($item->getTeachers() as $teacherItem) {
+            if (!array_key_exists($teacherItem->getId(), $teachersData)) {
+                $teachersData[$teacherItem->getId()] = [
+                    'short_name' => $teacherItem->getName(),
                     'duration' => 0,
                     'events' => 0,
                 ];
