@@ -103,16 +103,9 @@ use WCS4\Helper\Output;
                             </th>
                             <td class="column-primary
                                 <?= (current_user_can(WCS4_JOURNAL_MANAGE_CAPABILITY)) ? ' has-row-actions' : '' ?>">
-                                <?php
-                                if ($item->isTypeCumulative()): ?>
-                                    <?= $item->getStartDate() ?>
-                                    -
-                                    <?= $item->getEndDate() ?>
-                                <?php
-                                else: ?>
-                                    <?= WorkPlan_Item::typeLabel($item->getType()) ?>
-                                <?php
-                                endif; ?>
+                                <?= $item->getStartDate() ?>
+                                -
+                                <?= $item->getEndDate() ?>
                                 <?php
                                 if (current_user_can(WCS4_JOURNAL_MANAGE_CAPABILITY)): ?>
                                     <div class="row-actions">

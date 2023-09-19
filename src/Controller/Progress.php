@@ -276,6 +276,7 @@ class Progress
             if ($item->isTypePeriodic()) {
                 $template_style = wp_unslash($wcs4_options['progress_html_template_style']);
                 $template_code = wp_kses_stripslashes($wcs4_options['progress_html_template_code_periodic_type']);
+                $template_code = Output::process_template($item, $template_code);
                 Output::save_snapshot_and_render_html(
                     self::TEMPLATE_DIR . 'export_type_periodic.html.php',
                     $template_style,
@@ -529,16 +530,14 @@ class Progress
                 'student_id' => __('Student', 'wcs4'),
                 'improvements' => __('Improvements', 'wcs4'),
                 'indications' => __('Indications', 'wcs4'),
+                'start_date' => __('Start date', 'wcs4'),
+                'end_date' => __('End date', 'wcs4'),
             );
             if (Progress_Item::TYPE_PARTIAL === $type) {
                 $required['subject_id'] = __('Subject', 'wcs4');
             }
             if (false === $force_insert) {
                 $required['type'] = __('Type', 'wcs4');
-                if (Progress_Item::TYPE_PERIODIC === $type) {
-                    $required['start_date'] = __('Start date', 'wcs4');
-                    $required['end_date'] = __('End date', 'wcs4');
-                }
             }
 
             $errors = wcs4_verify_required_fields($required);
@@ -549,9 +548,8 @@ class Progress
             $subject_id = ($_POST['subject_id']);
             $teacher_id = ($_POST['teacher_id']);
             $student_id = ($_POST['student_id']);
-            $start_date = sanitize_text_field($_POST['start_date'] ?: null);
-
-            $end_date = sanitize_text_field($_POST['end_date'] ?: null);
+            $start_date = sanitize_text_field($_POST['start_date']);
+            $end_date = sanitize_text_field($_POST['end_date']);
             $improvements = sanitize_textarea_field($_POST['improvements']);
             $indications = sanitize_textarea_field($_POST['indications']);
 
@@ -585,8 +583,8 @@ class Progress
             }
             $data = [
                 'student_id' => $student_id,
-                'start_date' => ('' === $start_date ? null : $start_date),
-                'end_date' => ('' === $end_date ? null : $end_date),
+                'start_date' => $start_date,
+                'end_date' => $end_date,
                 'improvements' => $improvements,
                 'indications' => $indications,
                 'type' => $type,

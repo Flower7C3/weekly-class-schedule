@@ -75,7 +75,15 @@ use WCS4\Helper\Admin;
             <?php
             endif; ?>
         </fieldset>
-        <input type="hidden" id="wcs4_progress_type" value="<?= Progress_Item::TYPE_PARTIAL; ?>"/>
+        <input type="hidden" id="wcs4_progress_type" value="<?= Progress_Item::TYPE_PARTIAL ?>"/>
+        <fieldset class="form-field form-required form-field-start_date-wrap">
+            <label for="wcs4_progress_start_date"><?= __('Start date', 'wcs4') ?></label>
+            <input type="date" id="wcs4_progress_start_date" name="start_date"/>
+        </fieldset>
+        <fieldset class="form-field form-required form-field-end_date-wrap">
+            <label for="wcs4_progress_end_date"><?= __('End date', 'wcs4') ?></label>
+            <input type="date" id="wcs4_progress_end_date" name="end_date"/>
+        </fieldset>
         <fieldset class="form-field form-required form-field-improvements-wrap">
             <label for="wcs4_progress_improvements"><?= __('Improvements', 'wcs4') ?></label>
             <textarea rows="5" id="wcs4_progress_improvements" name="improvements"></textarea>

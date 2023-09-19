@@ -83,6 +83,14 @@ use WCS4\Helper\Admin;
         </fieldset>
         <input type="hidden" id="wcs4_work_plan_type" name="type"
                value="<?= WorkPlan_Item::TYPE_PARTIAL ?>"/>
+        <fieldset class="form-field form-required form-field-start_date-wrap">
+            <label for="wcs4_progress_start_date"><?= __('Start date', 'wcs4') ?></label>
+            <input type="date" id="wcs4_progress_start_date" name="start_date"/>
+        </fieldset>
+        <fieldset class="form-field form-required form-field-end_date-wrap">
+            <label for="wcs4_progress_end_date"><?= __('End date', 'wcs4') ?></label>
+            <input type="date" id="wcs4_progress_end_date" name="end_date"/>
+        </fieldset>
         <fieldset class="form-field form-required form-field-diagnosis-wrap">
             <label for="wcs4_work_plan_diagnosis"><?php
                 _e('Diagnosis', 'wcs4'); ?></label>

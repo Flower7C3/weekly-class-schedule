@@ -95,7 +95,7 @@
     let set_entry_data_to_form = function (entry) {
         let $form = $('#wcs4-work-plan-form');
         if (Array.isArray(entry)) {
-            $form.find('[name="type"][value="' + 'type.periodic' + '"]').prop('checked', true).change();
+            $form.find('[name="type"][value="type.cumulative"]').prop('checked', true).change();
             let teacher_ids = [];
             let student_id = null;
             let diagnosis = '';
@@ -162,8 +162,8 @@
                 $('#wcs4_work_plan_teacher').closest('fieldset').show();
                 $('#wcs4_work_plan_teacher').attr('multiple', false).attr('size', null);
                 $('#wcs4_work_plan_student').closest('fieldset').show();
-                $('#wcs4_work_plan_start_date').closest('fieldset').hide();
-                $('#wcs4_work_plan_end_date').closest('fieldset').hide();
+                $('#wcs4_work_plan_start_date').closest('fieldset').show();
+                $('#wcs4_work_plan_end_date').closest('fieldset').show();
                 $('#wcs4_work_plan_diagnosis').closest('fieldset').show();
                 $('#wcs4_work_plan_strengths').closest('fieldset').show();
                 $('#wcs4_work_plan_goals').closest('fieldset').show();
@@ -199,9 +199,9 @@
                 update_create_button();
             }, 300);
         });
-        $(document).on('click.wcs4-create-work-plan-button', '#wcs4-work-plans-filter  [data-action="generate"]', function (e) {
+        $(document).on('click.wcs4-create-work-plan-button', '#wcs4-work-plans-filter [data-action="generate"]', function (e) {
             let ids = [];
-            jQuery('tr[id]').each(function (k, v) {
+            jQuery('tr[data-id]').each(function (k, v) {
                 ids.push(jQuery(v).data('id'));
             });
             WCS4_LIB.fetch_entry_data_to_form('work-plan', ids, set_entry_data_to_form, WCS4_LIB.reset_to_create_mode)

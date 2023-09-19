@@ -282,7 +282,9 @@ class WorkPlan
             }
         }
 
-        [$thead_columns, $tbody_columns, $tfoot_columns] = Output::extract_for_table($wcs4_options['work_plan_html_table_columns']);
+        [$thead_columns, $tbody_columns, $tfoot_columns] = Output::extract_for_table(
+            $wcs4_options['work_plan_html_table_columns']
+        );
 
         $subject_item = '';
         $student_item = '';
@@ -526,16 +528,14 @@ class WorkPlan
                 'strengths' => __('Strengths', 'wcs4'),
                 'goals' => __('Goals', 'wcs4'),
                 'methods' => __('Methods', 'wcs4'),
+                'start_date' => __('Start date', 'wcs4'),
+                'end_date' => __('End date', 'wcs4'),
             );
             if (WorkPlan_Item::TYPE_PARTIAL === $type) {
                 $required['subject_id'] = __('Subject', 'wcs4');
             }
             if (false === $force_insert) {
                 $required['type'] = __('Type', 'wcs4');
-                if (WorkPlan_Item::TYPE_CUMULATIVE === $type) {
-                    $required['start_date'] = __('Start date', 'wcs4');
-                    $required['end_date'] = __('End date', 'wcs4');
-                }
             }
 
             $errors = wcs4_verify_required_fields($required);
@@ -546,9 +546,8 @@ class WorkPlan
             $subject_id = ($_POST['subject_id']);
             $teacher_id = ($_POST['teacher_id']);
             $student_id = ($_POST['student_id']);
-            $start_date = sanitize_text_field($_POST['start_date'] ?: null);
-
-            $end_date = sanitize_text_field($_POST['end_date'] ?: null);
+            $start_date = sanitize_text_field($_POST['start_date']);
+            $end_date = sanitize_text_field($_POST['end_date']);
             $diagnosis = sanitize_textarea_field($_POST['diagnosis']);
             $strengths = sanitize_textarea_field($_POST['strengths']);
             $goals = sanitize_textarea_field($_POST['goals']);
@@ -565,16 +564,14 @@ class WorkPlan
             }
 
             # Validate time logic
-            if (false === $force_insert && WorkPlan_Item::TYPE_CUMULATIVE === $type) {
-                $timezone = wcs4_get_system_timezone();
-                $tz = new DateTimeZone($timezone);
-                $start_dt = new DateTimeImmutable($start_date, $tz);
-                $end_dt = new DateTimeImmutable($end_date, $tz);
+            $timezone = wcs4_get_system_timezone();
+            $tz = new DateTimeZone($timezone);
+            $start_dt = new DateTimeImmutable($start_date, $tz);
+            $end_dt = new DateTimeImmutable($end_date, $tz);
 
-                if ($start_dt >= $end_dt) {
-                    # Invalid subject time
-                    $errors['start_date'][] = __('A progress cannot start before it ends', 'wcs4');
-                }
+            if ($start_dt >= $end_dt) {
+                # Invalid subject time
+                $errors['start_date'][] = __('A progress cannot start before it ends', 'wcs4');
             }
 
             if (!empty($errors)) {
