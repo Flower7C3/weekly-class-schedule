@@ -18,6 +18,7 @@ use WCS4\Exception\ValidationException;
 use WCS4\Helper\Admin;
 use WCS4\Helper\DB;
 use WCS4\Helper\Output;
+use WCS4\Repository\Journal as JournalRepository;
 
 class Journal
 {
@@ -150,7 +151,7 @@ class Journal
                 break;
         }
 
-        $items = self::get_items(
+        $items = JournalRepository::get_items(
             $teacher,
             $student,
             $subject,
@@ -256,7 +257,7 @@ class Journal
         }
 
         # get journals
-        $items = self::get_items(
+        $items = JournalRepository::get_items(
             $teacher,
             $student,
             $subject,
@@ -356,7 +357,7 @@ class Journal
         $orderDirection = null
     ): string {
         ob_start();
-        $items = self::get_items(
+        $items = JournalRepository::get_items(
             $teacher,
             $student,
             $subject,
@@ -382,8 +383,8 @@ class Journal
         $date_upto = null,
     ): array {
         global $wpdb;
-        $table = DB::get_journal_table_name();
-        $table_teacher = DB::get_journal_teacher_table_name();
+        $table = JournalRepository::get_journal_table_name();
+        $table_teacher = JournalRepository::get_journal_teacher_table_name();
         $table_posts = $wpdb->prefix . 'posts';
         $table_meta = $wpdb->prefix . 'postmeta';
 
@@ -426,115 +427,6 @@ class Journal
         return DB::get_summary($query_str, $queryArr);
     }
 
-    public static function get_items(
-        $teacher = 'all',
-        $student = 'all',
-        $subject = 'all',
-        $date_from = null,
-        $date_upto = null,
-        $type = null,
-        $created_at_from = null,
-        $created_at_upto = null,
-        $orderField = null,
-        $orderDirection = null,
-        $limit = null,
-        $paged = null
-    ): array {
-        global $wpdb;
-
-        $table = DB::get_journal_table_name();
-        $table_teacher = DB::get_journal_teacher_table_name();
-        $table_student = DB::get_journal_student_table_name();
-        $table_posts = $wpdb->prefix . 'posts';
-        $table_meta = $wpdb->prefix . 'postmeta';
-
-        $queryStr = "SELECT
-                {$table}.id AS journal_id, {$table}.created_at, {$table}.updated_at, {$table}.created_by, {$table}.updated_by,
-                sub.ID AS subject_id, sub.post_title AS subject_name, sub.post_content AS subject_desc,
-                tea.ID AS teacher_id, tea.post_title AS teacher_name, tea.post_content AS teacher_desc,
-                stu.ID AS student_id, stu.post_title AS student_name, stu.post_content AS student_desc,
-                {$table}.date, {$table}.start_time, {$table}.end_time,
-                {$table}.topic, {$table}.type
-            FROM {$table}
-            LEFT JOIN {$table_teacher} USING(id)
-            LEFT JOIN {$table_student} USING(id)
-            LEFT JOIN {$table_posts} sub ON subject_id = sub.ID
-            LEFT JOIN {$table_posts} tea ON teacher_id = tea.ID
-            LEFT JOIN {$table_posts} stu ON student_id = stu.ID
-        ";
-        $queryStr = apply_filters(
-            'wcs4_filter_get_journals_query',
-            $queryStr,
-            $table,
-            $table_posts,
-            $table_meta
-        );
-        $pattern = '/^\s?SELECT/';
-        $replacement = 'SELECT sub.ID AS subject_id, tea.ID as teacher_id, stu.ID as student_id,';
-        $queryStr = preg_replace($pattern, $replacement, $queryStr);
-
-        # Filters
-        $filters = [
-            ['prefix' => 'sub', 'value' => $subject, 'searchById' => "sub.ID = %s"],
-            [
-                'prefix' => 'tea',
-                'value' => $teacher,
-                'searchById' => "{$table}.id IN (SELECT id FROM {$table_teacher} WHERE teacher_id = %s)"
-            ],
-            [
-                'prefix' => 'stu',
-                'value' => $student,
-                'searchById' => "{$table}.id IN (SELECT id FROM {$table_student} WHERE student_id = %s)"
-            ],
-        ];
-
-        # Where
-        $where = [];
-        $queryArr = [];
-        if (!empty($date_from)) {
-            $where[] = 'date >= "%s"';
-            $queryArr[] = $date_from;
-        }
-        if (!empty($date_upto)) {
-            $where[] = 'date <= "%s"';
-            $queryArr[] = $date_upto;
-        }
-        if (!empty($created_at_from)) {
-            $where[] = 'created_at >= "%s"';
-            $queryArr[] = $created_at_from . ' 00:00:00';
-        }
-        if (!empty($created_at_upto)) {
-            $where[] = 'created_at <= "%s"';
-            $queryArr[] = $created_at_upto . ' 23:59:59';
-        }
-        if (!empty($type)) {
-            $where[] = 'type = "%s"';
-            $queryArr[] = $type;
-        }
-        switch ($orderField) {
-            case 'time':
-                $orderField = ['date' => $orderDirection, 'start_time' => $orderDirection];
-                break;
-            case 'subject':
-                $orderField = ['subject_name' => $orderDirection];
-                break;
-            case 'teacher':
-                $orderField = ['teacher_name' => $orderDirection];
-                break;
-            case 'student':
-                $orderField = ['student_name' => $orderDirection];
-                break;
-            case 'created-at':
-                $orderField = ['created_at' => $orderDirection];
-                break;
-            default:
-            case 'updated-at':
-                $orderField = ['updated_at' => $orderDirection];
-                break;
-        }
-        return DB::get_items(Journal_Item::class, $queryStr, $filters, $where, $queryArr, $orderField, $limit, $paged);
-    }
-
     public static function create_item(): void
     {
         self::save_item(true);
@@ -555,9 +447,9 @@ class Journal
 
             $update_request = false;
             $row_id = null;
-            $table = DB::get_journal_table_name();
-            $table_teacher = DB::get_journal_teacher_table_name();
-            $table_student = DB::get_journal_student_table_name();
+            $table = JournalRepository::get_journal_table_name();
+            $table_teacher = JournalRepository::get_journal_teacher_table_name();
+            $table_student = JournalRepository::get_journal_student_table_name();
             $type = sanitize_text_field($_POST['type'] ?? null);
 
             $required = array(
@@ -599,10 +491,14 @@ class Journal
             $topic = '';
             $type = sanitize_text_field($_POST['type']);
 
-            if (isset($_POST['row_id'])) {
+            if (!empty($_POST['row_id'])) {
                 # This is an update request and not an insert.
                 $update_request = true;
                 $row_id = sanitize_text_field($_POST['row_id']);
+                $item = JournalRepository::get_item($row_id);
+                if(true === $force_insert && !Output::editable_on_front($item)){
+                    throw new AccessDeniedException();
+                }
             }
 
             # Check if we need to sanitize the topic or leave as is.
@@ -684,7 +580,7 @@ class Journal
                 'type' => $type,
             );
 
-            if (!$force_insert && $update_request) {
+            if ($update_request) {
                 $old_date = $wpdb->get_var(
                     $wpdb->prepare(
                         "
@@ -767,8 +663,7 @@ class Journal
             }
             $response['days_to_update'] = array_unique($days_to_update);
             $wpdb->query('COMMIT');
-        } catch
-        (ValidationException $e) {
+        } catch (ValidationException $e) {
             $response['response'] = $e->getMessage();
             $response['errors'] = $e->getErrors();
             $status = \WP_Http::BAD_REQUEST;
@@ -786,9 +681,9 @@ class Journal
         global $wpdb;
         $response = [];
         try {
-            if (!current_user_can(WCS4_JOURNAL_MANAGE_CAPABILITY)) {
-                throw new AccessDeniedException();
-            }
+            //if (!current_user_can(WCS4_JOURNAL_MANAGE_CAPABILITY)) {
+            //    throw new AccessDeniedException();
+            //}
             wcs4_verify_nonce();
 
             $required = array(
@@ -799,9 +694,9 @@ class Journal
                 throw new ValidationException($errors);
             }
             $row_id = sanitize_text_field($_POST['row_id']);
-            $table = DB::get_journal_table_name();
-            $table_teacher = DB::get_journal_teacher_table_name();
-            $table_student = DB::get_journal_student_table_name();
+            $table = JournalRepository::get_journal_table_name();
+            $table_teacher = JournalRepository::get_journal_teacher_table_name();
+            $table_student = JournalRepository::get_journal_student_table_name();
             $db_result = $wpdb->get_row(
                 $wpdb->prepare(
                     "
@@ -849,9 +744,9 @@ class Journal
             }
             $row_id = sanitize_text_field($_POST['row_id']);
 
-            $table = DB::get_journal_table_name();
-            $table_teacher = DB::get_journal_teacher_table_name();
-            $table_student = DB::get_journal_student_table_name();
+            $table = JournalRepository::get_journal_table_name();
+            $table_teacher = JournalRepository::get_journal_teacher_table_name();
+            $table_student = JournalRepository::get_journal_student_table_name();
             $db_result = $wpdb->delete($table, array('id' => $row_id), array('%d'));
             $db_result_teacher = $wpdb->delete($table_teacher, array('id' => $row_id), array('%d'));
             $db_result_student = $wpdb->delete($table_student, array('id' => $row_id), array('%d'));
@@ -917,16 +812,16 @@ class Journal
      * @param string $template_list
      * @return string
      */
-    public static function get_html_of_journal_list(array $items, string $key, string $template_list): string
+    public static function get_html_of_journal_list_for_shortcode(array $items, string $key, string $template_list): string
     {
         if (empty($items)) {
             return '<p class="wcs4-no-items-message">' . __('No lessons journaled', 'wcs4') . '</p>';
         }
 
         $dateWithLessons = [];
-        /** @var Journal_Item $journal */
-        foreach ($items as $journal) {
-            $dateWithLessons[$journal->getDate()][] = $journal;
+        /** @var Journal_Item $item */
+        foreach ($items as $item) {
+            $dateWithLessons[$item->getDate()][] = $item;
         }
         krsort($dateWithLessons);
 
@@ -938,11 +833,11 @@ class Journal
                 $time = strtotime($date);
                 $weekday = strftime('%w', $time);
                 $output .= '<h4>' . strftime('%x', $time) . ' (' . $weekdays[$weekday] . ')' . '</h4>';
-                $output .= '<ul class="wcs4-grid-date-list wcs4-grid-date-list-' . $date . '">';
+                $output .= '<ul class="wcs4-grid-date-list wcs4-grid-date-list-' . $date . '" data-scope="journal">';
                 /** @var Journal_Item $journal */
-                foreach ($dayJournals as $journal) {
+                foreach ($dayJournals as $item) {
                     $output .= '<li class="wcs4-list-item-journal">';
-                    $output .= Output::process_template($journal, $template_list);
+                    $output .= Output::process_template($item, $template_list);
                     $output .= '</li>';
                 }
                 $output .= '</ul>';

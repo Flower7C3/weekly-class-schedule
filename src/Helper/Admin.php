@@ -6,6 +6,7 @@ use WCS4\Entity\Journal_Item;
 use WCS4\Entity\Lesson_Item;
 use WCS4\Entity\Progress_Item;
 use WCS4\Entity\WorkPlan_Item;
+use WCS4\Repository\Schedule;
 
 class Admin
 {
@@ -30,9 +31,9 @@ class Admin
         $post_type = 'wcs4_' . $key;
         $tax_type = WCS4_POST_TYPES_WHITELIST[$post_type];
 
-        $table = DB::get_schedule_table_name();
-        $table_teacher = DB::get_schedule_teacher_table_name();
-        $table_student = DB::get_schedule_student_table_name();
+        $table = Schedule::get_schedule_table_name();
+        $table_teacher = Schedule::get_schedule_teacher_table_name();
+        $table_student = Schedule::get_schedule_student_table_name();
 
         $values = [];
 

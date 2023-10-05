@@ -5,7 +5,7 @@
 
 namespace WCS4\Helper;
 
-use WCS4\Controller\Schedule;
+use WCS4\Repository\Schedule as ScheduleRepository;
 use WP_Widget;
 
 /**
@@ -60,7 +60,17 @@ class TodayClassesWidget extends WP_Widget
         );
         $template = $instance['template'];
 
-        $lessons = Schedule::get_items($classroom_ids, 'all', 'all', 'all', $today, $time, 'visible', null, $limit);
+        $lessons = ScheduleRepository::get_items(
+            $classroom_ids,
+            'all',
+            'all',
+            'all',
+            $today,
+            $time,
+            'visible',
+            null,
+            $limit
+        );
 
         if (empty($lessons)) {
             $output .= '<div class="wcs4-no-lessons">' . $no_entries_msg . '</div>';

@@ -3,8 +3,8 @@
 use WCS4\Helper\Admin;
 
 ?>
-<div class="wcs4-form-wrap" id="wcs4-management-form-wrapper">
-    <h2 id="wcs4-management-form-title"><?= _x('Add New Lesson', 'page title', 'wcs4') ?></h2>
+<div class="wcs4-form-wrap wcs4-management-form-wrapper" id="wcs4-schedule-form-wrapper">
+    <h2 data-wcs4="management-form-title"><?= _x('Add New Lesson', 'page title', 'wcs4') ?></h2>
     <form id="wcs4_schedule_management-form" action="<?= $_SERVER['PHP_SELF'] ?>" method="post">
         <fieldset class="form-field form-required form-field-subject_id-wrap">
             <label for="wcs4_schedule_subject_id"><?= __('Subject', 'wcs4') ?></label>
@@ -97,12 +97,12 @@ use WCS4\Helper\Admin;
         </fieldset>
         <fieldset class="submit" id="wcs4_schedule_buttons-wrapper">
             <span class="spinner"></span>
-            <button id="wcs4-submit-form" type="submit" class="button button-primary wcs4-submit-schedule-form"
+            <button data-wcs4="submit-form" type="submit" class="button button-primary wcs4-submit-schedule-form"
                     name="wcs4-submit">
                 <span class="dashicons dashicons-plus-alt"></span>
                 <?= _x('Add Lesson', 'button text', 'wcs4') ?>
             </button>
-            <button id="wcs4-reset-form" type="reset" class="button button-link wcs4-reset-schedule-form"
+            <button data-wcs4="reset-form" type="reset" class="button button-link wcs4-reset-schedule-form"
                     style="display: none;">
                 <?= _x('Reset form', 'button text', 'wcs4') ?>
             </button>

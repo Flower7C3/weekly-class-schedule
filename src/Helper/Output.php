@@ -3,6 +3,7 @@
 namespace WCS4\Helper;
 
 use JetBrains\PhpStorm\NoReturn;
+use WCS4\Controller\Settings;
 use WCS4\Controller\Snapshot;
 use WCS4\Entity\Item;
 use WCS4\Entity\Journal_Item;
@@ -16,6 +17,91 @@ use WCS4\Entity\WorkPlan_Item;
  */
 class Output
 {
+    public static function html_summary_element($string, $length = 32): string
+    {
+        if (mb_strlen($string) <= $length) {
+            return $string;
+        }
+        $lines = explode(PHP_EOL, wordwrap($string, $length, PHP_EOL));
+        $summary = $lines[0];
+        unset($lines[0]);
+        $more = implode('', $lines);
+
+        return sprintf('<details><summary>%s</summary>%s</details>', $summary, $more);
+    }
+
+    public static function editable_on_front(
+        Journal_Item|Progress_Item|WorkPlan_Item $item
+    ): bool {
+        if (empty($_SESSION[WCS_SESSION_SATISFY_POST])) {
+            return false;
+        }
+        $found = false;
+        $wcs4_settings = Settings::load_settings();
+        if ($item instanceof Journal_Item) {
+            foreach ($item->getTeachers() as $teacher) {
+                if ($_SESSION[WCS_SESSION_SATISFY_POST]->ID === $teacher->getId()) {
+                    $found = true;
+                    break;
+                }
+            }
+            foreach ($item->getStudents() as $student) {
+                if ($_SESSION[WCS_SESSION_SATISFY_POST]->ID === $student->getId()) {
+                    $found = true;
+                    break;
+                }
+            }
+            $settlementFirstDay = $wcs4_settings['journal_edit_masters'];
+        } elseif ($item instanceof WorkPlan_Item) {
+            if ($item->isTypeCumulative()) {
+                return false;
+            }
+            foreach ($item->getTeachers() as $teacher) {
+                if ($_SESSION[WCS_SESSION_SATISFY_POST]->ID === $teacher->getId()) {
+                    $found = true;
+                    break;
+                }
+            }
+            if ($_SESSION[WCS_SESSION_SATISFY_POST]->ID === $item->getStudent()->getId()) {
+                $found = true;
+            }
+            $settlementFirstDay = $wcs4_settings['work_plan_edit_masters'];
+        } elseif ($item instanceof Progress_Item) {
+            if ($item->isTypePeriodic()) {
+                return false;
+            }
+            foreach ($item->getTeachers() as $teacher) {
+                if ($_SESSION[WCS_SESSION_SATISFY_POST]->ID === $teacher->getId()) {
+                    $found = true;
+                    break;
+                }
+            }
+            if ($_SESSION[WCS_SESSION_SATISFY_POST]->ID === $item->getStudent()->getId()) {
+                $found = true;
+            }
+            $settlementFirstDay = $wcs4_settings['progress_edit_masters'];
+        } else {
+            $settlementFirstDay = 1;
+        }
+        if (false === $found) {
+            return false;
+        }
+        $createdAtDate = $item->getCreatedAt();
+        $currentMonthDay = (int)(new \DateTimeImmutable())
+            ->format('d');
+        $currentMonthSettlement = date('Y-m-' . $settlementFirstDay);
+        $currentMonthSettlementDate = new \DateTimeImmutable($currentMonthSettlement);
+        $previousMonthSettlementDate = $currentMonthSettlementDate->modify("- 1 month");
+        if ($currentMonthDay <= $settlementFirstDay &&
+            $createdAtDate->format('Ymd') >= $previousMonthSettlementDate->format('Ymd')) {
+            return true;
+        }
+        if ($currentMonthDay > $settlementFirstDay &&
+            $createdAtDate->format('Ymd') >= $currentMonthSettlementDate->format('Ymd')) {
+            return true;
+        }
+        return false;
+    }
 
     /**
      * Processes a template (replace placeholder, apply plugins).
@@ -120,7 +206,6 @@ class Output
         }
         if ($item instanceof Journal_Item) {
             $template = str_replace([
-                '{item no}',
                 '{date}',
                 '{start time}',
                 '{end time}',
@@ -128,12 +213,7 @@ class Output
                 '{topic}',
                 '{type}',
                 '{type icon}',
-                '{created at}',
-                '{created by}',
-                '{updated at}',
-                '{updated by}',
             ], [
-                $item->getId(),
                 $item->getDate(),
                 $item->getStartTime(),
                 $item->getEndTime(),
@@ -141,15 +221,10 @@ class Output
                 nl2br($item->getTopic()),
                 Journal_Item::typeLabel($item->getType()),
                 '<em class="' . Journal_Item::typeIcon($item->getType()) . '"></em>',
-                $item->getCreatedAt()?->format('Y-m-d H:i:s'),
-                $item->getCreatedBy()?->display_name,
-                $item->getUpdatedAt()?->format('Y-m-d H:i:s'),
-                $item->getUpdatedBy()?->display_name,
             ], $template);
         }
         if ($item instanceof WorkPlan_Item) {
             $template = str_replace([
-                '{item no}',
                 '{start date}',
                 '{end date}',
                 '{diagnosis}',
@@ -158,14 +233,7 @@ class Output
                 '{methods}',
                 '{type}',
                 '{type icon}',
-                '{created at}',
-                '{created at date}',
-                '{created by}',
-                '{updated at}',
-                '{updated at date}',
-                '{updated by}',
             ], [
-                $item->getId(),
                 $item->getStartDate(),
                 $item->getEndDate(),
                 nl2br($item->getDiagnosis()),
@@ -174,43 +242,59 @@ class Output
                 nl2br($item->getMethods()),
                 WorkPlan_Item::typeLabel($item->getType()),
                 '<em class="' . WorkPlan_Item::typeIcon($item->getType()) . '"></em>',
-                $item->getCreatedAt()?->format('Y-m-d H:i:s'),
-                $item->getCreatedAt()?->format('Y-m-d'),
-                $item->getCreatedBy()?->display_name,
-                $item->getUpdatedAt()?->format('Y-m-d H:i:s'),
-                $item->getUpdatedAt()?->format('Y-m-d'),
-                $item->getUpdatedBy()?->display_name,
             ], $template);
         }
         if ($item instanceof Progress_Item) {
             $template = str_replace([
-                '{item no}',
                 '{start date}',
                 '{end date}',
                 '{improvements}',
                 '{indications}',
                 '{type}',
                 '{type icon}',
-                '{created at}',
-                '{created at date}',
-                '{created by}',
-                '{updated at}',
-                '{updated at date}',
-                '{updated by}',
+
             ], [
-                $item->getId(),
                 $item->getStartDate(),
                 $item->getEndDate(),
                 nl2br($item->getImprovements()),
                 nl2br($item->getIndications()),
                 Progress_Item::typeLabel($item->getType()),
                 '<em class="' . Progress_Item::typeIcon($item->getType()) . '"></em>',
+            ], $template);
+        }
+        if ($item instanceof Journal_Item
+            ||
+            $item instanceof WorkPlan_Item
+            ||
+            $item instanceof Progress_Item) {
+            $template = str_replace([
+                '{item no}',
+                '{created or updated at}',
+                '{created at}',
+                '{created at date}',
+                '{created by}',
+                '{updated at}',
+                '{updated at date}',
+                '{updated by}',
+                '{edit button}',
+            ], [
+                $item->getId(),
+                (static function () use ($item) {
+                    ob_start();
+                    include __DIR__ . '/../Template/_common/updated_at.php';
+                    return ob_get_clean();
+                })(),
                 $item->getCreatedAt()?->format('Y-m-d H:i:s'),
                 $item->getCreatedAt()?->format('Y-m-d'),
                 $item->getCreatedBy()?->display_name,
                 $item->getUpdatedAt()?->format('Y-m-d H:i:s'),
                 $item->getUpdatedAt()?->format('Y-m-d'),
                 $item->getUpdatedBy()?->display_name,
+                self::editable_on_front($item)
+                    ? '<a href="#" data-id="' . $item->getId() . '" class="wcs4-edit-button">'
+                    . __('Edit', 'wcs4')
+                    . '</a>'
+                    : ''
             ], $template);
         }
         if ($item instanceof Lesson_Item) {
@@ -294,6 +378,30 @@ class Output
 
         wp_register_script('wcs4_front_js', WCS4_PLUGIN_URL . '/js/wcs_front.js', array('jquery'), WCS4_VERSION);
         wp_enqueue_script('wcs4_front_js');
+
+        wp_register_script(
+            'wcs4_front_journal_js',
+            WCS4_PLUGIN_URL . '/js/front/wcs_journal.js',
+            array('jquery'),
+            WCS4_VERSION
+        );
+        wp_enqueue_script('wcs4_front_journal_js');
+
+        wp_register_script(
+            'wcs4_front_progress_js',
+            WCS4_PLUGIN_URL . '/js/front/wcs_progress.js',
+            array('jquery'),
+            WCS4_VERSION
+        );
+        wp_enqueue_script('wcs4_front_progress_js');
+
+        wp_register_script(
+            'wcs4_front_work_plan_js',
+            WCS4_PLUGIN_URL . '/js/front/wcs_work_plan.js',
+            array('jquery'),
+            WCS4_VERSION
+        );
+        wp_enqueue_script('wcs4_front_work_plan_js');
 
         # Localize script
         wp_localize_script('wcs4_front_js', 'WCS4_DATA', $js_data);

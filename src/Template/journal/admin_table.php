@@ -124,8 +124,9 @@ $teacher_filter_field_id = 'search_wcs4_journal_teacher_id';
                                     </div>
                                 <?php
                                 endif; ?>
-                                <button type="button" class="toggle-row"><span class="screen-reader-text"><?php
-                                        _e('Show more details'); ?></span></button>
+                                <button type="button" class="toggle-row">
+                                    <span class="screen-reader-text"><?=__('Show more details') ?></span>
+                                </button>
                             </td>
                             <td data-colname="<?= __('Subject', 'wcs4') ?>">
                                 <?php
@@ -165,7 +166,7 @@ $teacher_filter_field_id = 'search_wcs4_journal_teacher_id';
                                 </ul>
                             </td>
                             <td data-colname="<?= __('Topic', 'wcs4') ?>">
-                                <?= $item->getTopic() ?>
+                                <?= Output::html_summary_element($item->getTopic()) ?>
                             </td>
                             <td data-colname="<?= __('Updated at', 'wcs4') ?>">
                                 <?php

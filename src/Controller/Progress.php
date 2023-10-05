@@ -19,6 +19,8 @@ use WCS4\Exception\ValidationException;
 use WCS4\Helper\Admin;
 use WCS4\Helper\DB;
 use WCS4\Helper\Output;
+use WCS4\Repository\Progress as ProgressRepository;
+use WCS4\Repository\WorkPlan as WorkPlanRepository;
 
 class Progress
 {
@@ -153,7 +155,7 @@ class Progress
                 break;
         }
 
-        $items = self::get_items(
+        $items = ProgressRepository::get_items(
             null,
             $teacher,
             $student,
@@ -251,7 +253,7 @@ class Progress
         }
 
         # get progresses
-        $items = self::get_items(
+        $items = ProgressRepository::get_items(
             $id,
             $teacher,
             $student,
@@ -378,7 +380,7 @@ class Progress
         $orderDirection = null
     ): string {
         ob_start();
-        $items = self::get_items(
+        $items = ProgressRepository::get_items(
             null,
             $teacher,
             $student,
@@ -394,121 +396,6 @@ class Progress
         include self::TEMPLATE_DIR . 'admin_table.php';
         $response = ob_get_clean();
         return trim($response);
-    }
-
-    public static function get_items(
-        $id = null,
-        $teacher = 'all',
-        $student = 'all',
-        $subject = 'all',
-        $date_from = null,
-        $date_upto = null,
-        $type = null,
-        $created_at_from = null,
-        $created_at_upto = null,
-        $orderField = null,
-        $orderDirection = null,
-        $limit = null,
-        $paged = null
-    ): array {
-        global $wpdb;
-
-        $table = DB::get_progress_table_name();
-        $table_subject = DB::get_progress_subject_table_name();
-        $table_teacher = DB::get_progress_teacher_table_name();
-        $table_posts = $wpdb->prefix . 'posts';
-        $table_meta = $wpdb->prefix . 'postmeta';
-
-        $queryStr = "SELECT
-                {$table}.id AS progress_id, {$table}.created_at, {$table}.updated_at, {$table}.created_by, {$table}.updated_by,
-                sub.ID AS subject_id, sub.post_title AS subject_name, sub.post_content AS subject_desc,
-                tea.ID AS teacher_id, tea.post_title AS teacher_name, tea.post_content AS teacher_desc,
-                stu.ID AS student_id, stu.post_title AS student_name, stu.post_content AS student_desc,
-                {$table}.start_date, {$table}.end_date,
-                {$table}.improvements, {$table}.indications, {$table}.type
-            FROM {$table} 
-            LEFT JOIN {$table_subject} USING(id)
-            LEFT JOIN {$table_teacher} USING(id)
-            LEFT JOIN {$table_posts} sub ON subject_id = sub.ID
-            LEFT JOIN {$table_posts} tea ON teacher_id = tea.ID
-            LEFT JOIN {$table_posts} stu ON student_id = stu.ID
-        ";
-        $queryStr = apply_filters(
-            'wcs4_filter_get_progresses_query',
-            $queryStr,
-            $table,
-            $table_posts,
-            $table_meta
-        );
-        $pattern = '/^\s?SELECT/';
-        $replacement = 'SELECT sub.ID AS subject_id, tea.ID as teacher_id, stu.ID as student_id,';
-        $queryStr = preg_replace($pattern, $replacement, $queryStr);
-
-        # Filters
-        $filters = [
-            [
-                'prefix' => 'sub',
-                'value' => $subject,
-                'searchById' => "{$table}.id IN (SELECT id FROM {$table_subject} WHERE subject_id = %s)"
-            ],
-            [
-                'prefix' => 'tea',
-                'value' => $teacher,
-                'searchById' => "{$table}.id IN (SELECT id FROM {$table_teacher} WHERE teacher_id = %s)"
-            ],
-            ['prefix' => 'stu', 'value' => $student, 'searchById' => "stu.ID = %s"],
-        ];
-
-        # Where
-        $where = [];
-        $queryArr = [];
-        if (!empty($id)) {
-            $where[] = "$table.id = %d";
-            $queryArr[] = $id;
-        }
-        if (!empty($type)) {
-            $where[] = "$table.type = '%s'";
-            $queryArr[] = $type;
-        }
-        if (!empty($date_from)) {
-            $where[] = 'start_date >= "%s"';
-            $queryArr[] = $date_from;
-        }
-        if (!empty($date_upto)) {
-            $where[] = 'start_date <= "%s"';
-            $queryArr[] = $date_upto;
-        }
-        if (!empty($created_at_from)) {
-            $where[] = 'created_at >= "%s"';
-            $queryArr[] = $created_at_from . ' 00:00:00';
-        }
-        if (!empty($created_at_upto)) {
-            $where[] = 'created_at <= "%s"';
-            $queryArr[] = $created_at_upto . ' 23:59:59';
-        }
-
-        switch ($orderField) {
-            case 'time':
-                $orderField = ['start_date' => $orderDirection];
-                break;
-            case 'subject':
-                $orderField = ['subject_name' => $orderDirection];
-                break;
-            case 'teacher':
-                $orderField = ['teacher_name' => $orderDirection];
-                break;
-            case 'student':
-                $orderField = ['student_name' => $orderDirection];
-                break;
-            case 'created-at':
-                $orderField = ['created_at' => $orderDirection];
-                break;
-            default:
-            case 'updated-at':
-                $orderField = ['updated_at' => $orderDirection];
-                break;
-        }
-        return DB::get_items(Progress_Item::class, $queryStr, $filters, $where, $queryArr, $orderField, $limit, $paged);
     }
 
     public static function create_item(): void
@@ -531,9 +418,9 @@ class Progress
 
             $update_request = false;
             $row_id = null;
-            $table = DB::get_progress_table_name();
-            $table_subject = DB::get_progress_subject_table_name();
-            $table_teacher = DB::get_progress_teacher_table_name();
+            $table = ProgressRepository::get_progress_table_name();
+            $table_subject = ProgressRepository::get_progress_subject_table_name();
+            $table_teacher = ProgressRepository::get_progress_teacher_table_name();
             $type = sanitize_text_field($_POST['type'] ?? null);
 
             $required = array(
@@ -564,10 +451,14 @@ class Progress
             $improvements = sanitize_textarea_field($_POST['improvements']);
             $indications = sanitize_textarea_field($_POST['indications']);
 
-            if (isset($_POST['row_id'])) {
+            if (!empty($_POST['row_id'])) {
                 # This is an update request and not an insert.
                 $update_request = true;
                 $row_id = sanitize_text_field($_POST['row_id']);
+                $item = ProgressRepository::get_item($row_id);
+                if(true === $force_insert && !Output::editable_on_front($item)){
+                    throw new AccessDeniedException();
+                }
             }
 
             $wcs4_settings = Settings::load_settings();
@@ -604,7 +495,7 @@ class Progress
             if (!is_array($teacher_id)) {
                 $teacher_id = [$teacher_id];
             }
-            if (!$force_insert && $update_request) {
+            if ($update_request) {
                 $old_date = $wpdb->get_var(
                     $wpdb->prepare(
                         "
@@ -704,9 +595,9 @@ class Progress
         global $wpdb;
         $response = [];
         try {
-            if (!current_user_can(WCS4_PROGRESS_MANAGE_CAPABILITY)) {
-                throw new AccessDeniedException();
-            }
+            //if (!current_user_can(WCS4_PROGRESS_MANAGE_CAPABILITY)) {
+            //    throw new AccessDeniedException();
+            //}
             wcs4_verify_nonce();
 
             $required = array(
@@ -717,9 +608,9 @@ class Progress
                 throw new ValidationException($errors);
             }
             $row_id = $_POST['row_id'];
-            $table = DB::get_progress_table_name();
-            $table_subject = DB::get_progress_subject_table_name();
-            $table_teacher = DB::get_progress_teacher_table_name();
+            $table = ProgressRepository::get_progress_table_name();
+            $table_subject = ProgressRepository::get_progress_subject_table_name();
+            $table_teacher = ProgressRepository::get_progress_teacher_table_name();
             if (is_array($row_id)) {
                 $query = $wpdb->prepare(
                     "
@@ -784,9 +675,9 @@ class Progress
             }
 
             $row_id = sanitize_text_field($_POST['row_id']);
-            $table = DB::get_progress_table_name();
-            $table_subject = DB::get_progress_subject_table_name();
-            $table_teacher = DB::get_progress_teacher_table_name();
+            $table = ProgressRepository::get_progress_table_name();
+            $table_subject = ProgressRepository::get_progress_subject_table_name();
+            $table_teacher = ProgressRepository::get_progress_teacher_table_name();
             $db_result = $wpdb->delete($table, array('id' => $row_id), array('%d'));
             $db_result_subject = $wpdb->delete($table_subject, array('id' => $row_id), array('%d'));
             $db_result_teacher = $wpdb->delete($table_teacher, array('id' => $row_id), array('%d'));
@@ -864,9 +755,9 @@ class Progress
         }
 
         $dateWithLessons = [];
-        /** @var Progress_Item $progress */
-        foreach ($items as $progress) {
-            $dateWithLessons[$progress->getDate()][] = $progress;
+        /** @var Progress_Item $item */
+        foreach ($items as $item) {
+            $dateWithLessons[$item->getDate()][] = $item;
         }
         krsort($dateWithLessons);
 
@@ -878,14 +769,14 @@ class Progress
                 $time = strtotime($date);
                 $weekday = strftime('%w', $time);
                 $output .= '<h4>' . strftime('%x', $time) . ' (' . $weekdays[$weekday] . ')' . '</h4>';
-                $output .= '<ul class="wcs4-grid-date-list wcs4-grid-date-list-' . $date . '">';
-                /** @var Progress_Item $progress */
-                foreach ($dayProgresses as $progress) {
+                $output .= '<ul class="wcs4-grid-date-list wcs4-grid-date-list-' . $date . '" data-scope="progress">';
+                /** @var Progress_Item $item */
+                foreach ($dayProgresses as $item) {
                     $output .= '<li class="wcs4-list-item-progress">';
-                    if ($progress->isTypePeriodic()) {
-                        $output .= Output::process_template($progress, $template_periodic);
-                    } elseif ($progress->isTypePartial()) {
-                        $output .= Output::process_template($progress, $template_partial);
+                    if ($item->isTypePeriodic()) {
+                        $output .= Output::process_template($item, $template_periodic);
+                    } elseif ($item->isTypePartial()) {
+                        $output .= Output::process_template($item, $template_partial);
                     }
                     $output .= '</li>';
                 }

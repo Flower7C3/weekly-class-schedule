@@ -64,6 +64,7 @@ class Settings
                     'work_plan_view_masters' => 'wcs4_validate_is_numeric',
                     'work_plan_create' => 'wcs4_validate_yes_no',
                     'work_plan_create_masters' => 'wcs4_validate_yes_no',
+                    'work_plan_edit_masters' => 'wcs4_validate_is_numeric',
                     'work_plan_shortcode_template_partial_type' => 'wcs4_validate_mock',
                     'work_plan_shortcode_template_periodic_type' => 'wcs4_validate_mock',
                     'work_plan_html_template_style' => 'wcs4_validate_mock',
@@ -75,6 +76,7 @@ class Settings
                     'progress_view_masters' => 'wcs4_validate_is_numeric',
                     'progress_create' => 'wcs4_validate_yes_no',
                     'progress_create_masters' => 'wcs4_validate_yes_no',
+                    'progress_edit_masters' => 'wcs4_validate_is_numeric',
                     'progress_shortcode_template_partial_type' => 'wcs4_validate_mock',
                     'progress_shortcode_template_periodic_type' => 'wcs4_validate_mock',
                     'progress_html_template_style' => 'wcs4_validate_mock',
@@ -91,6 +93,7 @@ class Settings
                     'color_background' => 'wcs4_validate_color',
                     'color_qtip_background' => 'wcs4_validate_color',
                     'color_links' => 'wcs4_validate_color',
+                    'journal_edit_masters' => 'wcs4_validate_is_numeric',
                     'subject_taxonomy_slug' => 'wcs4_validate_slug',
                     'subject_taxonomy_hierarchical' => 'wcs4_validate_yes_no',
                     'subject_archive_slug' => 'wcs4_validate_slug',
@@ -220,6 +223,7 @@ class Settings
                     'wcs4'
                 ),
                 # journal
+                'journal_edit_masters' => 0,
                 'journal_teacher_collision' => 'yes',
                 'journal_student_collision' => 'yes',
                 'journal_shortcode_template' => _x(
@@ -256,6 +260,7 @@ class Settings
                 'work_plan_view_masters' => 0,
                 'work_plan_create' => 'yes',
                 'work_plan_create_masters' => 'yes',
+                'work_plan_edit_masters' => 0,
                 'work_plan_shortcode_template_partial_type' => _x(
                     '{subject link} with {teacher link}<br>diagnosis: {diagnosis}<br>strengths: {strengths}<br>goals: {goals}<br>methods: {methods}',
                     'template work plan for student',
@@ -306,6 +311,7 @@ class Settings
                 'progress_view_masters' => 0,
                 'progress_create' => 'yes',
                 'progress_create_masters' => 'yes',
+                'progress_edit_masters' => 0,
                 'progress_shortcode_template_partial_type' => _x(
                     '{subject link} with {teacher link}<br>improvements: {improvements}<br>indications: {indications}',
                     'template progress for student',

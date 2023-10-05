@@ -168,7 +168,7 @@ use WCS4\Helper\Output;
                                     </ul>
                                 <?php
                                 else: ?>
-                                    -
+                                    <?= WorkPlan_Item::typeLabel($item->getType()) ?>
                                 <?php
                                 endif; ?>
                             </td>
@@ -195,16 +195,16 @@ use WCS4\Helper\Output;
                                 ); ?>
                             </td>
                             <td data-colname="<?= __('Diagnosis', 'wcs4') ?>">
-                                <?= $item->getDiagnosis() ?>
+                                <?= Output::html_summary_element($item->getDiagnosis()) ?>
                             </td>
                             <td data-colname="<?= __('Strengths', 'wcs4') ?>">
-                                <?= $item->getStrengths() ?>
+                                <?= Output::html_summary_element($item->getStrengths()) ?>
                             </td>
                             <td data-colname="<?= __('Goals', 'wcs4') ?>">
-                                <?= $item->getGoals() ?>
+                                <?= Output::html_summary_element($item->getGoals()) ?>
                             </td>
                             <td data-colname="<?= __('Methods', 'wcs4') ?>">
-                                <?= $item->getMethods() ?>
+                                <?= Output::html_summary_element($item->getMethods()) ?>
                             </td>
                             <td data-colname="<?= __('Updated at', 'wcs4') ?>">
                                 <?php

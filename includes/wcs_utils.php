@@ -238,6 +238,15 @@ function wcs4_select_list(
         $output .= '<option value="">---</option>';
     }
     $output .= '</select>';
+    if (true === $multiple) {
+        $output .= '<small class="notice">'
+            . _x(
+                'Hold down the <strong>control/ctrl</strong> (Windows) or <strong>⌘/command</strong> (OS X) button to select multiple options.',
+                'multiselect',
+                'wcs4'
+            )
+            . '</small>';
+    }
     return $output;
 }
 
@@ -398,8 +407,12 @@ function wcs4_js_i18n($handle)
             'add_mode' => _x('Add New Lesson', 'page title', 'wcs4'),
             'edit_mode' => _x('Edit Lesson', 'page title', 'wcs4'),
             'copy_mode' => _x('Duplicate Lesson', 'page title', 'wcs4'),
-            'add_item' => '<span class="dashicons dashicons-plus-alt"></span> '._x('Add Lesson', 'button text', 'wcs4'),
-            'save_item' => '<span class="dashicons dashicons-edit"></span> '._x('Save Lesson', 'button text', 'wcs4'),
+            'add_item' => '<span class="dashicons dashicons-plus-alt"></span> ' . _x(
+                    'Add Lesson',
+                    'button text',
+                    'wcs4'
+                ),
+            'save_item' => '<span class="dashicons dashicons-edit"></span> ' . _x('Save Lesson', 'button text', 'wcs4'),
             'cancel_editing' => _x('Exit edit lesson mode', 'button text', 'wcs4'),
             'cancel_copying' => _x('Exit copy lesson mode', 'button text', 'wcs4'),
             'delete_warning' => _x('Are you sure you want to delete this lesson?', 'manage schedule', 'wcs4'),
@@ -408,8 +421,16 @@ function wcs4_js_i18n($handle)
             'add_mode' => _x('Add New Journal', 'page title', 'wcs4'),
             'edit_mode' => _x('Edit Journal', 'page title', 'wcs4'),
             'copy_mode' => _x('Duplicate Journal', 'page title', 'wcs4'),
-            'add_item' => '<span class="dashicons dashicons-plus-alt"></span> '._x('Add Journal', 'button text', 'wcs4'),
-            'save_item' => '<span class="dashicons dashicons-edit"></span> '._x('Save Journal', 'button text', 'wcs4'),
+            'add_item' => '<span class="dashicons dashicons-plus-alt"></span> ' . _x(
+                    'Add Journal',
+                    'button text',
+                    'wcs4'
+                ),
+            'save_item' => '<span class="dashicons dashicons-edit"></span> ' . _x(
+                    'Save Journal',
+                    'button text',
+                    'wcs4'
+                ),
             'cancel_editing' => _x('Exit edit journal mode', 'button text', 'wcs4'),
             'cancel_copying' => _x('Exit copy journal mode', 'button text', 'wcs4'),
             'delete_warning' => _x('Are you sure you want to delete this journal?', 'manage schedule', 'wcs4'),
@@ -418,8 +439,16 @@ function wcs4_js_i18n($handle)
             'add_mode' => _x('Add New Work Plan', 'page title', 'wcs4'),
             'edit_mode' => _x('Edit Work Plan', 'page title', 'wcs4'),
             'copy_mode' => _x('Duplicate Work Plan', 'page title', 'wcs4'),
-            'add_item' => '<span class="dashicons dashicons-plus-alt"></span> '._x('Add Work Plan', 'button text', 'wcs4'),
-            'save_item' => '<span class="dashicons dashicons-edit"></span> '._x('Save Work Plan', 'button text', 'wcs4'),
+            'add_item' => '<span class="dashicons dashicons-plus-alt"></span> ' . _x(
+                    'Add Work Plan',
+                    'button text',
+                    'wcs4'
+                ),
+            'save_item' => '<span class="dashicons dashicons-edit"></span> ' . _x(
+                    'Save Work Plan',
+                    'button text',
+                    'wcs4'
+                ),
             'cancel_editing' => _x('Exit edit work plan mode', 'button text', 'wcs4'),
             'cancel_copying' => _x('Exit copy work plan mode', 'button text', 'wcs4'),
             'delete_warning' => _x('Are you sure you want to delete this work plan?', 'manage schedule', 'wcs4'),
@@ -428,8 +457,16 @@ function wcs4_js_i18n($handle)
             'add_mode' => _x('Add New Progress', 'page title', 'wcs4'),
             'edit_mode' => _x('Edit Progress', 'page title', 'wcs4'),
             'copy_mode' => _x('Duplicate Progress', 'page title', 'wcs4'),
-            'add_item' => '<span class="dashicons dashicons-plus-alt"></span> '._x('Add Progress', 'button text', 'wcs4'),
-            'save_item' => '<span class="dashicons dashicons-edit"></span> '._x('Save Progress', 'button text', 'wcs4'),
+            'add_item' => '<span class="dashicons dashicons-plus-alt"></span> ' . _x(
+                    'Add Progress',
+                    'button text',
+                    'wcs4'
+                ),
+            'save_item' => '<span class="dashicons dashicons-edit"></span> ' . _x(
+                    'Save Progress',
+                    'button text',
+                    'wcs4'
+                ),
             'cancel_editing' => _x('Exit edit progress mode', 'button text', 'wcs4'),
             'cancel_copying' => _x('Exit copy progress mode', 'button text', 'wcs4'),
             'delete_warning' => _x('Are you sure you want to delete this progress?', 'manage schedule', 'wcs4'),

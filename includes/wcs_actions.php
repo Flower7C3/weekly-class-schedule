@@ -9,6 +9,11 @@ use WCS4\Controller\WorkPlan;
 use WCS4\Exception\AccessDeniedException;
 use WCS4\Helper\DB;
 use WCS4\Helper\TodayClassesWidget;
+use WCS4\Repository\Journal as JournalRepository;
+use WCS4\Repository\Progress as ProgressRepository;
+use WCS4\Repository\Schedule as ScheduleRepository;
+use WCS4\Repository\Snapshot as SnapshotRepository;
+use WCS4\Repository\WorkPlan as WorkPlanRepository;
 
 
 add_action('wp_ajax_wcs_add_or_update_schedule_entry', [Schedule::class, 'save_item']);
@@ -22,6 +27,7 @@ add_action('wp_ajax_wcs_add_journal_entry', [Journal::class, 'create_item']);
 add_action('wp_ajax_nopriv_wcs_add_journal_entry', [Journal::class, 'create_item']);
 add_action('wp_ajax_wcs_delete_journal_entry', [Journal::class, 'delete_item']);
 add_action('wp_ajax_wcs_get_journal', [Journal::class, 'get_item']);
+add_action('wp_ajax_nopriv_wcs_get_journal', [Journal::class, 'get_item']);
 add_action('wp_ajax_wcs_get_journals_html', [Journal::class, 'get_ajax_html']);
 add_action('wp_ajax_wcs_download_journals_csv', [Journal::class, 'callback_of_export_csv_page']);
 add_action('wp_ajax_wcs_download_journals_html_complex', [Journal::class, 'callback_of_export_html_complex_page']);
@@ -32,6 +38,7 @@ add_action('wp_ajax_wcs_add_work_plan_entry', [WorkPlan::class, 'create_item']);
 add_action('wp_ajax_nopriv_wcs_add_work_plan_entry', [WorkPlan::class, 'create_item']);
 add_action('wp_ajax_wcs_delete_work-plan_entry', [WorkPlan::class, 'delete_item']);
 add_action('wp_ajax_wcs_get_work-plan', [WorkPlan::class, 'get_item']);
+add_action('wp_ajax_nopriv_wcs_get_work-plan', [WorkPlan::class, 'get_item']);
 add_action('wp_ajax_wcs_get_work_plans_html', [WorkPlan::class, 'get_ajax_html']);
 add_action('wp_ajax_wcs_download_work_plans_csv', [WorkPlan::class, 'callback_of_export_csv_page']);
 add_action('wp_ajax_wcs_download_work_plans_html', [WorkPlan::class, 'callback_of_export_html_page']);
@@ -41,6 +48,7 @@ add_action('wp_ajax_wcs_add_progress_entry', [Progress::class, 'create_item']);
 add_action('wp_ajax_nopriv_wcs_add_progress_entry', [Progress::class, 'create_item']);
 add_action('wp_ajax_wcs_delete_progress_entry', [Progress::class, 'delete_item']);
 add_action('wp_ajax_wcs_get_progress', [Progress::class, 'get_item']);
+add_action('wp_ajax_nopriv_wcs_get_progress', [Progress::class, 'get_item']);
 add_action('wp_ajax_wcs_get_progresses_html', [Progress::class, 'get_ajax_html']);
 add_action('wp_ajax_wcs_download_progresses_csv', [Progress::class, 'callback_of_export_csv_page']);
 add_action('wp_ajax_wcs_download_progresses_html', [Progress::class, 'callback_of_export_html_page']);
@@ -137,7 +145,7 @@ add_action('wp_ajax_wcs_clear_schedules', static function () {
             throw new AccessDeniedException();
         }
         wcs4_verify_nonce();
-        DB::delete_schedules();
+        ScheduleRepository::delete_schedules();
         $response['response'] = __('Weekly Class Schedule truncated successfully.', 'wcs4');
         $status = \WP_Http::OK;
     } catch (AccessDeniedException|Exception $e) {
@@ -153,7 +161,7 @@ add_action('wp_ajax_wcs_clear_journals', static function () {
             throw new AccessDeniedException();
         }
         wcs4_verify_nonce();
-        DB::delete_journals();
+        JournalRepository::delete_journals();
         $response['response'] = __('Weekly Class Journals truncated successfully.', 'wcs4');
         $status = \WP_Http::OK;
     } catch (AccessDeniedException|Exception $e) {
@@ -169,7 +177,7 @@ add_action('wp_ajax_wcs_clear_work_plans', static function () {
             throw new AccessDeniedException();
         }
         wcs4_verify_nonce();
-        DB::delete_work_plans();
+        WorkPlanRepository::delete_work_plans();
         $response['response'] = __('WCS Work Plans truncated successfully.', 'wcs4');
         $status = \WP_Http::OK;
     } catch (AccessDeniedException|Exception $e) {
@@ -185,7 +193,7 @@ add_action('wp_ajax_wcs_clear_progresses', static function () {
             throw new AccessDeniedException();
         }
         wcs4_verify_nonce();
-        DB::delete_progresses();
+        ProgressRepository::delete_progresses();
         $response['response'] = __('WCS Progresses truncated successfully.', 'wcs4');
         $status = \WP_Http::OK;
     } catch (AccessDeniedException|Exception $e) {
@@ -201,7 +209,7 @@ add_action('wp_ajax_wcs_clear_snapshots', static function () {
             throw new AccessDeniedException();
         }
         wcs4_verify_nonce();
-        DB::delete_snapshots();
+        SnapshotRepository::delete_snapshots();
         $response['response'] = __('WCS Snapshots truncated successfully.', 'wcs4');
         $status = \WP_Http::OK;
     } catch (AccessDeniedException|Exception $e) {

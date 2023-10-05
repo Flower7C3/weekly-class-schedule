@@ -8,8 +8,8 @@ use WCS4\Entity\Snapshot_Item;
 use WCS4\Exception\AccessDeniedException;
 use WCS4\Exception\ValidationException;
 use WCS4\Helper\Admin;
-use WCS4\Helper\DB;
 use WCS4\Helper\Output;
+use WCS4\Repository\Snapshot as SnapshotRepository;
 
 class Snapshot
 {
@@ -85,7 +85,7 @@ class Snapshot
         $orderDirection = null
     ): string {
         ob_start();
-        $items = self::get_items(
+        $items = SnapshotRepository::get_items(
             $action,
             $title,
             $location,
@@ -99,79 +99,11 @@ class Snapshot
         return trim($response);
     }
 
-    public static function get_items(
-        $action = null,
-        $title = null,
-        $location = null,
-        $created_at_from = null,
-        $created_at_upto = null,
-        $orderField = null,
-        $orderDirection = null,
-        $limit = null,
-        $paged = null
-    ): array {
-        global $wpdb;
-        $table = DB::get_snapshot_table_name();
-
-        $queryStr = "SELECT
-                {$table}.id AS snapshot_id,
-                {$table}.created_at, {$table}.created_by, {$table}.updated_at, {$table}.updated_by,
-                {$table}.title, {$table}.query_string, {$table}.query_hash, {$table}.action,
-                {$table}.content, {$table}.content_hash, {$table}.content_type,
-                {$table}.version
-            FROM {$table}
-        ";
-
-        # Filters
-        $filters = [];
-
-        # Where
-        $where = [];
-        $queryArr = [];
-        if (!empty($action)) {
-            $where[] = 'action LIKE "%s"';
-            $queryArr[] = '%' . $wpdb->esc_like($action) . '%';
-        }
-        if (!empty($title)) {
-            $where[] = 'title LIKE "%s"';
-            $queryArr[] = '%' . $wpdb->esc_like($title) . '%';
-        }
-        if (!empty($location)) {
-            $where[] = '(query_string LIKE "%s" OR query_hash = "%s")';
-            $queryArr[] = '%' . $wpdb->esc_like($location) . '%';
-            $queryArr[] = $wpdb->esc_like($location);
-        }
-        if (!empty($created_at_from)) {
-            $where[] = 'created_at >= "%s"';
-            $queryArr[] = $created_at_from . ' 00:00:00';
-        }
-        if (!empty($created_at_upto)) {
-            $where[] = 'created_at <= "%s"';
-            $queryArr[] = $created_at_upto . ' 23:59:59';
-        }
-        switch ($orderField) {
-            case 'action':
-                $orderField = ['action' => $orderDirection];
-                break;
-            case 'title':
-                $orderField = ['title' => $orderDirection];
-                break;
-            case 'created-at':
-                $orderField = ['created_at' => $orderDirection];
-                break;
-            default:
-            case 'updated-at':
-                $orderField = ['updated_at' => $orderDirection];
-                break;
-        }
-        return DB::get_items(Snapshot_Item::class, $queryStr, $filters, $where, $queryArr, $orderField, $limit, $paged);
-    }
-
 
     public static function add_item(array $queryString, string $title, string $content, string $contentType): void
     {
         global $wpdb;
-        $table = DB::get_snapshot_table_name();
+        $table = SnapshotRepository::get_snapshot_table_name();
 
         $urlParams = [];
         foreach ($queryString as $key => $val) {
@@ -249,7 +181,7 @@ class Snapshot
     public static function view_item(): void
     {
         global $wpdb;
-        $table = DB::get_snapshot_table_name();
+        $table = SnapshotRepository::get_snapshot_table_name();
         if (!wp_verify_nonce($_GET['nonce'], 'snapshot')) {
             header('HTTP/1.0 403 Access Denied');
             exit();
@@ -293,7 +225,7 @@ class Snapshot
             }
             $row_id = sanitize_text_field($_POST['row_id']);
 
-            $table = DB::get_snapshot_table_name();
+            $table = SnapshotRepository::get_snapshot_table_name();
             $db_result = $wpdb->delete($table, array('id' => $row_id), array('%d'));
 
             if (0 === $db_result) {

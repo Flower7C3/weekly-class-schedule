@@ -170,7 +170,7 @@ use WCS4\Helper\Output;
                                     </ul>
                                 <?php
                                 else: ?>
-                                    -
+                                    <?= Progress_Item::typeLabel($item->getType()) ?>
                                 <?php
                                 endif; ?>
                             </td>
@@ -197,10 +197,10 @@ use WCS4\Helper\Output;
                                 ); ?>
                             </td>
                             <td data-colname="<?= __('Improvements', 'wcs4') ?>">
-                                <?= $item->getImprovements() ?>
+                                <?= Output::html_summary_element($item->getImprovements()) ?>
                             </td>
                             <td data-colname="<?= __('Indications', 'wcs4') ?>">
-                                <?= $item->getIndications() ?>
+                                <?= Output::html_summary_element($item->getIndications()) ?>
                             </td>
                             <td data-colname="<?= __('Updated at', 'wcs4') ?>">
                                 <?php

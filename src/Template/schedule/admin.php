@@ -5,10 +5,8 @@
 
 ?>
 <div class="wrap wcs4-management-page-callback">
-    <h1 class="wp-heading-inline"><?php
-        _ex('Schedule Management', 'manage schedule', 'wcs4'); ?></h1>
-    <a href="#" class="page-title-action" id="wcs4-show-form"><?php
-        _ex('Add Lesson', 'button text', 'wcs4'); ?></a>
+    <h1 class="wp-heading-inline"><?= _x('Schedule Management', 'manage schedule', 'wcs4') ?></h1>
+    <a href="#" class="page-title-action" id="wcs4-show-form"><?= _x('Add Lesson', 'button text', 'wcs4') ?></a>
     <hr class="wp-header-end">
     <div id="ajax-response"></div>
     <div id="col-container" class="wp-clearfix">
@@ -33,15 +31,12 @@
             <div class="col-wrap" id="wcs4-schedules-list-wrapper">
                 <?php
                 foreach ($table as $key => $dayData): ?>
-                    <section id="wcs4_schedule_day-<?php
-                    echo $key; ?>">
+                    <section id="wcs4_schedule_day-<?= $key ?>">
                         <h2>
-                            <?php
-                            echo $dayData['day']; ?>
+                            <?= $dayData['day'] ?>
                             <span class="spinner"></span>
                         </h2>
-                        <?php
-                        echo $dayData['table']; ?>
+                        <?= $dayData['table'] ?>
                     </section>
                 <?php
                 endforeach; ?>

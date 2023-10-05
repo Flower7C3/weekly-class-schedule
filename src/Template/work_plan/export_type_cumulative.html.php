@@ -13,13 +13,10 @@ use WCS4\Helper\Output;
 <html class="cumulative">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-    <title><?php
-        _e('Work Plan', 'wcs4'); ?></title>
-    <style><?php
-        echo $template_style ?></style>
+    <title><?= __('Work Plan', 'wcs4') ?></title>
+    <style><?= $template_style ?></style>
 </head>
 <body>
-<?php
-echo Output::process_template($item, $template_code); ?>
+<?= Output::process_template($item, $template_code) ?>
 </body>
 </html>

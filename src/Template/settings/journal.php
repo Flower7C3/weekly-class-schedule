@@ -51,6 +51,27 @@
         </tr>
         <tr>
             <th>
+                <?= _x('Edit Journal due day', 'options general settings', 'wcs4') ?>
+                <div class="wcs4-description">
+                    <?= _x(
+                        'Will allow to edit journal due month day.',
+                        'options general settings',
+                        'wcs4'
+                    ) ?>
+                </div>
+            </th>
+            <td></td>
+            <td data-type="wcs4_journal_edit_masters">
+                <?= wcs4_textfield(
+                    'wcs4_journal_edit_masters',
+                    'wcs4_journal_edit_masters',
+                    $wcs4_options['journal_edit_masters'],
+                    20
+                ) ?>
+            </td>
+        </tr>
+        <tr>
+            <th>
                 <?= _x('Detect journal collisions', 'options general settings', 'wcs4') ?>
                 <div class="wcs4-description">
                     <?= _x(

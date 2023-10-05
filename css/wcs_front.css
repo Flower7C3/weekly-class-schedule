@@ -120,6 +120,15 @@
     visibility: visible;
 }
 
+.modal-footer .spinner {
+    float: left;
+    display: none;
+}
+
+.modal-footer .spinner.is-active {
+    display: block;
+}
+
 .error {
     color: red;
 }

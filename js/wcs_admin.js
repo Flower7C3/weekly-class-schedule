@@ -107,19 +107,19 @@ let WCS4_ADMIN = (function ($) {
      */
     let bind_show_hide_handler = function () {
         $('#wcs4-show-form').click(function () {
-            $('#wcs4-management-form-wrapper').toggleClass('is-open');
+            $('.wcs4-management-form-wrapper').toggleClass('is-open');
         });
-        $('#wcs4-reset-form').click(function () {
-            $('#wcs4-management-form-wrapper').removeClass('is-open');
+        $('[data-wcs4="reset-form"]').click(function () {
+            $('.wcs4-management-form-wrapper').removeClass('is-open');
             WCS4_LIB.remove_message();
-            $('#wcs4-reset-form').hide();
-            $('#wcs4-management-form-wrapper form').one('change.reset', function () {
-                $('#wcs4-reset-form').show();
+            $('[data-wcs4="reset-form"]').hide();
+            $('.wcs4-management-form-wrapper form').one('change.reset', function () {
+                $('[data-wcs4="reset-form"]').show();
             });
             $(this).closest('form').find('input,select').change();
         });
         $('#wcs4-management-form-wrapper form').one('change.reset', function () {
-            $('#wcs4-reset-form').show();
+            $('[data-wcs4="reset-form"]').show();
         });
     };
 

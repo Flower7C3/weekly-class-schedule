@@ -5,10 +5,8 @@
 
 ?>
 <div class="wrap wcs4-management-page-callback">
-    <h1 class="wp-heading-inline"><?php
-        _ex('Journal Management', 'manage journal', 'wcs4'); ?></h1>
-    <a href="#" class="page-title-action" id="wcs4-show-form"><?php
-        _ex('Add Journal', 'button text', 'wcs4'); ?></a>
+    <h1 class="wp-heading-inline"><?= _x('Journal Management', 'manage journal', 'wcs4') ?></h1>
+    <a href="#" class="page-title-action" id="wcs4-show-form"><?= _x('Add Journal', 'button text', 'wcs4') ?></a>
     <hr class="wp-header-end">
     <div id="ajax-response"></div>
     <div id="col-container" class="wp-clearfix">
@@ -31,8 +29,7 @@
                 <br class="clear">
             </div>
             <div class="col-wrap" id="wcs4-journals-list-wrapper">
-                <?php
-                echo $table; ?>
+                <?= $table ?>
             </div>
         </div><!-- /col-right -->
     </div>

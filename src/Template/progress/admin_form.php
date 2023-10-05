@@ -8,8 +8,8 @@
 use WCS4\Helper\Admin;
 
 ?>
-<div class="wcs4-form-wrap" id="wcs4-management-form-wrapper">
-    <h2 id="wcs4-management-form-title"><?= _x('Add New Progress', 'page title', 'wcs4') ?></h2>
+<div class="wcs4-form-wrap wcs4-management-form-wrapper" id="wcs4-progress-form-wrapper">
+    <h2 data-wcs4="management-form-title"><?= _x('Add New Progress', 'page title', 'wcs4') ?></h2>
     <form id="wcs4-progress-form" class="czr-form" action="<?= $_SERVER['PHP_SELF'] ?>" method="post">
         <fieldset class="form-field form-required form-field-type-wrap">
             <label for="wcs4_progress_type"><?= __('Type', 'wcs4') ?></label>
@@ -97,12 +97,12 @@ use WCS4\Helper\Admin;
         </fieldset>
         <fieldset class="submit" id="wcs4_progress_buttons-wrapper">
             <span class="spinner"></span>
-            <button id="wcs4-submit-form" type="submit" disabled class="button button-primary wcs4-submit-progress-form"
+            <button data-wcs4="submit-form" type="submit" disabled class="button button-primary wcs4-submit-progress-form"
                     name="wcs4-submit">
                 <span class="dashicons dashicons-plus-alt"></span>
                 <?= _x('Add Progress', 'button text', 'wcs4') ?>
             </button>
-            <button id="wcs4-reset-form" type="reset" class="button button-link wcs4-reset-progress-form"
+            <button data-wcs4="reset-form" type="reset" class="button button-link wcs4-reset-progress-form"
                     style="display: none;">
                 <?= _x('Reset form', 'button text', 'wcs4') ?>
             </button>

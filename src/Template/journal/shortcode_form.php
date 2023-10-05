@@ -10,29 +10,24 @@ use WCS4\Helper\Admin;
 ?>
 <div class="wcs4-form-wrap modal modal-lg"
      id="wcs4-journal-modal">
-    <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-dialog modal-dialog-centered wcs4-management-form-wrapper" id="wcs4-journal-form-wrapper">
         <form id="wcs4-journal-form" class="czr-form" action="<?= $_SERVER['PHP_SELF'] ?>" method="post">
+            <input type="hidden" name="row_id" value="">
             <div class="modal-content">
                 <div class="modal-header">
-                    <strong class="modal-title" id="wcs4-management-form-title">
-                        <?= _x(
-                            'Add New Journal',
-                            'page title',
-                            'wcs4'
-                        ) ?>
+                    <strong class="modal-title" data-wcs4="management-form-title">
+                        <?= _x('Add New Journal', 'page title', 'wcs4') ?>
                     </strong>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <fieldset class="form-field form-required form-field-type-wrap">
-                        <label for="wcs4_journal_type"><?php
-                            _e('Type', 'wcs4'); ?></label>
-                        <?php
-                        echo Admin::generate_admin_select_list_options(
+                        <label for="wcs4_journal_type"><?= __('Type', 'wcs4') ?></label>
+                        <?= Admin::generate_admin_select_list_options(
                             'journal_type',
                             'wcs4_journal_type',
                             'type'
-                        ); ?>
+                        ) ?>
                     </fieldset>
                     <fieldset class="form-field form-required form-field-subject_id-wrap">
                         <label for="wcs4_journal_subject"><?= __('Subject', 'wcs4') ?></label>
@@ -108,20 +103,20 @@ use WCS4\Helper\Admin;
                     </fieldset>
                 </div>
                 <div class="modal-footer">
-                    <fieldset class="submit" id="wcs4_journal_buttons-wrapper">
-                        <button id="wcs4-submit-form" type="submit"
-                                class="button button-primary wcs4-submit-journal-form"
-                                name="wcs4-submit">
-                            <span class="dashicons dashicons-plus-alt"></span>
-                            <?= _x('Add Journal', 'button text', 'wcs4') ?>
-                        </button>
-                        <button id="wcs4-reset-form" type="reset" class="button button-link wcs4-reset-journal-form"
-                                style="display: none;">
-                            <?= _x('Reset form', 'button text', 'wcs4') ?>
-                        </button>
-                        <span class="spinner"></span>
-                        <p id="wcs4-ajax-text-wrapper" class="wcs4-ajax-text"></p>
-                    </fieldset>
+                    <div id="wcs4-ajax-text-wrapper" class="wcs4-ajax-text"></div>
+                    <span class="spinner"></span>
+                    <button data-wcs4="submit-form" type="submit"
+                            class="button button-primary wcs4-submit-journal-form"
+                            name="wcs4-submit">
+                        <span class="dashicons dashicons-plus-alt"></span>
+                        <?= _x('Add Journal', 'button text', 'wcs4') ?>
+                    </button>
+                    <button data-wcs4="cancel-form" type="reset"
+                            data-bs-dismiss="modal"
+                            class="button button-link wcs4-reset-journal-form"
+                            style="display: none;">
+                        <?= _x('Exit edit journal mode', 'button text', 'wcs4') ?>
+                    </button>
                 </div>
             </div>
         </form>

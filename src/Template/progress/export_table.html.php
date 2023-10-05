@@ -15,8 +15,7 @@ use WCS4\Helper\Output;
         <?php
         foreach ($thead_columns as $key => $th): ?>
             <th data-key="<?= $key ?>">
-                <?php
-                echo $th; ?>
+                <?= $th ?>
             </th>
         <?php
         endforeach; ?>

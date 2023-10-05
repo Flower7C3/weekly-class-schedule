@@ -29,7 +29,7 @@
      */
     let bind_submit_handler = function () {
         let $form = $('#wcs4_schedule_management-form');
-        $form.find('#wcs4-submit-form').click(function (e) {
+        $form.find('[data-wcs4="submit-form"]').click(function (e) {
             e.preventDefault();
             let entry = {
                 action: 'wcs_add_or_update_schedule_entry',
@@ -102,7 +102,6 @@
             $form.find('[name="collision_detection"][value="' + ((entry.collision_detection === '1') ? 'yes' : 'no') + '"]').prop('checked', true);
             $form.find('[name="notes"]').val(entry.notes);
             $form.find('[name="type"][value="' + entry.type + '"]').prop('checked', true).change();
-
         } else {
             WCS4_LIB.show_message(WCS4_AJAX_OBJECT.ajax_error, 'error');
         }

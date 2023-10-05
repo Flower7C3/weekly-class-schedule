@@ -14,6 +14,10 @@ use WCS4\Controller\Schedule;
 use WCS4\Controller\Settings;
 use WCS4\Controller\WorkPlan;
 use WCS4\Helper\Output;
+use WCS4\Repository\Journal as JournalRepository;
+use WCS4\Repository\Progress as ProgressRepository;
+use WCS4\Repository\Schedule as ScheduleRepository;
+use WCS4\Repository\WorkPlan as WorkPlanRepository;
 
 add_shortcode('wcs_schedule', static function ($atts) {
     $output = '';
@@ -48,7 +52,7 @@ add_shortcode('wcs_schedule', static function ($atts) {
         EXTR_OVERWRITE
     );
     # Get lessons
-    $lessons = Schedule::get_items(
+    $lessons = ScheduleRepository::get_items(
         $classroom,
         $teacher,
         $student,
@@ -165,7 +169,7 @@ add_shortcode('wcs_journal', static function ($atts) {
     );
 
     # Get journals
-    $journals = Journal::get_items(
+    $journals = JournalRepository::get_items(
         $teacher,
         $student,
         $subject,
@@ -190,7 +194,7 @@ add_shortcode('wcs_journal', static function ($atts) {
 
     # Render list layout
     $output .= '<div class="wcs4_schedule_wrapper" id="' . $schedule_key . '">';
-    $output .= Journal::get_html_of_journal_list($journals, $schedule_key, $template);
+    $output .= Journal::get_html_of_journal_list_for_shortcode($journals, $schedule_key, $template);
     $output .= '</div>';
 
     $output = apply_filters('wcs4_post_render', $output, $style, $teacher, $student, $subject, $date_from, $date_upto);
@@ -265,7 +269,7 @@ add_shortcode('student_progress', static function ($atts) {
     );
 
     # Get progresses
-    $progresses = Progress::get_items(
+    $progresses = ProgressRepository::get_items(
         null,
         $teacher,
         $student,
@@ -373,7 +377,7 @@ add_shortcode('wcs_student_work_plan', static function ($atts) {
     );
 
     # Get work_plans
-    $work_plans = WorkPlan::get_items(
+    $work_plans = WorkPlanRepository::get_items(
         null,
         $teacher,
         $student,

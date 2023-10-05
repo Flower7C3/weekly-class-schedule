@@ -19,6 +19,8 @@ use WCS4\Exception\ValidationException;
 use WCS4\Helper\Admin;
 use WCS4\Helper\DB;
 use WCS4\Helper\Output;
+use WCS4\Repository\Journal as JournalRepository;
+use WCS4\Repository\WorkPlan as WorkPlanRepository;
 
 class WorkPlan
 {
@@ -154,7 +156,7 @@ class WorkPlan
                 break;
         }
 
-        $items = self::get_items(
+        $items = WorkPlanRepository::get_items(
             null,
             $teacher,
             $student,
@@ -252,7 +254,7 @@ class WorkPlan
         }
 
         # get progresses
-        $items = self::get_items(
+        $items = WorkPlanRepository::get_items(
             $id,
             $teacher,
             $student,
@@ -373,7 +375,7 @@ class WorkPlan
         $orderDirection = null
     ): string {
         ob_start();
-        $items = self::get_items(
+        $items = WorkPlanRepository::get_items(
             null,
             $teacher,
             $student,
@@ -389,121 +391,6 @@ class WorkPlan
         include self::TEMPLATE_DIR . 'admin_table.php';
         $response = ob_get_clean();
         return trim($response);
-    }
-
-    public static function get_items(
-        $id = null,
-        $teacher = 'all',
-        $student = 'all',
-        $subject = 'all',
-        $date_from = null,
-        $date_upto = null,
-        $type = null,
-        $created_at_from = null,
-        $created_at_upto = null,
-        $orderField = null,
-        $orderDirection = null,
-        $limit = null,
-        $paged = null
-    ): array {
-        global $wpdb;
-
-        $table = DB::get_work_plan_table_name();
-        $table_subject = DB::get_work_plan_subject_table_name();
-        $table_teacher = DB::get_work_plan_teacher_table_name();
-        $table_posts = $wpdb->prefix . 'posts';
-        $table_meta = $wpdb->prefix . 'postmeta';
-
-        $queryStr = "SELECT
-                $table.id AS work_plan_id, $table.created_at, $table.updated_at, $table.created_by, $table.updated_by,
-                sub.ID AS subject_id, sub.post_title AS subject_name, sub.post_content AS subject_desc,
-                tea.ID AS teacher_id, tea.post_title AS teacher_name, tea.post_content AS teacher_desc,
-                stu.ID AS student_id, stu.post_title AS student_name, stu.post_content AS student_desc,
-                start_date, end_date,
-                diagnosis, strengths, goals, methods, type
-            FROM $table 
-            LEFT JOIN $table_subject USING(id)
-            LEFT JOIN $table_teacher USING(id)
-            LEFT JOIN $table_posts sub ON subject_id = sub.ID
-            LEFT JOIN $table_posts tea ON teacher_id = tea.ID
-            LEFT JOIN $table_posts stu ON student_id = stu.ID
-        ";
-        $queryStr = apply_filters(
-            'wcs4_filter_get_progresses_query',
-            $queryStr,
-            $table,
-            $table_posts,
-            $table_meta
-        );
-        $pattern = '/^\s?SELECT/';
-        $replacement = 'SELECT sub.ID AS subject_id, tea.ID as teacher_id, stu.ID as student_id,';
-        $queryStr = preg_replace($pattern, $replacement, $queryStr);
-
-        # Filters
-        $filters = [
-            [
-                'prefix' => 'sub',
-                'value' => $subject,
-                'searchById' => "{$table}.id IN (SELECT id FROM {$table_subject} WHERE subject_id = %s)"
-            ],
-            [
-                'prefix' => 'tea',
-                'value' => $teacher,
-                'searchById' => "{$table}.id IN (SELECT id FROM {$table_teacher} WHERE teacher_id = %s)"
-            ],
-            ['prefix' => 'stu', 'value' => $student, 'searchById' => "stu.ID = %s"],
-        ];
-
-        # Where
-        $where = [];
-        $queryArr = [];
-        if (!empty($id)) {
-            $where[] = "$table.id = %d";
-            $queryArr[] = $id;
-        }
-        if (!empty($type)) {
-            $where[] = "$table.type = '%s'";
-            $queryArr[] = $type;
-        }
-        if (!empty($date_from)) {
-            $where[] = 'start_date >= "%s"';
-            $queryArr[] = $date_from;
-        }
-        if (!empty($date_upto)) {
-            $where[] = 'start_date <= "%s"';
-            $queryArr[] = $date_upto;
-        }
-        if (!empty($created_at_from)) {
-            $where[] = 'created_at >= "%s"';
-            $queryArr[] = $created_at_from . ' 00:00:00';
-        }
-        if (!empty($created_at_upto)) {
-            $where[] = 'created_at <= "%s"';
-            $queryArr[] = $created_at_upto . ' 23:59:59';
-        }
-
-        switch ($orderField) {
-            case 'time':
-                $orderField = ['start_date' => $orderDirection];
-                break;
-            case 'subject':
-                $orderField = ['subject_name' => $orderDirection];
-                break;
-            case 'teacher':
-                $orderField = ['teacher_name' => $orderDirection];
-                break;
-            case 'student':
-                $orderField = ['student_name' => $orderDirection];
-                break;
-            case 'created-at':
-                $orderField = ['created_at' => $orderDirection];
-                break;
-            default:
-            case 'updated-at':
-                $orderField = ['updated_at' => $orderDirection];
-                break;
-        }
-        return DB::get_items(WorkPlan_Item::class, $queryStr, $filters, $where, $queryArr, $orderField, $limit, $paged);
     }
 
     public static function create_item(): void
@@ -526,9 +413,9 @@ class WorkPlan
 
             $update_request = false;
             $row_id = null;
-            $table = DB::get_work_plan_table_name();
-            $table_subject = DB::get_work_plan_subject_table_name();
-            $table_teacher = DB::get_work_plan_teacher_table_name();
+            $table = WorkPlanRepository::get_work_plan_table_name();
+            $table_subject = WorkPlanRepository::get_work_plan_subject_table_name();
+            $table_teacher = WorkPlanRepository::get_work_plan_teacher_table_name();
             $type = sanitize_text_field($_POST['type'] ?? null);
 
             $required = array(
@@ -563,10 +450,14 @@ class WorkPlan
             $goals = sanitize_textarea_field($_POST['goals']);
             $methods = sanitize_textarea_field($_POST['methods']);
 
-            if (isset($_POST['row_id'])) {
+            if (!empty($_POST['row_id'])) {
                 # This is an update request and not an insert.
                 $update_request = true;
                 $row_id = sanitize_text_field($_POST['row_id']);
+                $item = WorkPlanRepository::get_item($row_id);
+                if(true === $force_insert && !Output::editable_on_front($item)){
+                    throw new AccessDeniedException();
+                }
             }
 
             if (!empty($start_date)) {
@@ -601,7 +492,7 @@ class WorkPlan
             if (!is_array($teacher_id)) {
                 $teacher_id = [$teacher_id];
             }
-            if (!$force_insert && $update_request) {
+            if ($update_request) {
                 $old_date = $wpdb->get_var(
                     $wpdb->prepare(
                         "
@@ -701,9 +592,9 @@ class WorkPlan
         global $wpdb;
         $response = [];
         try {
-            if (!current_user_can(WCS4_WORK_PLAN_MANAGE_CAPABILITY)) {
-                throw new AccessDeniedException();
-            }
+            //if (!current_user_can(WCS4_WORK_PLAN_MANAGE_CAPABILITY)) {
+            //    throw new AccessDeniedException();
+            //}
             wcs4_verify_nonce();
 
             $required = array(
@@ -715,9 +606,9 @@ class WorkPlan
             }
 
             $row_id = $_POST['row_id'];
-            $table = DB::get_work_plan_table_name();
-            $table_subject = DB::get_work_plan_subject_table_name();
-            $table_teacher = DB::get_work_plan_teacher_table_name();
+            $table = WorkPlanRepository::get_work_plan_table_name();
+            $table_subject = WorkPlanRepository::get_work_plan_subject_table_name();
+            $table_teacher = WorkPlanRepository::get_work_plan_teacher_table_name();
             if (is_array($row_id)) {
                 $query = $wpdb->prepare(
                     "
@@ -784,9 +675,9 @@ class WorkPlan
             }
 
             $row_id = sanitize_text_field($_POST['row_id']);
-            $table = DB::get_work_plan_table_name();
-            $table_subject = DB::get_work_plan_subject_table_name();
-            $table_teacher = DB::get_work_plan_teacher_table_name();
+            $table = WorkPlanRepository::get_work_plan_table_name();
+            $table_subject = WorkPlanRepository::get_work_plan_subject_table_name();
+            $table_teacher = WorkPlanRepository::get_work_plan_teacher_table_name();
             $db_result = $wpdb->delete($table, array('id' => $row_id), array('%d'));
             $db_result_subject = $wpdb->delete($table_subject, array('id' => $row_id), array('%d'));
             $db_result_teacher = $wpdb->delete($table_teacher, array('id' => $row_id), array('%d'));
@@ -863,9 +754,9 @@ class WorkPlan
         }
 
         $dateWithLessons = [];
-        /** @var WorkPlan_Item $work_plan */
-        foreach ($items as $work_plan) {
-            $dateWithLessons[$work_plan->getDate()][] = $work_plan;
+        /** @var WorkPlan_Item $item */
+        foreach ($items as $item) {
+            $dateWithLessons[$item->getDate()][] = $item;
         }
         krsort($dateWithLessons);
 
@@ -877,14 +768,14 @@ class WorkPlan
                 $time = strtotime($date);
                 $weekday = strftime('%w', $time);
                 $output .= '<h4>' . strftime('%x', $time) . ' (' . $weekdays[$weekday] . ')' . '</h4>';
-                $output .= '<ul class="wcs4-grid-date-list wcs4-grid-date-list-' . $date . '">';
-                /** @var WorkPlan_Item $work_plan */
-                foreach ($dayProgresses as $work_plan) {
+                $output .= '<ul class="wcs4-grid-date-list wcs4-grid-date-list-' . $date . '" data-scope="work-plan">';
+                /** @var WorkPlan_Item $item */
+                foreach ($dayProgresses as $item) {
                     $output .= '<li class="wcs4-list-item-progress">';
-                    if ($work_plan->isTypeCumulative()) {
-                        $output .= Output::process_template($work_plan, $template_periodic);
-                    } elseif ($work_plan->isTypePartial()) {
-                        $output .= Output::process_template($work_plan, $template_partial);
+                    if ($item->isTypeCumulative()) {
+                        $output .= Output::process_template($item, $template_periodic);
+                    } elseif ($item->isTypePartial()) {
+                        $output .= Output::process_template($item, $template_partial);
                     }
                     $output .= '</li>';
                 }

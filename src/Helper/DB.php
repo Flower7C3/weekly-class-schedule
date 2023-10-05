@@ -9,6 +9,11 @@ use WCS4\Entity\Journal_Item;
 use WCS4\Entity\Lesson_Item;
 use WCS4\Entity\Progress_Item;
 use WCS4\Entity\WorkPlan_Item;
+use WCS4\Repository\Journal;
+use WCS4\Repository\Progress;
+use WCS4\Repository\Schedule;
+use WCS4\Repository\Snapshot;
+use WCS4\Repository\WorkPlan;
 
 /**
  * WCS4 Database operations
@@ -21,111 +26,29 @@ class DB
     public static function delete_item_when_delete_post($post_id): void
     {
         global $wpdb;
-        $table_schedule = self::get_schedule_table_name();
+        $table_schedule = Schedule::get_schedule_table_name();
         $query = "DELETE FROM $table_schedule WHERE subject_id = %d OR teacher_id = %d OR student_id = %d OR classroom_id = %d";
         $wpdb->query($wpdb->prepare($query, array($post_id, $post_id, $post_id, $post_id)));
 
-        $table_schedule_teacher = self::get_schedule_teacher_table_name();
+        $table_schedule_teacher = Schedule::get_schedule_teacher_table_name();
         $query = "DELETE FROM $table_schedule_teacher WHERE teacher_id = %d ";
         $wpdb->query($wpdb->prepare($query, array($post_id)));
 
-        $table_schedule_student = self::get_schedule_student_table_name();
+        $table_schedule_student = Schedule::get_schedule_student_table_name();
         $query = "DELETE FROM $table_schedule_student WHERE student_id = %d";
         $wpdb->query($wpdb->prepare($query, array($post_id)));
 
-        $table_journal = self::get_journal_table_name();
+        $table_journal = Journal::get_journal_table_name();
         $query = "DELETE FROM $table_journal WHERE subject_id = %d  OR teacher_id = %d  OR student_id = %d OR classroom_id = %d";
         $wpdb->query($wpdb->prepare($query, array($post_id, $post_id, $post_id, $post_id)));
 
-        $table_journal_teacher = self::get_journal_teacher_table_name();
+        $table_journal_teacher = Journal::get_journal_teacher_table_name();
         $query = "DELETE FROM $table_journal_teacher WHERE teacher_id = %d ";
         $wpdb->query($wpdb->prepare($query, array($post_id)));
 
-        $table_journal_student = self::get_journal_student_table_name();
+        $table_journal_student = Journal::get_journal_student_table_name();
         $query = "DELETE FROM $table_journal_student WHERE student_id = %d";
         $wpdb->query($wpdb->prepare($query, array($post_id)));
-    }
-
-    /**
-     * Returns the schedule table.
-     * @return string
-     */
-    public static function get_schedule_table_name(): string
-    {
-        global $wpdb;
-        return $wpdb->prefix . 'wcs4_schedule';
-    }
-
-    public static function get_schedule_teacher_table_name(): string
-    {
-        global $wpdb;
-        return $wpdb->prefix . 'wcs4_schedule_teacher';
-    }
-
-    public static function get_schedule_student_table_name(): string
-    {
-        global $wpdb;
-        return $wpdb->prefix . 'wcs4_schedule_student';
-    }
-
-    public static function get_journal_table_name(): string
-    {
-        global $wpdb;
-        return $wpdb->prefix . 'wcs4_journal';
-    }
-
-    public static function get_journal_teacher_table_name(): string
-    {
-        global $wpdb;
-        return $wpdb->prefix . 'wcs4_journal_teacher';
-    }
-
-    public static function get_journal_student_table_name(): string
-    {
-        global $wpdb;
-        return $wpdb->prefix . 'wcs4_journal_student';
-    }
-
-    public static function get_work_plan_table_name(): string
-    {
-        global $wpdb;
-        return $wpdb->prefix . 'wcs4_work_plan';
-    }
-
-    public static function get_work_plan_subject_table_name(): string
-    {
-        global $wpdb;
-        return $wpdb->prefix . 'wcs4_work_plan_subject';
-    }
-
-    public static function get_work_plan_teacher_table_name(): string
-    {
-        global $wpdb;
-        return $wpdb->prefix . 'wcs4_work_plan_teacher';
-    }
-
-    public static function get_progress_table_name(): string
-    {
-        global $wpdb;
-        return $wpdb->prefix . 'wcs4_progress';
-    }
-
-    public static function get_progress_subject_table_name(): string
-    {
-        global $wpdb;
-        return $wpdb->prefix . 'wcs4_progress_subject';
-    }
-
-    public static function get_progress_teacher_table_name(): string
-    {
-        global $wpdb;
-        return $wpdb->prefix . 'wcs4_progress_teacher';
-    }
-
-    public static function get_snapshot_table_name(): string
-    {
-        global $wpdb;
-        return $wpdb->prefix . 'wcs4_snapshot';
     }
 
     /**
@@ -133,147 +56,12 @@ class DB
      */
     private static function create_db_tables(): void
     {
-        $table_schedule = self::get_schedule_table_name();
-        $table_schedule_teacher = self::get_schedule_teacher_table_name();
-        $table_schedule_student = self::get_schedule_student_table_name();
-        $table_journal = self::get_journal_table_name();
-        $table_journal_teacher = self::get_journal_teacher_table_name();
-        $table_journal_student = self::get_journal_student_table_name();
-        $table_work_plan = self::get_work_plan_table_name();
-        $table_work_plan_subject = self::get_work_plan_subject_table_name();
-        $table_work_plan_teacher = self::get_work_plan_teacher_table_name();
-        $table_progress = self::get_progress_table_name();
-        $table_progress_subject = self::get_progress_subject_table_name();
-        $table_progress_teacher = self::get_progress_teacher_table_name();
-        $table_snapshots = self::get_snapshot_table_name();
-
-        $sql_schedule = "CREATE TABLE `$table_schedule` (
-            `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-            `subject_id` int(20) unsigned NOT NULL,
-            `classroom_id` int(20) unsigned NOT NULL,
-            `weekday` int(3) unsigned NOT NULL,
-            `start_time` time NOT NULL,
-            `end_time` time NOT NULL,
-            `timezone` varchar(255) NOT NULL DEFAULT 'UTC',
-            `visible` tinyint(1) NOT NULL DEFAULT '1',
-            `collision_detection` tinyint(1) NOT NULL DEFAULT '1',
-            `notes` text,
-            `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-            `updated_at` DATETIME DEFAULT NULL,
-            `created_by` INT NULL,
-            `updated_by` INT NULL,
-            PRIMARY KEY (`id`)
-        )";
-        $sql_schedule_teacher = "CREATE TABLE `$table_schedule_teacher` (
-            `id` int(11) unsigned NOT NULL,
-            `teacher_id` int(20) unsigned NOT NULL
-        )";
-        $sql_schedule_student = "CREATE TABLE `$table_schedule_student` (
-            `id` int(11) unsigned NOT NULL,
-            `student_id` int(20) unsigned NOT NULL
-        )";
-
-        $sql_journal = "CREATE TABLE `$table_journal` (
-            `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-            `subject_id` int(20) unsigned NOT NULL,
-            `date` date NOT NULL,
-            `start_time` time NOT NULL,
-            `end_time` time NOT NULL,
-            `timezone` varchar(255) NOT NULL DEFAULT 'UTC',
-            `topic` text,
-            `type` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-            `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-            `updated_at` DATETIME DEFAULT NULL,
-            `created_by` INT NULL,
-            `updated_by` INT NULL,
-            PRIMARY KEY (`id`)
-        )";
-        $sql_journal_teacher = "CREATE TABLE `$table_journal_teacher` (
-            `id` int(11) unsigned NOT NULL,
-            `teacher_id` int(20) unsigned NOT NULL
-        )";
-        $sql_journal_student = "CREATE TABLE `$table_journal_student` (
-            `id` int(11) unsigned NOT NULL,
-            `student_id` int(20) unsigned NOT NULL
-        )";
-        $sql_work_plan = "CREATE TABLE `$table_work_plan` (
-            `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-            `subject_id` int(20) unsigned NOT NULL,
-            `student_id` int(20) unsigned NOT NULL,
-            `start_date` date NOT NULL,
-            `end_date` date NOT NULL,
-            `improvements` text,
-            `indications` text,
-            `type` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-            `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-            `updated_at` DATETIME DEFAULT NULL,
-            `created_by` INT NULL,
-            `updated_by` INT NULL,
-            PRIMARY KEY (`id`)
-        )";
-        $sql_work_plan_subject = "CREATE TABLE `$table_work_plan_subject` (
-            `id` int(11) unsigned NOT NULL,
-            `subject_id` int(20) unsigned NOT NULL
-        )";
-        $sql_work_plan_teacher = "CREATE TABLE `$table_work_plan_teacher` (
-            `id` int(11) unsigned NOT NULL,
-            `teacher_id` int(20) unsigned NOT NULL
-        )";
-        $sql_progress = "CREATE TABLE `$table_progress` (
-            `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-            `subject_id` int(20) unsigned NOT NULL,
-            `student_id` int(20) unsigned NOT NULL,
-            `start_date` date NOT NULL,
-            `end_date` date NOT NULL,
-            `diagnosis` text,
-            `strengths` text,
-            `goals` text,
-            `methods` text,
-            `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-            `updated_at` DATETIME DEFAULT NULL,
-            `created_by` INT NULL,
-            `updated_by` INT NULL,
-            PRIMARY KEY (`id`)
-        )";
-        $sql_progress_subject = "CREATE TABLE `$table_progress_subject` (
-            `id` int(11) unsigned NOT NULL,
-            `subject_id` int(20) unsigned NOT NULL
-        )";
-        $sql_progress_teacher = "CREATE TABLE `$table_progress_teacher` (
-            `id` int(11) unsigned NOT NULL,
-            `teacher_id` int(20) unsigned NOT NULL
-        )";
-        $sql_snapshots = "CREATE TABLE `$table_snapshots` (
-            `id` int(11) NOT NULL,
-            `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-            `created_by` int(11) NOT NULL,
-            `updated_at` datetime DEFAULT NULL,
-            `updated_by` int(11) DEFAULT NULL,
-            `title` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-            `action` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-            `query_string` text COLLATE utf8mb4_unicode_ci,
-            `query_hash` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-            `content` text COLLATE utf8mb4_unicode_ci NOT NULL,
-            `content_hash` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-            `content_type` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-            `version` int(11) NOT NULL,
-            PRIMARY KEY (`id`)
-         )";
-
         require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
-        dbDelta($sql_schedule);
-        dbDelta($sql_schedule_teacher);
-        dbDelta($sql_schedule_student);
-        dbDelta($sql_journal);
-        dbDelta($sql_journal_teacher);
-        dbDelta($sql_journal_student);
-        dbDelta($sql_work_plan);
-        dbDelta($sql_work_plan_subject);
-        dbDelta($sql_work_plan_teacher);
-        dbDelta($sql_progress);
-        dbDelta($sql_progress_subject);
-        dbDelta($sql_progress_teacher);
-        dbDelta($sql_snapshots);
+        Schedule::create_db_tables();
+        Journal::create_db_tables();
+        WorkPlan::create_db_tables();
+        Progress::create_db_tables();
+        Snapshot::create_db_tables();
         add_option('wcs4_db_version', WCS4_DB_VERSION);
     }
 
@@ -404,60 +192,19 @@ class DB
             }
         }
 
-        $wpdb->query('DROP TABLE IF EXISTS ' . self::get_schedule_teacher_table_name());
-        $wpdb->query('DROP TABLE IF EXISTS ' . self::get_schedule_student_table_name());
-        $wpdb->query('DROP TABLE IF EXISTS ' . self::get_schedule_table_name());
-        $wpdb->query('DROP TABLE IF EXISTS ' . self::get_journal_teacher_table_name());
-        $wpdb->query('DROP TABLE IF EXISTS ' . self::get_journal_student_table_name());
-        $wpdb->query('DROP TABLE IF EXISTS ' . self::get_journal_table_name());
-        $wpdb->query('DROP TABLE IF EXISTS ' . self::get_work_plan_subject_table_name());
-        $wpdb->query('DROP TABLE IF EXISTS ' . self::get_work_plan_teacher_table_name());
-        $wpdb->query('DROP TABLE IF EXISTS ' . self::get_work_plan_table_name());
-        $wpdb->query('DROP TABLE IF EXISTS ' . self::get_progress_subject_table_name());
-        $wpdb->query('DROP TABLE IF EXISTS ' . self::get_progress_teacher_table_name());
-        $wpdb->query('DROP TABLE IF EXISTS ' . self::get_progress_table_name());
-        $wpdb->query('DROP TABLE IF EXISTS ' . self::get_snapshot_table_name());
-    }
-
-    /**
-     * Truncate all the schedule data
-     */
-    public static function delete_schedules(): void
-    {
-        global $wpdb;
-        $wpdb->query('TRUNCATE ' . self::get_schedule_teacher_table_name());
-        $wpdb->query('TRUNCATE ' . self::get_schedule_student_table_name());
-        $wpdb->query('TRUNCATE ' . self::get_schedule_table_name());
-    }
-
-    public static function delete_journals(): void
-    {
-        global $wpdb;
-        $wpdb->query('TRUNCATE ' . self::get_journal_teacher_table_name());
-        $wpdb->query('TRUNCATE ' . self::get_journal_student_table_name());
-        $wpdb->query('TRUNCATE ' . self::get_journal_table_name());
-    }
-
-    public static function delete_work_plans(): void
-    {
-        global $wpdb;
-        $wpdb->query('TRUNCATE ' . self::get_work_plan_subject_table_name());
-        $wpdb->query('TRUNCATE ' . self::get_work_plan_teacher_table_name());
-        $wpdb->query('TRUNCATE ' . self::get_work_plan_table_name());
-    }
-
-    public static function delete_progresses(): void
-    {
-        global $wpdb;
-        $wpdb->query('TRUNCATE ' . self::get_progress_subject_table_name());
-        $wpdb->query('TRUNCATE ' . self::get_progress_teacher_table_name());
-        $wpdb->query('TRUNCATE ' . self::get_progress_table_name());
-    }
-
-    public static function delete_snapshots(): void
-    {
-        global $wpdb;
-        $wpdb->query('TRUNCATE ' . self::get_snapshot_table_name());
+        $wpdb->query('DROP TABLE IF EXISTS ' . Schedule::get_schedule_teacher_table_name());
+        $wpdb->query('DROP TABLE IF EXISTS ' . Schedule::get_schedule_student_table_name());
+        $wpdb->query('DROP TABLE IF EXISTS ' . Schedule::get_schedule_table_name());
+        $wpdb->query('DROP TABLE IF EXISTS ' . Journal::get_journal_teacher_table_name());
+        $wpdb->query('DROP TABLE IF EXISTS ' . Journal::get_journal_student_table_name());
+        $wpdb->query('DROP TABLE IF EXISTS ' . Journal::get_journal_table_name());
+        $wpdb->query('DROP TABLE IF EXISTS ' . WorkPlan::get_work_plan_subject_table_name());
+        $wpdb->query('DROP TABLE IF EXISTS ' . WorkPlan::get_work_plan_teacher_table_name());
+        $wpdb->query('DROP TABLE IF EXISTS ' . WorkPlan::get_work_plan_table_name());
+        $wpdb->query('DROP TABLE IF EXISTS ' . Progress::get_progress_subject_table_name());
+        $wpdb->query('DROP TABLE IF EXISTS ' . Progress::get_progress_teacher_table_name());
+        $wpdb->query('DROP TABLE IF EXISTS ' . Progress::get_progress_table_name());
+        $wpdb->query('DROP TABLE IF EXISTS ' . Snapshot::get_snapshot_table_name());
     }
 
     public static function get_item($id): ?Item
@@ -636,4 +383,5 @@ class DB
         }
         return $items;
     }
+
 }

@@ -36,7 +36,7 @@
      */
     let bind_submit_handler = function () {
         let $form = $('#wcs4-progress-form');
-        $form.find('#wcs4-submit-form').click(function (e) {
+        $form.find('[data-wcs4="submit-form"]').click(function (e) {
             e.preventDefault();
             let entry = {
                 action: 'wcs_add_or_update_progress_entry',

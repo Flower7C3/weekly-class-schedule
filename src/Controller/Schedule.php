@@ -18,6 +18,7 @@ use WCS4\Exception\ValidationException;
 use WCS4\Helper\Admin;
 use WCS4\Helper\DB;
 use WCS4\Helper\Output;
+use WCS4\Repository\Schedule as ScheduleRepository;
 
 class Schedule
 {
@@ -113,7 +114,7 @@ class Schedule
         $shiftDays = (int)abs($_GET['week'] ?: 0) * 7;
 
         # get lessons
-        $items = self::get_items(
+        $items = ScheduleRepository::get_items(
             $classroom,
             $teacher,
             $student,
@@ -186,7 +187,7 @@ class Schedule
         $weekday = null
     ): string {
         ob_start();
-        $items = self::get_items(
+        $items = ScheduleRepository::get_items(
             $classroom,
             $teacher,
             $student,
@@ -205,8 +206,8 @@ class Schedule
     public static function get_summary(): array
     {
         global $wpdb;
-        $table = DB::get_schedule_table_name();
-        $table_teacher = DB::get_schedule_teacher_table_name();
+        $table = ScheduleRepository::get_schedule_table_name();
+        $table_teacher = ScheduleRepository::get_schedule_teacher_table_name();
         $table_posts = $wpdb->prefix . 'posts';
         $table_meta = $wpdb->prefix . 'postmeta';
 
@@ -229,93 +230,6 @@ class Schedule
         return DB::get_summary($query_str);
     }
 
-    public static function get_items(
-        $classroom,
-        $teacher = 'all',
-        $student = 'all',
-        $subject = 'all',
-        int $weekday = null,
-        int $time = null,
-        ?string $visibility = 'visible',
-        ?string $collisionDetection = null,
-        string $limit = null,
-        string $paged = null
-    ): array {
-        global $wpdb;
-
-        $table = DB::get_schedule_table_name();
-        $table_teacher = DB::get_schedule_teacher_table_name();
-        $table_student = DB::get_schedule_student_table_name();
-        $table_posts = $wpdb->prefix . 'posts';
-        $table_meta = $wpdb->prefix . 'postmeta';
-
-        $queryStr = "SELECT
-                $table.id AS schedule_id, $table.created_at, $table.updated_at, $table.created_by, $table.updated_by,
-                sub.ID AS subject_id, sub.post_title AS subject_name, sub.post_content AS subject_desc,
-                tea.ID AS teacher_id, tea.post_title AS teacher_name, tea.post_content AS teacher_desc,
-                stu.ID AS student_id, stu.post_title AS student_name, stu.post_content AS student_desc,
-                cls.ID AS classroom_id, cls.post_title AS classroom_name, cls.post_content AS classroom_desc,
-                weekday, start_time, end_time, visible, collision_detection,
-                notes
-            FROM $table 
-            LEFT JOIN $table_teacher USING(id)
-            LEFT JOIN $table_student USING(id)
-            LEFT JOIN $table_posts sub ON subject_id = sub.ID
-            LEFT JOIN $table_posts tea ON teacher_id = tea.ID
-            LEFT JOIN $table_posts stu ON student_id = stu.ID
-            LEFT JOIN $table_posts cls ON classroom_id = cls.ID
-        ";
-        $queryStr = apply_filters(
-            'wcs4_filter_get_lessons_query',
-            $queryStr,
-            $table,
-            $table_posts,
-            $table_meta
-        );
-        $pattern = '/^\s?SELECT/';
-        $replacement = 'SELECT sub.ID AS subject_id, tea.ID as teacher_id, stu.ID as student_id, cls.ID as classroom_id,';
-        $queryStr = preg_replace($pattern, $replacement, $queryStr);
-
-        # Filters
-        $filters = [
-            ['prefix' => 'sub', 'value' => $subject, 'searchById' => "sub.ID = %s"],
-            [
-                'prefix' => 'tea',
-                'value' => $teacher,
-                'searchById' => "{$table}.id IN (SELECT id FROM {$table_teacher} WHERE teacher_id = %s)"
-            ],
-            [
-                'prefix' => 'stu',
-                'value' => $student,
-                'searchById' => "{$table}.id IN (SELECT id FROM {$table_student} WHERE student_id = %s)"
-            ],
-            ['prefix' => 'cls', 'value' => $classroom, 'searchById' => "cls.ID = %s"],
-        ];
-
-        # Where
-        $where = [];
-        $queryArr = [];
-        if (null !== $weekday) {
-            $where[] = 'weekday = %d';
-            $queryArr[] = $weekday;
-        }
-        if (null !== $time) {
-            $where[] = 'end_time >= %s';
-            $queryArr[] = $time;
-        }
-        if (null !== $visibility && '' !== $visibility) {
-            $where[] = 'visible = %d';
-            $queryArr[] = ('visible' === $visibility) ? 1 : 0;
-        }
-        if (null !== $collisionDetection && '' !== $collisionDetection) {
-            $where[] = 'collision_detection = %d';
-            $queryArr[] = ('yes' === $collisionDetection) ? 1 : 0;
-        }
-        $orderField = ['weekday' => 'ASC', 'start_time' => 'ASC'];
-
-        return DB::get_items(Lesson_Item::class, $queryStr, $filters, $where, $queryArr, $orderField, $limit, $paged);
-    }
-
     public static function save_item(): void
     {
         global $wpdb;
@@ -331,9 +245,9 @@ class Schedule
 
             $update_request = false;
             $row_id = null;
-            $table = DB::get_schedule_table_name();
-            $table_teacher = DB::get_schedule_teacher_table_name();
-            $table_student = DB::get_schedule_student_table_name();
+            $table = ScheduleRepository::get_schedule_table_name();
+            $table_teacher = ScheduleRepository::get_schedule_teacher_table_name();
+            $table_student = ScheduleRepository::get_schedule_student_table_name();
 
             $required = array(
                 'subject_id' => __('Subject', 'wcs4'),
@@ -352,7 +266,7 @@ class Schedule
                 throw new ValidationException($errors);
             }
 
-            if (isset($_POST['row_id'])) {
+            if (!empty($_POST['row_id'])) {
                 # This is an update request and not an insert.
                 $update_request = true;
                 $row_id = sanitize_text_field($_POST['row_id']);
@@ -594,9 +508,9 @@ class Schedule
             }
 
             $row_id = sanitize_text_field($_POST['row_id']);
-            $table = DB::get_schedule_table_name();
-            $table_teacher = DB::get_schedule_teacher_table_name();
-            $table_student = DB::get_schedule_student_table_name();
+            $table = ScheduleRepository::get_schedule_table_name();
+            $table_teacher = ScheduleRepository::get_schedule_teacher_table_name();
+            $table_student = ScheduleRepository::get_schedule_student_table_name();
             $db_result = $wpdb->get_row(
                 $wpdb->prepare(
                     "
@@ -644,9 +558,9 @@ class Schedule
             }
 
             $row_id = sanitize_text_field($_POST['row_id']);
-            $table = DB::get_schedule_table_name();
-            $table_teacher = DB::get_schedule_teacher_table_name();
-            $table_student = DB::get_schedule_student_table_name();
+            $table = ScheduleRepository::get_schedule_table_name();
+            $table_teacher = ScheduleRepository::get_schedule_teacher_table_name();
+            $table_student = ScheduleRepository::get_schedule_student_table_name();
             $db_result = $wpdb->delete($table, array('id' => $row_id), array('%d'));
             $db_result_teacher = $wpdb->delete($table_teacher, array('id' => $row_id), array('%d'));
             $db_result_student = $wpdb->delete($table_student, array('id' => $row_id), array('%d'));
@@ -697,7 +611,7 @@ class Schedule
             $data_schedule['updated_by'] = get_current_user_id();
             $data_schedule['visible'] = sanitize_text_field($_POST['visible']);
 
-            $table = DB::get_schedule_table_name();
+            $table = ScheduleRepository::get_schedule_table_name();
             $db_result = $wpdb->update(
                 $table,
                 $data_schedule,

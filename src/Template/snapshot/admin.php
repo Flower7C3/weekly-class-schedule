@@ -5,8 +5,7 @@
 
 ?>
 <div class="wrap wcs4-management-page-callback">
-    <h1 class="wp-heading-inline"><?php
-        _ex('Snapshots', 'manage snapshot', 'wcs4'); ?></h1>
+    <h1 class="wp-heading-inline"><?= _x('Snapshots', 'manage snapshot', 'wcs4') ?></h1>
     <hr class="wp-header-end">
     <div id="ajax-response"></div>
     <div id="col-container" class="wp-clearfix">
@@ -18,8 +17,7 @@
             <br class="clear">
         </div>
         <div class="col-wrap" id="wcs4-snapshot-list-wrapper">
-            <?php
-            echo $table; ?>
+            <?= $table ?>
         </div>
     </div>
 </div>
