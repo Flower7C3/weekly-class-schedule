@@ -32,10 +32,10 @@
             };
             WCS4_LIB.submit_entry(entry, function (data, status) {
                 $spinner.removeClass('is-active');
-                if (200 <= status && status < 300) {
-                    // jQuery('#wcs4-progress-form').get(0).reset();
-                    jQuery('#wcs4-progress-modal').modal('hide');
-                }
+                // if (200 <= status && status < 300) {
+                //     // jQuery('#wcs4-progress-form').get(0).reset();
+                //     jQuery('#wcs4-progress-modal').modal('hide');
+                // }
             });
         });
     };
