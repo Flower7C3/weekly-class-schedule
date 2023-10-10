@@ -173,13 +173,13 @@ add_filter('the_content', static function ($content) {
 
             if (true === $journal_view_access || true === $journal_create_access) {
                 $content .= '<details class="wcs4" id="wcs_journal-shortcode-wrapper">';
+                $content .= '<summary>' . __('Journals', 'wcs4') . '</summary>';
                 if (true === $journal_create_access) {
                     $params = [];
                     $params[] = $post_type_key . '="' . $post_id . '"';
                     $content .= '[wcs_journal_create  ' . implode(' ', $params) . ']';
                 }
                 if (true === $journal_view_access) {
-                    $content .= '<summary>' . __('Journals', 'wcs4') . '</summary>';
                     $template = $wcs4_settings[$post_type_key . '_journal_shortcode_template'];
                     $params = [];
                     $params[] = $post_type_key . '="#' . $post_id . '"';
@@ -227,28 +227,28 @@ add_filter('the_content', static function ($content) {
                 }
                 if (!empty($work_plan_view_access) || (true === $work_plan_create_access)) {
                     $content .= '<details class="wcs4" id="wcs_student_work_plan-shortcode-wrapper">';
-                }
-                if (true === $work_plan_create_access) {
-                    $params = [];
-                    $params[] = 'student="' . $post_id . '"';
-                    if (isset($_SESSION[WCS_SESSION_SATISFY_POST])) {
-                        $type = str_replace(
-                            'wcs4_',
-                            '',
-                            $_SESSION[WCS_SESSION_SATISFY_POST]->post_type
-                        );
-                        $params[] = $type . '="' . $_SESSION[WCS_SESSION_SATISFY_POST]->ID . '"';
-                    }
-                    $content .= '[wcs_student_work_plan_create  ' . implode(' ', $params) . ']';
-                }
-                if (!empty($work_plan_view_access)) {
                     $content .= '<summary><strong>' . __('Work Plans', 'wcs4') . '</strong></summary>';
-                    $params = [];
-                    $params[] = 'student="#' . $post_id . '"';
-                    $params[] = 'template_partial="' . $wcs4_settings['work_plan_shortcode_template_partial_type'] . '"';
-                    $params[] = 'template_periodic="' . $wcs4_settings['work_plan_shortcode_template_periodic_type'] . '"';
-                    $params[] = 'limit=' . $work_plan_view_access;
-                    $content .= '[wcs_student_work_plan  ' . implode(' ', $params) . ']';
+                    if (true === $work_plan_create_access) {
+                        $params = [];
+                        $params[] = 'student="' . $post_id . '"';
+                        if (isset($_SESSION[WCS_SESSION_SATISFY_POST])) {
+                            $type = str_replace(
+                                'wcs4_',
+                                '',
+                                $_SESSION[WCS_SESSION_SATISFY_POST]->post_type
+                            );
+                            $params[] = $type . '="' . $_SESSION[WCS_SESSION_SATISFY_POST]->ID . '"';
+                        }
+                        $content .= '[wcs_student_work_plan_create  ' . implode(' ', $params) . ']';
+                    }
+                    if (!empty($work_plan_view_access)) {
+                        $params = [];
+                        $params[] = 'student="#' . $post_id . '"';
+                        $params[] = 'template_partial="' . $wcs4_settings['work_plan_shortcode_template_partial_type'] . '"';
+                        $params[] = 'template_periodic="' . $wcs4_settings['work_plan_shortcode_template_periodic_type'] . '"';
+                        $params[] = 'limit=' . $work_plan_view_access;
+                        $content .= '[wcs_student_work_plan  ' . implode(' ', $params) . ']';
+                    }
                     $content .= '</details>';
                 }
                 ### PROGRESS VIEW
@@ -281,6 +281,7 @@ add_filter('the_content', static function ($content) {
                 }
                 if (!empty($progress_view_access) || (true === $progress_create_access)) {
                     $content .= '<details class="wcs4">';
+                    $content .= '<summary><strong>' . __('Progresses', 'wcs4') . '</strong></summary>';
                     if (true === $progress_create_access) {
                         $params = [];
                         $params[] = 'student="' . $post_id . '"';
@@ -295,7 +296,6 @@ add_filter('the_content', static function ($content) {
                         $content .= '[student_progress_create  ' . implode(' ', $params) . ']';
                     }
                     if (!empty($progress_view_access)) {
-                        $content .= '<summary><strong>' . __('Progresses', 'wcs4') . '</strong></summary>';
                         $params = [];
                         $params[] = 'student="#' . $post_id . '"';
                         $params[] = 'template_partial="' . $wcs4_settings['progress_shortcode_template_partial_type'] . '"';
