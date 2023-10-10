@@ -767,8 +767,8 @@ class Progress
         foreach ($dateWithLessons as $date => $dayProgresses) {
             if (!empty($dayProgresses)) {
                 $time = strtotime($date);
-                $weekday = strftime('%w', $time);
-                $output .= '<h4>' . strftime('%x', $time) . ' (' . $weekdays[$weekday] . ')' . '</h4>';
+                $weekday = $GLOBALS['dateFormatter']->format('%w', $time);
+                $output .= '<h4>' . $GLOBALS['dateFormatter']->format('%x', $time) . ' (' . $weekdays[$weekday] . ')' . '</h4>';
                 $output .= '<ul class="wcs4-grid-date-list wcs4-grid-date-list-' . $date . '" data-scope="progress">';
                 /** @var Progress_Item $item */
                 foreach ($dayProgresses as $item) {

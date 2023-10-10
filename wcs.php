@@ -150,6 +150,14 @@ $wcs4_allowed_html = array(
     'strong' => [],
 );
 
+$dateFormatter = datefmt_create(
+    get_locale(),
+    IntlDateFormatter::FULL,
+    IntlDateFormatter::FULL,
+    wp_timezone_string(),
+    IntlDateFormatter::GREGORIAN
+);
+
 /**
  * Load modules.
  */
