@@ -52,28 +52,7 @@
         </tr>
         <tr>
             <th>
-                <?= _x('Edit Work Plan due day', 'options general settings', 'wcs4') ?>
-                <div class="wcs4-description">
-                    <?= _x(
-                        'Will allow to edit work plan due month day.',
-                        'options general settings',
-                        'wcs4'
-                    ) ?>
-                </div>
-            </th>
-            <td></td>
-            <td data-type="wcs4_work_plan_edit_masters">
-                <?= wcs4_textfield(
-                    'wcs4_work_plan_edit_masters',
-                    'wcs4_work_plan_edit_masters',
-                    $wcs4_options['work_plan_edit_masters'],
-                    20
-                ) ?>
-            </td>
-        </tr>
-        <tr>
-            <th>
-                <?= _x('Display Work Plane', 'options general settings', 'wcs4') ?>
+                <?= _x('Display Work Planes', 'options general settings', 'wcs4') ?>
                 <div class="wcs4-description">
                     <?= _x(
                         'Will display amount of progresses.',

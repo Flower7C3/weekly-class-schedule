@@ -31,73 +31,40 @@ class Output
     }
 
     public static function editable_on_front(
-        Journal_Item|Progress_Item|WorkPlan_Item $item
+        Journal_Item $item
     ): bool {
         if (empty($_SESSION[WCS_SESSION_SATISFY_POST])) {
             return false;
         }
         $found = false;
         $wcs4_settings = Settings::load_settings();
-        if ($item instanceof Journal_Item) {
-            foreach ($item->getTeachers() as $teacher) {
-                if ($_SESSION[WCS_SESSION_SATISFY_POST]->ID === $teacher->getId()) {
-                    $found = true;
-                    break;
-                }
-            }
-            foreach ($item->getStudents() as $student) {
-                if ($_SESSION[WCS_SESSION_SATISFY_POST]->ID === $student->getId()) {
-                    $found = true;
-                    break;
-                }
-            }
-            $settlementFirstDay = $wcs4_settings['journal_edit_masters'];
-        } elseif ($item instanceof WorkPlan_Item) {
-            if ($item->isTypeCumulative()) {
-                return false;
-            }
-            foreach ($item->getTeachers() as $teacher) {
-                if ($_SESSION[WCS_SESSION_SATISFY_POST]->ID === $teacher->getId()) {
-                    $found = true;
-                    break;
-                }
-            }
-            if ($_SESSION[WCS_SESSION_SATISFY_POST]->ID === $item->getStudent()->getId()) {
+        foreach ($item->getTeachers() as $teacher) {
+            if ($_SESSION[WCS_SESSION_SATISFY_POST]->ID === $teacher->getId()) {
                 $found = true;
+                break;
             }
-            $settlementFirstDay = $wcs4_settings['work_plan_edit_masters'];
-        } elseif ($item instanceof Progress_Item) {
-            if ($item->isTypePeriodic()) {
-                return false;
-            }
-            foreach ($item->getTeachers() as $teacher) {
-                if ($_SESSION[WCS_SESSION_SATISFY_POST]->ID === $teacher->getId()) {
-                    $found = true;
-                    break;
-                }
-            }
-            if ($_SESSION[WCS_SESSION_SATISFY_POST]->ID === $item->getStudent()->getId()) {
-                $found = true;
-            }
-            $settlementFirstDay = $wcs4_settings['progress_edit_masters'];
-        } else {
-            $settlementFirstDay = 1;
         }
+        foreach ($item->getStudents() as $student) {
+            if ($_SESSION[WCS_SESSION_SATISFY_POST]->ID === $student->getId()) {
+                $found = true;
+                break;
+            }
+        }
+        $settlementFirstDay = $wcs4_settings['journal_edit_masters'];
+        $theDate = $item->getStartDateTime();
         if (false === $found) {
             return false;
         }
-        $createdAtDate = $item->getCreatedAt();
-        $currentMonthDay = (int)(new \DateTimeImmutable())
-            ->format('d');
+        $currentMonthDay = (int)(new \DateTimeImmutable())->format('d');
         $currentMonthSettlement = date('Y-m-' . $settlementFirstDay);
         $currentMonthSettlementDate = new \DateTimeImmutable($currentMonthSettlement);
         $previousMonthSettlementDate = $currentMonthSettlementDate->modify("- 1 month");
         if ($currentMonthDay <= $settlementFirstDay &&
-            $createdAtDate->format('Ymd') >= $previousMonthSettlementDate->format('Ymd')) {
+            $theDate->format('Ymd') >= $previousMonthSettlementDate->format('Ymd')) {
             return true;
         }
         if ($currentMonthDay > $settlementFirstDay &&
-            $createdAtDate->format('Ymd') >= $currentMonthSettlementDate->format('Ymd')) {
+            $theDate->format('Ymd') >= $currentMonthSettlementDate->format('Ymd')) {
             return true;
         }
         return false;
@@ -262,6 +229,18 @@ class Output
                 '<em class="' . Progress_Item::typeIcon($item->getType()) . '"></em>',
             ], $template);
         }
+        if ($item instanceof Journal_Item) {
+            $template = str_replace(
+                '{edit button}',
+                self::editable_on_front($item)
+                    ? '<a href="#" data-id="' . $item->getId() . '" class="wcs4-edit-button">'
+                    . __('Edit', 'wcs4')
+                    . '</a>'
+                    : ''
+                ,
+                $template
+            );
+        }
         if ($item instanceof Journal_Item
             ||
             $item instanceof WorkPlan_Item
@@ -290,11 +269,6 @@ class Output
                 $item->getUpdatedAt()?->format('Y-m-d H:i:s'),
                 $item->getUpdatedAt()?->format('Y-m-d'),
                 $item->getUpdatedBy()?->display_name,
-                self::editable_on_front($item)
-                    ? '<a href="#" data-id="' . $item->getId() . '" class="wcs4-edit-button">'
-                    . __('Edit', 'wcs4')
-                    . '</a>'
-                    : ''
             ], $template);
         }
         if ($item instanceof Lesson_Item) {

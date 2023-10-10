@@ -52,28 +52,7 @@
         </tr>
         <tr>
             <th>
-                <?= _x('Edit Progress due day', 'options general settings', 'wcs4') ?>
-                <div class="wcs4-description">
-                    <?= _x(
-                        'Will allow to edit progress due month day.',
-                        'options general settings',
-                        'wcs4'
-                    ) ?>
-                </div>
-            </th>
-            <td></td>
-            <td data-type="wcs4_progress_edit_masters">
-                <?= wcs4_textfield(
-                    'wcs4_progress_edit_masters',
-                    'wcs4_progress_edit_masters',
-                    $wcs4_options['progress_edit_masters'],
-                    20
-                ) ?>
-            </td>
-        </tr>
-        <tr>
-            <th>
-                <?= _x('Display Progresse', 'options general settings', 'wcs4') ?>
+                <?= _x('Display Progresses', 'options general settings', 'wcs4') ?>
                 <div class="wcs4-description">
                     <?= _x(
                         'Will display amount of progresses.',
