@@ -308,6 +308,14 @@ class DB
             $prefix = $filter['prefix'];
             $value = $filter['value'];
             $searchById = $filter['searchById'];
+            if (str_starts_with($value, '!')) {
+                if (empty($filter['strict'])) {
+                    continue;
+                }
+                $value = preg_replace('/^!/', '', $value);
+            } elseif (!empty($filter['strict'])) {
+                continue;
+            }
             if ('all' !== $value && '' !== $value && null !== $value) {
                 if (is_array($value)) {
                     $where[] = $prefix . '.ID IN (' . implode(', ', array_fill(0, count($value), '%s')) . ')';

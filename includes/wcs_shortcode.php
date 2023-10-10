@@ -76,7 +76,7 @@ add_shortcode('wcs_schedule', static function ($atts) {
     $output = apply_filters('wcs4_pre_render', $output, $style);
 
     $output .= '<div class="wcs4_schedule_wrapper" id="' . $schedule_key . '">';
-    if ($layout === 'table') {
+    if ('table' === $layout) {
         # Render table layout
         $weekdays = wcs4_get_indexed_weekdays($abbr = true);
         $output .= Schedule::get_html_of_schedule_table_for_shortcode(
@@ -86,34 +86,32 @@ add_shortcode('wcs_schedule', static function ($atts) {
             $template_table_short,
             $template_table_details
         );
+    } elseif ('list' === $layout) {
+        # Render list layout
+        $weekdays = wcs4_get_weekdays();
+        $output .= Schedule::get_html_of_schedule_list_for_shortcode(
+            $lessons,
+            $weekdays,
+            $schedule_key,
+            $template_list
+        );
     } else {
-        if ($layout === 'list') {
-            # Render list layout
-            $weekdays = wcs4_get_weekdays();
-            $output .= Schedule::get_html_of_schedule_list_for_shortcode(
-                $lessons,
-                $weekdays,
-                $schedule_key,
-                $template_list
-            );
+        $weekdays = wcs4_get_weekdays();
+        $buffer = apply_filters(
+            'wcs4_render_layout',
+            $buffer,
+            $lessons,
+            $weekdays,
+            $classroom,
+            $teacher,
+            $student,
+            $subject,
+            $wcs4_options
+        );
+        if (empty($buffer)) {
+            $output .= __('Unsupported layout', 'wcs4');
         } else {
-            $weekdays = wcs4_get_weekdays();
-            $buffer = apply_filters(
-                'wcs4_render_layout',
-                $buffer,
-                $lessons,
-                $weekdays,
-                $classroom,
-                $teacher,
-                $student,
-                $subject,
-                $wcs4_options
-            );
-            if (empty($buffer)) {
-                $output .= __('Unsupported layout', 'wcs4');
-            } else {
-                $output .= $buffer;
-            }
+            $output .= $buffer;
         }
     }
     $output .= '</div>';
@@ -170,14 +168,16 @@ add_shortcode('wcs_journal', static function ($atts) {
 
     # Get journals
     $journals = JournalRepository::get_items(
-        $teacher,
-        $student,
-        $subject,
+        '!' . $teacher,
+        '!' . $student,
+        '!' . $subject,
         $date_from,
         $date_upto,
         null,
         null,
         null,
+        'time',
+        'DESC',
         $limit,
         $paged
     );
@@ -194,7 +194,14 @@ add_shortcode('wcs_journal', static function ($atts) {
 
     # Render list layout
     $output .= '<div class="wcs4_schedule_wrapper" id="' . $schedule_key . '">';
-    $output .= Journal::get_html_of_journal_list_for_shortcode($journals, $schedule_key, $template);
+    if (!empty($limit)) {
+        $output .= '<p><em>' . sprintf(__('Showing latest %d items.', 'wcs4'), $limit) . '</em></p>';
+    }
+    $output .= Journal::get_html_of_journal_list_for_shortcode(
+        $journals,
+        $schedule_key,
+        $template
+    );
     $output .= '</div>';
 
     $output = apply_filters('wcs4_post_render', $output, $style, $teacher, $student, $subject, $date_from, $date_upto);
@@ -271,15 +278,16 @@ add_shortcode('student_progress', static function ($atts) {
     # Get progresses
     $progresses = ProgressRepository::get_items(
         null,
-        $teacher,
-        $student,
-        $subject,
+        '!' . $teacher,
+        '!' . $student,
+        '!' . $subject,
         $date_from,
         $date_upto,
         null,
         null,
         null,
-        null,
+        'time',
+        'DESC',
         $limit,
         $paged
     );
@@ -296,6 +304,9 @@ add_shortcode('student_progress', static function ($atts) {
 
     # Render list layout
     $output .= '<div class="wcs4_schedule_wrapper" id="' . $schedule_key . '">';
+    if (!empty($limit)) {
+        $output .= '<p><em>' . sprintf(__('Showing latest %d items.', 'wcs4'), $limit) . '</em></p>';
+    }
     $output .= Progress::get_html_of_progress_list_for_shortcode(
         $progresses,
         $schedule_key,
@@ -379,14 +390,16 @@ add_shortcode('wcs_student_work_plan', static function ($atts) {
     # Get work_plans
     $work_plans = WorkPlanRepository::get_items(
         null,
-        $teacher,
-        $student,
-        $subject,
+        '!' . $teacher,
+        '!' . $student,
+        '!' . $subject,
         $date_from,
         $date_upto,
         null,
         null,
         null,
+        'time',
+        'DESC',
         $limit,
         $paged
     );
@@ -403,6 +416,9 @@ add_shortcode('wcs_student_work_plan', static function ($atts) {
 
     # Render list layout
     $output .= '<div class="wcs4_schedule_wrapper" id="' . $schedule_key . '">';
+    if (!empty($limit)) {
+        $output .= '<p><em>' . sprintf(__('Showing latest %d items.', 'wcs4'), $limit) . '</em></p>';
+    }
     $output .= WorkPlan::get_html_of_work_plan_list_for_shortcode(
         $work_plans,
         $schedule_key,

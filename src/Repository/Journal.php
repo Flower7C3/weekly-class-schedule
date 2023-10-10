@@ -2,6 +2,7 @@
 
 namespace WCS4\Repository;
 
+use DateTime;
 use WCS4\Entity\Journal_Item;
 use WCS4\Helper\DB;
 
@@ -108,11 +109,13 @@ class Journal
         # Filters
         $filters = [
             ['prefix' => 'sub', 'value' => $subject, 'searchById' => "sub.ID = %s"],
+            ['prefix' => 'tea', 'value' => $teacher, 'searchById' => "tea.ID = %s", 'strict' => true],
             [
                 'prefix' => 'tea',
                 'value' => $teacher,
                 'searchById' => "{$table}.id IN (SELECT id FROM {$table_teacher} WHERE teacher_id = %s)"
             ],
+            ['prefix' => 'stu', 'value' => $student, 'searchById' => "stu.ID = %s", 'strict' => true],
             [
                 'prefix' => 'stu',
                 'value' => $student,
@@ -146,6 +149,12 @@ class Journal
         if (!empty($type)) {
             $where[] = 'type = "%s"';
             $queryArr[] = $type;
+        }
+        if('-1' === $limit){
+            $where[] = 'date LIKE "%s" OR date LIKE "%s"';
+            $queryArr[] = (new DateTime('now'))->format('Y-m-').'%';
+            $queryArr[] = (new DateTime('previous month'))->format('Y-m-').'%';
+            $limit = null;
         }
         switch ($orderField) {
             case 'time':

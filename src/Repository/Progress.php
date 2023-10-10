@@ -109,11 +109,13 @@ class Progress
 
         # Filters
         $filters = [
+            ['prefix' => 'sub', 'value' => $subject, 'searchById' => "sub.ID = %s", 'strict' => true],
             [
                 'prefix' => 'sub',
                 'value' => $subject,
                 'searchById' => "{$table}.id IN (SELECT id FROM {$table_subject} WHERE subject_id = %s)"
             ],
+            ['prefix' => 'tea', 'value' => $teacher, 'searchById' => "tea.ID = %s", 'strict' => true],
             [
                 'prefix' => 'tea',
                 'value' => $teacher,
