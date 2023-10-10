@@ -11,6 +11,8 @@ namespace WCS4\Controller;
 use DateTimeImmutable;
 use DateTimeZone;
 use Exception;
+use IntlCalendar;
+use IntlDateFormatter;
 use JetBrains\PhpStorm\NoReturn;
 use RuntimeException;
 use WCS4\Entity\WorkPlan_Item;
@@ -760,14 +762,12 @@ class WorkPlan
         }
         krsort($dateWithLessons);
 
-        $weekdays = wcs4_get_weekdays();
         $output = '<div class="wcs4-work_plan-list-layout" id="' . $key . '">';
         # Classes are grouped by indexed weekdays.
         foreach ($dateWithLessons as $date => $dayProgresses) {
             if (!empty($dayProgresses)) {
-                $time = strtotime($date);
-                $weekday = $GLOBALS['dateFormatter']->format('%w', $time);
-                $output .= '<h4>' . $GLOBALS['dateFormatter']->format('%x', $time) . ' (' . $weekdays[$weekday] . ')' . '</h4>';
+                $time = IntlCalendar::fromDateTime($date);
+                $output .= '<h4>' . IntlDateFormatter::formatObject($time, [IntlDateFormatter::FULL, IntlDateFormatter::NONE], get_locale()). '</h4>';
                 $output .= '<ul class="wcs4-grid-date-list wcs4-grid-date-list-' . $date . '" data-scope="work-plan">';
                 /** @var WorkPlan_Item $item */
                 foreach ($dayProgresses as $item) {
