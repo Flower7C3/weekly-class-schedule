@@ -151,7 +151,7 @@ class Journal
             $queryArr[] = $type;
         }
         if('-1' === $limit){
-            $where[] = 'date LIKE "%s" OR date LIKE "%s"';
+            $where[] = '(date LIKE "%s" OR date LIKE "%s")';
             $queryArr[] = (new DateTime('now'))->format('Y-m-').'%';
             $queryArr[] = (new DateTime('previous month'))->format('Y-m-').'%';
             $limit = null;

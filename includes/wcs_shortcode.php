@@ -194,7 +194,7 @@ add_shortcode('wcs_journal', static function ($atts) {
 
     # Render list layout
     $output .= '<div class="wcs4_schedule_wrapper" id="' . $schedule_key . '">';
-    if (!empty($limit)) {
+    if (!empty($limit) && $limit > 0) {
         $output .= '<p><em>' . sprintf(__('Showing latest %d items.', 'wcs4'), $limit) . '</em></p>';
     }
     $output .= Journal::get_html_of_journal_list_for_shortcode(
@@ -304,7 +304,7 @@ add_shortcode('student_progress', static function ($atts) {
 
     # Render list layout
     $output .= '<div class="wcs4_schedule_wrapper" id="' . $schedule_key . '">';
-    if (!empty($limit)) {
+    if (!empty($limit) && $limit > 0) {
         $output .= '<p><em>' . sprintf(__('Showing latest %d items.', 'wcs4'), $limit) . '</em></p>';
     }
     $output .= Progress::get_html_of_progress_list_for_shortcode(
@@ -416,7 +416,7 @@ add_shortcode('wcs_student_work_plan', static function ($atts) {
 
     # Render list layout
     $output .= '<div class="wcs4_schedule_wrapper" id="' . $schedule_key . '">';
-    if (!empty($limit)) {
+    if (!empty($limit) && $limit > 0) {
         $output .= '<p><em>' . sprintf(__('Showing latest %d items.', 'wcs4'), $limit) . '</em></p>';
     }
     $output .= WorkPlan::get_html_of_work_plan_list_for_shortcode(
