@@ -139,6 +139,15 @@ tr.is-active {
 }
 
 
+.form-table tr > th:first-child,
+.form-table tr > td:first-child {
+    width: 150px;
+    max-width: 150px;
+}
+.form-table th,
+.form-table td {
+    width: auto;
+}
 .form-table td[data-type="wcs4_taxonomy_slug"],
 .form-table td[data-type="wcs4_post_slug"],
 .form-table td[data-type="wcs4_archive_slug"] {

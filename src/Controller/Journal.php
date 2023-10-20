@@ -111,10 +111,16 @@ class Journal
                 'label' => __('Download Journals as CSV', 'wcs4'),
             ];
             $search['buttons'][] = [
-                'action' => 'wcs_download_journals_html_complex',
+                'action' => 'wcs_download_journals_teachers_html',
                 'formtarget' => '_blank',
                 'icon' => 'dashicons dashicons-download',
-                'label' => __('Download Journals as HTML Complex', 'wcs4'),
+                'label' => __('Download Journals as HTML for Teachers', 'wcs4'),
+            ];
+            $search['buttons'][] = [
+                'action' => 'wcs_download_journals_students_html',
+                'formtarget' => '_blank',
+                'icon' => 'dashicons dashicons-download',
+                'label' => __('Download Journals as HTML for Students', 'wcs4'),
             ];
             $search['buttons'][] = [
                 'action' => 'wcs_download_journals_html_simple',
@@ -218,17 +224,22 @@ class Journal
         Output::save_snapshot_and_render_csv($handle, $filename_key);
     }
 
-    public static function callback_of_export_html_complex_page(): void
+    public static function callback_of_export_teachers_html_page(): void
     {
-        self::callback_of_export_html_page('complex');
+        self::callback_of_export_html_page('complex', 'teachers');
+    }
+
+    public static function callback_of_export_students_html_page(): void
+    {
+        self::callback_of_export_html_page('complex', 'students');
     }
 
     public static function callback_of_export_html_simple_page(): void
     {
-        self::callback_of_export_html_page('simple');
+        self::callback_of_export_html_page('simple', 'teachers');
     }
 
-    private static function callback_of_export_html_page($mode): void
+    private static function callback_of_export_html_page($mode, $view): void
     {
         if (!current_user_can(WCS4_JOURNAL_EXPORT_CAPABILITY)) {
             header('HTTP/1.0 403 Forbidden');
@@ -274,7 +285,7 @@ class Journal
 
         $wcs4_options = Settings::load_settings();
         [$thead_columns, $tbody_columns, $tfoot_columns] = Output::extract_for_table(
-            $wcs4_options['journal_html_table_columns']
+            $wcs4_options['journal_' . $view . '_html_table_columns']
         );
 
         $subject_item = '';
@@ -301,8 +312,8 @@ class Journal
         include self::TEMPLATE_DIR . 'export_' . $mode . '_table.html.php';
         $table = ob_get_clean();
 
-        $template_style = wp_unslash($wcs4_options['journal_html_template_style']);
-        $template_code = wp_kses_stripslashes($wcs4_options['journal_html_template_code']);
+        $template_style = wp_unslash($wcs4_options['journal_' . $view . '_html_template_style']);
+        $template_code = wp_kses_stripslashes($wcs4_options['journal_' . $view . '_html_template_code']);
         $template_code = Output::process_template(null, $template_code);
         $template_code = str_replace([
             '{date from}',
@@ -498,7 +509,7 @@ class Journal
                 $update_request = true;
                 $row_id = sanitize_text_field($_POST['row_id']);
                 $item = JournalRepository::get_item($row_id);
-                if(true === $force_insert && !Output::editable_on_front($item)){
+                if (true === $force_insert && !Output::editable_on_front($item)) {
                     throw new AccessDeniedException();
                 }
             }
@@ -814,8 +825,11 @@ class Journal
      * @param string $template_list
      * @return string
      */
-    public static function get_html_of_journal_list_for_shortcode(array $items, string $key, string $template_list): string
-    {
+    public static function get_html_of_journal_list_for_shortcode(
+        array $items,
+        string $key,
+        string $template_list
+    ): string {
         if (empty($items)) {
             return '<p class="wcs4-no-items-message">' . __('No lessons journaled', 'wcs4') . '</p>';
         }
@@ -832,7 +846,11 @@ class Journal
         foreach ($dateWithLessons as $date => $dayJournals) {
             if (!empty($dayJournals)) {
                 $time = IntlCalendar::fromDateTime($date);
-                $output .= '<h4>' . IntlDateFormatter::formatObject($time, [IntlDateFormatter::FULL, IntlDateFormatter::NONE], get_locale()). '</h4>';
+                $output .= '<h4>' . IntlDateFormatter::formatObject(
+                        $time,
+                        [IntlDateFormatter::FULL, IntlDateFormatter::NONE],
+                        get_locale()
+                    ) . '</h4>';
                 $output .= '<ul class="wcs4-grid-date-list wcs4-grid-date-list-' . $date . '" data-scope="journal">';
                 /** @var Journal_Item $journal */
                 foreach ($dayJournals as $item) {

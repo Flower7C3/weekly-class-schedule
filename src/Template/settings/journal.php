@@ -225,20 +225,41 @@
         <?= _x('HTML journal template', 'options general settings', 'wcs4') ?>
     </h2>
     <table class="form-table">
+        <thead>
+        <tr>
+            <th></th>
+            <th><?= _x('For teachers', 'options general settings', 'wcs4') ?></th>
+            <th><?= _x('For students', 'options general settings', 'wcs4') ?></th>
+        </tr>
+        </thead>
         <tbody>
         <tr>
             <th>
                 <?= _x('HTML code', 'options general settings', 'wcs4') ?>
             </th>
-            <td data-type="wcs4_journal_html_template_code">
+            <td data-type="wcs4_journal_teachers_html_template_code">
                 <?php
                 wp_editor(
-                    wp_kses_stripslashes($wcs4_options['journal_html_template_code']),
-                    'wcs4_journal_html_template_code',
+                    wp_kses_stripslashes($wcs4_options['journal_teachers_html_template_code']),
+                    'wcs4_journal_teachers_html_template_code',
                     [
                         'wpautop' => true,
                         'media_buttons' => false,
-                        'textarea_name' => 'wcs4_journal_html_template_code',
+                        'textarea_name' => 'wcs4_journal_teachers_html_template_code',
+                        'textarea_rows' => 14,
+                    ]
+                );
+                ?>
+            </td>
+            <td data-type="wcs4_journal_students_html_template_code">
+                <?php
+                wp_editor(
+                    wp_kses_stripslashes($wcs4_options['journal_students_html_template_code']),
+                    'wcs4_journal_students_html_template_code',
+                    [
+                        'wpautop' => true,
+                        'media_buttons' => false,
+                        'textarea_name' => 'wcs4_journal_students_html_template_code',
                         'textarea_rows' => 14,
                     ]
                 );
@@ -260,10 +281,17 @@
                     ) ?>
                 </div>
             </th>
-            <td data-type="wcs4_journal_html_table_columns">
-                <textarea name="wcs4_journal_html_table_columns"
+            <td data-type="wcs4_journal_teachers_html_table_columns">
+                <textarea name="wcs4_journal_teachers_html_table_columns"
                           class="widefat textarea code_editor"
-                          style="width:100%" rows="10"><?= $wcs4_options['journal_html_table_columns'] ?></textarea>
+                          style="width:100%"
+                          rows="10"><?= $wcs4_options['journal_teachers_html_table_columns'] ?></textarea>
+            </td>
+            <td data-type="wcs4_journal_students_html_table_columns">
+                <textarea name="wcs4_journal_students_html_table_columns"
+                          class="widefat textarea code_editor"
+                          style="width:100%"
+                          rows="10"><?= $wcs4_options['journal_students_html_table_columns'] ?></textarea>
             </td>
         </tr>
         <tr>
@@ -271,11 +299,18 @@
                 <?= _x('CSS code', 'options general settings', 'wcs4') ?>
             </th>
             <td>
-            <textarea name="wcs4_journal_html_template_style"
-                      class="widefat textarea code_editor"
-                      style="width:100%" rows="5"><?= wp_unslash(
-                    $wcs4_options['journal_html_template_style']
-                ) ?></textarea>
+                <textarea name="wcs4_journal_teachers_html_template_style"
+                          class="widefat textarea code_editor"
+                          style="width:100%" rows="5"><?= wp_unslash(
+                        $wcs4_options['journal_teachers_html_template_style']
+                    ) ?></textarea>
+            </td>
+            <td>
+                <textarea name="wcs4_journal_students_html_template_style"
+                          class="widefat textarea code_editor"
+                          style="width:100%" rows="5"><?= wp_unslash(
+                        $wcs4_options['journal_students_html_template_style']
+                    ) ?></textarea>
             </td>
         </tr>
         </tbody>

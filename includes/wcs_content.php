@@ -327,9 +327,9 @@ add_filter('single_template', static function ($single) {
             && current_user_can(WCS4_JOURNAL_EXPORT_CAPABILITY)) {
             Journal::callback_of_export_csv_page();
         }
-        if ('html' === $_GET['format'] && 'yes' === $wcs4_settings[$post_type_key . '_journal_download_html']
+        if ('html' === $_GET['format'] && 'yes' === $wcs4_settings[$post_type_key . '_journal_teachers_download_html']
             && current_user_can(WCS4_JOURNAL_EXPORT_CAPABILITY)) {
-            Journal::callback_of_export_html_complex_page();
+            Journal::callback_of_export_teachers_html_page();
         }
     }
     return $single;
