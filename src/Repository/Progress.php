@@ -121,6 +121,7 @@ class Progress
                 'value' => $teacher,
                 'searchById' => "{$table}.id IN (SELECT id FROM {$table_teacher} WHERE teacher_id = %s)"
             ],
+            ['prefix' => 'stu', 'value' => $student, 'searchById' => "stu.ID = %s", 'strict' => true],
             ['prefix' => 'stu', 'value' => $student, 'searchById' => "stu.ID = %s"],
         ];
 
