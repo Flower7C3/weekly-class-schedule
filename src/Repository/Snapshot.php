@@ -14,7 +14,7 @@ class Snapshot
     public static function create_db_tables(): void
     {
         $table_snapshots = self::get_snapshot_table_name();
-        $sql_snapshots = "CREATE TABLE `$table_snapshots` (
+        $sql_snapshots = "CREATE TABLE IF NOT EXISTS `$table_snapshots` (
             `id` int(11) NOT NULL,
             `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
             `created_by` int(11) NOT NULL,

@@ -480,7 +480,6 @@ class Journal
                 Journal_Item::TYPE_ABSENT_STUDENT,
             ], true)) {
                 $required['topic'] = __('Topic', 'wcs4');
-                $required['student_id'] = __('Student', 'wcs4');
             }
 
             $errors = wcs4_verify_required_fields($required);
@@ -493,7 +492,6 @@ class Journal
             $student_id = $_POST['student_id'] ?? [];
             if (!in_array($type, [
                 Journal_Item::TYPE_NORMAL,
-                Journal_Item::TYPE_ABSENT_TEACHER,
                 Journal_Item::TYPE_ABSENT_STUDENT,
             ], true)) {
                 $student_id = null;
@@ -763,7 +761,7 @@ class Journal
             $db_result = $wpdb->delete($table, array('id' => $row_id), array('%d'));
             $db_result_teacher = $wpdb->delete($table_teacher, array('id' => $row_id), array('%d'));
             $db_result_student = $wpdb->delete($table_student, array('id' => $row_id), array('%d'));
-            if (0 === $db_result || 0 === $db_result_teacher || 0 === $db_result_student) {
+            if (0 === $db_result || 0 === $db_result_teacher /*|| 0 === $db_result_student*/) {
                 $response['response'] = __('Failed to delete entry', 'wcs4');
                 $status = \WP_Http::BAD_REQUEST;
             } else {

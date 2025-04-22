@@ -13,12 +13,12 @@ if (null !== $item->getUpdatedAt() && $item->getUpdatedAt()->format('Y-m-d H:i:s
         $item->getUpdatedAt()->format('Y-m-d H:i:s'),
         $item->getUpdatedBy()?->display_name ?: 'nn'
     ) ?>">
-        <i class="fa-regular fa-calendar-check"></i>
+        <i class="fa fa-regular fa-calendar-check"></i>
         <?= $item->getUpdatedAt()->format('Y-m-d H:i:s') ?>
         <?php
         if (!empty($item->getUpdatedBy()?->display_name)): ?>
             <small>
-            <i class="fa-regular fa-user"></i>
+            <i class="fa fa-regular fa-user"></i>
             <?= $item->getUpdatedBy()?->display_name ?>
         </small>
         <?php
@@ -31,12 +31,12 @@ else: ?>
         $item->getCreatedAt()->format('Y-m-d H:i:s'),
         $item->getCreatedBy()?->display_name ?: 'nn'
     ) ?>">
-        <i class="fa-regular fa-calendar-plus"></i>
+        <i class="fa fa-regular fa-calendar-plus"></i>
         <?= $item->getCreatedAt()->format('Y-m-d H:i:s') ?>
         <?php
         if (!empty($item->getCreatedBy()?->display_name)): ?>
             <small>
-              <i class="fa-regular fa-user"></i>
+              <i class="fa fa-regular fa-user"></i>
       <?= $item->getCreatedBy()?->display_name ?>
         </small>
         <?php

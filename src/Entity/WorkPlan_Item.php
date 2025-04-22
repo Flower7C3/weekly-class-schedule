@@ -166,8 +166,8 @@ class WorkPlan_Item
     public static function typeIcon(string $type): string
     {
         return match ($type) {
-            self::TYPE_PARTIAL => 'fa-fw fa-solid fa-calendar-day',
-            self::TYPE_CUMULATIVE => 'fa-fw fa-regular fa-calendar',
+            self::TYPE_PARTIAL => 'fa fa-fw fa-solid fa-calendar-day',
+            self::TYPE_CUMULATIVE => 'fa fa-fw fa-regular fa-calendar',
             default => '',
         };
     }

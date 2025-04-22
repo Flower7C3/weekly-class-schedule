@@ -9,7 +9,7 @@ use WCS4\Controller\Journal;
 use WCS4\Controller\Schedule;
 use WCS4\Controller\Settings;
 
-const WCS_POST_ACCESS_COOKIE_NAME = 'wp-postpass_' . COOKIEHASH;
+const WCS_POST_ACCESS_COOKIE_NAME = 'wp-postpass_';// . COOKIEHASH;
 const WCS_SESSION_CHECK_POST = 'check-post';
 const WCS_SESSION_SATISFY_POST = 'satisfy-post';
 

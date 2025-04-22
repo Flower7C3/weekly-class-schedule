@@ -234,7 +234,7 @@ class Output
                 '{edit button}',
                 self::editable_on_front($item)
                     ? '<a href="#" data-id="' . $item->getId() . '" class="wcs4-edit-button">'
-                    . '<i class="fa-regular fa-pen-to-square"></i>'
+                    . '<i class="fa fa-regular fa-pen-to-square"></i>'
                     . __('Edit', 'wcs4')
                     . '</a>'
                     : ''

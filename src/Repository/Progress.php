@@ -201,7 +201,7 @@ class Progress
         $table_progress_subject = self::get_progress_subject_table_name();
         $table_progress_teacher = self::get_progress_teacher_table_name();
 
-        $sql_progress = "CREATE TABLE `$table_progress` (
+        $sql_progress = "CREATE TABLE IF NOT EXISTS `$table_progress` (
             `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
             `subject_id` int(20) unsigned NOT NULL,
             `student_id` int(20) unsigned NOT NULL,
@@ -217,11 +217,11 @@ class Progress
             `updated_by` INT NULL,
             PRIMARY KEY (`id`)
         )";
-        $sql_progress_subject = "CREATE TABLE `$table_progress_subject` (
+        $sql_progress_subject = "CREATE TABLE IF NOT EXISTS `$table_progress_subject` (
             `id` int(11) unsigned NOT NULL,
             `subject_id` int(20) unsigned NOT NULL
         )";
-        $sql_progress_teacher = "CREATE TABLE `$table_progress_teacher` (
+        $sql_progress_teacher = "CREATE TABLE IF NOT EXISTS `$table_progress_teacher` (
             `id` int(11) unsigned NOT NULL,
             `teacher_id` int(20) unsigned NOT NULL
         )";

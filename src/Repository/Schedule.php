@@ -16,7 +16,7 @@ class Schedule
         $table_schedule = self::get_schedule_table_name();
         $table_schedule_teacher = self::get_schedule_teacher_table_name();
         $table_schedule_student = self::get_schedule_student_table_name();
-        $sql_schedule = "CREATE TABLE `$table_schedule` (
+        $sql_schedule = "CREATE TABLE IF NOT EXISTS `$table_schedule` (
             `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
             `subject_id` int(20) unsigned NOT NULL,
             `classroom_id` int(20) unsigned NOT NULL,
@@ -33,11 +33,11 @@ class Schedule
             `updated_by` INT NULL,
             PRIMARY KEY (`id`)
         )";
-        $sql_schedule_teacher = "CREATE TABLE `$table_schedule_teacher` (
+        $sql_schedule_teacher = "CREATE TABLE IF NOT EXISTS `$table_schedule_teacher` (
             `id` int(11) unsigned NOT NULL,
             `teacher_id` int(20) unsigned NOT NULL
         )";
-        $sql_schedule_student = "CREATE TABLE `$table_schedule_student` (
+        $sql_schedule_student = "CREATE TABLE IF NOT EXISTS `$table_schedule_student` (
             `id` int(11) unsigned NOT NULL,
             `student_id` int(20) unsigned NOT NULL
         )";

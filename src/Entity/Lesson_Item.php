@@ -84,8 +84,8 @@ class Lesson_Item
     public static function collisionDetectionIcon(bool $collisionDetection): string
     {
         return match ($collisionDetection) {
-            true => 'fa-fw fa-solid fa-shield',
-            false => 'fa-fw fa-solid fa-unlock',
+            true => 'fa fa-fw fa-solid fa-shield',
+            false => 'fa fa-fw fa-solid fa-unlock',
         };
     }
 
@@ -100,8 +100,8 @@ class Lesson_Item
     public static function visibilityIcon(bool $visible): string
     {
         return match ($visible) {
-            true => 'fa-fw fa-solid fa-eye',
-            false => 'fa-fw fa-solid fa-eye-slash',
+            true => 'fa fa-fw fa-solid fa-eye',
+            false => 'fa fa-fw fa-solid fa-eye-slash',
         };
     }
 

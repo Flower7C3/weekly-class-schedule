@@ -207,7 +207,7 @@ class Journal
         $table_journal_teacher = self::get_journal_teacher_table_name();
         $table_journal_student = self::get_journal_student_table_name();
 
-        $sql_journal = "CREATE TABLE `$table_journal` (
+        $sql_journal = "CREATE TABLE IF NOT EXISTS `$table_journal` (
             `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
             `subject_id` int(20) unsigned NOT NULL,
             `date` date NOT NULL,
@@ -222,11 +222,11 @@ class Journal
             `updated_by` INT NULL,
             PRIMARY KEY (`id`)
         )";
-        $sql_journal_teacher = "CREATE TABLE `$table_journal_teacher` (
+        $sql_journal_teacher = "CREATE TABLE IF NOT EXISTS `$table_journal_teacher` (
             `id` int(11) unsigned NOT NULL,
             `teacher_id` int(20) unsigned NOT NULL
         )";
-        $sql_journal_student = "CREATE TABLE `$table_journal_student` (
+        $sql_journal_student = "CREATE TABLE IF NOT EXISTS `$table_journal_student` (
             `id` int(11) unsigned NOT NULL,
             `student_id` int(20) unsigned NOT NULL
         )";

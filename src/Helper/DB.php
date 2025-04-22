@@ -52,9 +52,9 @@ class DB
     }
 
     /**
-     * Creates the required WCS4 db tables.
+     * Install all the data for wcs4
      */
-    private static function create_db_tables(): void
+    public static function create_schema(): void
     {
         require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
         Schedule::create_db_tables();
@@ -63,16 +63,6 @@ class DB
         Progress::create_db_tables();
         Snapshot::create_db_tables();
         add_option('wcs4_db_version', WCS4_DB_VERSION);
-    }
-
-    /**
-     * Install all the data for wcs4
-     */
-    public static function create_schema(): void
-    {
-        add_option('wcs4_version', WCS4_VERSION);
-        do_action('wcs4_default_settings');
-        self::create_db_tables();
     }
 
     /**

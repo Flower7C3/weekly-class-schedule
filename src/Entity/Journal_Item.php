@@ -103,15 +103,15 @@ class Journal_Item
     public static function typeIcon(string $type): string
     {
         return match ($type) {
-            self::TYPE_NORMAL => 'fa-fw fa-regular fa-clock',
-            self::TYPE_ABSENT_TEACHER => 'fa-fw fa-solid fa-user-slash',
-            self::TYPE_ABSENT_TEACHER_FREE_VACATION => 'fa-fw fa-solid fa-umbrella-beach',
-            self::TYPE_ABSENT_TEACHER_PAID_VACATION => 'fa-fw fa-solid fa-umbrella-beach',
-            self::TYPE_ABSENT_TEACHER_SICK_CHILDCARE => 'fa-fw fa-solid fa-hand-holding-medical',
-            self::TYPE_ABSENT_TEACHER_HEALTHY_CHILDCARE => 'fa-fw fa-solid fa-hands-holding-child',
-            self::TYPE_ABSENT_TEACHER_SICK_LEAVE => 'fa-fw fa-solid fa-hospital-user',
-            self::TYPE_ABSENT_STUDENT => 'fa-fw fa-solid fa-users-slash',
-            self::TYPE_TEACHER_OFFICE_WORKS => 'fa-fw fa-solid fa-feather',
+            self::TYPE_NORMAL => 'fa fa-fw fa-regular fa-clock',
+            self::TYPE_ABSENT_TEACHER => 'fa fa-fw fa-solid fa-user-slash',
+            self::TYPE_ABSENT_TEACHER_FREE_VACATION => 'fa fa-fw fa-solid fa-umbrella-beach',
+            self::TYPE_ABSENT_TEACHER_PAID_VACATION => 'fa fa-fw fa-solid fa-umbrella-beach',
+            self::TYPE_ABSENT_TEACHER_SICK_CHILDCARE => 'fa fa-fw fa-solid fa-hand-holding-medical',
+            self::TYPE_ABSENT_TEACHER_HEALTHY_CHILDCARE => 'fa fa-fw fa-solid fa-hands-holding-child',
+            self::TYPE_ABSENT_TEACHER_SICK_LEAVE => 'fa fa-fw fa-solid fa-hospital-user',
+            self::TYPE_ABSENT_STUDENT => 'fa fa-fw fa-solid fa-users-slash',
+            self::TYPE_TEACHER_OFFICE_WORKS => 'fa fa-fw fa-solid fa-feather',
             default => '',
         };
     }

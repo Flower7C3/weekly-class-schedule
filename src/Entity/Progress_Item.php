@@ -138,8 +138,8 @@ class Progress_Item
     public static function typeIcon(string $type): string
     {
         return match ($type) {
-            self::TYPE_PARTIAL => 'fa-fw fa-solid fa-calendar-day',
-            self::TYPE_PERIODIC => 'fa-fw fa-solid fa-calendar-week',
+            self::TYPE_PARTIAL => 'fa fa-fw fa-solid fa-calendar-day',
+            self::TYPE_PERIODIC => 'fa fa-fw fa-solid fa-calendar-week',
             default => '',
         };
     }

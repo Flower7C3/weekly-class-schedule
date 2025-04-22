@@ -818,11 +818,11 @@ class Schedule
             <?php
         }
         echo '</style>';
-        $output = '<a href="javascript://void()" class="btn btn-skin inverted fa-solid fa-maximize toggle" title="' . __(
+        $output = '<a href="javascript://void()" class="btn btn-skin inverted fa fa-solid fa-maximize toggle" title="' . __(
                 'Toggle full screen',
                 'wcs4'
             ) . '"></a> ';
-        $output .= '<a href="javascript://void()" class="btn btn-skin inverted fa-solid fa-download download" title="' . __(
+        $output .= '<a href="javascript://void()" class="btn btn-skin inverted fa fa-solid fa-download download" title="' . __(
                 'Download PNG',
                 'wcs4'
             ) . '"></a>';

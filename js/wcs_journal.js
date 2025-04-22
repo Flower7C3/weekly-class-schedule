@@ -109,7 +109,7 @@
         if (typeof type === 'undefined' || '' === type) {
             return;
         }
-        if (type.startsWith('type.absent_teacher.') || type === 'type.teacher_office_works') {
+        if (type.startsWith('type.absent_teacher.') || type === 'type.absent_teacher' || type === 'type.teacher_office_works') {
             $('#wcs4_journal_student').closest('fieldset').hide();
         } else {
             $('#wcs4_journal_student').closest('fieldset').show();

@@ -16,7 +16,7 @@ class WorkPlan
         $table_work_plan = self::get_work_plan_table_name();
         $table_work_plan_subject = self::get_work_plan_subject_table_name();
         $table_work_plan_teacher = self::get_work_plan_teacher_table_name();
-        $sql_work_plan = "CREATE TABLE `$table_work_plan` (
+        $sql_work_plan = "CREATE TABLE IF NOT EXISTS `$table_work_plan` (
             `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
             `subject_id` int(20) unsigned NOT NULL,
             `student_id` int(20) unsigned NOT NULL,
@@ -31,11 +31,11 @@ class WorkPlan
             `updated_by` INT NULL,
             PRIMARY KEY (`id`)
         )";
-        $sql_work_plan_subject = "CREATE TABLE `$table_work_plan_subject` (
+        $sql_work_plan_subject = "CREATE TABLE IF NOT EXISTS `$table_work_plan_subject` (
             `id` int(11) unsigned NOT NULL,
             `subject_id` int(20) unsigned NOT NULL
         )";
-        $sql_work_plan_teacher = "CREATE TABLE `$table_work_plan_teacher` (
+        $sql_work_plan_teacher = "CREATE TABLE IF NOT EXISTS `$table_work_plan_teacher` (
             `id` int(11) unsigned NOT NULL,
             `teacher_id` int(20) unsigned NOT NULL
         )";

@@ -179,6 +179,15 @@ class Settings
     {
         self::set_default_settings();
         $settings = get_option('wcs4_settings');
+            $settings = html_entity_decode($settings, ENT_QUOTES, 'UTF-8');
+
+        //if($_SERVER['REMOTE_ADDR'] === '31.0.79.3') {
+        //    error_reporting(E_ALL);
+        //    ini_set('display_errors', 1);
+        //    echo $settings;
+        //    dd(unserialize($settings, ['allowed_classes'=>true]));
+        //}
+
         return unserialize($settings);
     }
 
