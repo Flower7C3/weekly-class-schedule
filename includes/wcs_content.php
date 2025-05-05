@@ -9,7 +9,6 @@ use WCS4\Controller\Journal;
 use WCS4\Controller\Schedule;
 use WCS4\Controller\Settings;
 
-const WCS_POST_ACCESS_COOKIE_NAME = 'wp-postpass_';// . COOKIEHASH;
 const WCS_SESSION_CHECK_POST = 'check-post';
 const WCS_SESSION_SATISFY_POST = 'satisfy-post';
 
@@ -46,7 +45,7 @@ add_filter('post_password_required', static function ($required, $post) {
      * then set satisfy-post session variable
      * and remove check-post session variable
      */
-    if (array_key_exists(WCS_POST_ACCESS_COOKIE_NAME, $_COOKIE)
+    if (array_key_exists('wp-postpass_' . COOKIEHASH, $_COOKIE)
         && isset($_SESSION[WCS_SESSION_CHECK_POST])
         && $_SESSION[WCS_SESSION_CHECK_POST]->post_type === $post->post_type
         && $_SESSION[WCS_SESSION_CHECK_POST]->ID === $post->ID
@@ -62,7 +61,7 @@ add_filter('post_password_required', static function ($required, $post) {
      * and type match to allow the list,
      * then do not require a password.
      */
-    if (array_key_exists(WCS_POST_ACCESS_COOKIE_NAME, $_COOKIE)
+    if (array_key_exists('wp-postpass_' . COOKIEHASH, $_COOKIE)
         && isset($_SESSION[WCS_SESSION_SATISFY_POST])
         && in_array($_SESSION[WCS_SESSION_SATISFY_POST]->post_type, get_wcs_post_pass_satisfy_any(), true)) {
         return false;
@@ -94,7 +93,7 @@ add_filter('the_password_form', static function ($form) {
     return $form;
 });
 add_filter('__before_page_wrapper', static function () {
-    if (array_key_exists(WCS_POST_ACCESS_COOKIE_NAME, $_COOKIE)) {
+    if (array_key_exists('wp-postpass_' . COOKIEHASH, $_COOKIE)) {
         printf(
             '<div><p class="text-right">%s</p></div>',
             implode(' ', [
@@ -120,7 +119,7 @@ add_filter('the_content', static function ($content) {
     $post_type = get_post_type();
     if (array_key_exists($post_type, WCS4_POST_TYPES_WHITELIST) && is_single()) {
         if (isset($_GET['logout'])) {
-            setcookie(WCS_POST_ACCESS_COOKIE_NAME, '', 1, COOKIEPATH, COOKIE_DOMAIN, true);
+            setcookie('wp-postpass_' . COOKIEHASH, '', 1, COOKIEPATH, COOKIE_DOMAIN, true);
             unset($_SESSION[WCS_SESSION_SATISFY_POST], $_SESSION[WCS_SESSION_CHECK_POST]);
             wp_safe_redirect(wp_get_referer());
             exit;

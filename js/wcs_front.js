@@ -9,13 +9,13 @@
             $(this).closest('.form-invalid').find('.error').remove();
         });
         $('.wcs4_schedule_wrapper .toggle').on('click', function () {
-            if (document.fullscreenElement) {
-                $('.toggle').removeClass('fa-minimize').addClass('fa-maximize')
-                document.exitFullscreen();
-            } else {
+            // if (document.fullscreenElement) {
+            //     $('.toggle').removeClass('fa-window-minimize').addClass('fa-window-maximize')
+            //     document.exitFullscreen();
+            // } else {
                 $('.wcs4_schedule_grid').get(0).requestFullscreen();
-                $('.toggle').removeClass('fa-maximize').addClass('fa-minimize')
-            }
+                // $('.toggle').removeClass('fa-window-maximize').addClass('fa-window-minimize')
+            // }
         });
 
         html2canvas(document.querySelector(".wcs4_schedule_grid")).then((canvas) => {

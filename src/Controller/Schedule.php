@@ -818,7 +818,7 @@ class Schedule
             <?php
         }
         echo '</style>';
-        $output = '<a href="javascript://void()" class="btn btn-skin inverted fa fa-solid fa-maximize toggle" title="' . __(
+        $output = '<a href="javascript://void()" class="btn btn-skin inverted fa fa-solid fa-window-maximize toggle" title="' . __(
                 'Toggle full screen',
                 'wcs4'
             ) . '"></a> ';

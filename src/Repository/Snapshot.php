@@ -15,7 +15,7 @@ class Snapshot
     {
         $table_snapshots = self::get_snapshot_table_name();
         $sql_snapshots = "CREATE TABLE IF NOT EXISTS `$table_snapshots` (
-            `id` int(11) NOT NULL,
+            `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
             `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
             `created_by` int(11) NOT NULL,
             `updated_at` datetime DEFAULT NULL,
