@@ -38,9 +38,10 @@ add_filter('post_password_required', static function ($required, $post) {
         unset($_SESSION[WCS_SESSION_SATISFY_POST], $_SESSION[WCS_SESSION_CHECK_POST]);
         return false;
     }
+
     /**
-     * If access cookie exists,
-     * and check-post session variable exists,
+     * If the access cookie exists,
+     * and the check-post session variable exists,
      * and check-post session variable is for current page
      * then set satisfy-post session variable
      * and remove check-post session variable
@@ -95,7 +96,7 @@ add_filter('the_password_form', static function ($form) {
 add_filter('__before_page_wrapper', static function () {
     if (array_key_exists('wp-postpass_' . COOKIEHASH, $_COOKIE)) {
         printf(
-            '<div><p class="text-right">%s</p></div>',
+            '<div class="container-fluid"><div class="row"><div class="col-12"><div class="alignright">%s</div></div></div></div>',
             implode(' ', [
                 (isset($_SESSION[WCS_SESSION_SATISFY_POST])
                     ? sprintf(
@@ -114,16 +115,21 @@ add_filter('__before_page_wrapper', static function () {
             ])
         );
     }
-}, 10, 2);
+}, 1,0);
+
+add_action('template_redirect', static function () {
+    $post_type = get_post_type();
+    if (array_key_exists($post_type, WCS4_POST_TYPES_WHITELIST) && is_single() && isset($_GET['logout'])) {
+        unset($_COOKIE['wp-postpass_' . COOKIEHASH], $_SESSION[WCS_SESSION_SATISFY_POST], $_SESSION[WCS_SESSION_CHECK_POST]);
+        setcookie('wp-postpass_' . COOKIEHASH, '', -1, COOKIEPATH, COOKIE_DOMAIN, true);
+        wp_safe_redirect(wp_get_referer());
+        exit;
+    }
+});
+
 add_filter('the_content', static function ($content) {
     $post_type = get_post_type();
     if (array_key_exists($post_type, WCS4_POST_TYPES_WHITELIST) && is_single()) {
-        if (isset($_GET['logout'])) {
-            setcookie('wp-postpass_' . COOKIEHASH, '', 1, COOKIEPATH, COOKIE_DOMAIN, true);
-            unset($_SESSION[WCS_SESSION_SATISFY_POST], $_SESSION[WCS_SESSION_CHECK_POST]);
-            wp_safe_redirect(wp_get_referer());
-            exit;
-        }
         $post_id = get_the_id();
         if (!post_password_required($post_id)) {
             $wcs4_settings = Settings::load_settings();
