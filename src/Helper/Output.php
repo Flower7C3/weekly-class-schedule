@@ -256,7 +256,6 @@ class Output
                 '{updated at}',
                 '{updated at date}',
                 '{updated by}',
-                '{edit button}',
             ], [
                 $item->getId(),
                 (static function () use ($item) {

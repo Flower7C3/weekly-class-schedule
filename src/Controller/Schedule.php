@@ -773,49 +773,16 @@ class Schedule
             $weekdayColumns = empty($weekMinutes[$dayIndex]) ? 1 : max($weekMinutes[$dayIndex]);
             $startCol = $endCol;
             $endCol = $startCol + $weekdayColumns;
-            ?>
-            #<?php
-            echo $schedule_key; ?> .wcs4-grid-weekday-<?php
-            echo $dayIndex ?>{
-            grid-column: <?php
-            echo $startCol; ?> / <?php
-            echo $endCol ?>;
+            printf("#%s .wcs4-grid-weekday-%d {grid-column: %d/%d}\n", $schedule_key, $dayIndex, $startCol, $endCol);
+            for ($position = 0; $position < $weekdayColumns; $position++) {
+                printf("#%s .wcs4-grid-weekday-%d-%d {grid-column: %d}\n", $schedule_key, $dayIndex,$position, $startCol+$position);
             }
-            <?php
-            for ($position = 0; $position < $weekdayColumns; $position++) { ?>
-                #<?php
-                echo $schedule_key; ?> .wcs4-grid-weekday-<?php
-                echo $dayIndex ?>-<?php
-                echo $position; ?>{
-                grid-column: <?php
-                echo $startCol + $position; ?>;
-                }
-                <?php
-            } ?>
-            <?php
         }
         ksort($hours);
         foreach (array_keys($hours) as $index => $hourKey) {
-            ?>
-            #<?php
-            echo $schedule_key; ?> .wcs4-grid-hour-<?php
-            echo $hourKey ?> {
-            grid-row: <?php
-            echo($index + 2) ?>;
-            }
-            #<?php
-            echo $schedule_key; ?> .wcs4-lesson-hour-from-<?php
-            echo $hourKey ?> {
-            grid-row-start: <?php
-            echo($index + 2) ?>;
-            }
-            #<?php
-            echo $schedule_key; ?> .wcs4-lesson-hour-to-<?php
-            echo $hourKey ?> {
-            grid-row-end: <?php
-            echo($index + 2) ?>;
-            }
-            <?php
+            printf("#%s .wcs4-grid-hour-%s {grid-row: %d}\n", $schedule_key, $hourKey, $index + 2);
+            printf("#%s .wcs4-lesson-hour-from-%s {grid-row: %d}\n", $schedule_key, $hourKey, $index + 2);
+            printf("#%s .wcs4-lesson-hour-to-%s {grid-row: %d}\n", $schedule_key, $hourKey, $index + 2);
         }
         echo '</style>';
         $output = '<a href="javascript://void()" class="btn btn-skin inverted fa fa-solid fa-window-maximize toggle" title="' . __(

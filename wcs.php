@@ -38,6 +38,17 @@ if (APP_DEVEL) {
     define('WCS4_VERSION', '4.58' . time());
 }
 
+
+//if (in_array($_SERVER['REMOTE_ADDR'], ['185.157.14.77', '188.68.229.109'], true)) {
+//    dd(__LINE__);
+//}
+//if($_SERVER['REMOTE_ADDR'] === '185.157.14.77') {
+//    error_reporting(E_ALL);
+//    ini_set('display_errors', 1);
+//    echo $settings;
+//    dd(unserialize($settings, ['allowed_classes'=>true]));
+//}
+
 define('WCS4_REQUIRED_WP_VERSION', '4.0');
 
 if (!defined('WCS4_PLUGIN_BASENAME')) {

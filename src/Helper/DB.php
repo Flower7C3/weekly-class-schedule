@@ -257,11 +257,11 @@ class DB
         ];
         foreach ($summary as $filter) {
             $groupKey = $filter->types['group'];
-            $groupKeyId = "${groupKey}_id";
-            $groupKeyName = "${groupKey}_name";
+            $groupKeyId = "{$groupKey}_id";
+            $groupKeyName = "{$groupKey}_name";
             $rowKey = $filter->types['row'];
-            $rowKeyId = "${rowKey}_id";
-            $rowKeyName = "${rowKey}_name";
+            $rowKeyId = "{$rowKey}_id";
+            $rowKeyName = "{$rowKey}_name";
             $orderBy = $groupKeyName . ', ' . $rowKeyName;
             $results = $wpdb->get_results(
                 $wpdb->prepare($query_str . " GROUP BY $groupBy ORDER BY $orderBy", $queryArr)

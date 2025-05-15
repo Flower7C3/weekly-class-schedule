@@ -115,7 +115,7 @@ add_filter('__before_page_wrapper', static function () {
             ])
         );
     }
-}, 1,0);
+}, 1, 0);
 
 add_action('template_redirect', static function () {
     $post_type = get_post_type();
