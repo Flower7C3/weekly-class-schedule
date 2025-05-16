@@ -32,7 +32,8 @@ add_action('wp_ajax_wcs_get_journals_html', [Journal::class, 'get_ajax_html']);
 add_action('wp_ajax_wcs_download_journals_csv', [Journal::class, 'callback_of_export_csv_page']);
 add_action('wp_ajax_wcs_download_journals_teachers_html', [Journal::class, 'callback_of_export_teachers_html_page']);
 add_action('wp_ajax_wcs_download_journals_students_html', [Journal::class, 'callback_of_export_students_html_page']);
-add_action('wp_ajax_wcs_download_journals_html_simple', [Journal::class, 'callback_of_export_html_simple_page']);
+add_action('wp_ajax_wcs_download_journals_teachers_simple_html', [Journal::class, 'callback_of_export_teachers_simple_html_page']);
+add_action('wp_ajax_wcs_download_journals_students_simple_html', [Journal::class, 'callback_of_export_students_simple_html_page']);
 
 add_action('wp_ajax_wcs_add_or_update_work_plan_entry', [WorkPlan::class, 'save_item']);
 add_action('wp_ajax_wcs_add_work_plan_entry', [WorkPlan::class, 'create_item']);

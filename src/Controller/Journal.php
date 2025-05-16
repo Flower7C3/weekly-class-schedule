@@ -123,10 +123,16 @@ class Journal
                 'label' => __('Download Journals as HTML for Students', 'wcs4'),
             ];
             $search['buttons'][] = [
-                'action' => 'wcs_download_journals_html_simple',
+                'action' => 'wcs_download_journals_teachers_simple_html',
                 'formtarget' => '_blank',
                 'icon' => 'dashicons dashicons-download',
-                'label' => __('Download Journals as HTML Simple', 'wcs4'),
+                'label' => __('Download Journals as HTML Simple for Teachers', 'wcs4'),
+            ];
+            $search['buttons'][] = [
+                'action' => 'wcs_download_journals_students_simple_html',
+                'formtarget' => '_blank',
+                'icon' => 'dashicons dashicons-download',
+                'label' => __('Download Journals as HTML Simple for Students', 'wcs4'),
             ];
         }
 
@@ -234,9 +240,14 @@ class Journal
         self::callback_of_export_html_page('complex', 'students');
     }
 
-    public static function callback_of_export_html_simple_page(): void
+    public static function callback_of_export_teachers_simple_html_page(): void
     {
         self::callback_of_export_html_page('simple', 'teachers');
+    }
+
+    public static function callback_of_export_students_simple_html_page(): void
+    {
+        self::callback_of_export_html_page('simple', 'students');
     }
 
     private static function callback_of_export_html_page($mode, $view): void
@@ -285,7 +296,7 @@ class Journal
 
         $wcs4_options = Settings::load_settings();
         [$thead_columns, $tbody_columns, $tfoot_columns] = Output::extract_for_table(
-            $wcs4_options['journal_' . $view . '_html_table_columns']
+            $wcs4_options['journal_' . $view . '_html_' . ('simple' === $mode ? 'simple_' : '') . 'table_columns']
         );
 
         $subject_item = '';

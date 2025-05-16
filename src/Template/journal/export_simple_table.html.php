@@ -91,24 +91,44 @@ if (false === $rowspan) {
 ?>
 <?php
 /** @var Journal_Item $item */
-foreach ($items as $item):
-    foreach ($tbody_columns as $key => $td):
-        if ('student duration detailed' === $key):
-            foreach ($studentsData as $studentId => $studentData):
+foreach ($items as $item) {
+    foreach ($tbody_columns as $key => $td) {
+        if ('student duration detailed' === $key) {
+            foreach ($studentsData as $studentId => $studentData) {
                 if (array_key_exists($studentId, $item->getStudents())) {
                     $studentsData[$studentId]['duration'] += $item->getDurationTime();
                     $studentsData[$studentId]['events']++;
+                    foreach ($typesData as $typeKey => $typeData) {
+                        if ($item->getType() === $typeKey
+                            ||
+                            str_starts_with($item->getType(), $typeKey)
+                        ) {
+                            $studentsData[$studentId]['types'][$typeKey]['duration'] += $item->getDurationTime();
+                            $studentsData[$studentId]['types'][$typeKey]['events']++;
+                        }
+                    }
                 }
-            endforeach;
-        elseif ('teacher duration detailed' === $key):
-            foreach ($teachersData as $teacherId => $teacherData):
+            }
+        }
+        if ('teacher duration detailed' === $key) {
+            foreach ($teachersData as $teacherId => $teacherData) {
                 if (array_key_exists($teacherId, $item->getTeachers())) {
                     $teachersData[$teacherId]['duration'] += $item->getDurationTime();
                     $teachersData[$teacherId]['events']++;
+                    foreach ($typesData as $typeKey => $typeData) {
+                        if ($item->getType() === $typeKey
+                            ||
+                            str_starts_with($item->getType(), $typeKey)
+                        ) {
+                            $teachersData[$teacherId]['types'][$typeKey]['duration'] += $item->getDurationTime();
+                            $teachersData[$teacherId]['types'][$typeKey]['events']++;
+                        }
+                    }
                 }
-            endforeach;
-        elseif ('type duration detailed' === $key || 'type duration simple' === $key):
-            foreach ($typesData as $typeKey => $typeData):
+            }
+        }
+        if ('type duration detailed' === $key || 'type duration simple' === $key) {
+            foreach ($typesData as $typeKey => $typeData) {
                 if (
                     ('type duration detailed' === $key && $item->getType() === $typeKey)
                     ||
@@ -117,10 +137,10 @@ foreach ($items as $item):
                     $typesData[$typeKey]['duration'] += $item->getDurationTime();
                     $typesData[$typeKey]['events']++;
                 }
-            endforeach;
-        endif;
-    endforeach;
-endforeach;
+            }
+        }
+    }
+}
 ?>
 <table>
     <?php
@@ -133,6 +153,14 @@ endforeach;
                     <?= $thead_columns[$key] ?>
                     (<?= count($studentsData) ?>)
                 </th>
+                <?php
+                foreach ($typesData as $typeKey => $typeData) {
+                    ?>
+                    <th data-key="type duration detailed">
+                        <span><?= $typeData['short_name'] ?></span>
+                    </th>
+                    <?php
+                } ?>
             </tr>
             </thead>
             <tbody>
@@ -147,6 +175,17 @@ endforeach;
                     <td data-key="<?= $key ?>" data-student-id="<?= $studentId ?>">
                         <?= Output::process_template($studentData, $th) ?>
                     </td>
+                    <?php
+                    foreach ($typesData as $typeKey => $typeData) {
+                        ?>
+                        <td>
+                            <?= $studentData['types'][$typeKey] ? Output::process_template(
+                                $studentData['types'][$typeKey],
+                                $th
+                            ) : '' ?>
+                        </td>
+                        <?php
+                    } ?>
                 </tr>
             <?php
             endforeach; ?>
@@ -159,6 +198,14 @@ endforeach;
                     <?= $thead_columns[$key] ?>
                     (<?= count($teachersData) ?>)
                 </th>
+                <?php
+                foreach ($typesData as $typeKey => $typeData) {
+                    ?>
+                    <th data-key="type duration detailed">
+                        <span><?= $typeData['short_name'] ?></span>
+                    </th>
+                    <?php
+                } ?>
             </tr>
             </thead>
             <tbody>
@@ -173,6 +220,17 @@ endforeach;
                     <td data-key="<?= $key ?>" data-teacher-id="<?= $teacherId ?>">
                         <?= Output::process_template($teacherData, $th) ?>
                     </td>
+                    <?php
+                    foreach ($typesData as $typeKey => $typeData) {
+                        ?>
+                        <td>
+                            <?= $teacherData['types'][$typeKey] ? Output::process_template(
+                                $teacherData['types'][$typeKey],
+                                $th
+                            ) : '' ?>
+                        </td>
+                        <?php
+                    } ?>
                 </tr>
             <?php
             endforeach; ?>

@@ -35,7 +35,7 @@ if (APP_DEVEL) {
     }
     define('WCS4_VERSION', '4.devel.' . time());
 } else {
-    define('WCS4_VERSION', '4.58' . time());
+    define('WCS4_VERSION', '4.59' . time());
 }
 
 

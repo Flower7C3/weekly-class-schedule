@@ -269,7 +269,7 @@
         <tr>
             <th>
                 <?= _x(
-                    'Table columns',
+                    'Detailed table columns',
                     'options general settings',
                     'wcs4'
                 ) ?>
@@ -292,6 +292,34 @@
                           class="widefat textarea code_editor"
                           style="width:100%"
                           rows="10"><?= $wcs4_options['journal_students_html_table_columns'] ?></textarea>
+            </td>
+        </tr>
+        <tr>
+            <th>
+                <?= _x(
+                    'Simple table columns',
+                    'options general settings',
+                    'wcs4'
+                ) ?>
+                <div class="wcs4-description">
+                    <?= _x(
+                        'Columns separated by new line. Values in line: <code>key, title, value</code>.',
+                        'options general settings',
+                        'wcs4'
+                    ) ?>
+                </div>
+            </th>
+            <td data-type="wcs4_journal_teachers_html_simple_table_columns">
+                <textarea name="wcs4_journal_teachers_html_simple_table_columns"
+                          class="widefat textarea code_editor"
+                          style="width:100%"
+                          rows="10"><?= $wcs4_options['journal_teachers_html_simple_table_columns'] ?></textarea>
+            </td>
+            <td data-type="wcs4_journal_students_html_simple_table_columns">
+                <textarea name="wcs4_journal_students_html_simple_table_columns"
+                          class="widefat textarea code_editor"
+                          style="width:100%"
+                          rows="10"><?= $wcs4_options['journal_students_html_simple_table_columns'] ?></textarea>
             </td>
         </tr>
         <tr>

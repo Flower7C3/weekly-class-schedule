@@ -59,9 +59,11 @@ class Settings
                     'journal_teachers_html_template_code' => 'wcs4_validate_mock',
                     'journal_teachers_html_template_style' => 'wcs4_validate_mock',
                     'journal_teachers_html_table_columns' => 'wcs4_validate_mock',
+                    'journal_teachers_html_simple_table_columns' => 'wcs4_validate_mock',
                     'journal_students_html_template_code' => 'wcs4_validate_mock',
                     'journal_students_html_template_style' => 'wcs4_validate_mock',
                     'journal_students_html_table_columns' => 'wcs4_validate_mock',
+                    'journal_students_html_simple_table_columns' => 'wcs4_validate_mock',
                     'journal_csv_table_columns' => 'wcs4_validate_mock',
                     'work_plan_view' => 'wcs4_validate_is_numeric',
                     'work_plan_view_masters' => 'wcs4_validate_is_numeric',
@@ -247,6 +249,9 @@ class Settings
                     'time, Czas trwania, {duration time} min' . PHP_EOL .
                     'topic, Temat, {topic}' . PHP_EOL .
                     'signature, Podpis, ' . PHP_EOL,
+                'teachers' => 'id, ID, {index}' . PHP_EOL .
+                    'teacher duration detailed, Pedagodzy, {duration time} min, {duration time} min = {duration hours} h {duration minutes} min / {events} wpisów' . PHP_EOL .
+                    'type duration detailed, Rodzaje, {duration time} min, {duration time} min = {duration hours} h {duration minutes} min / {events} wpisów' . PHP_EOL,
                 'journal_students_html_template_code' =>
                     '<header><h1>Journal</h1><h2>{heading}</h2></header>' .
                     '<main>{table}</main>' .
@@ -260,6 +265,9 @@ class Settings
                     'time, Czas trwania, {duration time} min' . PHP_EOL .
                     'topic, Temat, {topic}' . PHP_EOL .
                     'signature, Podpis, ' . PHP_EOL,
+                'journal_students_html_simple_table_columns' => 'id, ID, {index}' . PHP_EOL .
+                    'student duration detailed, Uczniowie, {duration time} min, {duration time} min = {duration hours} h {duration minutes} min / {events} wpisów' . PHP_EOL .
+                    'type duration simple, Rodzaje, {duration time} min, {duration time} min = {duration hours} h {duration minutes} min / {events} wpisów' . PHP_EOL,
                 'journal_csv_table_columns' => 'id, ID, {index}' . PHP_EOL .
                     'teacher, Pedagog, {teacher}' . PHP_EOL .
                     'subject, Przedmiot, {subject}' . PHP_EOL .
