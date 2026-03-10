@@ -15,12 +15,13 @@ let WCS4_ADMIN = (function ($) {
 
     let search_form_process_and_push_history_state = function ($form) {
         let state = $form.serializeArray();
-        let url = $form.attr('action') + '?';
+        let parts = [];
         let data = [];
         state.forEach(function (item) {
-            url += item.name + '=' + item.value + '&'
+            parts.push(encodeURIComponent(item.name) + '=' + encodeURIComponent(item.value));
             data[item.name] = item.value;
         });
+        let url = $form.attr('action') + (parts.length ? '?' + parts.join('&') : '');
         history.pushState(state, $('title').text(), url);
         return data;
     }

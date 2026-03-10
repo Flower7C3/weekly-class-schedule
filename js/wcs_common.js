@@ -217,8 +217,13 @@ let WCS4_LIB = (function ($) {
             // Field already exists, let's update.
             $('#wcs4-row-id').attr('value', entry.id);
         } else {
-            // Field does not exist.
-            let row_hidden_field = '<input type="hidden" id="wcs4-row-id" name="wcs4-row-id" value="' + entry.id + '">';
+            // Field does not exist (wartość escapowana, żeby uniknąć XSS przy nietypowych id).
+            let row_hidden_field = $('<input>', {
+                type: 'hidden',
+                id: 'wcs4-row-id',
+                name: 'wcs4-row-id',
+                value: entry.id
+            });
             $('.wcs4-management-form-wrapper').append(row_hidden_field);
         }
         // Add cancel editing button
@@ -298,7 +303,7 @@ let WCS4_LIB = (function ($) {
                 $text.addClass('error');
                 $text.append('<span class="dashicons dashicons-warning"></span>');
             }
-            $text.append(message).show();
+            $text.text(message).show();
             setTimeout(function () {
                 $('.wcs4-ajax-text').fadeOut('slow');
             }, 3000);
@@ -307,7 +312,7 @@ let WCS4_LIB = (function ($) {
             let $wrap = $('.form-field-' + field_id + '-wrap');
             $wrap.addClass('form-invalid');
             for (let error_id in errors[field_id]) {
-                let msg = $('<div class="error">').html(errors[field_id][error_id]);
+                let msg = $('<div class="error">').text(errors[field_id][error_id]);
                 $wrap.append(msg);
             }
         }

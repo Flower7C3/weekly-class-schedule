@@ -98,10 +98,10 @@
             $form.find('[name="weekday"]').val(entry.weekday);
             $form.find('[name="start_time"]').val(entry.start_time);
             $form.find('[name="end_time"]').val(entry.end_time);
-            $form.find('[name="visibility"][value="' + ((entry.visible === '1') ? 'visible' : 'hidden') + '"]').prop('checked', true);
-            $form.find('[name="collision_detection"][value="' + ((entry.collision_detection === '1') ? 'yes' : 'no') + '"]').prop('checked', true);
+            $form.find('[name="visibility"]').val(entry.visible === '1' ? 'visible' : 'hidden');
+            $form.find('[name="collision_detection"]').val(entry.collision_detection === '1' ? 'yes' : 'no');
             $form.find('[name="notes"]').val(entry.notes);
-            $form.find('[name="type"][value="' + entry.type + '"]').prop('checked', true).change();
+            $form.find('[name="type"]').val(entry.type).change();
         } else {
             WCS4_LIB.show_message(WCS4_AJAX_OBJECT.ajax_error, 'error');
         }

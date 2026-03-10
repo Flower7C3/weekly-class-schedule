@@ -70,7 +70,7 @@
         let $form = $('#wcs4-journal-form');
         if (entry.hasOwnProperty('id')) {
             // We got an entry.
-            $form.find('[name="type"] [value="' + entry.type + '"]').prop('selected', true).select();
+            $form.find('[name="type"]').val(entry.type);
             $form.find('[name="subject"]').val(entry.subject_id);
             $form.find('[name="teacher"]').val(entry.teacher_id);
             $form.find('[name="student"]').val(entry.student_id);

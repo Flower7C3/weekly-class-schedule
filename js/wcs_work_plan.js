@@ -125,7 +125,7 @@
             $form.find('[name="goals"]').val(goals);
             $form.find('[name="methods"]').val(methods);
         } else if (entry.hasOwnProperty('id')) {
-            $form.find('[name="type"][value="' + entry.type + '"]').prop('checked', true).change();
+            $form.find('[name="type"]').val(entry.type).change();
             $form.find('[name="subject"]').val(entry.subject_id);
             $form.find('[name="teacher"]').val(entry.teacher_id);
             $form.find('[name="student"]').val(entry.student_id);
