@@ -147,7 +147,7 @@ add_action('wp_ajax_wcs_clear_schedules', static function () {
             throw new AccessDeniedException();
         }
         wcs4_verify_nonce();
-        ScheduleRepository::delete_schedules();
+        ScheduleRepository::truncate();
         $response['response'] = __('Weekly Class Schedule truncated successfully.', 'wcs4');
         $status = \WP_Http::OK;
     } catch (AccessDeniedException|Exception $e) {
@@ -163,7 +163,7 @@ add_action('wp_ajax_wcs_clear_journals', static function () {
             throw new AccessDeniedException();
         }
         wcs4_verify_nonce();
-        JournalRepository::delete_journals();
+        JournalRepository::truncate();
         $response['response'] = __('Weekly Class Journals truncated successfully.', 'wcs4');
         $status = \WP_Http::OK;
     } catch (AccessDeniedException|Exception $e) {
@@ -179,7 +179,7 @@ add_action('wp_ajax_wcs_clear_work_plans', static function () {
             throw new AccessDeniedException();
         }
         wcs4_verify_nonce();
-        WorkPlanRepository::delete_work_plans();
+        WorkPlanRepository::truncate();
         $response['response'] = __('WCS Work Plans truncated successfully.', 'wcs4');
         $status = \WP_Http::OK;
     } catch (AccessDeniedException|Exception $e) {
@@ -195,7 +195,7 @@ add_action('wp_ajax_wcs_clear_progresses', static function () {
             throw new AccessDeniedException();
         }
         wcs4_verify_nonce();
-        ProgressRepository::delete_progresses();
+        ProgressRepository::truncate();
         $response['response'] = __('WCS Progresses truncated successfully.', 'wcs4');
         $status = \WP_Http::OK;
     } catch (AccessDeniedException|Exception $e) {
@@ -211,7 +211,7 @@ add_action('wp_ajax_wcs_clear_snapshots', static function () {
             throw new AccessDeniedException();
         }
         wcs4_verify_nonce();
-        SnapshotRepository::delete_snapshots();
+        SnapshotRepository::truncate();
         $response['response'] = __('WCS Snapshots truncated successfully.', 'wcs4');
         $status = \WP_Http::OK;
     } catch (AccessDeniedException|Exception $e) {

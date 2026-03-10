@@ -1,16 +1,16 @@
 <?php
 
-
 namespace WCS4\Entity;
 
 use DateTimeInterface;
+use WCS4\Entity\Contract\EntityWithIdInterface;
 use WCS4\Entity\Trait\Blameable_Trait;
 use WCS4\Entity\Trait\Student_Trait;
 use WCS4\Entity\Trait\Subjects_Trait;
 use WCS4\Entity\Trait\Teachers_Trait;
 use WCS4\Entity\Trait\Timestampable_Trait;
 
-class WorkPlan_Item
+class WorkPlan_Item implements EntityWithIdInterface
 {
     public const TYPE_PARTIAL = 'type.partial';
     public const TYPE_CUMULATIVE = 'type.cumulative';

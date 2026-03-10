@@ -1,12 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
 namespace WCS4\Repository;
 
 use WCS4\Entity\Snapshot_Item;
 use WCS4\Helper\DB;
+use WCS4\Repository\Contract\SchemaCreatableInterface;
+use WCS4\Repository\Contract\TruncatableRepositoryInterface;
+use WCS4\Repository\Trait\TableNameTrait;
 
-class Snapshot
+class Snapshot implements SchemaCreatableInterface, TruncatableRepositoryInterface
 {
+    use TableNameTrait;
 
     /**
      * @return void
@@ -35,11 +41,10 @@ class Snapshot
 
     public static function get_snapshot_table_name(): string
     {
-        global $wpdb;
-        return $wpdb->prefix . 'wcs4_snapshot';
+        return self::tableName('snapshot');
     }
 
-    public static function delete_snapshots(): void
+    public static function truncate(): void
     {
         global $wpdb;
         $wpdb->query('TRUNCATE ' . self::get_snapshot_table_name());

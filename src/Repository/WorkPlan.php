@@ -1,12 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
 namespace WCS4\Repository;
 
 use WCS4\Entity\WorkPlan_Item;
 use WCS4\Helper\DB;
+use WCS4\Repository\Contract\SchemaCreatableInterface;
+use WCS4\Repository\Contract\TruncatableRepositoryInterface;
+use WCS4\Repository\Trait\TableNameTrait;
 
-class WorkPlan
+class WorkPlan implements SchemaCreatableInterface, TruncatableRepositoryInterface
 {
+    use TableNameTrait;
 
     /**
      * @return void
@@ -46,7 +52,7 @@ class WorkPlan
         dbDelta($sql_work_plan_teacher);
     }
 
-    public static function delete_work_plans(): void
+    public static function truncate(): void
     {
         global $wpdb;
         $wpdb->query('TRUNCATE ' . self::get_work_plan_subject_table_name());
@@ -56,20 +62,17 @@ class WorkPlan
 
     public static function get_work_plan_subject_table_name(): string
     {
-        global $wpdb;
-        return $wpdb->prefix . 'wcs4_work_plan_subject';
+        return self::tableName('work_plan_subject');
     }
 
     public static function get_work_plan_teacher_table_name(): string
     {
-        global $wpdb;
-        return $wpdb->prefix . 'wcs4_work_plan_teacher';
+        return self::tableName('work_plan_teacher');
     }
 
     public static function get_work_plan_table_name(): string
     {
-        global $wpdb;
-        return $wpdb->prefix . 'wcs4_work_plan';
+        return self::tableName('work_plan');
     }
 
     public static function get_item(string $row_id)

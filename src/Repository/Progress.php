@@ -1,12 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
 namespace WCS4\Repository;
 
 use WCS4\Entity\Progress_Item;
 use WCS4\Helper\DB;
+use WCS4\Repository\Contract\SchemaCreatableInterface;
+use WCS4\Repository\Contract\TruncatableRepositoryInterface;
+use WCS4\Repository\Trait\TableNameTrait;
 
-class Progress
+class Progress implements SchemaCreatableInterface, TruncatableRepositoryInterface
 {
+    use TableNameTrait;
     public static function get_item($row_id)
     {
         $items = self::query_items(
@@ -179,20 +185,17 @@ class Progress
 
     public static function get_progress_table_name(): string
     {
-        global $wpdb;
-        return $wpdb->prefix . 'wcs4_progress';
+        return self::tableName('progress');
     }
 
     public static function get_progress_teacher_table_name(): string
     {
-        global $wpdb;
-        return $wpdb->prefix . 'wcs4_progress_teacher';
+        return self::tableName('progress_teacher');
     }
 
     public static function get_progress_subject_table_name(): string
     {
-        global $wpdb;
-        return $wpdb->prefix . 'wcs4_progress_subject';
+        return self::tableName('progress_subject');
     }
 
     public static function create_db_tables(): void
@@ -228,7 +231,7 @@ class Progress
         dbDelta($sql_progress_teacher);
     }
 
-    public static function delete_progresses(): void
+    public static function truncate(): void
     {
         global $wpdb;
         $wpdb->query('TRUNCATE ' . self::get_progress_subject_table_name());

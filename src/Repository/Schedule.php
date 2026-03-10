@@ -1,12 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
 namespace WCS4\Repository;
 
 use WCS4\Entity\Lesson_Item;
 use WCS4\Helper\DB;
+use WCS4\Repository\Contract\SchemaCreatableInterface;
+use WCS4\Repository\Contract\TruncatableRepositoryInterface;
+use WCS4\Repository\Trait\TableNameTrait;
 
-class Schedule
+class Schedule implements SchemaCreatableInterface, TruncatableRepositoryInterface
 {
+    use TableNameTrait;
 
     /**
      * @return void
@@ -52,20 +58,18 @@ class Schedule
      */
     public static function get_schedule_table_name(): string
     {
-        global $wpdb;
-        return $wpdb->prefix . 'wcs4_schedule';
+        return self::tableName('schedule');
     }
 
     public static function get_schedule_student_table_name(): string
     {
-        global $wpdb;
-        return $wpdb->prefix . 'wcs4_schedule_student';
+        return self::tableName('schedule_student');
     }
 
     /**
-     * Truncate all the schedule data
+     * Truncate all the schedule data.
      */
-    public static function delete_schedules(): void
+    public static function truncate(): void
     {
         global $wpdb;
         $wpdb->query('TRUNCATE ' . self::get_schedule_teacher_table_name());
@@ -75,8 +79,7 @@ class Schedule
 
     public static function get_schedule_teacher_table_name(): string
     {
-        global $wpdb;
-        return $wpdb->prefix . 'wcs4_schedule_teacher';
+        return self::tableName('schedule_teacher');
     }
 
     public static function get_items(

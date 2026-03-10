@@ -7,6 +7,9 @@
 
 namespace WCS4\Controller;
 
+use WCS4\Controller\Contract\AjaxGetItemHandlerInterface;
+use WCS4\Controller\Contract\ManagesTemplateInterface;
+use WCS4\Controller\Trait\RendersTemplateTrait;
 use DateTimeImmutable;
 use DateTimeZone;
 use Exception;
@@ -20,9 +23,16 @@ use WCS4\Helper\DB;
 use WCS4\Helper\Output;
 use WCS4\Repository\Schedule as ScheduleRepository;
 
-class Schedule
+class Schedule implements AjaxGetItemHandlerInterface, ManagesTemplateInterface
 {
+    use RendersTemplateTrait;
+
     private const TEMPLATE_DIR = __DIR__ . '/../Template/schedule/';
+
+    public static function getTemplateDir(): string
+    {
+        return self::TEMPLATE_DIR;
+    }
 
     public static function callback_of_management_page(): void
     {
@@ -87,7 +97,7 @@ class Schedule
                 ],
             ],
         ];
-        include self::TEMPLATE_DIR . 'admin.php';
+        self::renderTemplate('admin.php', get_defined_vars());
     }
 
     public static function callback_of_calendar_page()
@@ -266,10 +276,11 @@ class Schedule
                 throw new ValidationException($errors);
             }
 
+            $row_id = 0;
             if (!empty($_POST['row_id'])) {
                 # This is an update request and not an insert.
                 $update_request = true;
-                $row_id = sanitize_text_field($_POST['row_id']);
+                $row_id = (int) $_POST['row_id'];
             }
 
             $subject_id = $_POST['subject_id'] ?? null;
@@ -324,49 +335,57 @@ class Schedule
 
             if (!empty($collisionDetection) && !empty($teacher_id) && $wcs4_settings['schedule_teacher_collision'] === 'yes') {
                 # Validate teacher collision (if applicable)
-                $schedule_teacher_collision = $wpdb->get_col(
-                    $wpdb->prepare(
-                        "
-                    SELECT id
-                    FROM $table
-                    LEFT JOIN $table_teacher USING (id)
-                    WHERE
-                          teacher_id IN (%s)
-                      AND weekday = %d
-                      AND collision_detection = 1
-                      AND %s < end_time
-                      AND %s > start_time
-                      AND id != %d
-                    ",
-                        array(implode(',', $teacher_id), $weekday, $start_time, $end_time, $row_id,)
-                    )
-                );
-                if (!empty($schedule_teacher_collision)) {
-                    $errors['teacher_id'][] = __('Teacher is not available at this time', 'wcs4');
+                $teacher_id = array_map('intval', (array) $teacher_id);
+                $teacher_id = array_filter($teacher_id);
+                if (!empty($teacher_id)) {
+                    $placeholders = implode(',', array_fill(0, count($teacher_id), '%d'));
+                    $schedule_teacher_collision = $wpdb->get_col(
+                        $wpdb->prepare(
+                            "
+                            SELECT DISTINCT s.id
+                            FROM $table s
+                            INNER JOIN $table_teacher st ON s.id = st.id
+                            WHERE st.teacher_id IN ($placeholders)
+                              AND s.weekday = %d
+                              AND s.collision_detection = 1
+                              AND %s < s.end_time
+                              AND %s > s.start_time
+                              AND s.id != %d
+                            ",
+                            array_merge($teacher_id, [$weekday, $start_time, $end_time, $row_id])
+                        )
+                    );
+                    if (!empty($schedule_teacher_collision)) {
+                        $errors['teacher_id'][] = __('Teacher is not available at this time', 'wcs4');
+                    }
                 }
             }
 
             if (!empty($collisionDetection) && !empty($student_id) && $wcs4_settings['schedule_student_collision'] === 'yes') {
                 # Validate student collision (if applicable)
-                $schedule_student_collision = $wpdb->get_col(
-                    $wpdb->prepare(
-                        "
-                        SELECT id
-                        FROM $table
-                        LEFT JOIN $table_student USING (id)
-                        WHERE
-                              student_id IN (%s)
-                          AND weekday = %d
-                          AND collision_detection = 1
-                          AND %s < end_time
-                          AND %s > start_time
-                          AND id != %d
-                    ",
-                        array(implode(',', $student_id), $weekday, $start_time, $end_time, $row_id,)
-                    )
-                );
-                if (!empty($schedule_student_collision)) {
-                    $errors['student_id'][] = __('Student is not available at this time', 'wcs4');
+                $student_id_for_collision = array_map('intval', (array) $student_id);
+                $student_id_for_collision = array_filter($student_id_for_collision);
+                if (!empty($student_id_for_collision)) {
+                    $placeholders = implode(',', array_fill(0, count($student_id_for_collision), '%d'));
+                    $schedule_student_collision = $wpdb->get_col(
+                        $wpdb->prepare(
+                            "
+                            SELECT DISTINCT s.id
+                            FROM $table s
+                            INNER JOIN $table_student ss ON s.id = ss.id
+                            WHERE ss.student_id IN ($placeholders)
+                              AND s.weekday = %d
+                              AND s.collision_detection = 1
+                              AND %s < s.end_time
+                              AND %s > s.start_time
+                              AND s.id != %d
+                            ",
+                            array_merge($student_id_for_collision, [$weekday, $start_time, $end_time, $row_id])
+                        )
+                    );
+                    if (!empty($schedule_student_collision)) {
+                        $errors['student_id'][] = __('Student is not available at this time', 'wcs4');
+                    }
                 }
             }
 

@@ -1,12 +1,12 @@
 <?php
 
-
 namespace WCS4\Entity;
 
 use WCS4\Controller\Settings;
+use WCS4\Entity\Contract\EntityWithIdInterface;
 use WP_Error;
 
-class Item
+class Item implements EntityWithIdInterface
 {
     private int $id = 0;
     private ?string $name = null;

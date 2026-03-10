@@ -9,6 +9,7 @@ use WCS4\Entity\Journal_Item;
 use WCS4\Entity\Lesson_Item;
 use WCS4\Entity\Progress_Item;
 use WCS4\Entity\WorkPlan_Item;
+use WCS4\Repository\Contract\SchemaCreatableInterface;
 use WCS4\Repository\Journal;
 use WCS4\Repository\Progress;
 use WCS4\Repository\Schedule;
@@ -52,16 +53,22 @@ class DB
     }
 
     /**
-     * Install all the data for wcs4
+     * Install all the data for wcs4 (tworzy tabele dla wszystkich repozytoriów implementujących SchemaCreatableInterface).
      */
     public static function create_schema(): void
     {
         require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
-        Schedule::create_db_tables();
-        Journal::create_db_tables();
-        WorkPlan::create_db_tables();
-        Progress::create_db_tables();
-        Snapshot::create_db_tables();
+        $repositories = [
+            Schedule::class,
+            Journal::class,
+            WorkPlan::class,
+            Progress::class,
+            Snapshot::class,
+        ];
+        foreach ($repositories as $repository) {
+            /** @var SchemaCreatableInterface $repository */
+            $repository::create_db_tables();
+        }
         add_option('wcs4_db_version', WCS4_DB_VERSION);
     }
 

@@ -8,6 +8,9 @@
 
 namespace WCS4\Controller;
 
+use WCS4\Controller\Contract\AjaxGetItemHandlerInterface;
+use WCS4\Controller\Contract\ManagesTemplateInterface;
+use WCS4\Controller\Trait\RendersTemplateTrait;
 use DateTimeImmutable;
 use DateTimeZone;
 use Exception;
@@ -22,9 +25,16 @@ use WCS4\Helper\DB;
 use WCS4\Helper\Output;
 use WCS4\Repository\Journal as JournalRepository;
 
-class Journal
+class Journal implements AjaxGetItemHandlerInterface, ManagesTemplateInterface
 {
+    use RendersTemplateTrait;
+
     private const TEMPLATE_DIR = __DIR__ . '/../Template/journal/';
+
+    public static function getTemplateDir(): string
+    {
+        return self::TEMPLATE_DIR;
+    }
 
     public static function callback_of_management_page(): void
     {
@@ -136,7 +146,7 @@ class Journal
             ];
         }
 
-        include self::TEMPLATE_DIR . 'admin.php';
+        self::renderTemplate('admin.php', get_defined_vars());
     }
 
     public static function callback_of_export_csv_page(): void
@@ -435,13 +445,13 @@ class Journal
         $where = [];
         $queryArr = [];
 
-        # Filters
+        # Filters (placeholders bez cudzysłowów – prepare() sam dodaje)
         if (!empty($date_from)) {
-            $where[] = 'date >= "%s"';
+            $where[] = 'date >= %s';
             $queryArr[] = $date_from;
         }
         if (!empty($date_upto)) {
-            $where[] = 'date <= "%s"';
+            $where[] = 'date <= %s';
             $queryArr[] = $date_upto;
         }
         if (!empty($where)) {
@@ -513,10 +523,11 @@ class Journal
             $topic = '';
             $type = sanitize_text_field($_POST['type']);
 
+            $row_id = 0;
             if (!empty($_POST['row_id'])) {
                 # This is an update request and not an insert.
                 $update_request = true;
-                $row_id = sanitize_text_field($_POST['row_id']);
+                $row_id = (int) $_POST['row_id'];
                 $item = JournalRepository::get_item($row_id);
                 if (true === $force_insert && !Output::editable_on_front($item)) {
                     throw new AccessDeniedException();
@@ -544,47 +555,55 @@ class Journal
 
             if (!empty($teacher_id) && $wcs4_settings['journal_teacher_collision'] === 'yes') {
                 # Validate teacher collision (if applicable)
-                $journal_teacher_collision = $wpdb->get_col(
-                    $wpdb->prepare(
-                        "
-                SELECT id
-                FROM $table
-                LEFT JOIN $table_teacher USING (id)
-                WHERE
-                      teacher_id IN (%s)
-                  AND date = %s
-                  AND %s < end_time
-                  AND %s > start_time
-                  AND id != %d
-                ",
-                        array(implode(',', $teacher_id), $date, $start_time, $end_time, $row_id,)
-                    )
-                );
-                if (!empty($journal_teacher_collision)) {
-                    $errors['teacher_id'][] = __('Teacher is not available at this time', 'wcs4');
+                $teacher_id = array_map('intval', (array) $teacher_id);
+                $teacher_id = array_filter($teacher_id);
+                if (!empty($teacher_id)) {
+                    $placeholders = implode(',', array_fill(0, count($teacher_id), '%d'));
+                    $journal_teacher_collision = $wpdb->get_col(
+                        $wpdb->prepare(
+                            "
+                            SELECT DISTINCT j.id
+                            FROM $table j
+                            INNER JOIN $table_teacher jt ON j.id = jt.id
+                            WHERE jt.teacher_id IN ($placeholders)
+                              AND j.date = %s
+                              AND %s < j.end_time
+                              AND %s > j.start_time
+                              AND j.id != %d
+                            ",
+                            array_merge($teacher_id, [$date, $start_time, $end_time, $row_id])
+                        )
+                    );
+                    if (!empty($journal_teacher_collision)) {
+                        $errors['teacher_id'][] = __('Teacher is not available at this time', 'wcs4');
+                    }
                 }
             }
 
             if (!empty($student_id) && $wcs4_settings['journal_student_collision'] === 'yes') {
                 # Validate student collision (if applicable)
-                $journal_student_collision = $wpdb->get_col(
-                    $wpdb->prepare(
-                        "
-                SELECT id
-                FROM $table
-                LEFT JOIN $table_student USING (id)
-                WHERE
-                      student_id IN (%s)
-                  AND date = %s
-                  AND %s < end_time
-                  AND %s > start_time
-                  AND id != %d
-                ",
-                        array(implode(',', $student_id), $date, $start_time, $end_time, $row_id,)
-                    )
-                );
-                if (!empty($journal_student_collision)) {
-                    $errors['student_id'][] = __('Student is not available at this time', 'wcs4');
+                $student_id_for_collision = array_map('intval', (array) $student_id);
+                $student_id_for_collision = array_filter($student_id_for_collision);
+                if (!empty($student_id_for_collision)) {
+                    $placeholders = implode(',', array_fill(0, count($student_id_for_collision), '%d'));
+                    $journal_student_collision = $wpdb->get_col(
+                        $wpdb->prepare(
+                            "
+                            SELECT DISTINCT j.id
+                            FROM $table j
+                            INNER JOIN $table_student js ON j.id = js.id
+                            WHERE js.student_id IN ($placeholders)
+                              AND j.date = %s
+                              AND %s < j.end_time
+                              AND %s > j.start_time
+                              AND j.id != %d
+                            ",
+                            array_merge($student_id_for_collision, [$date, $start_time, $end_time, $row_id])
+                        )
+                    );
+                    if (!empty($journal_student_collision)) {
+                        $errors['student_id'][] = __('Student is not available at this time', 'wcs4');
+                    }
                 }
             }
 

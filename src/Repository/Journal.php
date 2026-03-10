@@ -1,13 +1,19 @@
 <?php
 
+declare(strict_types=1);
+
 namespace WCS4\Repository;
 
 use DateTime;
 use WCS4\Entity\Journal_Item;
 use WCS4\Helper\DB;
+use WCS4\Repository\Contract\SchemaCreatableInterface;
+use WCS4\Repository\Contract\TruncatableRepositoryInterface;
+use WCS4\Repository\Trait\TableNameTrait;
 
-class Journal
+class Journal implements SchemaCreatableInterface, TruncatableRepositoryInterface
 {
+    use TableNameTrait;
     public static function get_item($row_id)
     {
         $items = self::query_items(
@@ -182,20 +188,17 @@ class Journal
 
     public static function get_journal_table_name(): string
     {
-        global $wpdb;
-        return $wpdb->prefix . 'wcs4_journal';
+        return self::tableName('journal');
     }
 
     public static function get_journal_student_table_name(): string
     {
-        global $wpdb;
-        return $wpdb->prefix . 'wcs4_journal_student';
+        return self::tableName('journal_student');
     }
 
     public static function get_journal_teacher_table_name(): string
     {
-        global $wpdb;
-        return $wpdb->prefix . 'wcs4_journal_teacher';
+        return self::tableName('journal_teacher');
     }
 
     /**
@@ -235,7 +238,7 @@ class Journal
         dbDelta($sql_journal_student);
     }
 
-    public static function delete_journals(): void
+    public static function truncate(): void
     {
         global $wpdb;
         $wpdb->query('TRUNCATE ' . self::get_journal_teacher_table_name());

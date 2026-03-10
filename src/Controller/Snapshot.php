@@ -2,6 +2,8 @@
 
 namespace WCS4\Controller;
 
+use WCS4\Controller\Contract\ManagesTemplateInterface;
+use WCS4\Controller\Trait\RendersTemplateTrait;
 use JetBrains\PhpStorm\NoReturn;
 use RuntimeException;
 use WCS4\Entity\Snapshot_Item;
@@ -11,9 +13,16 @@ use WCS4\Helper\Admin;
 use WCS4\Helper\Output;
 use WCS4\Repository\Snapshot as SnapshotRepository;
 
-class Snapshot
+class Snapshot implements ManagesTemplateInterface
 {
+    use RendersTemplateTrait;
+
     private const TEMPLATE_DIR = __DIR__ . '/../Template/snapshot/';
+
+    public static function getTemplateDir(): string
+    {
+        return self::TEMPLATE_DIR;
+    }
 
     public static function callback_of_management_page(): void
     {
@@ -71,7 +80,7 @@ class Snapshot
                 ],
             ],
         ];
-        include self::TEMPLATE_DIR . 'admin.php';
+        self::renderTemplate('admin.php', get_defined_vars());
     }
 
 

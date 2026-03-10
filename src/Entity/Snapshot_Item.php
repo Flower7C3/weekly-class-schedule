@@ -2,12 +2,13 @@
 
 namespace WCS4\Entity;
 
+use WCS4\Entity\Contract\EntityWithIdInterface;
 use WCS4\Entity\Trait\Blameable_Trait;
 use WCS4\Entity\Trait\Timestampable_Trait;
 
 use function json_decode;
 
-class Snapshot_Item
+class Snapshot_Item implements EntityWithIdInterface
 {
     public const TYPE_HTML = 'text/html';
     public const TYPE_CSV = 'text/csv';

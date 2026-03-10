@@ -1,10 +1,10 @@
 <?php
 
-
 namespace WCS4\Entity;
 
 use DateInterval;
 use DateTimeImmutable;
+use WCS4\Entity\Contract\EntityWithIdInterface;
 use WCS4\Entity\Trait\Blameable_Trait;
 use WCS4\Entity\Trait\Classroom_Trait;
 use WCS4\Entity\Trait\Students_Trait;
@@ -12,7 +12,7 @@ use WCS4\Entity\Trait\Subject_Trait;
 use WCS4\Entity\Trait\Teachers_Trait;
 use WCS4\Entity\Trait\Timestampable_Trait;
 
-class Lesson_Item
+class Lesson_Item implements EntityWithIdInterface
 {
     private int $id;
     private int $weekday;

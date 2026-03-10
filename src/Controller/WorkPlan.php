@@ -8,6 +8,9 @@
 
 namespace WCS4\Controller;
 
+use WCS4\Controller\Contract\AjaxGetItemHandlerInterface;
+use WCS4\Controller\Contract\ManagesTemplateInterface;
+use WCS4\Controller\Trait\RendersTemplateTrait;
 use DateTimeImmutable;
 use DateTimeZone;
 use Exception;
@@ -24,9 +27,16 @@ use WCS4\Helper\Output;
 use WCS4\Repository\Journal as JournalRepository;
 use WCS4\Repository\WorkPlan as WorkPlanRepository;
 
-class WorkPlan
+class WorkPlan implements AjaxGetItemHandlerInterface, ManagesTemplateInterface
 {
+    use RendersTemplateTrait;
+
     private const TEMPLATE_DIR = __DIR__ . '/../Template/work_plan/';
+
+    public static function getTemplateDir(): string
+    {
+        return self::TEMPLATE_DIR;
+    }
 
     public static function callback_of_management_page(): void
     {
@@ -129,7 +139,7 @@ class WorkPlan
                 'label' => __('Generate Cumulative Work Plan', 'wcs4'),
             ];
         }
-        include self::TEMPLATE_DIR . 'admin.php';
+        self::renderTemplate('admin.php', get_defined_vars());
     }
 
     public static function callback_of_export_csv_page(): void
@@ -612,24 +622,32 @@ class WorkPlan
             $table_subject = WorkPlanRepository::get_work_plan_subject_table_name();
             $table_teacher = WorkPlanRepository::get_work_plan_teacher_table_name();
             if (is_array($row_id)) {
-                $query = $wpdb->prepare(
-                    "
+                $row_id = array_map('intval', $row_id);
+                $row_id = array_filter($row_id);
+                if (empty($row_id)) {
+                    $response['response'] = [];
+                    $status = \WP_Http::NO_CONTENT;
+                } else {
+                    $placeholders = implode(',', array_fill(0, count($row_id), '%d'));
+                    $query = $wpdb->prepare(
+                        "
                             SELECT $table.*, GROUP_CONCAT(subject_id) AS subject_id, GROUP_CONCAT(teacher_id) AS teacher_id
                             FROM $table
                             LEFT JOIN $table_subject USING (id)
                             LEFT JOIN $table_teacher USING (id)
-                            WHERE id IN (" . implode(',', array_fill(0, count($row_id), '%d')) . ")
+                            WHERE id IN ($placeholders)
                             GROUP BY id",
-                    $row_id
-                );
-                $db_results = $wpdb->get_results($query, ARRAY_A);
-                if ($db_results) {
-                    foreach ($db_results as $id => $db_result) {
-                        $response['response'][$id] = DB::parse_query($db_result);
+                        ...$row_id
+                    );
+                    $db_results = $wpdb->get_results($query, ARRAY_A);
+                    if ($db_results) {
+                        foreach ($db_results as $id => $db_result) {
+                            $response['response'][$id] = DB::parse_query($db_result);
+                        }
+                        $status = \WP_Http::OK;
+                    } else {
+                        $status = \WP_Http::NO_CONTENT;
                     }
-                    $status = \WP_Http::OK;
-                } else {
-                    $status = \WP_Http::NO_CONTENT;
                 }
             } else {
                 $query = $wpdb->prepare(

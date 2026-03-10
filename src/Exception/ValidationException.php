@@ -2,7 +2,9 @@
 
 namespace WCS4\Exception;
 
-class ValidationException extends \RuntimeException
+use WCS4\Exception\Contract\Wcs4ExceptionInterface;
+
+class ValidationException extends \RuntimeException implements Wcs4ExceptionInterface
 {
 
     public function __construct(private array $errors)
