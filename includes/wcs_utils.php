@@ -74,7 +74,7 @@ function wcs4_json_response(array $data, int $code): void
  * @param bool $abbr : if TRUE returns abbreviated weekday names.
  * @return array
  */
-function wcs4_get_weekdays($abbr = false)
+function wcs4_get_weekdays(bool $abbr = false)
 {
     global $wp_locale;
 

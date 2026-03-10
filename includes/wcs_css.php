@@ -56,8 +56,6 @@ CSS;
 
     /* ------------- END ------------ */
 
-    echo '<style>';
-    echo $dynamic_css;
-    echo '</style>';
+    echo '<style>' . $dynamic_css . '</style>';
 
 });

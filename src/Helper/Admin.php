@@ -78,35 +78,53 @@ class Admin
             $queryWhere = [];
             $queryParams = [];
             if (!empty($filter['subject'])) {
-                $queryWhere[] = 'subject_id IN (%s)';
-                $queryParams[] = $filter['subject'];
+                $ids = array_map('intval', (array) $filter['subject']);
+                $ids = array_filter($ids);
+                if (!empty($ids)) {
+                    $queryWhere[] = 'subject_id IN (' . implode(',', array_fill(0, count($ids), '%d')) . ')';
+                    $queryParams = array_merge($queryParams, $ids);
+                }
             }
             if (!empty($filter['teacher'])) {
-                $queryWhere[] = 'teacher_id IN (%s)';
-                $queryParams[] = $filter['teacher'];
+                $ids = array_map('intval', (array) $filter['teacher']);
+                $ids = array_filter($ids);
+                if (!empty($ids)) {
+                    $queryWhere[] = 'teacher_id IN (' . implode(',', array_fill(0, count($ids), '%d')) . ')';
+                    $queryParams = array_merge($queryParams, $ids);
+                }
             }
             if (!empty($filter['student'])) {
-                $queryWhere[] = 'student_id IN (%s)';
-                $queryParams[] = $filter['student'];
+                $ids = array_map('intval', (array) $filter['student']);
+                $ids = array_filter($ids);
+                if (!empty($ids)) {
+                    $queryWhere[] = 'student_id IN (' . implode(',', array_fill(0, count($ids), '%d')) . ')';
+                    $queryParams = array_merge($queryParams, $ids);
+                }
             }
             if (true === $includeOnlyScheduled) {
                 $queryEventsString = "SELECT DISTINCT id FROM $table LEFT JOIN $table_teacher USING (id) LEFT JOIN $table_student USING (id)";
                 if (!empty($queryWhere)) {
                     $queryEventsString .= ' WHERE ' . implode(" AND ", $queryWhere);
                 }
-                $queryEventsPrepared = $wpdb->prepare($queryEventsString, $queryParams);
+                $queryEventsPrepared = !empty($queryParams)
+                    ? $wpdb->prepare($queryEventsString, ...$queryParams)
+                    : $queryEventsString;
                 $eventsIds = $wpdb->get_col($queryEventsPrepared);
-                $queryString = "SELECT DISTINCT $querySelect FROM $table LEFT JOIN $table_teacher USING (id) LEFT JOIN $table_student USING (id) WHERE id IN ("
-                    . implode(',', $eventsIds)
-                    . ")";
-                $queryPrepared = $wpdb->prepare($queryString);
-                $include_ids = $wpdb->get_col($queryPrepared);
+                $include_ids = [];
+                if (!empty($eventsIds)) {
+                    $placeholders = implode(',', array_fill(0, count($eventsIds), '%d'));
+                    $queryString = "SELECT DISTINCT $querySelect FROM $table LEFT JOIN $table_teacher USING (id) LEFT JOIN $table_student USING (id) WHERE id IN ($placeholders)";
+                    $queryPrepared = $wpdb->prepare($queryString, ...array_map('intval', $eventsIds));
+                    $include_ids = $wpdb->get_col($queryPrepared);
+                }
             } else {
                 $queryString = "SELECT DISTINCT $querySelect FROM $table LEFT JOIN $table_teacher USING (id) LEFT JOIN $table_student USING (id)";
                 if (!empty($queryWhere)) {
                     $queryString .= ' WHERE ' . implode(" AND ", $queryWhere);
+                    $query = $wpdb->prepare($queryString, ...$queryParams);
+                } else {
+                    $query = $queryString;
                 }
-                $query = $wpdb->prepare($queryString, $queryParams);
                 $include_ids = $wpdb->get_col($query);
             }
         } else {

@@ -86,7 +86,7 @@ add_action('admin_menu', static function () {
         'wcs4',
         __('Work Plans', 'wcs4'),
         __('Work Plans', 'wcs4'),
-        WCS4_PROGRESS_VIEW_CAPABILITY,
+        WCS4_WORK_PLAN_VIEW_CAPABILITY,
         'wcs4-work-plan',
         array(WorkPlan::class, "callback_of_management_page")
     );

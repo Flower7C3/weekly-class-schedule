@@ -468,7 +468,7 @@ add_shortcode('wcs_student_work_plan_create', static function ($atts) {
 });
 
 
-add_shortcode('wp_query', static function (array $options = []) {
+add_shortcode('wcs_wp_query', static function (array $options = []) {
     $shortcode_atts = shortcode_atts([
         'post_type' => 'page',
         'order_direction' => 'ASC',
