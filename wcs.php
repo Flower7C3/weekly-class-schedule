@@ -2,7 +2,7 @@
 /*
 Plugin Name: Weekly Class Schedule
 Description: Weekly Class Schedule generates a weekly schedule of lessons. It provides you with an easy way to manage and update the schedule as well as the subjects, teachers, students and classrooms database.
-Version: 3.45
+Version: 4.60.1
 Text Domain: wcs4
 Author: Kwiatek.pro, Pulsar Web Design
 Author URI: https://kwiatek.pro
@@ -25,7 +25,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-const APP_DEVEL = true;
+const APP_DEVEL = false;
 
 if (APP_DEVEL) {
     opcache_reset();
@@ -33,14 +33,16 @@ if (APP_DEVEL) {
         error_reporting(E_ALL);
         ini_set('display_errors', true);
     }
-    define('WCS4_VERSION', '4.devel.' . time());
+    define('WCS4_VERSION', '4.60.1');
 } else {
-    define('WCS4_VERSION', '4.59' . time());
+    define('WCS4_VERSION', '4.60.1');
 }
 
 
 //if (in_array($_SERVER['REMOTE_ADDR'], ['185.157.14.77', '188.68.229.109'], true)) {
-//    dd(__LINE__);
+    //dd(__LINE__);
+//    phpinfo(32);
+//    exit;
 //}
 //if($_SERVER['REMOTE_ADDR'] === '185.157.14.77') {
 //    error_reporting(E_ALL);
@@ -49,7 +51,7 @@ if (APP_DEVEL) {
 //    dd(unserialize($settings, ['allowed_classes'=>true]));
 //}
 
-define('WCS4_REQUIRED_WP_VERSION', '4.0');
+define('WCS4_REQUIRED_WP_VERSION', '5.9');
 
 if (!defined('WCS4_PLUGIN_BASENAME')) {
     define('WCS4_PLUGIN_BASENAME', plugin_basename(__FILE__));
