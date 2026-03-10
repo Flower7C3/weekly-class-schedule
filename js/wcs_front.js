@@ -33,8 +33,9 @@ let WCS4_FRONT = (function ($) {
 
     let bind_edit_handler = function (scope, set_entry_data_to_form) {
         $('#wcs4-' + scope + '-modal').on('hidden.bs.modal', function () {
-            $('.wcs4-management-form-wrapper form').trigger("reset");
-            $('.wcs4-management-form-wrapper form').find('input,textarea,select').trigger("change");
+            let $form = $('.wcs4-management-form-wrapper form');
+            $form.trigger("reset");
+            $form.find('input,textarea,select').trigger("change");
             $('[data-wcs4="management-form-title"]').text(WCS4_AJAX_OBJECT[scope].add_mode);
             $('[data-wcs4="submit-form"]').html(WCS4_AJAX_OBJECT[scope].add_item);
             $('[data-wcs4="cancel-form"]').hide();
@@ -42,9 +43,10 @@ let WCS4_FRONT = (function ($) {
         $(document).on('click.wcs4-edit-' + scope + '-button', '[data-scope="' + scope + '"] .wcs4-edit-button', function (e) {
             WCS4_LIB.fetch_entry_data_to_form(scope, $(this).data('id'), set_entry_data_to_form, function () {
                 $('#wcs4-' + scope + '-modal').modal('show');
-                $('.wcs4-management-form-wrapper form').find('input,textarea,select').focus();
-                $('.wcs4-management-form-wrapper form [data-readonly]').attr('readonly', true);
-                $('.wcs4-management-form-wrapper form').unbind('change.reset');
+                let $form = $('.wcs4-management-form-wrapper form');
+                $form.find('input,textarea,select').focus();
+                $form.find('[data-readonly]').prop('readonly', true);
+                $form.unbind('change.reset');
                 $('[data-wcs4="management-form-title"]').text(WCS4_AJAX_OBJECT[scope].edit_mode)
                 $('[data-wcs4="submit-form"]').html(WCS4_AJAX_OBJECT[scope].save_item);
                 $('[data-wcs4="cancel-form"]').show();

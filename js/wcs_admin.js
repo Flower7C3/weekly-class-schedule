@@ -79,6 +79,8 @@ let WCS4_ADMIN = (function ($) {
     }
 
     let bind_filter_handler = function () {
+        let $resultsFilter = $('.results-filter');
+        let $filterSubmit = $resultsFilter.find('.button-primary');
         $(document).on('change.wcs4-filter-select', 'select.search-filter', function (e) {
             let $selected = $(this).find('option:selected');
             let select_subject_id = $(this).data('select-subject-id');
@@ -87,18 +89,18 @@ let WCS4_ADMIN = (function ($) {
             let select_teacher_id = $(this).data('select-teacher-id');
             let value_teacher = $selected.data('option-teacher-val');
             $('#' + select_teacher_id).val(value_teacher).change();
-            $('.results-filter .button-primary').click();
+            $filterSubmit.click();
         });
         $(document).on('click.wcs4-filter-toggle', 'a.search-filter', function (e) {
             let select_id = $(this).data('select-id');
             let value = $(this).data('option-val');
             $('#' + select_id).val(value).change();
-            $('.results-filter .button-primary').click();
+            $filterSubmit.click();
         });
         $(document).on('click.wcs4-filter-reset', '.results-filter [type=reset]', function (e) {
-            $('.results-filter select option:selected').attr('selected', false);
+            $resultsFilter.find('select option:selected').prop('selected', false);
             setTimeout(function () {
-                $('.results-filter .button-primary').click();
+                $filterSubmit.click();
             }, 500);
         });
     }
@@ -107,20 +109,23 @@ let WCS4_ADMIN = (function ($) {
      * Handles the Show form button click event.
      */
     let bind_show_hide_handler = function () {
-        $('#wcs4-show-form').click(function () {
-            $('.wcs4-management-form-wrapper').toggleClass('is-open');
+        let $wrapper = $('.wcs4-management-form-wrapper');
+        let $form = $wrapper.find('form');
+        let $resetForm = $('[data-wcs4="reset-form"]');
+        $('#wcs4-show-form').on('click', function () {
+            $wrapper.toggleClass('is-open');
         });
-        $('[data-wcs4="reset-form"]').click(function () {
-            $('.wcs4-management-form-wrapper').removeClass('is-open');
+        $resetForm.on('click', function () {
+            $wrapper.removeClass('is-open');
             WCS4_LIB.remove_message();
-            $('[data-wcs4="reset-form"]').hide();
-            $('.wcs4-management-form-wrapper form').one('change.reset', function () {
-                $('[data-wcs4="reset-form"]').show();
+            $resetForm.hide();
+            $form.one('change.reset', function () {
+                $resetForm.show();
             });
-            $(this).closest('form').find('input,select').change();
+            $(this).closest('form').find('input,select').trigger('change');
         });
-        $('#wcs4-management-form-wrapper form').one('change.reset', function () {
-            $('[data-wcs4="reset-form"]').show();
+        $form.one('change.reset', function () {
+            $resetForm.show();
         });
     };
 
@@ -129,7 +134,7 @@ let WCS4_ADMIN = (function ($) {
      */
     let bind_colorpickers = function () {
         $(document).on('click.wcs_colorpicker', '.wcs_colorpicker', function (index) {
-            let elementName = $(this).attr('id');
+            let elementName = $(this).prop('id');
             $(this).ColorPicker({
                 onChange: function (hsb, hex, rgb) {
                     $('#' + elementName).val(hex);
@@ -143,30 +148,32 @@ let WCS4_ADMIN = (function ($) {
     };
 
     let bind_reset_settings = function () {
-        $('#wcs4-reset-database button').click(function (e) {
+        let $resetDb = $('#wcs4-reset-database');
+        let $spinner = $resetDb.find('.spinner');
+        $resetDb.find('button').on('click', function (e) {
             e.preventDefault();
             entry = {
-                action: $(this).attr('name'),
+                action: $(this).prop('name'),
                 security: WCS4_AJAX_OBJECT.ajax_nonce,
             };
-            let confirm = window.confirm(WCS4_AJAX_OBJECT.reset_warning);
-            if (!confirm) {
+            if (!window.confirm(WCS4_AJAX_OBJECT.reset_warning)) {
                 return;
             }
-            $('#wcs4-reset-database .spinner').addClass('is-active');
+            $spinner.addClass('is-active');
             $.post(WCS4_AJAX_OBJECT.ajax_url, entry, function (data) {
                 WCS4_LIB.show_message(data.response, data.result);
             }).fail(function (err) {
                 console.error(err);
             }).always(function () {
-                $('#wcs4-reset-database .spinner').removeClass('is-active');
+                $spinner.removeClass('is-active');
             });
         });
     };
 
 
     let load_editor = function () {
-        if ($('.code_editor').length) {
+        let $editors = $('.code_editor');
+        if ($editors.length) {
             let editorSettings = wp.codeEditor.defaultSettings ? _.clone(wp.codeEditor.defaultSettings) : {};
             editorSettings.codemirror = _.extend(
                 {},
@@ -177,8 +184,8 @@ let WCS4_ADMIN = (function ($) {
                     mode: 'css',
                 }
             );
-            $('.code_editor').each(function (k, v) {
-                wp.codeEditor.initialize($('.code_editor:eq(' + k + ')'), editorSettings);
+            $editors.each(function (k) {
+                wp.codeEditor.initialize($editors.eq(k), editorSettings);
             });
         }
     };

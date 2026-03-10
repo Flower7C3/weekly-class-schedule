@@ -43,23 +43,20 @@ let WCS4_LIB = (function ($) {
      */
     let submit_entry = function (entry, callback) {
         WCS4_LIB.remove_message();
-        if ($('#wcs4-row-id').length > 0) {
-            // We've got a hidden row field, that means this is an update
-            // request and not a regular insert request.
-            entry.row_id = $('#wcs4-row-id').val();
+        let $rowId = $('#wcs4-row-id');
+        if ($rowId.length > 0) {
+            entry.row_id = $rowId.val();
         }
 
-        $('.wcs4-management-form-wrapper .spinner').addClass('is-active');
-
-        // We can also pass the url value separately from ajaxurl for
-        // front end AJAX implementations
+        let $spinner = $('.wcs4-management-form-wrapper .spinner');
+        $spinner.addClass('is-active');
         jQuery.post(WCS4_AJAX_OBJECT.ajax_url, entry, function (data, state, xhr) {
             WCS4_LIB.show_message(data.response, xhr.status);
             callback(data, xhr.status);
         }).fail(function (err) {
             WCS4_LIB.show_message(err.responseJSON.response, err.status, err.responseJSON.errors ?? []);
         }).always(function () {
-            $('.spinner').removeClass('is-active');
+            $spinner.removeClass('is-active');
         });
     }
 
@@ -123,13 +120,15 @@ let WCS4_LIB = (function ($) {
                 row_id: row_id
             };
         }
-        $('.wcs4-management-form-wrapper .spinner').addClass('is-active');
-        $('.wcs4-management-form-wrapper input,.wcs4-management-form-wrapper select,.wcs4-management-form-wrapper textarea').attr('readonly', true);
+        let $wrapper = $('.wcs4-management-form-wrapper');
+        let $fields = $wrapper.find('input,select,textarea');
+        $wrapper.find('.spinner').addClass('is-active');
+        $fields.prop('readonly', true);
         jQuery.post(WCS4_AJAX_OBJECT.ajax_url, get_query)
             .always(function () {
                 $('html,body').css({'cursor': 'auto'});
-                $('.wcs4-management-form-wrapper .spinner').removeClass('is-active');
-                $('.wcs4-management-form-wrapper input,.wcs4-management-form-wrapper select,.wcs4-management-form-wrapper textarea').attr('readonly', null);
+                $wrapper.find('.spinner').removeClass('is-active');
+                $fields.prop('readonly', false);
             })
             .done(function (data) {
                 set_entry_data_to_form(data.response)
@@ -142,24 +141,80 @@ let WCS4_LIB = (function ($) {
         ;
     };
 
-    let form_field_value = function ($form, name) {
-        let $checkbox = $form.find('input[type="checkbox"][name="' + name + '"]');
-        if ($checkbox.length) {
-            let $checked = $form.find('input[type="checkbox"][name="' + name + '"]:checked');
-            return $checked.toArray().map(item => item.value);
+    /**
+     * Ustawia wartość grupy radio w formularzu (zaznacza input o danej value).
+     * @param {jQuery} $form - formularz
+     * @param {string} name - atrybut name grupy radio
+     * @param {string|number|null|undefined} value - wartość do zaznaczenia
+     * @param {boolean} [triggerChange=false] - czy wywołać change() na zaznaczonym
+     */
+    let set_radio_value = function ($form, name, value, triggerChange) {
+        let val = value != null ? String(value) : '';
+        let $radios = $form.find('input[type="radio"][name="' + name + '"]');
+        $radios.each(function () {
+            $(this).prop('checked', $(this).val() === val);
+        });
+        if (triggerChange) {
+            $form.find('input[type="radio"][name="' + name + '"]:checked').first().trigger('change');
         }
-        let $radio = $form.find('input[type="radio"][name="' + name + '"]');
-        if ($radio.length) {
-            let $checked = $form.find('input[type="radio"][name="' + name + '"]:checked');
-            return $checked.val();
+    };
+
+    /**
+     * Ustawia wartość pola input (text, date, time, number itd.) lub textarea.
+     * @param {jQuery} $form - formularz
+     * @param {string} name - atrybut name pola
+     * @param {string|number|null|undefined} value - wartość do ustawienia
+     */
+    let set_input_value = function ($form, name, value) {
+        let val = (value != null && value !== '') ? String(value) : '';
+        let $el = $form.find('input[name="' + name + '"]').not('[type="radio"], [type="checkbox"]')
+            .add($form.find('textarea[name="' + name + '"]'));
+        $el.val(val);
+    };
+
+    /**
+     * Ustawia wartość selecta (pojedynczy lub wielokrotny wybór).
+     * @param {jQuery} $form - formularz
+     * @param {string} name - atrybut name selecta
+     * @param {string|number|Array|null|undefined} value - wartość; dla multi: tablica lub string po przecinku
+     */
+    let set_select_value = function ($form, name, value) {
+        let $sel = $form.find('select[name="' + name + '"]');
+        if (!$sel.length) {
+            return;
         }
-        let $inputSingle = $form.find('input[name="' + name + '"]');
-        if ($inputSingle.length) {
-            return $inputSingle.val();
+        if ($sel.prop('multiple')) {
+            let arr = Array.isArray(value)
+                ? value.map(function (v) { return String(v); })
+                : (value != null ? String(value).split(',').map(function (s) { return s.trim(); }) : []);
+            $sel.val(arr);
+        } else {
+            $sel.val(value != null ? String(value) : '');
         }
-        let $inputMultiple = $form.find('input[name="' + name + '[]"]');
-        if ($inputMultiple.length) {
-            return $inputMultiple.toArray().map(item => item.value);
+    };
+
+    /**
+     * Odczytuje wartość pola formularza (checkbox, radio, input, textarea, select).
+     * @param {jQuery} $form - formularz
+     * @param {string} name - atrybut name pola (dla multi: 'name' lub 'name[]')
+     * @returns {string|string[]|null} - wartość lub tablica (checkbox/multi select) lub null
+     */
+    let get_field_value = function ($form, name) {
+        let $checkedCb = $form.find('input[type="checkbox"][name="' + name + '"]:checked');
+        if ($checkedCb.length) {
+            return $checkedCb.toArray().map(function (item) { return item.value; });
+        }
+        let $checkedRadio = $form.find('input[type="radio"][name="' + name + '"]:checked');
+        if ($checkedRadio.length) {
+            return $checkedRadio.val();
+        }
+        let $input = $form.find('input[name="' + name + '"]').not('[type="radio"], [type="checkbox"]');
+        if ($input.length) {
+            return $input.val();
+        }
+        let $inputArr = $form.find('input[name="' + name + '[]"]');
+        if ($inputArr.length) {
+            return $inputArr.toArray().map(function (item) { return item.value; });
         }
         let $textarea = $form.find('textarea[name="' + name + '"]');
         if ($textarea.length) {
@@ -167,36 +222,34 @@ let WCS4_LIB = (function ($) {
         }
         let $select = $form.find('select[name="' + name + '"]');
         if ($select.length) {
-            let $selected = $select.find('option:selected');
-            return 'multiple' === $select.attr('multiple')
-                ? $selected.toArray().map(item => item.value)
-                : $selected.val();
+            return $select.val();
         }
         return null;
     };
     let update_view = function ($parent, entry, action) {
-        $parent.find('.spinner').addClass('is-active');
+        let $spinner = $parent.find('.spinner');
+        $spinner.addClass('is-active');
         $.post(WCS4_AJAX_OBJECT.ajax_url, entry, function (data) {
-            // Rebuild table
             let html = data.html;
-            if (html.length > 0 && $('.wcs4-day-content-wrapper', $parent).data('hash') !== $(html).data('hash')) {
-                $('.wcs4-day-content-wrapper', $parent).fadeOut(300, function () {
+            let $dayContent = $parent.find('.wcs4-day-content-wrapper');
+            if (html.length > 0 && $dayContent.data('hash') !== $(html).data('hash')) {
+                $dayContent.fadeOut(300, function () {
                     $(this).remove();
                     $parent.append(html);
                     if (action === 'fade') {
-                        $('.wcs4-day-content-wrapper', $parent).hide().fadeIn(300, function () {
-                            $(this).attr('style', null);
+                        let $newContent = $parent.find('.wcs4-day-content-wrapper');
+                        $newContent.hide().fadeIn(300, function () {
+                            $(this).removeAttr('style');
                         });
                     }
                 });
             }
         }).fail(function (err) {
-            // Failed
             console.error(err);
             show_message(WCS4_AJAX_OBJECT.ajax_error, 'error');
         }).always(function () {
             $('.wcs4-management-form-wrapper .spinner').removeClass('is-active');
-            $parent.find('.spinner').removeClass('is-active');
+            $spinner.removeClass('is-active');
         });
     };
 
@@ -205,86 +258,90 @@ let WCS4_LIB = (function ($) {
      * Enter edit mode
      */
     let reset_to_edit_mode = function (scope, entry) {
-        $('.wcs4-management-form-wrapper form').unbind('change.reset');
-        // Add editing mode message
-        $('[data-wcs4="management-form-title"]').text(WCS4_AJAX_OBJECT[scope].edit_mode)
-        $('[data-wcs4="reset-form"]').hide();
-        $('.wcs4-management-form-wrapper').addClass('is-open');
-        // Let's add the row id and the save button.
+        let $wrapper = $('.wcs4-management-form-wrapper');
+        let $form = $wrapper.find('form');
+        let $resetForm = $('[data-wcs4="reset-form"]');
+        let $rowId = $('#wcs4-row-id');
+        $form.unbind('change.reset');
+        $('[data-wcs4="management-form-title"]').text(WCS4_AJAX_OBJECT[scope].edit_mode);
+        $resetForm.hide();
+        $wrapper.addClass('is-open');
         $('[data-wcs4="submit-form"]').html(WCS4_AJAX_OBJECT[scope].save_item);
-        // Add hidden row field
-        if ($('#wcs4-row-id').length > 0) {
-            // Field already exists, let's update.
-            $('#wcs4-row-id').attr('value', entry.id);
+        if ($rowId.length > 0) {
+            $rowId.val(entry.id);
         } else {
-            // Field does not exist (wartość escapowana, żeby uniknąć XSS przy nietypowych id).
             let row_hidden_field = $('<input>', {
                 type: 'hidden',
                 id: 'wcs4-row-id',
                 name: 'wcs4-row-id',
                 value: entry.id
             });
-            $('.wcs4-management-form-wrapper').append(row_hidden_field);
+            $wrapper.append(row_hidden_field);
         }
-        // Add cancel editing button
-        if ($('#wcs4-cancel-editing').length == 0) {
+        let $cancelEditing = $('#wcs4-cancel-editing');
+        if ($cancelEditing.length === 0) {
             let cancel_button = '<a href="#" class="button button-link" id="wcs4-cancel-editing">' + WCS4_AJAX_OBJECT[scope].cancel_editing + '</a>';
-            $('[data-wcs4="reset-form"]').after(cancel_button);
-            $('#wcs4-cancel-editing').click(function () {
+            $resetForm.after(cancel_button);
+            $cancelEditing = $('#wcs4-cancel-editing');
+            $cancelEditing.on('click', function () {
                 reset_to_add_mode(scope);
-            })
+            });
         }
     }
 
     let reset_to_copy_mode = function (scope) {
-        $('.wcs4-management-form-wrapper form').unbind('change.reset');
-        // Add copying mode message
-        $('[data-wcs4="management-form-title"]').text(WCS4_AJAX_OBJECT[scope].copy_mode)
-        $('[data-wcs4="reset-form"]').hide();
-        $('.wcs4-management-form-wrapper').addClass('is-open');
-        // Let's add the row id and the save button.
+        let $wrapper = $('.wcs4-management-form-wrapper');
+        let $resetForm = $('[data-wcs4="reset-form"]');
+        $wrapper.find('form').unbind('change.reset');
+        $('[data-wcs4="management-form-title"]').text(WCS4_AJAX_OBJECT[scope].copy_mode);
+        $resetForm.hide();
+        $wrapper.addClass('is-open');
         $('[data-wcs4="submit-form"]').html(WCS4_AJAX_OBJECT[scope].add_item);
-        // Add cancel copying button
-        if ($('#wcs4-cancel-copying').length == 0) {
+        let $cancelCopying = $('#wcs4-cancel-copying');
+        if ($cancelCopying.length === 0) {
             let cancel_button = '<a href="#" class="button button-link" id="wcs4-cancel-copying">' + WCS4_AJAX_OBJECT[scope].cancel_copying + '</a>';
-            $('[data-wcs4="reset-form"]').after(cancel_button);
-            $('#wcs4-cancel-copying').click(function () {
+            $resetForm.after(cancel_button);
+            $cancelCopying = $('#wcs4-cancel-copying');
+            $cancelCopying.on('click', function () {
                 reset_to_add_mode(scope);
-            })
+            });
         }
     }
     let reset_to_create_mode = function (scope) {
-        $('.wcs4-management-form-wrapper form').unbind('change.reset');
-        // Add copying mode message
-        $('[data-wcs4="management-form-title"]').text(WCS4_AJAX_OBJECT[scope].add_mode)
-        $('[data-wcs4="reset-form"]').hide();
-        $('.wcs4-management-form-wrapper').addClass('is-open');
-        // Let's add the row id and the save button.
+        let $wrapper = $('.wcs4-management-form-wrapper');
+        let $resetForm = $('[data-wcs4="reset-form"]');
+        $wrapper.find('form').unbind('change.reset');
+        $('[data-wcs4="management-form-title"]').text(WCS4_AJAX_OBJECT[scope].add_mode);
+        $resetForm.hide();
+        $wrapper.addClass('is-open');
         $('[data-wcs4="submit-form"]').html(WCS4_AJAX_OBJECT[scope].add_item);
-        // Add cancel copying button
-        if ($('#wcs4-cancel-copying').length == 0) {
+        let $cancelCopying = $('#wcs4-cancel-copying');
+        if ($cancelCopying.length === 0) {
             let cancel_button = '<a href="#" class="button button-link" id="wcs4-cancel-copying">' + WCS4_AJAX_OBJECT[scope].cancel_copying + '</a>';
-            $('[data-wcs4="reset-form"]').after(cancel_button);
-            $('#wcs4-cancel-copying').click(function () {
+            $resetForm.after(cancel_button);
+            $cancelCopying = $('#wcs4-cancel-copying');
+            $cancelCopying.on('click', function () {
                 reset_to_add_mode(scope);
-            })
+            });
         }
     }
 
     let reset_to_add_mode = function (scope) {
-        $('.wcs4-management-form-wrapper form')
-            .one('change.reset', function () {
-                $('[data-wcs4="reset-form"]').show();
-            })
-            .get(0).reset();
-        $('.wcs4-management-form-wrapper form').trigger("reset");
-        $('.wcs4-management-form-wrapper form').find('input,textarea,select').trigger("change");
-        $('[data-wcs4="management-form-title"]').text(WCS4_AJAX_OBJECT[scope].add_mode);
+        let $wrapper = $('.wcs4-management-form-wrapper');
+        let $form = $wrapper.find('form');
+        let $dataTitle = $('[data-wcs4="management-form-title"]');
+        let $dataSubmit = $('[data-wcs4="submit-form"]');
+        $form.one('change.reset', function () {
+            $('[data-wcs4="reset-form"]').show();
+        }).get(0).reset();
+        $form.trigger("reset");
+        $form.find('input,textarea,select').trigger("change");
+        $dataTitle.text(WCS4_AJAX_OBJECT[scope].add_mode);
         $('#wcs4-row-id').remove();
         $('#wcs4-cancel-copying').remove();
         $('#wcs4-cancel-editing').remove();
-        $('[data-wcs4="submit-form"]').html(WCS4_AJAX_OBJECT[scope].add_item);
-        $('.wcs4-management-form-wrapper').removeClass('is-open');
+        $dataSubmit.html(WCS4_AJAX_OBJECT[scope].add_item);
+        $wrapper.removeClass('is-open');
         $('tr.is-active').removeClass('is-active');
     }
 
@@ -305,7 +362,7 @@ let WCS4_LIB = (function ($) {
             }
             $text.text(message).show();
             setTimeout(function () {
-                $('.wcs4-ajax-text').fadeOut('slow');
+                $text.fadeOut('slow');
             }, 3000);
         }
         for (let field_id in errors) {
@@ -318,10 +375,11 @@ let WCS4_LIB = (function ($) {
         }
     };
     let remove_message = function () {
-        $('.wcs4-ajax-text').html('').hide();
-        $('.wcs4-ajax-text').removeClass('updated').removeClass('error')
-        $('.form-field').removeClass('form-invalid');
-        $('.form-field .error').remove();
+        let $ajaxText = $('.wcs4-ajax-text');
+        $ajaxText.html('').hide().removeClass('updated').removeClass('error');
+        let $formFields = $('.form-field');
+        $formFields.removeClass('form-invalid');
+        $formFields.find('.error').remove();
     };
 
     return {
@@ -332,7 +390,10 @@ let WCS4_LIB = (function ($) {
         submit_entry,
         modify_entry,
         fetch_entry_data_to_form,
-        form_field_value,
+        get_field_value,
+        set_radio_value,
+        set_input_value,
+        set_select_value,
         // view
         reset_to_add_mode,
         reset_to_create_mode,

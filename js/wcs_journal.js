@@ -37,23 +37,23 @@
             let entry = {
                 action: 'wcs_add_or_update_journal_entry',
                 security: WCS4_AJAX_OBJECT.ajax_nonce,
-                subject_id: WCS4_LIB.form_field_value($form, 'subject'),
-                teacher_id: WCS4_LIB.form_field_value($form, 'teacher'),
-                student_id: WCS4_LIB.form_field_value($form, 'student'),
-                date: WCS4_LIB.form_field_value($form, 'date'),
-                start_time: WCS4_LIB.form_field_value($form, 'start_time'),
-                end_time: WCS4_LIB.form_field_value($form, 'end_time'),
-                topic: WCS4_LIB.form_field_value($form, 'topic'),
-                type: WCS4_LIB.form_field_value($form, 'type'),
+                subject_id: WCS4_LIB.get_field_value($form, 'subject'),
+                teacher_id: WCS4_LIB.get_field_value($form, 'teacher'),
+                student_id: WCS4_LIB.get_field_value($form, 'student'),
+                date: WCS4_LIB.get_field_value($form, 'date'),
+                start_time: WCS4_LIB.get_field_value($form, 'start_time'),
+                end_time: WCS4_LIB.get_field_value($form, 'end_time'),
+                topic: WCS4_LIB.get_field_value($form, 'topic'),
+                type: WCS4_LIB.get_field_value($form, 'type'),
             };
             console.log(entry)
             WCS4_LIB.submit_entry(entry, function (data, status) {
                 if (200 <= status && status < 300) {
-                    // Let's refresh the day
-                    let search_form_data = WCS4_ADMIN.search_form_process_and_push_history_state($(FILTER_ID))
+                    let search_form_data = WCS4_ADMIN.search_form_process_and_push_history_state($(FILTER_ID));
+                    let $sortable = $('.sortable.sorted');
                     reload_html_view(search_form_data, 'fade',
-                        $('.sortable.sorted').data('order-current-field'),
-                        $('.sortable.sorted').data('order-current-direction'));
+                        $sortable.data('order-current-field'),
+                        $sortable.data('order-current-direction'));
                     // Clear topic.
                     WCS4_LIB.reset_to_add_mode('journal');
                 }
@@ -90,14 +90,14 @@
         let $form = $('#wcs4-journal-form');
         if (entry.hasOwnProperty('id')) {
             // We got an entry.
-            $form.find('[name="type"]').val(entry.type).change();
-            $form.find('[name="subject"]').val(entry.subject_id);
-            $form.find('[name="teacher"]').val(entry.teacher_id);
-            $form.find('[name="student"]').val(entry.student_id);
-            $form.find('[name="date"]').val(entry.date);
-            $form.find('[name="start_time"]').val(entry.start_time);
-            $form.find('[name="end_time"]').val(entry.end_time);
-            $form.find('[name="topic"]').val(entry.topic);
+            WCS4_LIB.set_radio_value($form, 'type', entry.type, true);
+            WCS4_LIB.set_select_value($form, 'subject', entry.subject_id);
+            WCS4_LIB.set_select_value($form, 'teacher', entry.teacher_id);
+            WCS4_LIB.set_select_value($form, 'student', entry.student_id);
+            WCS4_LIB.set_input_value($form, 'date', entry.date);
+            WCS4_LIB.set_input_value($form, 'start_time', entry.start_time);
+            WCS4_LIB.set_input_value($form, 'end_time', entry.end_time);
+            WCS4_LIB.set_input_value($form, 'topic', entry.topic);
         } else {
             WCS4_LIB.show_message(WCS4_AJAX_OBJECT.ajax_error, 'error');
         }
@@ -109,10 +109,11 @@
         if (typeof type === 'undefined' || '' === type) {
             return;
         }
+        let $student = $('#wcs4_journal_student').closest('fieldset');
         if (type.startsWith('type.absent_teacher.') || type === 'type.absent_teacher' || type === 'type.teacher_office_works') {
-            $('#wcs4_journal_student').closest('fieldset').hide();
+            $student.hide();
         } else {
-            $('#wcs4_journal_student').closest('fieldset').show();
+            $student.show();
         }
     }
 

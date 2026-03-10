@@ -27,15 +27,15 @@
             let entry = {
                 action: 'wcs_add_journal_entry',
                 security: WCS4_AJAX_OBJECT.ajax_nonce,
-                subject_id: WCS4_LIB.form_field_value($form, 'subject'),
-                teacher_id: WCS4_LIB.form_field_value($form, 'teacher'),
-                student_id: WCS4_LIB.form_field_value($form, 'student'),
-                date: WCS4_LIB.form_field_value($form, 'date'),
-                start_time: WCS4_LIB.form_field_value($form, 'start_time'),
-                end_time: WCS4_LIB.form_field_value($form, 'end_time'),
-                topic: WCS4_LIB.form_field_value($form, 'topic'),
-                type: WCS4_LIB.form_field_value($form, 'type'),
-                row_id: WCS4_LIB.form_field_value($form, 'row_id'),
+                subject_id: WCS4_LIB.get_field_value($form, 'subject'),
+                teacher_id: WCS4_LIB.get_field_value($form, 'teacher'),
+                student_id: WCS4_LIB.get_field_value($form, 'student'),
+                date: WCS4_LIB.get_field_value($form, 'date'),
+                start_time: WCS4_LIB.get_field_value($form, 'start_time'),
+                end_time: WCS4_LIB.get_field_value($form, 'end_time'),
+                topic: WCS4_LIB.get_field_value($form, 'topic'),
+                type: WCS4_LIB.get_field_value($form, 'type'),
+                row_id: WCS4_LIB.get_field_value($form, 'row_id'),
             };
             WCS4_LIB.submit_entry(entry, function (data, status) {
                 $spinner.removeClass('is-active');
@@ -56,10 +56,11 @@
         if (typeof type === 'undefined' || '' === type) {
             return;
         }
+        let $studentFieldset = $('#wcs4_journal_student').closest('fieldset');
         if (type.startsWith('type.absent_teacher.') || type === 'type.teacher_office_works') {
-            $('#wcs4_journal_student').closest('fieldset').hide();
+            $studentFieldset.hide();
         } else {
-            $('#wcs4_journal_student').closest('fieldset').show();
+            $studentFieldset.show();
         }
     }
 
@@ -70,15 +71,15 @@
         let $form = $('#wcs4-journal-form');
         if (entry.hasOwnProperty('id')) {
             // We got an entry.
-            $form.find('[name="type"]').val(entry.type);
-            $form.find('[name="subject"]').val(entry.subject_id);
-            $form.find('[name="teacher"]').val(entry.teacher_id);
-            $form.find('[name="student"]').val(entry.student_id);
-            $form.find('[name="date"]').val(entry.date);
-            $form.find('[name="start_time"]').val(entry.start_time);
-            $form.find('[name="end_time"]').val(entry.end_time);
-            $form.find('[name="topic"]').val(entry.topic);
-            $form.find('[name="row_id"]').val(entry.id);
+            WCS4_LIB.set_radio_value($form, 'type', entry.type);
+            WCS4_LIB.set_select_value($form, 'subject', entry.subject_id);
+            WCS4_LIB.set_select_value($form, 'teacher', entry.teacher_id);
+            WCS4_LIB.set_select_value($form, 'student', entry.student_id);
+            WCS4_LIB.set_input_value($form, 'date', entry.date);
+            WCS4_LIB.set_input_value($form, 'start_time', entry.start_time);
+            WCS4_LIB.set_input_value($form, 'end_time', entry.end_time);
+            WCS4_LIB.set_input_value($form, 'topic', entry.topic);
+            WCS4_LIB.set_input_value($form, 'row_id', entry.id);
         } else {
             WCS4_LIB.show_message(WCS4_AJAX_OBJECT.ajax_error, 'error');
         }

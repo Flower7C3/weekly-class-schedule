@@ -41,24 +41,24 @@
             let entry = {
                 action: 'wcs_add_or_update_work_plan_entry',
                 security: WCS4_AJAX_OBJECT.ajax_nonce,
-                subject_id: WCS4_LIB.form_field_value($form, 'subject'),
-                teacher_id: WCS4_LIB.form_field_value($form, 'teacher'),
-                student_id: WCS4_LIB.form_field_value($form, 'student'),
-                start_date: WCS4_LIB.form_field_value($form, 'start_date'),
-                end_date: WCS4_LIB.form_field_value($form, 'end_date'),
-                diagnosis: WCS4_LIB.form_field_value($form, 'diagnosis'),
-                strengths: WCS4_LIB.form_field_value($form, 'strengths'),
-                goals: WCS4_LIB.form_field_value($form, 'goals'),
-                methods: WCS4_LIB.form_field_value($form, 'methods'),
-                type: WCS4_LIB.form_field_value($form, 'type'),
+                subject_id: WCS4_LIB.get_field_value($form, 'subject'),
+                teacher_id: WCS4_LIB.get_field_value($form, 'teacher'),
+                student_id: WCS4_LIB.get_field_value($form, 'student'),
+                start_date: WCS4_LIB.get_field_value($form, 'start_date'),
+                end_date: WCS4_LIB.get_field_value($form, 'end_date'),
+                diagnosis: WCS4_LIB.get_field_value($form, 'diagnosis'),
+                strengths: WCS4_LIB.get_field_value($form, 'strengths'),
+                goals: WCS4_LIB.get_field_value($form, 'goals'),
+                methods: WCS4_LIB.get_field_value($form, 'methods'),
+                type: WCS4_LIB.get_field_value($form, 'type'),
             };
             WCS4_LIB.submit_entry(entry, function (data, status) {
                 if (200 <= status && status < 300) {
-                    // Let's refresh the day
-                    let search_form_data = WCS4_ADMIN.search_form_process_and_push_history_state($(FILTER_ID))
+                    let search_form_data = WCS4_ADMIN.search_form_process_and_push_history_state($(FILTER_ID));
+                    let $sortable = $('.sortable.sorted');
                     reload_html_view(search_form_data, 'fade',
-                        $('.sortable.sorted').data('order-current-field'),
-                        $('.sortable.sorted').data('order-current-direction'));
+                        $sortable.data('order-current-field'),
+                        $sortable.data('order-current-direction'));
                     // Clear diagnosis, strengths, goals, methods
                     WCS4_LIB.reset_to_add_mode('work-plan');
                 }
@@ -116,25 +116,25 @@
                 goals += item.goals + "\n";
                 methods += item.methods + "\n";
             });
-            $form.find('[name="teacher"]').val(teacher_ids);
-            $form.find('[name="student"]').val(student_id);
-            $form.find('[name="start_date"]').val(null);
-            $form.find('[name="end_date"]').val(null);
-            $form.find('[name="diagnosis"]').val(diagnosis);
-            $form.find('[name="strengths"]').val(strengths);
-            $form.find('[name="goals"]').val(goals);
-            $form.find('[name="methods"]').val(methods);
+            WCS4_LIB.set_select_value($form, 'teacher', teacher_ids);
+            WCS4_LIB.set_select_value($form, 'student', student_id);
+            WCS4_LIB.set_input_value($form, 'start_date', null);
+            WCS4_LIB.set_input_value($form, 'end_date', null);
+            WCS4_LIB.set_input_value($form, 'diagnosis', diagnosis);
+            WCS4_LIB.set_input_value($form, 'strengths', strengths);
+            WCS4_LIB.set_input_value($form, 'goals', goals);
+            WCS4_LIB.set_input_value($form, 'methods', methods);
         } else if (entry.hasOwnProperty('id')) {
-            $form.find('[name="type"]').val(entry.type).change();
-            $form.find('[name="subject"]').val(entry.subject_id);
-            $form.find('[name="teacher"]').val(entry.teacher_id);
-            $form.find('[name="student"]').val(entry.student_id);
-            $form.find('[name="start_date"]').val(entry.start_date);
-            $form.find('[name="end_date"]').val(entry.end_date);
-            $form.find('[name="diagnosis"]').val(entry.diagnosis);
-            $form.find('[name="strengths"]').val(entry.strengths);
-            $form.find('[name="goals"]').val(entry.goals);
-            $form.find('[name="methods"]').val(entry.methods);
+            WCS4_LIB.set_radio_value($form, 'type', entry.type, true);
+            WCS4_LIB.set_select_value($form, 'subject', entry.subject_id);
+            WCS4_LIB.set_select_value($form, 'teacher', entry.teacher_id);
+            WCS4_LIB.set_select_value($form, 'student', entry.student_id);
+            WCS4_LIB.set_input_value($form, 'start_date', entry.start_date);
+            WCS4_LIB.set_input_value($form, 'end_date', entry.end_date);
+            WCS4_LIB.set_input_value($form, 'diagnosis', entry.diagnosis);
+            WCS4_LIB.set_input_value($form, 'strengths', entry.strengths);
+            WCS4_LIB.set_input_value($form, 'goals', entry.goals);
+            WCS4_LIB.set_input_value($form, 'methods', entry.methods);
         } else {
             WCS4_LIB.show_message(WCS4_AJAX_OBJECT.ajax_error, 'error');
         }
@@ -143,45 +143,50 @@
      * Handles the search button click event.
      */
     let bind_form_handler = function () {
-        switch ($('#wcs4-work-plan-form [name="type"]:checked').val()) {
+        let $form = $('#wcs4-work-plan-form');
+        let $subject = $('#wcs4_work_plan_subject'), $teacher = $('#wcs4_work_plan_teacher'), $student = $('#wcs4_work_plan_student');
+        let $startDate = $('#wcs4_work_plan_start_date'), $endDate = $('#wcs4_work_plan_end_date');
+        let $diagnosis = $('#wcs4_work_plan_diagnosis'), $strengths = $('#wcs4_work_plan_strengths'), $goals = $('#wcs4_work_plan_goals'), $methods = $('#wcs4_work_plan_methods');
+        let $buttons = $('#wcs4_work_plan_buttons-wrapper button');
+        switch ($form.find('[name="type"]:checked').val()) {
             default:
-                $('#wcs4_work_plan_subject').closest('fieldset').hide();
-                $('#wcs4_work_plan_teacher').closest('fieldset').hide();
-                $('#wcs4_work_plan_teacher').attr('multiple', false).attr('size', null);
-                $('#wcs4_work_plan_student').closest('fieldset').hide();
-                $('#wcs4_work_plan_start_date').closest('fieldset').hide();
-                $('#wcs4_work_plan_end_date').closest('fieldset').hide();
-                $('#wcs4_work_plan_diagnosis').closest('fieldset').hide();
-                $('#wcs4_work_plan_strengths').closest('fieldset').hide();
-                $('#wcs4_work_plan_goals').closest('fieldset').hide();
-                $('#wcs4_work_plan_methods').closest('fieldset').hide();
-                $('#wcs4_work_plan_buttons-wrapper button').attr('disabled', true).change();
+                $subject.closest('fieldset').hide();
+                $teacher.closest('fieldset').hide();
+                $teacher.prop('multiple', false).removeAttr('size');
+                $student.closest('fieldset').hide();
+                $startDate.closest('fieldset').hide();
+                $endDate.closest('fieldset').hide();
+                $diagnosis.closest('fieldset').hide();
+                $strengths.closest('fieldset').hide();
+                $goals.closest('fieldset').hide();
+                $methods.closest('fieldset').hide();
+                $buttons.prop('disabled', true).change();
                 break;
             case 'type.partial':
-                $('#wcs4_work_plan_subject').closest('fieldset').show();
-                $('#wcs4_work_plan_teacher').closest('fieldset').show();
-                $('#wcs4_work_plan_teacher').attr('multiple', false).attr('size', null);
-                $('#wcs4_work_plan_student').closest('fieldset').show();
-                $('#wcs4_work_plan_start_date').closest('fieldset').show();
-                $('#wcs4_work_plan_end_date').closest('fieldset').show();
-                $('#wcs4_work_plan_diagnosis').closest('fieldset').show();
-                $('#wcs4_work_plan_strengths').closest('fieldset').show();
-                $('#wcs4_work_plan_goals').closest('fieldset').show();
-                $('#wcs4_work_plan_methods').closest('fieldset').show();
-                $('#wcs4_work_plan_buttons-wrapper button').attr('disabled', false).change();
+                $subject.closest('fieldset').show();
+                $teacher.closest('fieldset').show();
+                $teacher.prop('multiple', false).removeAttr('size');
+                $student.closest('fieldset').show();
+                $startDate.closest('fieldset').show();
+                $endDate.closest('fieldset').show();
+                $diagnosis.closest('fieldset').show();
+                $strengths.closest('fieldset').show();
+                $goals.closest('fieldset').show();
+                $methods.closest('fieldset').show();
+                $buttons.prop('disabled', false).change();
                 break;
             case 'type.cumulative':
-                $('#wcs4_work_plan_subject').closest('fieldset').hide();
-                $('#wcs4_work_plan_teacher').closest('fieldset').show();
-                $('#wcs4_work_plan_teacher').attr('multiple', true).attr('size', 10);
-                $('#wcs4_work_plan_student').closest('fieldset').show();
-                $('#wcs4_work_plan_start_date').closest('fieldset').show();
-                $('#wcs4_work_plan_end_date').closest('fieldset').show();
-                $('#wcs4_work_plan_diagnosis').closest('fieldset').show();
-                $('#wcs4_work_plan_strengths').closest('fieldset').show();
-                $('#wcs4_work_plan_goals').closest('fieldset').show();
-                $('#wcs4_work_plan_methods').closest('fieldset').show();
-                $('#wcs4_work_plan_buttons-wrapper button').attr('disabled', false).change();
+                $subject.closest('fieldset').hide();
+                $teacher.closest('fieldset').show();
+                $teacher.prop('multiple', true).attr('size', 10);
+                $student.closest('fieldset').show();
+                $startDate.closest('fieldset').show();
+                $endDate.closest('fieldset').show();
+                $diagnosis.closest('fieldset').show();
+                $strengths.closest('fieldset').show();
+                $goals.closest('fieldset').show();
+                $methods.closest('fieldset').show();
+                $buttons.prop('disabled', false).change();
                 break;
         }
     };
@@ -209,11 +214,8 @@
     }
 
     let update_create_button = function () {
-        if ('' === $('#search_wcs4_work_plan_student_id').val()) {
-            $('#wcs4-work-plans-filter [data-action="generate"]').attr('disabled', true)
-        } else {
-            $('#wcs4-work-plans-filter [data-action="generate"]').attr('disabled', false)
-        }
+        let $generateBtn = $(FILTER_ID + ' [data-action="generate"]');
+        $generateBtn.prop('disabled', '' === $('#search_wcs4_work_plan_student_id').val());
     }
 
 })(jQuery);

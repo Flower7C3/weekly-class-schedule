@@ -20,15 +20,15 @@
             let entry = {
                 action: 'wcs_add_progress_entry',
                 security: WCS4_AJAX_OBJECT.ajax_nonce,
-                subject_id: WCS4_LIB.form_field_value($form, 'subject'),
-                teacher_id: WCS4_LIB.form_field_value($form, 'teacher'),
-                student_id: WCS4_LIB.form_field_value($form, 'student'),
-                start_date: WCS4_LIB.form_field_value($form, 'start_date'),
-                end_date: WCS4_LIB.form_field_value($form, 'end_date'),
-                improvements: WCS4_LIB.form_field_value($form, 'improvements'),
-                indications: WCS4_LIB.form_field_value($form, 'indications'),
+                subject_id: WCS4_LIB.get_field_value($form, 'subject'),
+                teacher_id: WCS4_LIB.get_field_value($form, 'teacher'),
+                student_id: WCS4_LIB.get_field_value($form, 'student'),
+                start_date: WCS4_LIB.get_field_value($form, 'start_date'),
+                end_date: WCS4_LIB.get_field_value($form, 'end_date'),
+                improvements: WCS4_LIB.get_field_value($form, 'improvements'),
+                indications: WCS4_LIB.get_field_value($form, 'indications'),
                 type: 'type.partial',
-                row_id: WCS4_LIB.form_field_value($form, 'row_id'),
+                row_id: WCS4_LIB.get_field_value($form, 'row_id'),
             };
             WCS4_LIB.submit_entry(entry, function (data, status) {
                 $spinner.removeClass('is-active');
@@ -47,14 +47,14 @@
     let set_entry_data_to_form = function (entry) {
         let $form = $('#wcs4-progress-form');
         if (entry.hasOwnProperty('id')) {
-            $form.find('[name="subject"]').val(entry.subject_id);
-            $form.find('[name="teacher[]"]').val(entry.teacher_id);
-            $form.find('[name="student"]').val(entry.student_id);
-            $form.find('[name="start_date"]').val(entry.start_date);
-            $form.find('[name="end_date"]').val(entry.end_date);
-            $form.find('[name="improvements"]').val(entry.improvements);
-            $form.find('[name="indications"]').val(entry.indications);
-            $form.find('[name="row_id"]').val(entry.id);
+            WCS4_LIB.set_select_value($form, 'subject', entry.subject_id);
+            WCS4_LIB.set_select_value($form, 'teacher[]', entry.teacher_id);
+            WCS4_LIB.set_select_value($form, 'student', entry.student_id);
+            WCS4_LIB.set_input_value($form, 'start_date', entry.start_date);
+            WCS4_LIB.set_input_value($form, 'end_date', entry.end_date);
+            WCS4_LIB.set_input_value($form, 'improvements', entry.improvements);
+            WCS4_LIB.set_input_value($form, 'indications', entry.indications);
+            WCS4_LIB.set_input_value($form, 'row_id', entry.id);
         } else {
             WCS4_LIB.show_message(WCS4_AJAX_OBJECT.ajax_error, 'error');
         }

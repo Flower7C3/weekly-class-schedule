@@ -41,22 +41,22 @@
             let entry = {
                 action: 'wcs_add_or_update_progress_entry',
                 security: WCS4_AJAX_OBJECT.ajax_nonce,
-                subject_id: WCS4_LIB.form_field_value($form, 'subject'),
-                teacher_id: WCS4_LIB.form_field_value($form, 'teacher'),
-                student_id: WCS4_LIB.form_field_value($form, 'student'),
-                start_date: WCS4_LIB.form_field_value($form, 'start_date'),
-                end_date: WCS4_LIB.form_field_value($form, 'end_date'),
-                improvements: WCS4_LIB.form_field_value($form, 'improvements'),
-                indications: WCS4_LIB.form_field_value($form, 'indications'),
-                type: WCS4_LIB.form_field_value($form, 'type'),
+                subject_id: WCS4_LIB.get_field_value($form, 'subject'),
+                teacher_id: WCS4_LIB.get_field_value($form, 'teacher'),
+                student_id: WCS4_LIB.get_field_value($form, 'student'),
+                start_date: WCS4_LIB.get_field_value($form, 'start_date'),
+                end_date: WCS4_LIB.get_field_value($form, 'end_date'),
+                improvements: WCS4_LIB.get_field_value($form, 'improvements'),
+                indications: WCS4_LIB.get_field_value($form, 'indications'),
+                type: WCS4_LIB.get_field_value($form, 'type'),
             };
             WCS4_LIB.submit_entry(entry, function (data, status) {
                 if (200 <= status && status < 300) {
-                    // Let's refresh the day
-                    let search_form_data = WCS4_ADMIN.search_form_process_and_push_history_state($(FILTER_ID))
+                    let search_form_data = WCS4_ADMIN.search_form_process_and_push_history_state($(FILTER_ID));
+                    let $sortable = $('.sortable.sorted');
                     reload_html_view(search_form_data, 'fade',
-                        $('.sortable.sorted').data('order-current-field'),
-                        $('.sortable.sorted').data('order-current-direction')
+                        $sortable.data('order-current-field'),
+                        $sortable.data('order-current-direction')
                     );
                     // Clear improvements and indications.
                     WCS4_LIB.reset_to_add_mode('progress');
@@ -110,21 +110,21 @@
                 improvements += item.improvements + "\n";
                 indications += item.indications + "\n";
             });
-            $form.find('[name="teacher"]').val(teacher_ids);
-            $form.find('[name="student"]').val(student_id);
-            $form.find('[name="start_date"]').val(null);
-            $form.find('[name="end_date"]').val(null);
-            $form.find('[name="improvements"]').val(improvements);
-            $form.find('[name="indications"]').val(indications);
+            WCS4_LIB.set_select_value($form, 'teacher', teacher_ids);
+            WCS4_LIB.set_select_value($form, 'student', student_id);
+            WCS4_LIB.set_input_value($form, 'start_date', null);
+            WCS4_LIB.set_input_value($form, 'end_date', null);
+            WCS4_LIB.set_input_value($form, 'improvements', improvements);
+            WCS4_LIB.set_input_value($form, 'indications', indications);
         } else if (entry.hasOwnProperty('id')) {
-            $form.find('[name="type"]').val(entry.type).change();
-            $form.find('[name="subject"]').val(entry.subject_id);
-            $form.find('[name="teacher"]').val(entry.teacher_id);
-            $form.find('[name="student"]').val(entry.student_id);
-            $form.find('[name="start_date"]').val(entry.start_date);
-            $form.find('[name="end_date"]').val(entry.end_date);
-            $form.find('[name="improvements"]').val(entry.improvements);
-            $form.find('[name="indications"]').val(entry.indications);
+            WCS4_LIB.set_radio_value($form, 'type', entry.type, true);
+            WCS4_LIB.set_select_value($form, 'subject', entry.subject_id);
+            WCS4_LIB.set_select_value($form, 'teacher', entry.teacher_id);
+            WCS4_LIB.set_select_value($form, 'student', entry.student_id);
+            WCS4_LIB.set_input_value($form, 'start_date', entry.start_date);
+            WCS4_LIB.set_input_value($form, 'end_date', entry.end_date);
+            WCS4_LIB.set_input_value($form, 'improvements', entry.improvements);
+            WCS4_LIB.set_input_value($form, 'indications', entry.indications);
         } else {
             WCS4_LIB.show_message(WCS4_AJAX_OBJECT.ajax_error, 'error');
         }
@@ -134,39 +134,43 @@
      */
     let bind_form_handler = function () {
         let $form = $('#wcs4-progress-form');
+        let $subject = $('#wcs4_progress_subject'), $teacher = $('#wcs4_progress_teacher'), $student = $('#wcs4_progress_student');
+        let $startDate = $('#wcs4_progress_start_date'), $endDate = $('#wcs4_progress_end_date');
+        let $improvements = $('#wcs4_progress_improvements'), $indications = $('#wcs4_progress_indications');
+        let $buttons = $('#wcs4_progress_buttons-wrapper button');
         switch ($form.find('[name="type"]:checked').val()) {
             default:
-                $('#wcs4_progress_subject').closest('fieldset').hide();
-                $('#wcs4_progress_student').closest('fieldset').hide();
-                $('#wcs4_progress_teacher').closest('fieldset').hide();
-                $('#wcs4_progress_teacher').attr('multiple', false).attr('size', null);
-                $('#wcs4_progress_start_date').closest('fieldset').hide();
-                $('#wcs4_progress_end_date').closest('fieldset').hide();
-                $('#wcs4_progress_improvements').closest('fieldset').hide();
-                $('#wcs4_progress_indications').closest('fieldset').hide();
-                $('#wcs4_progress_buttons-wrapper button').attr('disabled', true).change();
+                $subject.closest('fieldset').hide();
+                $student.closest('fieldset').hide();
+                $teacher.closest('fieldset').hide();
+                $teacher.prop('multiple', false).removeAttr('size');
+                $startDate.closest('fieldset').hide();
+                $endDate.closest('fieldset').hide();
+                $improvements.closest('fieldset').hide();
+                $indications.closest('fieldset').hide();
+                $buttons.prop('disabled', true).change();
                 break;
             case 'type.partial':
-                $('#wcs4_progress_subject').closest('fieldset').show();
-                $('#wcs4_progress_student').closest('fieldset').show();
-                $('#wcs4_progress_teacher').closest('fieldset').show();
-                $('#wcs4_progress_teacher').attr('multiple', false).attr('size', null);
-                $('#wcs4_progress_start_date').closest('fieldset').show();
-                $('#wcs4_progress_end_date').closest('fieldset').show();
-                $('#wcs4_progress_improvements').closest('fieldset').show();
-                $('#wcs4_progress_indications').closest('fieldset').show();
-                $('#wcs4_progress_buttons-wrapper button').attr('disabled', false).change();
+                $subject.closest('fieldset').show();
+                $student.closest('fieldset').show();
+                $teacher.closest('fieldset').show();
+                $teacher.prop('multiple', false).removeAttr('size');
+                $startDate.closest('fieldset').show();
+                $endDate.closest('fieldset').show();
+                $improvements.closest('fieldset').show();
+                $indications.closest('fieldset').show();
+                $buttons.prop('disabled', false).change();
                 break;
             case 'type.periodic':
-                $('#wcs4_progress_subject').closest('fieldset').hide();
-                $('#wcs4_progress_student').closest('fieldset').show();
-                $('#wcs4_progress_teacher').closest('fieldset').show();
-                $('#wcs4_progress_teacher').attr('multiple', true).attr('size', 10);
-                $('#wcs4_progress_start_date').closest('fieldset').show();
-                $('#wcs4_progress_end_date').closest('fieldset').show();
-                $('#wcs4_progress_improvements').closest('fieldset').show();
-                $('#wcs4_progress_indications').closest('fieldset').show();
-                $('#wcs4_progress_buttons-wrapper button').attr('disabled', false).change();
+                $subject.closest('fieldset').hide();
+                $student.closest('fieldset').show();
+                $teacher.closest('fieldset').show();
+                $teacher.prop('multiple', true).attr('size', 10);
+                $startDate.closest('fieldset').show();
+                $endDate.closest('fieldset').show();
+                $improvements.closest('fieldset').show();
+                $indications.closest('fieldset').show();
+                $buttons.prop('disabled', false).change();
                 break;
         }
     };
@@ -193,11 +197,8 @@
     }
 
     let update_create_button = function () {
-        if ('' === $('#search_wcs4_progress_student_id').val()) {
-            $('#wcs4-progresses-filter [data-action="generate"]').attr('disabled', true)
-        } else {
-            $('#wcs4-progresses-filter [data-action="generate"]').attr('disabled', false)
-        }
+        let $generateBtn = $(FILTER_ID + ' [data-action="generate"]');
+        $generateBtn.prop('disabled', '' === $('#search_wcs4_progress_student_id').val());
     }
 
 })(jQuery);

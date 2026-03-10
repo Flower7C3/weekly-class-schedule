@@ -34,16 +34,16 @@
             let entry = {
                 action: 'wcs_add_or_update_schedule_entry',
                 security: WCS4_AJAX_OBJECT.ajax_nonce,
-                subject_id: WCS4_LIB.form_field_value($form, 'subject'),
-                teacher_id: WCS4_LIB.form_field_value($form, 'teacher'),
-                student_id: WCS4_LIB.form_field_value($form, 'student'),
-                classroom_id: WCS4_LIB.form_field_value($form, 'classroom'),
-                weekday: WCS4_LIB.form_field_value($form, 'weekday'),
-                start_time: WCS4_LIB.form_field_value($form, 'start_time'),
-                end_time: WCS4_LIB.form_field_value($form, 'end_time'),
-                visible: WCS4_LIB.form_field_value($form, 'visibility'),
-                collision_detection: WCS4_LIB.form_field_value($form, 'collision_detection'),
-                notes: WCS4_LIB.form_field_value($form, 'notes'),
+                subject_id: WCS4_LIB.get_field_value($form, 'subject'),
+                teacher_id: WCS4_LIB.get_field_value($form, 'teacher'),
+                student_id: WCS4_LIB.get_field_value($form, 'student'),
+                classroom_id: WCS4_LIB.get_field_value($form, 'classroom'),
+                weekday: WCS4_LIB.get_field_value($form, 'weekday'),
+                start_time: WCS4_LIB.get_field_value($form, 'start_time'),
+                end_time: WCS4_LIB.get_field_value($form, 'end_time'),
+                visible: WCS4_LIB.get_field_value($form, 'visibility'),
+                collision_detection: WCS4_LIB.get_field_value($form, 'collision_detection'),
+                notes: WCS4_LIB.get_field_value($form, 'notes'),
             };
 
             WCS4_LIB.submit_entry(entry, function (data, status) {
@@ -91,17 +91,16 @@
         let $form = $('#wcs4_schedule_management-form');
         if (entry.hasOwnProperty('id')) {
             // We got an entry.
-            $form.find('[name="subject"]').val(entry.subject_id);
-            $form.find('[name="teacher"]').val(entry.teacher_id);
-            $form.find('[name="student"]').val(entry.student_id);
-            $form.find('[name="classroom"]').val(entry.classroom_id);
-            $form.find('[name="weekday"]').val(entry.weekday);
-            $form.find('[name="start_time"]').val(entry.start_time);
-            $form.find('[name="end_time"]').val(entry.end_time);
-            $form.find('[name="visibility"]').val(entry.visible === '1' ? 'visible' : 'hidden');
-            $form.find('[name="collision_detection"]').val(entry.collision_detection === '1' ? 'yes' : 'no');
-            $form.find('[name="notes"]').val(entry.notes);
-            $form.find('[name="type"]').val(entry.type).change();
+            WCS4_LIB.set_select_value($form, 'subject', entry.subject_id);
+            WCS4_LIB.set_select_value($form, 'teacher', entry.teacher_id);
+            WCS4_LIB.set_select_value($form, 'student', entry.student_id);
+            WCS4_LIB.set_select_value($form, 'classroom', entry.classroom_id);
+            WCS4_LIB.set_select_value($form, 'weekday', entry.weekday);
+            WCS4_LIB.set_input_value($form, 'start_time', entry.start_time);
+            WCS4_LIB.set_input_value($form, 'end_time', entry.end_time);
+            WCS4_LIB.set_radio_value($form, 'visibility', entry.visible === '1' ? 'visible' : 'hidden');
+            WCS4_LIB.set_radio_value($form, 'collision_detection', entry.collision_detection === '1' ? 'yes' : 'no');
+            WCS4_LIB.set_input_value($form, 'notes', entry.notes);
         } else {
             WCS4_LIB.show_message(WCS4_AJAX_OBJECT.ajax_error, 'error');
         }
