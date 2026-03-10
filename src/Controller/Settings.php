@@ -212,66 +212,57 @@ class Settings
                 'schedule_classroom_collision' => 'yes',
                 'schedule_teacher_collision' => 'yes',
                 'schedule_student_collision' => 'yes',
-                'schedule_template_table_short' => _x(
-                    '<small>{start time}-{end time}</small><br>{subject} ({tea}/{stu})',
-                    'config template table short',
-                    'wcs4'
-                ),
-                'schedule_template_table_details' => _x(
-                    '{teacher link} has {subject link} at {classroom link} from {start time} to {end time} for {student link} {notes}',
-                    'config template table details',
-                    'wcs4'
-                ),
-                'schedule_template_list' => _x(
-                    '{teacher link} has {subject link} at {classroom link} from {start time} to {end time} for {student link} {notes}',
-                    'config template list',
-                    'wcs4'
-                ),
+                'schedule_template_table_short' => '<p>{start time}-{end time}<br />' . "\n" . '{subject} ({tea}/{stu}) @{cls}</p>',
+                'schedule_template_table_details' => '<p><small>{start time}-{end time}</small><br />' . "\n" . '{subject link} ({teacher link}/{student link}) @{classroom link}</p>',
+                'schedule_template_list' => '<p>{start time}-{end time}: {subject link} z {teacher link} dla {student link} w {classroom link}</p>',
                 # journal
-                'journal_edit_masters' => 0,
+                'journal_edit_masters' => 5,
                 'journal_teacher_collision' => 'yes',
                 'journal_student_collision' => 'yes',
-                'journal_shortcode_template' => _x(
-                    '{teacher link} has {subject link} from {start time} to {end time} for {student link} {topic}',
-                    'config template journal',
-                    'wcs4'
-                ),
+                'journal_shortcode_template' => '<p><small>{start time}-{end time}<small> {type}</small></small><br />' . "\n" . '{subject} ({tea}/{stu})</p>',
+                # Szablony z obrazkami (logo/PFRON) – nie nadpisujemy; pozostawiamy krótki placeholder.
                 'journal_teachers_html_template_code' =>
                     '<header><h1>Journal</h1><h2>{heading}</h2></header>' .
                     '<main>{table}</main>' .
                     '<footer><p>Generated at {current datetime}</p></footer>',
                 'journal_teachers_html_template_style' => '',
-                'journal_teachers_html_table_columns' => 'id, ID, {index}' . PHP_EOL .
-                    'teacher, Pedagog, {teacher}' . PHP_EOL .
+                'journal_teachers_html_table_columns' => 'teacher, Pedagog, {teacher}' . PHP_EOL .
                     'subject, Przedmiot, {subject}' . PHP_EOL .
-                    'student, Uczeń, {student}' . PHP_EOL .
+                    '#student, Uczeń, {student}' . PHP_EOL .
+                    '#type, Rodzaj, {type}' . PHP_EOL .
                     'date, Data, {date}: {start time} - {end time}' . PHP_EOL .
-                    'time, Czas trwania, {duration time} min' . PHP_EOL .
+                    '#time, Czas trwania, {duration time}' . PHP_EOL .
                     'topic, Temat, {topic}' . PHP_EOL .
-                    'signature, Podpis, ' . PHP_EOL,
-                'teachers' => 'id, ID, {index}' . PHP_EOL .
-                    'teacher duration detailed, Pedagodzy, {duration time} min, {duration time} min = {duration hours} h {duration minutes} min / {events} wpisów' . PHP_EOL .
+                    '#created, Utworzono, {created at} <small>{created by}</small>' . PHP_EOL .
+                    'student duration detailed, Uczniowie, {duration time} min, {duration time} min = {duration hours} h {duration minutes} min / {events} wpisów' . PHP_EOL .
+                    'type duration simple, Rodzaje, {duration time} min, {duration time} min = {duration hours} h {duration minutes} min / {events} wpisów' . PHP_EOL .
+                    'signature, Podpis,' . PHP_EOL,
+                'journal_teachers_html_simple_table_columns' => 'teacher duration detailed, Pedagodzy, {duration time} min, {duration time} min = {duration hours} h {duration minutes} min / {events} wpisów' . PHP_EOL .
+                    'type, Rodzaj, {type}' . PHP_EOL .
                     'type duration detailed, Rodzaje, {duration time} min, {duration time} min = {duration hours} h {duration minutes} min / {events} wpisów' . PHP_EOL,
                 'journal_students_html_template_code' =>
                     '<header><h1>Journal</h1><h2>{heading}</h2></header>' .
                     '<main>{table}</main>' .
                     '<footer><p>Generated at {current datetime}</p></footer>',
                 'journal_students_html_template_style' => '',
-                'journal_students_html_table_columns' => 'id, ID, {index}' . PHP_EOL .
-                    'teacher, Pedagog, {teacher}' . PHP_EOL .
+                'journal_students_html_table_columns' => '#teacher, Pedagog, {teacher}' . PHP_EOL .
+                    'subject, Przedmiot, {subject}' . PHP_EOL .
+                    '#student, Uczeń, {student}' . PHP_EOL .
+                    '#type, Rodzaj, {type}' . PHP_EOL .
+                    '#student duration detailed, Uczniowie, {duration time} min, {duration time} min = {duration hours} h {duration minutes} min / {events} wpisów' . PHP_EOL .
+                    'time, Czas trwania, {duration time}' . PHP_EOL .
+                    '#date, Data, {date}: {start time} - {end time}' . PHP_EOL .
+                    'date, Data, {date}' . PHP_EOL .
+                    '#topic, Temat, {topic}' . PHP_EOL .
+                    '#created, Utworzono, {created at} <small>{created by}</small>' . PHP_EOL .
+                    '#type duration simple, Rodzaje, {duration time} min, {duration time} min = {duration hours} h {duration minutes} min / {events} wpisów' . PHP_EOL .
+                    '#signature, Podpis,' . PHP_EOL,
+                'journal_students_html_simple_table_columns' => 'student duration detailed, Uczniowie, {duration time} min, {duration time} min = {duration hours} h {duration minutes} min / {events} wpisów' . PHP_EOL .
+                    'type duration detailed, Rodzaje, {duration time} min, {duration time} min = {duration hours} h {duration minutes} min / {events} wpisów' . PHP_EOL,
+                'journal_csv_table_columns' => 'teacher, Pedagog, {teacher}' . PHP_EOL .
                     'subject, Przedmiot, {subject}' . PHP_EOL .
                     'student, Uczeń, {student}' . PHP_EOL .
-                    'date, Data, {date}: {start time} - {end time}' . PHP_EOL .
-                    'time, Czas trwania, {duration time} min' . PHP_EOL .
-                    'topic, Temat, {topic}' . PHP_EOL .
-                    'signature, Podpis, ' . PHP_EOL,
-                'journal_students_html_simple_table_columns' => 'id, ID, {index}' . PHP_EOL .
-                    'student duration detailed, Uczniowie, {duration time} min, {duration time} min = {duration hours} h {duration minutes} min / {events} wpisów' . PHP_EOL .
-                    'type duration simple, Rodzaje, {duration time} min, {duration time} min = {duration hours} h {duration minutes} min / {events} wpisów' . PHP_EOL,
-                'journal_csv_table_columns' => 'id, ID, {index}' . PHP_EOL .
-                    'teacher, Pedagog, {teacher}' . PHP_EOL .
-                    'subject, Przedmiot, {subject}' . PHP_EOL .
-                    'student, Uczeń, {student}' . PHP_EOL .
+                    'type, Rodzaj, {type}' . PHP_EOL .
                     'date, Data, {date}: {start time} - {end time}' . PHP_EOL .
                     'time, Czas trwania, {duration time} min' . PHP_EOL .
                     'topic, Temat, {topic}' . PHP_EOL .
@@ -281,20 +272,27 @@ class Settings
                     'updated_by, Zaktualizowano przez, {updated by}' . PHP_EOL,
                 # work_plan
                 'work_plan_view' => 0,
-                'work_plan_view_masters' => 0,
-                'work_plan_create' => 'yes',
+                'work_plan_view_masters' => 20,
+                'work_plan_create' => 'no',
                 'work_plan_create_masters' => 'yes',
-                'work_plan_shortcode_template_partial_type' => _x(
-                    '{subject link} with {teacher link}<br>diagnosis: {diagnosis}<br>strengths: {strengths}<br>goals: {goals}<br>methods: {methods}',
-                    'template work plan for student',
-                    'wcs4'
-                ),
-                'work_plan_shortcode_template_periodic_type' => _x(
-                    '<small>{start date} - {end date}</small><br>{subject link} with {teacher link}<br>diagnosis: {diagnosis}<br>strengths: {strengths}<br>goals: {goals}<br>methods: {methods}',
-                    'template work plan for student',
-                    'wcs4'
-                ),
+                'work_plan_shortcode_template_partial_type' => '<p>{type icon} {type}: {teacher link} prowadzi {subject link} z {student} za okres od {start date} do {end date}:</p>' . "\n" .
+                    '<ul>' . "\n" .
+                    '  <li><strong>diagnoza: </strong>{diagnosis}</li>' . "\n" .
+                    '  <li><strong>mocne strony: </strong>{strengths}</li>' . "\n" .
+                    '  <li><strong>cele do osiągnięcia: </strong>{goals}</li>' . "\n" .
+                    '  <li><strong>działania oraz metody pracy z beneficjentem: </strong>{methods}</li>' . "\n" .
+                    '</ul>' . "\n" .
+                    '<p><small>{created or updated at}</small></p>',
+                'work_plan_shortcode_template_periodic_type' => '<p>{type icon} {type}: {teacher link} prowadzi z {student} za okres od {start date} do {end date}:</p>' . "\n" .
+                    '<ul>' . "\n" .
+                    '  <li><strong>diagnoza: </strong>{diagnosis}</li>' . "\n" .
+                    '  <li><strong>mocne strony: </strong>{strengths}</li>' . "\n" .
+                    '  <li><strong>cele do osiągnięcia: </strong>{goals}</li>' . "\n" .
+                    '  <li><strong>działania oraz metody pracy z beneficjentem: </strong>{methods}</li>' . "\n" .
+                    '</ul>' . "\n" .
+                    '<p><small>{created or updated at}</small></p>',
                 'work_plan_html_template_style' => '',
+                # Szablony z obrazkami – nie nadpisujemy.
                 'work_plan_html_template_code_partial_type' =>
                     '<header><h1>Progress</h1><h2>{heading}</h2></header>' .
                     '<main>{table}</main>' .
@@ -307,13 +305,13 @@ class Settings
                     'teacher, Pedagog, {teacher}' . PHP_EOL .
                     'subject, Przedmiot, {subject}' . PHP_EOL .
                     'student, Uczeń, {student}' . PHP_EOL .
-                    'start_date, Data początkowa, {start date}' . PHP_EOL .
-                    'end_date, Data końcowa, {end date}' . PHP_EOL .
+                    'date, Data, {start date} - {end date}' . PHP_EOL .
                     'diagnosis, Diagnoza, {diagnosis}' . PHP_EOL .
                     'strengths, Mocne strony, {strengths}' . PHP_EOL .
                     'goals, Cele do osiągnięcia, {goals}' . PHP_EOL .
                     'methods, Działania oraz metody pracy z beneficjentem, {methods}' . PHP_EOL .
-                    'type, Typ raportu, {type}' . PHP_EOL,
+                    '#type, Typ raportu, {type}' . PHP_EOL .
+                    '#created, Utworzono, {created at} <small>{created by}</small>' . PHP_EOL,
                 'work_plan_csv_table_columns' => 'id, ID, {index}' . PHP_EOL .
                     'teacher, Pedagog, {teacher}' . PHP_EOL .
                     'subject, Przedmiot, {subject}' . PHP_EOL .
@@ -331,20 +329,23 @@ class Settings
                     'updated_by, Zaktualizowano przez, {updated by}' . PHP_EOL,
                 # progress
                 'progress_view' => 0,
-                'progress_view_masters' => 0,
-                'progress_create' => 'yes',
+                'progress_view_masters' => 20,
+                'progress_create' => 'no',
                 'progress_create_masters' => 'yes',
-                'progress_shortcode_template_partial_type' => _x(
-                    '{subject link} with {teacher link}<br>improvements: {improvements}<br>indications: {indications}',
-                    'template progress for student',
-                    'wcs4'
-                ),
-                'progress_shortcode_template_periodic_type' => _x(
-                    '<small>{start date} - {end date}</small><br>{subject link} with {teacher link}<br>improvements: {improvements}<br>indications: {indications}',
-                    'template progress for student',
-                    'wcs4'
-                ),
+                'progress_shortcode_template_partial_type' => '<p>{type icon} {type}: {teacher link} prowadzi {subject link} z {student} za okres od {start date} do {end date}</p>' . "\n" .
+                    '<ul>' . "\n" .
+                    '  <li><strong>postępy:</strong> {improvements}</li>' . "\n" .
+                    '  <li><strong>wskazania:</strong> {indications}</li>' . "\n" .
+                    '</ul>' . "\n" .
+                    '<p><small>{created or updated at}</small></p>',
+                'progress_shortcode_template_periodic_type' => '<p>{type icon} {type}: {teacher link} prowadzi z {student} za okres od {start date} do {end date}</p>' . "\n" .
+                    '<ul>' . "\n" .
+                    '  <li><strong>postępy: </strong>{improvements}</li>' . "\n" .
+                    '  <li><strong>wskazania: </strong>{indications}</li>' . "\n" .
+                    '</ul>' . "\n" .
+                    '<p><small>{created or updated at}</small></p>',
                 'progress_html_template_style' => '',
+                # Szablony z obrazkami – nie nadpisujemy.
                 'progress_html_template_code_partial_type' =>
                     '<header><h1>Progress</h1><h2>{heading}</h2></header>' .
                     '<main>{table}</main>' .
@@ -357,11 +358,10 @@ class Settings
                     'teacher, Pedagog, {teacher}' . PHP_EOL .
                     'subject, Przedmiot, {subject}' . PHP_EOL .
                     'student, Uczeń, {student}' . PHP_EOL .
-                    'start_date, Data początkowa, {start date}' . PHP_EOL .
-                    'end_date, Data końcowa, {end date}' . PHP_EOL .
+                    'date, Data, {start date} - {end date}' . PHP_EOL .
                     'improvements, Postępy, {improvements}' . PHP_EOL .
-                    'indications, Wskazania do dalszej terapii, {indications}' . PHP_EOL .
-                    'type, Typ raportu, {type}' . PHP_EOL,
+                    'indications, Wskazania, {indications}' . PHP_EOL .
+                    '#signature, Podpis, ' . PHP_EOL,
                 'progress_csv_table_columns' => 'id, ID, {index}' . PHP_EOL .
                     'teacher, Pedagog, {teacher}' . PHP_EOL .
                     'subject, Przedmiot, {subject}' . PHP_EOL .
@@ -369,135 +369,75 @@ class Settings
                     'start_date, Data początkowa, {start date}' . PHP_EOL .
                     'end_date, Data końcowa, {end date}' . PHP_EOL .
                     'improvements, Postępy, {improvements}' . PHP_EOL .
-                    'indications, Wskazania do dalszej terapii, {indications}' . PHP_EOL .
+                    'indications, Wskazania, {indications}' . PHP_EOL .
                     'type, Typ raportu, {type}' . PHP_EOL .
                     'created_at, Utworzono o, {created at}' . PHP_EOL .
                     'created_by, Utworzono przez, {created by}' . PHP_EOL .
                     'updated_at, Zaktualizowano o, {updated at}' . PHP_EOL .
                     'updated_by, Zaktualizowano przez, {updated by}' . PHP_EOL,
                 # subject
-                'subject_taxonomy_slug' => _x('branch', 'config slug for taxonomy', 'wcs4'),
+                'subject_taxonomy_slug' => 'harmonogram/dziedzina',
                 'subject_taxonomy_hierarchical' => 'no',
-                'subject_archive_slug' => _x('subjects', 'config slug for archive', 'wcs4'),
-                'subject_post_slug' => _x('subject', 'config slug for item', 'wcs4'),
+                'subject_archive_slug' => 'harmonogram/przedmioty',
+                'subject_post_slug' => 'harmonogram/przedmiot',
                 'subject_schedule_download_ical' => 'no',
                 'subject_hashed_slug' => 'no',
                 'subject_post_pass_satisfy_any' => 'no',
                 'subject_schedule_layout' => 'table',
-                'subject_schedule_template_table_short' => _x(
-                    '<small>{start time}-{end time}</small><br>{tea}/{stu} @{cls}',
-                    'template table short for subject',
-                    'wcs4'
-                ),
-                'subject_schedule_template_table_details' => _x(
-                    '<small>{start time}-{end time}</small><br>{teacher link} at {classroom link} for {student link} {notes}',
-                    'template table details for subject',
-                    'wcs4'
-                ),
-                'subject_schedule_template_list' => _x(
-                    '<small>{start time}-{end time}</small><br>{teacher link} at {classroom link} for {student link} {notes}',
-                    'template schedule for subject',
-                    'wcs4'
-                ),
+                'subject_schedule_template_table_short' => '<p><strong><small>{start time}-{end time}</small></strong><br />' . "\n" . '{tea}/{stu} @{cls}</p>',
+                'subject_schedule_template_table_details' => '<p><strong><small>{start time}-{end time}</small></strong><br />' . "\n" . '{teacher link} dla {student link} w {classroom link} {notes}</p>',
+                'subject_schedule_template_list' => '<p><strong><small>{start time}-{end time}</small></strong><br />' . "\n" . '{teacher link} w {classroom link} dla {student link} {notes}</p>',
                 'subject_journal_view' => 0,
                 'subject_journal_create' => 'no',
-                'subject_journal_shortcode_template' => _x(
-                    '<small>{start time}-{end time}</small><br>{teacher link} at {classroom link} for {student link} {topic}',
-                    'template journal for subject',
-                    'wcs4'
-                ),
+                'subject_journal_shortcode_template' => '<p><small>{start time}-{end time}<small> {type}</small></small><br />' . "\n" . '{teacher link} w {classroom link} dla {student link} {topic}</p>',
                 'subject_journal_download_csv' => 'no',
                 'subject_journal_download_html' => 'no',
                 # teacher
-                'teacher_taxonomy_slug' => _x('specialization', 'config slug for taxonomy', 'wcs4'),
+                'teacher_taxonomy_slug' => 'harmonogram/specjalizacja',
                 'teacher_taxonomy_hierarchical' => 'no',
-                'teacher_archive_slug' => _x('teachers', 'config slug for archive', 'wcs4'),
-                'teacher_post_slug' => _x('teacher', 'config slug for item', 'wcs4'),
+                'teacher_archive_slug' => 'harmonogram/pedagodzy',
+                'teacher_post_slug' => 'harmonogram/pedagog',
                 'teacher_schedule_download_ical' => 'no',
                 'teacher_hashed_slug' => 'yes',
-                'teacher_post_pass_satisfy_any' => 'no',
+                'teacher_post_pass_satisfy_any' => 'yes',
                 'teacher_schedule_layout' => 'table',
-                'teacher_schedule_template_table_short' => _x(
-                    '<small>{start time}-{end time}</small><br>{subject} @{cls} ({stu})',
-                    'template table short for teacher',
-                    'wcs4'
-                ),
-                'teacher_schedule_template_table_details' => _x(
-                    '<small>{start time}-{end time}</small><br>{subject link} at {classroom link} for {student link} {notes}',
-                    'template table details for teacher',
-                    'wcs4'
-                ),
-                'teacher_schedule_template_list' => _x(
-                    '<small>{start time}-{end time}</small><br>{subject link} at {classroom link} for {student link} {notes}',
-                    'template schedule for teacher',
-                    'wcs4'
-                ),
-                'teacher_journal_view' => 0,
-                'teacher_journal_create' => 'no',
-                'teacher_journal_shortcode_template' => _x(
-                    '<small>{start time}-{end time}</small><br>{subject link} for {student link} {topic}',
-                    'template journal for teacher',
-                    'wcs4'
-                ),
+                'teacher_schedule_template_table_short' => '<p><strong><small>{start time}-{end time}</small></strong><br />' . "\n" . '{subject} ({stu})<br />' . "\n" . '<small>@{classroom}</small></p>',
+                'teacher_schedule_template_table_details' => '<p><strong><small>{start time}-{end time}</small></strong><br />' . "\n" . '{subject link} dla {student link} w {classroom link} {notes}</p>',
+                'teacher_schedule_template_list' => '<p><strong><small>{start time}-{end time}</small></strong><br />' . "\n" . '{subject link} w {classroom link} dla {student link} {notes}</p>',
+                'teacher_journal_view' => -1,
+                'teacher_journal_create' => 'yes',
+                'teacher_journal_shortcode_template' => '<p><small>{start time}-{end time} {type}</small><br />' . "\n" . '{subject link} dla {student link} {topic}</p>' . "\n" . '<p><small>{created or updated at} {edit button}</small></p>',
                 'teacher_journal_download_csv' => 'no',
                 'teacher_journal_download_html' => 'no',
                 # student
-                'student_taxonomy_slug' => _x('group', 'config slug for taxonomy', 'wcs4'),
+                'student_taxonomy_slug' => 'harmonogram/grupa',
                 'student_taxonomy_hierarchical' => 'no',
-                'student_archive_slug' => _x('students', 'config slug for archive', 'wcs4'),
-                'student_post_slug' => _x('student', 'config slug for item', 'wcs4'),
+                'student_archive_slug' => 'harmonogram/uczniowie',
+                'student_post_slug' => 'harmonogram/uczen',
                 'student_schedule_download_ical' => 'no',
                 'student_hashed_slug' => 'yes',
                 'student_post_pass_satisfy_any' => 'no',
                 'student_schedule_layout' => 'table',
-                'student_schedule_template_table_short' => _x(
-                    '<small>{start time}-{end time}</small><br>{subject} ({tea}) @{cls}',
-                    'template table short for student',
-                    'wcs4'
-                ),
-                'student_schedule_template_table_details' => _x(
-                    '<small>{start time}-{end time}</small><br>{subject link} with {teacher link} at {classroom link}',
-                    'template table details for student',
-                    'wcs4'
-                ),
-                'student_schedule_template_list' => _x(
-                    '{subject link} with {teacher link} at {classroom link} from {start time} to {end time} {notes}',
-                    'template schedule for student',
-                    'wcs4'
-                ),
+                'student_schedule_template_table_short' => '<p><strong><small>{start time}-{end time}</small></strong><br />' . "\n" . '{subject} ({tea})<br />' . "\n" . '<small>@{classroom}</small></p>',
+                'student_schedule_template_table_details' => '<p><strong><small>{start time}-{end time}</small></strong><br />' . "\n" . '{subject link} z {teacher link} w {classroom link} {notes}</p>',
+                'student_schedule_template_list' => '<p><strong><small>{start time}-{end time}</small></strong><br />' . "\n" . '{subject link} z {teacher link} w {classroom link} {notes}</p>',
                 'student_journal_view' => 0,
                 'student_journal_create' => 'no',
-                'student_journal_shortcode_template' => _x(
-                    '{subject link} with {teacher link} from {start time} to {end time} {topic}',
-                    'template journal for student',
-                    'wcs4'
-                ),
+                'student_journal_shortcode_template' => '<p>{subject link} przez {teacher link} od {start time} do {end time} {topic}</p>',
                 'student_journal_download_csv' => 'no',
                 'student_journal_download_html' => 'no',
                 # classroom
-                'classroom_taxonomy_slug' => _x('locations', 'config slug for taxonomy', 'wcs4'),
-                'classroom_taxonomy_hierarchical' => 'no',
-                'classroom_archive_slug' => _x('classrooms', 'config slug for archive', 'wcs4'),
-                'classroom_post_slug' => _x('classroom', 'config slug for item', 'wcs4'),
+                'classroom_taxonomy_slug' => 'harmonogram/lokalizacja',
+                'classroom_taxonomy_hierarchical' => 'yes',
+                'classroom_archive_slug' => 'harmonogram/sale',
+                'classroom_post_slug' => 'harmonogram/sala',
                 'classroom_schedule_download_ical' => 'no',
                 'classroom_hashed_slug' => 'no',
                 'classroom_post_pass_satisfy_any' => 'no',
                 'classroom_schedule_layout' => 'table',
-                'classroom_schedule_template_table_short' => _x(
-                    '<small>{start time}-{end time}</small><br>{subject} ({tea}/{stu})',
-                    'template table short for classroom',
-                    'wcs4'
-                ),
-                'classroom_schedule_template_table_details' => _x(
-                    '<small>{start time}-{end time}</small><br>{subject link} with {teacher link} for {student link} {notes}',
-                    'template table details for classroom',
-                    'wcs4'
-                ),
-                'classroom_schedule_template_list' => _x(
-                    '{subject link} with {teacher link} from {start time} to {end time} for {student link} {notes}',
-                    'template list for classroom',
-                    'wcs4'
-                ),
+                'classroom_schedule_template_table_short' => '<p><strong><small>{start time}-{end time}</small></strong><br />' . "\n" . '{subject} ({tea}/{stu})</p>',
+                'classroom_schedule_template_table_details' => '<p><strong><small>{start time}-{end time}</small></strong><br />' . "\n" . '{subject link} z {teacher link} dla {student link} {notes}</p>',
+                'classroom_schedule_template_list' => '<p><strong><small>{start time}-{end time}</small></strong><br />' . "\n" . '{subject link} z {teacher link} dla {student link} {notes}</p>',
                 # layout
                 'color_base' => 'DDFFDD',
                 'color_details_box' => 'FFDDDD',
