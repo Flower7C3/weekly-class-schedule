@@ -291,6 +291,11 @@ class WorkPlan implements AjaxGetItemHandlerInterface, ManagesTemplateInterface
             if ($item->isTypeCumulative()) {
                 $template_style = wp_unslash($wcs4_options['work_plan_html_template_style']);
                 $template_code = wp_kses_stripslashes($wcs4_options['work_plan_html_template_code_periodic_type']);
+                $template_code = str_replace(
+                    '{meta}',
+                    wp_kses_stripslashes($wcs4_options['work_plan_html_meta_code_periodic_type'] ?? ''),
+                    $template_code
+                );
                 include self::TEMPLATE_DIR . 'export_type_cumulative.html.php';
                 exit;
             }
@@ -333,6 +338,7 @@ class WorkPlan implements AjaxGetItemHandlerInterface, ManagesTemplateInterface
             '{current datetime}',
             '{current date}',
             '{current time}',
+            '{meta}',
             '{heading}',
             '{table}',
         ], [
@@ -341,6 +347,7 @@ class WorkPlan implements AjaxGetItemHandlerInterface, ManagesTemplateInterface
             date('Y-m-d H:i:s'),
             date('Y-m-d'),
             date('H:i:s'),
+            wp_kses_stripslashes($wcs4_options['work_plan_html_meta_code_partial_type'] ?? ''),
             $heading,
             $table,
         ], $template_code);

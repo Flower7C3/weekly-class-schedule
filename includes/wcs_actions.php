@@ -67,7 +67,7 @@ add_action('wcs4_default_settings', [Settings::class, 'set_default_settings']);
  */
 add_action('wp_ajax_wcs_create_schema', static function () {
     try {
-        if (!current_user_can(WCS4_ADVANCED_OPTIONS_CAPABILITY)) {
+        if (!current_user_can(WCS4_MAINTENANCE_OPTIONS_CAPABILITY)) {
             throw new AccessDeniedException();
         }
         wcs4_verify_nonce();
@@ -86,7 +86,7 @@ add_action('wp_ajax_wcs_create_schema', static function () {
  */
 add_action('wp_ajax_wcs_load_example_data', static function () {
     try {
-        if (!current_user_can(WCS4_ADVANCED_OPTIONS_CAPABILITY)) {
+        if (!current_user_can(WCS4_MAINTENANCE_OPTIONS_CAPABILITY)) {
             throw new AccessDeniedException();
         }
         wcs4_verify_nonce();
@@ -105,7 +105,7 @@ add_action('wp_ajax_wcs_load_example_data', static function () {
  */
 add_action('wp_ajax_wcs_delete_everything', static function () {
     try {
-        if (!current_user_can(WCS4_ADVANCED_OPTIONS_CAPABILITY)) {
+        if (!current_user_can(WCS4_MAINTENANCE_OPTIONS_CAPABILITY)) {
             throw new AccessDeniedException();
         }
         wcs4_verify_nonce();
@@ -124,7 +124,7 @@ add_action('wp_ajax_wcs_delete_everything', static function () {
  */
 add_action('wp_ajax_wcs_reset_settings', static function () {
     try {
-        if (!current_user_can(WCS4_ADVANCED_OPTIONS_CAPABILITY)) {
+        if (!current_user_can(WCS4_MAINTENANCE_OPTIONS_CAPABILITY)) {
             throw new AccessDeniedException();
         }
         wcs4_verify_nonce();
@@ -143,7 +143,7 @@ add_action('wp_ajax_wcs_reset_settings', static function () {
  */
 add_action('wp_ajax_wcs_clear_schedules', static function () {
     try {
-        if (!current_user_can(WCS4_ADVANCED_OPTIONS_CAPABILITY)) {
+        if (!current_user_can(WCS4_MAINTENANCE_OPTIONS_CAPABILITY)) {
             throw new AccessDeniedException();
         }
         wcs4_verify_nonce();
@@ -159,7 +159,7 @@ add_action('wp_ajax_wcs_clear_schedules', static function () {
 
 add_action('wp_ajax_wcs_clear_journals', static function () {
     try {
-        if (!current_user_can(WCS4_ADVANCED_OPTIONS_CAPABILITY)) {
+        if (!current_user_can(WCS4_MAINTENANCE_OPTIONS_CAPABILITY)) {
             throw new AccessDeniedException();
         }
         wcs4_verify_nonce();
@@ -175,7 +175,7 @@ add_action('wp_ajax_wcs_clear_journals', static function () {
 
 add_action('wp_ajax_wcs_clear_work_plans', static function () {
     try {
-        if (!current_user_can(WCS4_ADVANCED_OPTIONS_CAPABILITY)) {
+        if (!current_user_can(WCS4_MAINTENANCE_OPTIONS_CAPABILITY)) {
             throw new AccessDeniedException();
         }
         wcs4_verify_nonce();
@@ -191,7 +191,7 @@ add_action('wp_ajax_wcs_clear_work_plans', static function () {
 
 add_action('wp_ajax_wcs_clear_progresses', static function () {
     try {
-        if (!current_user_can(WCS4_ADVANCED_OPTIONS_CAPABILITY)) {
+        if (!current_user_can(WCS4_MAINTENANCE_OPTIONS_CAPABILITY)) {
             throw new AccessDeniedException();
         }
         wcs4_verify_nonce();
@@ -207,7 +207,7 @@ add_action('wp_ajax_wcs_clear_progresses', static function () {
 
 add_action('wp_ajax_wcs_clear_snapshots', static function () {
     try {
-        if (!current_user_can(WCS4_ADVANCED_OPTIONS_CAPABILITY)) {
+        if (!current_user_can(WCS4_MAINTENANCE_OPTIONS_CAPABILITY)) {
             throw new AccessDeniedException();
         }
         wcs4_verify_nonce();

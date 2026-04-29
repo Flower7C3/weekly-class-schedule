@@ -291,6 +291,11 @@ class Progress implements AjaxGetItemHandlerInterface, ManagesTemplateInterface
                 $template_style = wp_unslash($wcs4_options['progress_html_template_style']);
                 $template_code = wp_kses_stripslashes($wcs4_options['progress_html_template_code_periodic_type']);
                 $template_code = Output::process_template($item, $template_code);
+                $template_code = str_replace(
+                    '{meta}',
+                    wp_kses_stripslashes($wcs4_options['progress_html_meta_code_periodic_type'] ?? ''),
+                    $template_code
+                );
                 Output::save_snapshot_and_render_html(
                     self::TEMPLATE_DIR . 'export_type_periodic.html.php',
                     $template_style,
@@ -337,6 +342,7 @@ class Progress implements AjaxGetItemHandlerInterface, ManagesTemplateInterface
             '{current datetime}',
             '{current date}',
             '{current time}',
+            '{meta}',
             '{heading}',
             '{table}',
         ], [
@@ -345,6 +351,7 @@ class Progress implements AjaxGetItemHandlerInterface, ManagesTemplateInterface
             date('Y-m-d H:i:s'),
             date('Y-m-d'),
             date('H:i:s'),
+            wp_kses_stripslashes($wcs4_options['progress_html_meta_code_partial_type'] ?? ''),
             $heading,
             $table,
         ], $template_code);

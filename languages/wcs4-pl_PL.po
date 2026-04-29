@@ -65,6 +65,18 @@ msgstr "Dodaj lub usuń specjalizacje"
 msgid "Advanced Options"
 msgstr "Ustawienia zaawansowane"
 
+#: includes/wcs_admin_hooks.php:125 includes/wcs_admin_hooks.php:126
+msgid "Full Options"
+msgstr "Pełne ustawienia"
+
+#: includes/wcs_admin_hooks.php:133 includes/wcs_admin_hooks.php:134
+msgid "Maintenance Options"
+msgstr "Ustawienia serwisowe"
+
+#: includes/wcs_admin_hooks.php:121 includes/wcs_admin_hooks.php:122
+msgid "Simple Options"
+msgstr "Proste ustawienia"
+
 #: includes/wcs_init.php:20
 msgid "All Branches"
 msgstr "Wszystkie dziedziny"
@@ -1205,12 +1217,27 @@ msgstr "Zapisz ustawienia"
 #: src/Template/settings/advanced.php:12
 msgctxt "options"
 msgid "Weekly Class Schedule Advanced Settings"
-msgstr "Ustawienia zawansowane"
+msgstr "Ustawienia zaawansowane"
+
+#: src/Template/settings/advanced.php:12
+msgctxt "options"
+msgid "Weekly Class Schedule Maintenance Settings"
+msgstr "Ustawienia serwisowe"
 
 #: src/Template/settings/standard.php:3
 msgctxt "options"
 msgid "Weekly Class Schedule Standard Settings"
 msgstr "Konfiguracja"
+
+#: src/Template/settings/standard.php:3
+msgctxt "options"
+msgid "Weekly Class Schedule Full Settings"
+msgstr "Pełne ustawienia"
+
+#: src/Template/settings/simple.php:8
+msgctxt "options"
+msgid "Weekly Class Schedule Simple Settings"
+msgstr "Proste ustawienia"
 
 #: src/Template/settings/appearance.php:8
 msgctxt "options appearance settings"

@@ -163,6 +163,46 @@
         <tbody>
         <tr>
             <th>
+                <?= _x('HTML meta code', 'options general settings', 'wcs4') ?>
+                <div class="wcs4-description">
+                    <?= _x(
+                        'Reusable HTML block you can inject into templates with <code>{meta}</code>.',
+                        'options general settings',
+                        'wcs4'
+                    ) ?>
+                </div>
+            </th>
+            <td>
+                <?php
+                wp_editor(
+                    wp_unslash($wcs4_options['work_plan_html_meta_code_partial_type'] ?? ''),
+                    'wcs4_work_plan_html_meta_code_partial_type',
+                    [
+                        'wpautop' => true,
+                        'media_buttons' => true,
+                        'textarea_name' => 'wcs4_work_plan_html_meta_code_partial_type',
+                        'textarea_rows' => 14,
+                    ]
+                );
+                ?>
+            </td>
+            <td>
+                <?php
+                wp_editor(
+                    wp_unslash($wcs4_options['work_plan_html_meta_code_periodic_type'] ?? ''),
+                    'wcs4_work_plan_html_meta_code_periodic_type',
+                    [
+                        'wpautop' => true,
+                        'media_buttons' => true,
+                        'textarea_name' => 'wcs4_work_plan_html_meta_code_periodic_type',
+                        'textarea_rows' => 14,
+                    ]
+                );
+                ?>
+            </td>
+        </tr>
+        <tr>
+            <th>
                 <?= _x('HTML code', 'options general settings', 'wcs4') ?>
             </th>
             <td>

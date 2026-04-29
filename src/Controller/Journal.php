@@ -342,6 +342,7 @@ class Journal implements AjaxGetItemHandlerInterface, ManagesTemplateInterface
             '{current datetime}',
             '{current date}',
             '{current time}',
+            '{meta}',
             '{heading}',
             '{table}',
         ], [
@@ -350,6 +351,10 @@ class Journal implements AjaxGetItemHandlerInterface, ManagesTemplateInterface
             date('Y-m-d H:i:s'),
             date('Y-m-d'),
             date('H:i:s'),
+            wp_kses_stripslashes(
+                $wcs4_options[('teachers' === $view ? 'journal_teachers_html_meta_code' : 'journal_students_html_meta_code')]
+                ?? ''
+            ),
             $heading,
             $table,
         ], $template_code);

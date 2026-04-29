@@ -9,7 +9,7 @@ class Settings
 {
     private const TEMPLATE_DIR = __DIR__ . '/../Template/settings/';
 
-    public static function standard_options_page_callback(): void
+    public static function full_options_page_callback(): void
     {
         $taxonomyTypes = array(
             'subject' => array(
@@ -56,6 +56,8 @@ class Settings
                     'schedule_template_table_details' => 'wcs4_validate_mock',
                     'schedule_template_list' => 'wcs4_validate_mock',
                     'journal_shortcode_template' => 'wcs4_validate_mock',
+                    'journal_teachers_html_meta_code' => 'wcs4_validate_mock',
+                    'journal_students_html_meta_code' => 'wcs4_validate_mock',
                     'journal_teachers_html_template_code' => 'wcs4_validate_mock',
                     'journal_teachers_html_template_style' => 'wcs4_validate_mock',
                     'journal_teachers_html_table_columns' => 'wcs4_validate_mock',
@@ -72,6 +74,8 @@ class Settings
                     'work_plan_shortcode_template_partial_type' => 'wcs4_validate_mock',
                     'work_plan_shortcode_template_periodic_type' => 'wcs4_validate_mock',
                     'work_plan_html_template_style' => 'wcs4_validate_mock',
+                    'work_plan_html_meta_code_partial_type' => 'wcs4_validate_mock',
+                    'work_plan_html_meta_code_periodic_type' => 'wcs4_validate_mock',
                     'work_plan_html_template_code_partial_type' => 'wcs4_validate_mock',
                     'work_plan_html_template_code_periodic_type' => 'wcs4_validate_mock',
                     'work_plan_html_table_columns' => 'wcs4_validate_mock',
@@ -83,6 +87,8 @@ class Settings
                     'progress_shortcode_template_partial_type' => 'wcs4_validate_mock',
                     'progress_shortcode_template_periodic_type' => 'wcs4_validate_mock',
                     'progress_html_template_style' => 'wcs4_validate_mock',
+                    'progress_html_meta_code_partial_type' => 'wcs4_validate_mock',
+                    'progress_html_meta_code_periodic_type' => 'wcs4_validate_mock',
                     'progress_html_template_code_partial_type' => 'wcs4_validate_mock',
                     'progress_html_template_code_periodic_type' => 'wcs4_validate_mock',
                     'progress_html_table_columns' => 'wcs4_validate_mock',
@@ -169,7 +175,41 @@ class Settings
         include self::TEMPLATE_DIR . 'standard.php';
     }
 
-    public static function advanced_options_page_callback(): void
+    public static function simple_options_page_callback(): void
+    {
+        $wcs4_options = self::load_settings();
+        if (!is_array($wcs4_options)) {
+            $wcs4_options = [];
+        }
+
+        if (isset($_POST['wcs4_options_nonce'])) {
+            $nonce = sanitize_text_field($_POST['wcs4_options_nonce']);
+            $valid = wp_verify_nonce($nonce, 'wcs4_save_options');
+
+            if ($valid === false) {
+                wcs4_options_message(__('Nonce verification failed', 'wcs4'), 'error');
+            } else {
+                wcs4_options_message(__('Options updated', 'wcs4'));
+
+                $fields = array(
+                    'journal_teachers_html_meta_code' => 'wcs4_validate_mock',
+                    'journal_students_html_meta_code' => 'wcs4_validate_mock',
+                    'work_plan_html_meta_code_partial_type' => 'wcs4_validate_mock',
+                    'work_plan_html_meta_code_periodic_type' => 'wcs4_validate_mock',
+                    'progress_html_meta_code_partial_type' => 'wcs4_validate_mock',
+                    'progress_html_meta_code_periodic_type' => 'wcs4_validate_mock',
+                );
+
+                $new_options = wcs4_perform_validation($fields, $wcs4_options);
+                $wcs4_options = array_merge($wcs4_options, $new_options);
+                self::save_settings($wcs4_options);
+            }
+        }
+
+        include self::TEMPLATE_DIR . 'simple.php';
+    }
+
+    public static function maintenance_options_page_callback(): void
     {
         include self::TEMPLATE_DIR . 'advanced.php';
     }
@@ -181,9 +221,38 @@ class Settings
     {
         self::set_default_settings();
         $settings = get_option('wcs4_settings');
-        $settings = html_entity_decode($settings, ENT_QUOTES, 'UTF-8');
+        if (false === $settings || null === $settings) {
+            return [];
+        }
 
-        return unserialize($settings);
+        // Some installs may already store array here.
+        if (is_array($settings)) {
+            return $settings;
+        }
+
+        // Preferred: let WP handle serialized vs non-serialized values.
+        $maybe = maybe_unserialize($settings);
+        if (is_array($maybe)) {
+            return $maybe;
+        }
+
+        // Backward/edge cases: values may be HTML-encoded or slashed.
+        $candidates = [];
+        if (is_string($settings)) {
+            $candidates[] = $settings;
+            $candidates[] = html_entity_decode($settings, ENT_QUOTES, 'UTF-8');
+            $candidates[] = stripslashes($settings);
+            $candidates[] = stripslashes(html_entity_decode($settings, ENT_QUOTES, 'UTF-8'));
+        }
+
+        foreach ($candidates as $candidate) {
+            $unserialized = @unserialize($candidate);
+            if (is_array($unserialized)) {
+                return $unserialized;
+            }
+        }
+
+        return [];
     }
 
     /**
@@ -220,6 +289,8 @@ class Settings
                 'journal_teacher_collision' => 'yes',
                 'journal_student_collision' => 'yes',
                 'journal_shortcode_template' => '<p><small>{start time}-{end time}<small> {type}</small></small><br />' . "\n" . '{subject} ({tea}/{stu})</p>',
+                'journal_teachers_html_meta_code' => '',
+                'journal_students_html_meta_code' => '',
                 # Szablony z obrazkami (logo/PFRON) – nie nadpisujemy; pozostawiamy krótki placeholder.
                 'journal_teachers_html_template_code' =>
                     '<header><h1>Journal</h1><h2>{heading}</h2></header>' .
@@ -293,6 +364,8 @@ class Settings
                     '<p><small>{created or updated at}</small></p>',
                 'work_plan_html_template_style' => '',
                 # Szablony z obrazkami – nie nadpisujemy.
+                'work_plan_html_meta_code_partial_type' => '',
+                'work_plan_html_meta_code_periodic_type' => '',
                 'work_plan_html_template_code_partial_type' =>
                     '<header><h1>Progress</h1><h2>{heading}</h2></header>' .
                     '<main>{table}</main>' .
@@ -346,6 +419,8 @@ class Settings
                     '<p><small>{created or updated at}</small></p>',
                 'progress_html_template_style' => '',
                 # Szablony z obrazkami – nie nadpisujemy.
+                'progress_html_meta_code_partial_type' => '',
+                'progress_html_meta_code_periodic_type' => '',
                 'progress_html_template_code_partial_type' =>
                     '<header><h1>Progress</h1><h2>{heading}</h2></header>' .
                     '<main>{table}</main>' .

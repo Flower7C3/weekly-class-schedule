@@ -58,11 +58,14 @@ if (!defined('WCS4_SNAPSHOT_VIEW_CAPABILITY')) {
 if (!defined('WCS4_SNAPSHOT_MANAGE_CAPABILITY')) {
     define('WCS4_SNAPSHOT_MANAGE_CAPABILITY', 'wcs4_snapshot_manage');
 }
-if (!defined('WCS4_STANDARD_OPTIONS_CAPABILITY')) {
-    define('WCS4_STANDARD_OPTIONS_CAPABILITY', 'wcs4_standard_options');
+if (!defined('WCS4_FULL_OPTIONS_CAPABILITY')) {
+    define('WCS4_FULL_OPTIONS_CAPABILITY', 'wcs4_full_options');
 }
-if (!defined('WCS4_ADVANCED_OPTIONS_CAPABILITY')) {
-    define('WCS4_ADVANCED_OPTIONS_CAPABILITY', 'wcs4_advanced_options');
+if (!defined('WCS4_SIMPLE_OPTIONS_CAPABILITY')) {
+    define('WCS4_SIMPLE_OPTIONS_CAPABILITY', 'wcs4_simple_options');
+}
+if (!defined('WCS4_MAINTENANCE_OPTIONS_CAPABILITY')) {
+    define('WCS4_MAINTENANCE_OPTIONS_CAPABILITY', 'wcs4_maintenance_options');
 }
 add_action('admin_menu', static function () {
     $page_schedule = add_menu_page(
@@ -106,21 +109,29 @@ add_action('admin_menu', static function () {
         'wcs4-snapshot',
         array(Snapshot::class, "callback_of_management_page")
     );
-    $page_standard_options = add_submenu_page(
+    add_submenu_page(
         'wcs4',
-        __('Standard Options', 'wcs4'),
-        __('Standard Options', 'wcs4'),
-        WCS4_STANDARD_OPTIONS_CAPABILITY,
-        'wcs4-standard-options',
-        array(Settings::class, "standard_options_page_callback")
+        __('Simple Options', 'wcs4'),
+        __('Simple Options', 'wcs4'),
+        WCS4_SIMPLE_OPTIONS_CAPABILITY,
+        'wcs4-simple-options',
+        array(Settings::class, "simple_options_page_callback")
+    );
+    $page_full_options = add_submenu_page(
+        'wcs4',
+        __('Full Options', 'wcs4'),
+        __('Full Options', 'wcs4'),
+        WCS4_FULL_OPTIONS_CAPABILITY,
+        'wcs4-full-options',
+        array(Settings::class, "full_options_page_callback")
     );
     add_submenu_page(
         'wcs4',
-        __('Advanced Options', 'wcs4'),
-        __('Advanced Options', 'wcs4'),
-        WCS4_ADVANCED_OPTIONS_CAPABILITY,
-        'wcs4-advanced-options',
-        array(Settings::class, "advanced_options_page_callback")
+        __('Maintenance Options', 'wcs4'),
+        __('Maintenance Options', 'wcs4'),
+        WCS4_MAINTENANCE_OPTIONS_CAPABILITY,
+        'wcs4-maintenance-options',
+        array(Settings::class, "maintenance_options_page_callback")
     );
 
     $help_tabs = [];
@@ -180,7 +191,7 @@ add_action('admin_menu', static function () {
             }
         }
     });
-    add_action('load-' . $page_standard_options, static function () use ($help_tabs) {
+    add_action('load-' . $page_full_options, static function () use ($help_tabs) {
         $screen = get_current_screen();
         if (null !== $screen) {
             $tabs = array($help_tabs['placeholders'], $help_tabs['allowed_html']);
@@ -211,8 +222,9 @@ add_action('init', static function () {
         $role->add_cap(WCS4_PROGRESS_EXPORT_CAPABILITY, true);
         $role->add_cap(WCS4_SNAPSHOT_VIEW_CAPABILITY, true);
         $role->add_cap(WCS4_SNAPSHOT_MANAGE_CAPABILITY, true);
-        $role->add_cap(WCS4_STANDARD_OPTIONS_CAPABILITY, true);
-        $role->add_cap(WCS4_ADVANCED_OPTIONS_CAPABILITY, true);
+        $role->add_cap(WCS4_FULL_OPTIONS_CAPABILITY, true);
+        $role->add_cap(WCS4_SIMPLE_OPTIONS_CAPABILITY, true);
+        $role->add_cap(WCS4_MAINTENANCE_OPTIONS_CAPABILITY, true);
     }
     $role = get_role('editor');
     if (null !== $role) {
@@ -229,7 +241,8 @@ add_action('init', static function () {
         $role->add_cap(WCS4_PROGRESS_EXPORT_CAPABILITY, true);
         $role->add_cap(WCS4_SNAPSHOT_VIEW_CAPABILITY, true);
         $role->add_cap(WCS4_SNAPSHOT_MANAGE_CAPABILITY, true);
-        $role->add_cap(WCS4_STANDARD_OPTIONS_CAPABILITY, true);
+        $role->add_cap(WCS4_FULL_OPTIONS_CAPABILITY, true);
+        $role->add_cap(WCS4_SIMPLE_OPTIONS_CAPABILITY, true);
     }
     $role = get_role('author');
     if (null !== $role) {

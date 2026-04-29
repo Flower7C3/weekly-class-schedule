@@ -9,7 +9,7 @@ use WCS4\Repository\WorkPlan;
 ?>
 <div class="wrap">
     <h1 class="wp-heading-inline">
-        <?= _x('Weekly Class Schedule Advanced Settings', 'options', 'wcs4') ?>
+        <?= _x('Weekly Class Schedule Maintenance Settings', 'options', 'wcs4') ?>
     </h1>
     <div id="wcs4-reset-database" class="wrap">
         <p>
