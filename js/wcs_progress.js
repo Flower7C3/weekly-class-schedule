@@ -134,7 +134,8 @@
      */
     let bind_form_handler = function () {
         let $form = $('#wcs4-progress-form');
-        let $subject = $('#wcs4_progress_subject'), $teacher = $('#wcs4_progress_teacher'), $student = $('#wcs4_progress_student');
+        let $subject = $('#wcs4_progress_subject'), $teacher = $('#wcs4_progress_teacher'),
+            $student = $('#wcs4_progress_student');
         let $startDate = $('#wcs4_progress_start_date'), $endDate = $('#wcs4_progress_end_date');
         let $improvements = $('#wcs4_progress_improvements'), $indications = $('#wcs4_progress_indications');
         let $buttons = $('#wcs4_progress_buttons-wrapper button');

@@ -1,84 +1,84 @@
 [
-    {
-        "key": "group_60fc1b2601d2b",
-        "title": "Kontakt",
-        "fields": [
-            {
-                "key": "field_60fc1b2fd8af2",
-                "label": "Email",
-                "name": "email",
-                "aria-label": "",
-                "type": "email",
-                "instructions": "Wypełnij to pole, aby móc korzystać z narzędzia <b>Udostępnij<\/b>",
-                "required": 0,
-                "conditional_logic": 0,
-                "wrapper": {
-                    "width": "",
-                    "class": "",
-                    "id": ""
-                },
-                "default_value": "",
-                "allow_in_bindings": 1,
-                "placeholder": "np. jan@example.com",
-                "prepend": "",
-                "append": ""
-            },
-            {
-                "key": "field_60fc2346c6843",
-                "label": "Telefon",
-                "name": "phone",
-                "aria-label": "",
-                "type": "text",
-                "instructions": "",
-                "required": 0,
-                "conditional_logic": 0,
-                "wrapper": {
-                    "width": "",
-                    "class": "",
-                    "id": ""
-                },
-                "default_value": "",
-                "maxlength": "",
-                "allow_in_bindings": 1,
-                "placeholder": "np. 123 456 789",
-                "prepend": "",
-                "append": ""
-            }
-        ],
-        "location": [
-            [
-                {
-                    "param": "post_type",
-                    "operator": "==",
-                    "value": "post"
-                }
-            ],
-            [
-                {
-                    "param": "post_type",
-                    "operator": "==",
-                    "value": "post"
-                }
-            ]
-        ],
-        "menu_order": 0,
-        "position": "normal",
-        "style": "seamless",
-        "label_placement": "left",
-        "instruction_placement": "field",
-        "hide_on_screen": [
-            "discussion",
-            "comments",
-            "revisions",
-            "slug",
-            "author",
-            "send-trackbacks"
-        ],
-        "active": true,
-        "description": "",
-        "show_in_rest": 0,
-        "display_title": "",
-        "allow_ai_access": false,
-        "ai_description": ""
-    }
+  {
+    "key": "group_60fc1b2601d2b",
+    "title": "Kontakt",
+    "fields": [
+      {
+        "key": "field_60fc1b2fd8af2",
+        "label": "Email",
+        "name": "email",
+        "aria-label": "",
+        "type": "email",
+        "instructions": "Wypełnij to pole, aby móc korzystać z narzędzia <b>Udostępnij<\/b>",
+        "required": 0,
+        "conditional_logic": 0,
+        "wrapper": {
+          "width": "",
+          "class": "",
+          "id": ""
+        },
+        "default_value": "",
+        "allow_in_bindings": 1,
+        "placeholder": "np. jan@example.com",
+        "prepend": "",
+        "append": ""
+      },
+      {
+        "key": "field_60fc2346c6843",
+        "label": "Telefon",
+        "name": "phone",
+        "aria-label": "",
+        "type": "text",
+        "instructions": "",
+        "required": 0,
+        "conditional_logic": 0,
+        "wrapper": {
+          "width": "",
+          "class": "",
+          "id": ""
+        },
+        "default_value": "",
+        "maxlength": "",
+        "allow_in_bindings": 1,
+        "placeholder": "np. 123 456 789",
+        "prepend": "",
+        "append": ""
+      }
+    ],
+    "location": [
+      [
+        {
+          "param": "post_type",
+          "operator": "==",
+          "value": "post"
+        }
+      ],
+      [
+        {
+          "param": "post_type",
+          "operator": "==",
+          "value": "post"
+        }
+      ]
+    ],
+    "menu_order": 0,
+    "position": "normal",
+    "style": "seamless",
+    "label_placement": "left",
+    "instruction_placement": "field",
+    "hide_on_screen": [
+      "discussion",
+      "comments",
+      "revisions",
+      "slug",
+      "author",
+      "send-trackbacks"
+    ],
+    "active": true,
+    "description": "",
+    "show_in_rest": 0,
+    "display_title": "",
+    "allow_ai_access": false,
+    "ai_description": ""
+  }
 ]

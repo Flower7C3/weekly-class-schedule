@@ -2,6 +2,7 @@
 /**
  * @var array $wcs4_options
  */
+
 ?>
 <div class="wrap">
     <h1 class="wp-heading-inline">

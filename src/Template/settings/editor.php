@@ -1,4 +1,5 @@
 <?php
+
 wp_enqueue_code_editor([
     'type' => 'text/css',
     'codemirror' => [

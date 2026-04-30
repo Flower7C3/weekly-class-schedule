@@ -121,11 +121,31 @@ class Journal_Item implements EntityWithIdInterface
         return match ($type) {
             self::TYPE_NORMAL => _x('Normal', 'Journal type as normal', 'wcs4'),
             self::TYPE_ABSENT_TEACHER => _x('Absent teacher', 'Journal type as absent teacher', 'wcs4'),
-            self::TYPE_ABSENT_TEACHER_FREE_VACATION => _x('Absent teacher (free vacation)', 'Journal type as absent teacher', 'wcs4'),
-            self::TYPE_ABSENT_TEACHER_PAID_VACATION => _x('Absent teacher (paid vacation)', 'Journal type as absent teacher', 'wcs4'),
-            self::TYPE_ABSENT_TEACHER_SICK_CHILDCARE => _x('Absent teacher (sick childcare)', 'Journal type as absent teacher', 'wcs4'),
-            self::TYPE_ABSENT_TEACHER_HEALTHY_CHILDCARE => _x('Absent teacher (healthy childcare)', 'Journal type as absent teacher', 'wcs4'),
-            self::TYPE_ABSENT_TEACHER_SICK_LEAVE => _x('Absent teacher (sick leave)', 'Journal type as absent teacher', 'wcs4'),
+            self::TYPE_ABSENT_TEACHER_FREE_VACATION => _x(
+                'Absent teacher (free vacation)',
+                'Journal type as absent teacher',
+                'wcs4'
+            ),
+            self::TYPE_ABSENT_TEACHER_PAID_VACATION => _x(
+                'Absent teacher (paid vacation)',
+                'Journal type as absent teacher',
+                'wcs4'
+            ),
+            self::TYPE_ABSENT_TEACHER_SICK_CHILDCARE => _x(
+                'Absent teacher (sick childcare)',
+                'Journal type as absent teacher',
+                'wcs4'
+            ),
+            self::TYPE_ABSENT_TEACHER_HEALTHY_CHILDCARE => _x(
+                'Absent teacher (healthy childcare)',
+                'Journal type as absent teacher',
+                'wcs4'
+            ),
+            self::TYPE_ABSENT_TEACHER_SICK_LEAVE => _x(
+                'Absent teacher (sick leave)',
+                'Journal type as absent teacher',
+                'wcs4'
+            ),
             self::TYPE_ABSENT_STUDENT => _x('Absent student', 'Journal type as absent student', 'wcs4'),
             self::TYPE_TEACHER_OFFICE_WORKS => _x('Office works', 'Journal type as office works', 'wcs4'),
             default => '',

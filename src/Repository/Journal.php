@@ -14,6 +14,7 @@ use WCS4\Repository\Trait\TableNameTrait;
 class Journal implements SchemaCreatableInterface, TruncatableRepositoryInterface
 {
     use TableNameTrait;
+
     public static function get_item($row_id)
     {
         $items = self::query_items(
@@ -156,10 +157,10 @@ class Journal implements SchemaCreatableInterface, TruncatableRepositoryInterfac
             $where[] = 'type = "%s"';
             $queryArr[] = $type;
         }
-        if('-1' === $limit){
+        if ('-1' === $limit) {
             $where[] = '(date LIKE "%s" OR date LIKE "%s")';
-            $queryArr[] = (new DateTime('now'))->format('Y-m-').'%';
-            $queryArr[] = (new DateTime('previous month'))->format('Y-m-').'%';
+            $queryArr[] = (new DateTime('now'))->format('Y-m-') . '%';
+            $queryArr[] = (new DateTime('previous month'))->format('Y-m-') . '%';
             $limit = null;
         }
         switch ($orderField) {

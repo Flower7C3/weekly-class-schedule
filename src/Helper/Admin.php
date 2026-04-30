@@ -78,7 +78,7 @@ class Admin
             $queryWhere = [];
             $queryParams = [];
             if (!empty($filter['subject'])) {
-                $ids = array_map('intval', (array) $filter['subject']);
+                $ids = array_map('intval', (array)$filter['subject']);
                 $ids = array_filter($ids);
                 if (!empty($ids)) {
                     $queryWhere[] = 'subject_id IN (' . implode(',', array_fill(0, count($ids), '%d')) . ')';
@@ -86,7 +86,7 @@ class Admin
                 }
             }
             if (!empty($filter['teacher'])) {
-                $ids = array_map('intval', (array) $filter['teacher']);
+                $ids = array_map('intval', (array)$filter['teacher']);
                 $ids = array_filter($ids);
                 if (!empty($ids)) {
                     $queryWhere[] = 'teacher_id IN (' . implode(',', array_fill(0, count($ids), '%d')) . ')';
@@ -94,7 +94,7 @@ class Admin
                 }
             }
             if (!empty($filter['student'])) {
-                $ids = array_map('intval', (array) $filter['student']);
+                $ids = array_map('intval', (array)$filter['student']);
                 $ids = array_filter($ids);
                 if (!empty($ids)) {
                     $queryWhere[] = 'student_id IN (' . implode(',', array_fill(0, count($ids), '%d')) . ')';

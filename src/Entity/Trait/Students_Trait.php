@@ -18,7 +18,7 @@ trait Students_Trait
 
     public function setStudents($student_id, $student_name, $student_desc): self
     {
-        if(null !== $student_id) {
+        if (null !== $student_id) {
             $this->students[$student_id] = new Item($student_id, $student_name, $student_desc);
         }
         return $this;

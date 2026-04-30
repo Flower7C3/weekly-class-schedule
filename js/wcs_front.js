@@ -13,8 +13,8 @@
             //     $('.toggle').removeClass('fa-window-minimize').addClass('fa-window-maximize')
             //     document.exitFullscreen();
             // } else {
-                $('.wcs4_schedule_grid').get(0).requestFullscreen();
-                // $('.toggle').removeClass('fa-window-maximize').addClass('fa-window-minimize')
+            $('.wcs4_schedule_grid').get(0).requestFullscreen();
+            // $('.toggle').removeClass('fa-window-maximize').addClass('fa-window-minimize')
             // }
         });
 

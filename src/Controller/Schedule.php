@@ -280,7 +280,7 @@ class Schedule implements AjaxGetItemHandlerInterface, ManagesTemplateInterface
             if (!empty($_POST['row_id'])) {
                 # This is an update request and not an insert.
                 $update_request = true;
-                $row_id = (int) $_POST['row_id'];
+                $row_id = (int)$_POST['row_id'];
             }
 
             $subject_id = $_POST['subject_id'] ?? null;
@@ -335,7 +335,7 @@ class Schedule implements AjaxGetItemHandlerInterface, ManagesTemplateInterface
 
             if (!empty($collisionDetection) && !empty($teacher_id) && $wcs4_settings['schedule_teacher_collision'] === 'yes') {
                 # Validate teacher collision (if applicable)
-                $teacher_id = array_map('intval', (array) $teacher_id);
+                $teacher_id = array_map('intval', (array)$teacher_id);
                 $teacher_id = array_filter($teacher_id);
                 if (!empty($teacher_id)) {
                     $placeholders = implode(',', array_fill(0, count($teacher_id), '%d'));
@@ -363,7 +363,7 @@ class Schedule implements AjaxGetItemHandlerInterface, ManagesTemplateInterface
 
             if (!empty($collisionDetection) && !empty($student_id) && $wcs4_settings['schedule_student_collision'] === 'yes') {
                 # Validate student collision (if applicable)
-                $student_id_for_collision = array_map('intval', (array) $student_id);
+                $student_id_for_collision = array_map('intval', (array)$student_id);
                 $student_id_for_collision = array_filter($student_id_for_collision);
                 if (!empty($student_id_for_collision)) {
                     $placeholders = implode(',', array_fill(0, count($student_id_for_collision), '%d'));
@@ -508,7 +508,8 @@ class Schedule implements AjaxGetItemHandlerInterface, ManagesTemplateInterface
         wcs4_json_response($response, $status);
     }
 
-    #[NoReturn] public static function get_item(): void
+    #[NoReturn]
+    public static function get_item(): void
     {
         global $wpdb;
         $response = [];
@@ -558,7 +559,8 @@ class Schedule implements AjaxGetItemHandlerInterface, ManagesTemplateInterface
         wcs4_json_response($response, $status);
     }
 
-    #[NoReturn] public static function delete_item(): void
+    #[NoReturn]
+    public static function delete_item(): void
     {
         global $wpdb;
         $response = [];
@@ -605,7 +607,8 @@ class Schedule implements AjaxGetItemHandlerInterface, ManagesTemplateInterface
         wcs4_json_response($response, $status);
     }
 
-    #[NoReturn] public static function toggle_visibility_item(): void
+    #[NoReturn]
+    public static function toggle_visibility_item(): void
     {
         global $wpdb;
         $response = [];
@@ -660,7 +663,8 @@ class Schedule implements AjaxGetItemHandlerInterface, ManagesTemplateInterface
         wcs4_json_response($response, $status);
     }
 
-    #[NoReturn] public static function get_ajax_html(): void
+    #[NoReturn]
+    public static function get_ajax_html(): void
     {
         $response = [];
         try {
@@ -794,7 +798,13 @@ class Schedule implements AjaxGetItemHandlerInterface, ManagesTemplateInterface
             $endCol = $startCol + $weekdayColumns;
             printf("#%s .wcs4-grid-weekday-%d {grid-column: %d/%d}\n", $schedule_key, $dayIndex, $startCol, $endCol);
             for ($position = 0; $position < $weekdayColumns; $position++) {
-                printf("#%s .wcs4-grid-weekday-%d-%d {grid-column: %d}\n", $schedule_key, $dayIndex,$position, $startCol+$position);
+                printf(
+                    "#%s .wcs4-grid-weekday-%d-%d {grid-column: %d}\n",
+                    $schedule_key,
+                    $dayIndex,
+                    $position,
+                    $startCol + $position
+                );
             }
         }
         ksort($hours);

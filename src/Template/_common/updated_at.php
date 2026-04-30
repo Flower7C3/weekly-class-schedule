@@ -7,7 +7,9 @@ use WCS4\Entity\Journal_Item;
 use WCS4\Entity\Lesson_Item;
 use WCS4\Entity\Progress_Item;
 
-if (null !== $item->getUpdatedAt() && $item->getUpdatedAt()->format('Y-m-d H:i:s') !== $item->getCreatedAt()->format('Y-m-d H:i:s')): ?>
+if (null !== $item->getUpdatedAt() && $item->getUpdatedAt()->format('Y-m-d H:i:s') !== $item->getCreatedAt()->format(
+        'Y-m-d H:i:s'
+    )): ?>
     <span title="<?= sprintf(
         __('Updated at %s by %s', 'wcs4'),
         $item->getUpdatedAt()->format('Y-m-d H:i:s'),

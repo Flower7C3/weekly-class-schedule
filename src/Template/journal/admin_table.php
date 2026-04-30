@@ -125,7 +125,7 @@ $teacher_filter_field_id = 'search_wcs4_journal_teacher_id';
                                 <?php
                                 endif; ?>
                                 <button type="button" class="toggle-row">
-                                    <span class="screen-reader-text"><?=__('Show more details') ?></span>
+                                    <span class="screen-reader-text"><?= __('Show more details') ?></span>
                                 </button>
                             </td>
                             <td data-colname="<?= __('Subject', 'wcs4') ?>">

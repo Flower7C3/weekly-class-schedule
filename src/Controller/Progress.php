@@ -475,7 +475,7 @@ class Progress implements AjaxGetItemHandlerInterface, ManagesTemplateInterface
                 $update_request = true;
                 $row_id = sanitize_text_field($_POST['row_id']);
                 $item = ProgressRepository::get_item($row_id);
-                if(true === $force_insert && !Output::editable_on_front($item)){
+                if (true === $force_insert && !Output::editable_on_front($item)) {
                     throw new AccessDeniedException();
                 }
             }
@@ -682,7 +682,8 @@ class Progress implements AjaxGetItemHandlerInterface, ManagesTemplateInterface
         wcs4_json_response($response, $status);
     }
 
-    #[NoReturn] public static function delete_item(): void
+    #[NoReturn]
+    public static function delete_item(): void
     {
         global $wpdb;
         $response = [];
@@ -728,7 +729,8 @@ class Progress implements AjaxGetItemHandlerInterface, ManagesTemplateInterface
         wcs4_json_response($response, $status);
     }
 
-    #[NoReturn] public static function get_ajax_html(): void
+    #[NoReturn]
+    public static function get_ajax_html(): void
     {
         $response = [];
         try {
@@ -792,7 +794,11 @@ class Progress implements AjaxGetItemHandlerInterface, ManagesTemplateInterface
         foreach ($dateWithLessons as $date => $dayProgresses) {
             if (!empty($dayProgresses)) {
                 $time = IntlCalendar::fromDateTime($date);
-                $output .= '<h4>' . IntlDateFormatter::formatObject($time, [IntlDateFormatter::FULL, IntlDateFormatter::NONE], get_locale()). '</h4>';
+                $output .= '<h4>' . IntlDateFormatter::formatObject(
+                        $time,
+                        [IntlDateFormatter::FULL, IntlDateFormatter::NONE],
+                        get_locale()
+                    ) . '</h4>';
                 $output .= '<ul class="wcs4-grid-date-list wcs4-grid-date-list-' . $date . '" data-scope="progress">';
                 /** @var Progress_Item $item */
                 foreach ($dayProgresses as $item) {

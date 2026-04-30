@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Loads all the required modules for the WCS4 plugin.
  */

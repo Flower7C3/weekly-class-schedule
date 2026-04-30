@@ -13,6 +13,7 @@ use WCS4\Repository\Trait\TableNameTrait;
 class Progress implements SchemaCreatableInterface, TruncatableRepositoryInterface
 {
     use TableNameTrait;
+
     public static function get_item($row_id)
     {
         $items = self::query_items(

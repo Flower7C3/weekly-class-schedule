@@ -144,9 +144,11 @@
      */
     let bind_form_handler = function () {
         let $form = $('#wcs4-work-plan-form');
-        let $subject = $('#wcs4_work_plan_subject'), $teacher = $('#wcs4_work_plan_teacher'), $student = $('#wcs4_work_plan_student');
+        let $subject = $('#wcs4_work_plan_subject'), $teacher = $('#wcs4_work_plan_teacher'),
+            $student = $('#wcs4_work_plan_student');
         let $startDate = $('#wcs4_work_plan_start_date'), $endDate = $('#wcs4_work_plan_end_date');
-        let $diagnosis = $('#wcs4_work_plan_diagnosis'), $strengths = $('#wcs4_work_plan_strengths'), $goals = $('#wcs4_work_plan_goals'), $methods = $('#wcs4_work_plan_methods');
+        let $diagnosis = $('#wcs4_work_plan_diagnosis'), $strengths = $('#wcs4_work_plan_strengths'),
+            $goals = $('#wcs4_work_plan_goals'), $methods = $('#wcs4_work_plan_methods');
         let $buttons = $('#wcs4_work_plan_buttons-wrapper button');
         switch ($form.find('[name="type"]:checked').val()) {
             default:

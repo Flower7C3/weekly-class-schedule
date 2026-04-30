@@ -446,7 +446,8 @@ class Output
         return [$thead_columns, $tbody_columns, $tfoot_columns];
     }
 
-    #[NoReturn] public static function render_csv(string $filename, string $content): void
+    #[NoReturn]
+    public static function render_csv(string $filename, string $content): void
     {
         header('Content-Encoding: UTF-8');
         header('Content-type: text/csv charset=UTF-8');
@@ -460,7 +461,8 @@ class Output
         exit;
     }
 
-    #[NoReturn] public static function save_snapshot_and_render_html(
+    #[NoReturn]
+    public static function save_snapshot_and_render_html(
         string $filepath,
         string $template_style,
         string $template_code,
@@ -474,7 +476,8 @@ class Output
         exit;
     }
 
-    #[NoReturn] public static function save_snapshot_and_render_csv($handle, string $filename): void
+    #[NoReturn]
+    public static function save_snapshot_and_render_csv($handle, string $filename): void
     {
         ob_start();
         fseek($handle, 0);

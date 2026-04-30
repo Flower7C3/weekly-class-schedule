@@ -532,7 +532,7 @@ class Journal implements AjaxGetItemHandlerInterface, ManagesTemplateInterface
             if (!empty($_POST['row_id'])) {
                 # This is an update request and not an insert.
                 $update_request = true;
-                $row_id = (int) $_POST['row_id'];
+                $row_id = (int)$_POST['row_id'];
                 $item = JournalRepository::get_item($row_id);
                 if (true === $force_insert && !Output::editable_on_front($item)) {
                     throw new AccessDeniedException();
@@ -560,7 +560,7 @@ class Journal implements AjaxGetItemHandlerInterface, ManagesTemplateInterface
 
             if (!empty($teacher_id) && $wcs4_settings['journal_teacher_collision'] === 'yes') {
                 # Validate teacher collision (if applicable)
-                $teacher_id = array_map('intval', (array) $teacher_id);
+                $teacher_id = array_map('intval', (array)$teacher_id);
                 $teacher_id = array_filter($teacher_id);
                 if (!empty($teacher_id)) {
                     $placeholders = implode(',', array_fill(0, count($teacher_id), '%d'));
@@ -587,7 +587,7 @@ class Journal implements AjaxGetItemHandlerInterface, ManagesTemplateInterface
 
             if (!empty($student_id) && $wcs4_settings['journal_student_collision'] === 'yes') {
                 # Validate student collision (if applicable)
-                $student_id_for_collision = array_map('intval', (array) $student_id);
+                $student_id_for_collision = array_map('intval', (array)$student_id);
                 $student_id_for_collision = array_filter($student_id_for_collision);
                 if (!empty($student_id_for_collision)) {
                     $placeholders = implode(',', array_fill(0, count($student_id_for_collision), '%d'));
@@ -722,7 +722,8 @@ class Journal implements AjaxGetItemHandlerInterface, ManagesTemplateInterface
         wcs4_json_response($response, $status);
     }
 
-    #[NoReturn] public static function get_item(): void
+    #[NoReturn]
+    public static function get_item(): void
     {
         global $wpdb;
         $response = [];
@@ -771,7 +772,8 @@ class Journal implements AjaxGetItemHandlerInterface, ManagesTemplateInterface
         wcs4_json_response($response, $status);
     }
 
-    #[NoReturn] public static function delete_item(): void
+    #[NoReturn]
+    public static function delete_item(): void
     {
         global $wpdb;
         $response = [];
@@ -817,7 +819,8 @@ class Journal implements AjaxGetItemHandlerInterface, ManagesTemplateInterface
         wcs4_json_response($response, $status);
     }
 
-    #[NoReturn] public static function get_ajax_html(): void
+    #[NoReturn]
+    public static function get_ajax_html(): void
     {
         $response = [];
         try {

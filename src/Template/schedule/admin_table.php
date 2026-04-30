@@ -16,7 +16,9 @@ $subject_filter_field_id = 'search_wcs4_schedule_subject_id';
 $teacher_filter_field_id = 'search_wcs4_schedule_teacher_id';
 ?>
 <div class="wcs4-day-content-wrapper"
-     data-hash="<?= md5(serialize($items) . $collisionDetection. $subject .$teacher  . $orderField . $orderDirection) ?>">
+     data-hash="<?= md5(
+         serialize($items) . $collisionDetection . $subject . $teacher . $orderField . $orderDirection
+     ) ?>">
     <?php
     include __DIR__ . '/../_common/quick_filter.php'; ?>
     <?php

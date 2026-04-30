@@ -4,8 +4,9 @@
 
 use WCS4\Repository\Schedule;
 
-if (!defined('WP_UNINSTALL_PLUGIN'))
+if (!defined('WP_UNINSTALL_PLUGIN')) {
     exit();
+}
 
 function wcs4_delete_plugin()
 {
@@ -25,15 +26,17 @@ function wcs4_delete_plugin()
         $posts = get_posts(array(
             'numberposts' => -1,
             'post_type' => $type,
-            'post_status' => 'any'));
+            'post_status' => 'any'
+        ));
 
-        foreach ($posts as $post)
+        foreach ($posts as $post) {
             wp_delete_post($post->ID, true);
+        }
     }
 
-    $wpdb->query('DROP TABLE IF EXISTS '. Schedule::get_schedule_teacher_table_name());
-    $wpdb->query('DROP TABLE IF EXISTS '. Schedule::get_schedule_student_table_name());
-    $wpdb->query('DROP TABLE IF EXISTS '. Schedule::get_schedule_table_name());
+    $wpdb->query('DROP TABLE IF EXISTS ' . Schedule::get_schedule_teacher_table_name());
+    $wpdb->query('DROP TABLE IF EXISTS ' . Schedule::get_schedule_student_table_name());
+    $wpdb->query('DROP TABLE IF EXISTS ' . Schedule::get_schedule_table_name());
 }
 
 wcs4_delete_plugin();

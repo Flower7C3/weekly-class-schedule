@@ -97,7 +97,8 @@ use WCS4\Helper\Admin;
         </fieldset>
         <fieldset class="submit" id="wcs4_progress_buttons-wrapper">
             <span class="spinner"></span>
-            <button data-wcs4="submit-form" type="submit" disabled class="button button-primary wcs4-submit-progress-form"
+            <button data-wcs4="submit-form" type="submit" disabled
+                    class="button button-primary wcs4-submit-progress-form"
                     name="wcs4-submit">
                 <span class="dashicons dashicons-plus-alt"></span>
                 <?= _x('Add Progress', 'button text', 'wcs4') ?>

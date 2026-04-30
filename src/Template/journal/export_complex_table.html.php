@@ -25,7 +25,7 @@ if (array_key_exists('student duration detailed', $thead_columns)) {
                 &&
                 !array_key_exists($studentItem->getId(), $studentsData)
                 &&
-                ('#'.$studentItem->getId() === $student || empty($student))
+                ('#' . $studentItem->getId() === $student || empty($student))
             ) {
                 $studentsData[$studentItem->getId()] = [
                     'short_name' => $studentItem->getName(),

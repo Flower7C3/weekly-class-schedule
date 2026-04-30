@@ -215,7 +215,8 @@ class Snapshot implements ManagesTemplateInterface
         }
     }
 
-    #[NoReturn] public static function delete_item(): void
+    #[NoReturn]
+    public static function delete_item(): void
     {
         global $wpdb;
         $response = [];
@@ -258,7 +259,8 @@ class Snapshot implements ManagesTemplateInterface
     }
 
 
-    #[NoReturn] public static function get_ajax_html(): void
+    #[NoReturn]
+    public static function get_ajax_html(): void
     {
         $response = [];
         try {

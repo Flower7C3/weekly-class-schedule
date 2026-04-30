@@ -30,7 +30,8 @@ Weekly Class Schedule generates a weekly schedule of subjects using an ultra-sim
 1. Upload the entire `weekly-class-schedule` folder to the `/wp-content/plugins/` directory.
 2. Activate the plugin through the 'Plugins' menu in WordPress.
 
-You will find a 'Schedule' menu item as well as 'Classes', 'Teachers', 'Students', and 'Classrooms' in your WordPress admin panel.
+You will find a 'Schedule' menu item as well as 'Classes', 'Teachers', 'Students', and 'Classrooms' in your WordPress
+admin panel.
 
 ### Screenshots
 

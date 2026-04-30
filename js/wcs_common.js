@@ -185,8 +185,12 @@ let WCS4_LIB = (function ($) {
         }
         if ($sel.prop('multiple')) {
             let arr = Array.isArray(value)
-                ? value.map(function (v) { return String(v); })
-                : (value != null ? String(value).split(',').map(function (s) { return s.trim(); }) : []);
+                ? value.map(function (v) {
+                    return String(v);
+                })
+                : (value != null ? String(value).split(',').map(function (s) {
+                    return s.trim();
+                }) : []);
             $sel.val(arr);
         } else {
             $sel.val(value != null ? String(value) : '');
@@ -202,7 +206,9 @@ let WCS4_LIB = (function ($) {
     let get_field_value = function ($form, name) {
         let $checkedCb = $form.find('input[type="checkbox"][name="' + name + '"]:checked');
         if ($checkedCb.length) {
-            return $checkedCb.toArray().map(function (item) { return item.value; });
+            return $checkedCb.toArray().map(function (item) {
+                return item.value;
+            });
         }
         let $checkedRadio = $form.find('input[type="radio"][name="' + name + '"]:checked');
         if ($checkedRadio.length) {
@@ -214,7 +220,9 @@ let WCS4_LIB = (function ($) {
         }
         let $inputArr = $form.find('input[name="' + name + '[]"]');
         if ($inputArr.length) {
-            return $inputArr.toArray().map(function (item) { return item.value; });
+            return $inputArr.toArray().map(function (item) {
+                return item.value;
+            });
         }
         let $textarea = $form.find('textarea[name="' + name + '"]');
         if ($textarea.length) {
