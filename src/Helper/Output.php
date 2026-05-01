@@ -347,16 +347,33 @@ class Output
         wp_enqueue_script('html2canvas');
 
         # Load custom scripts
+        wp_enqueue_style('dashicons');
+
         wp_register_style('wcs4_front_css', WCS4_PLUGIN_URL . '/css/wcs_front.css', false, WCS4_VERSION);
         wp_enqueue_style('wcs4_front_css');
 
-        wp_register_script('wcs4_front_js', WCS4_PLUGIN_URL . '/js/wcs_front.js', array('jquery'), WCS4_VERSION);
+        # Bootstrap 5 bundle: shortcode modals use data-bs-*; theme often has no BS JS on the front.
+        wp_register_script(
+            'wcs4-bootstrap-bundle',
+            'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js',
+            [],
+            '5.3.3',
+            true
+        );
+        wp_enqueue_script('wcs4-bootstrap-bundle');
+
+        wp_register_script(
+            'wcs4_front_js',
+            WCS4_PLUGIN_URL . '/js/wcs_front.js',
+            array('jquery', 'wcs4-bootstrap-bundle'),
+            WCS4_VERSION
+        );
         wp_enqueue_script('wcs4_front_js');
 
         wp_register_script(
             'wcs4_front_journal_js',
             WCS4_PLUGIN_URL . '/js/front/wcs_journal.js',
-            array('jquery'),
+            array('jquery', 'wcs4_front_js'),
             WCS4_VERSION
         );
         wp_enqueue_script('wcs4_front_journal_js');
@@ -364,7 +381,7 @@ class Output
         wp_register_script(
             'wcs4_front_progress_js',
             WCS4_PLUGIN_URL . '/js/front/wcs_progress.js',
-            array('jquery'),
+            array('jquery', 'wcs4_front_js'),
             WCS4_VERSION
         );
         wp_enqueue_script('wcs4_front_progress_js');
@@ -372,7 +389,7 @@ class Output
         wp_register_script(
             'wcs4_front_work_plan_js',
             WCS4_PLUGIN_URL . '/js/front/wcs_work_plan.js',
-            array('jquery'),
+            array('jquery', 'wcs4_front_js'),
             WCS4_VERSION
         );
         wp_enqueue_script('wcs4_front_work_plan_js');

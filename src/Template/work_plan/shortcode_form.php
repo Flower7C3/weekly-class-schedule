@@ -19,7 +19,10 @@ use WCS4\Helper\Admin;
                     <strong class="modal-title" data-wcs4="management-form-title">
                         <?= _x('Add New Work Plan', 'page title', 'wcs4') ?>
                     </strong>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="wcs4-modal-close" data-bs-dismiss="modal"
+                            aria-label="<?= esc_attr__( 'Close', 'wcs4' ) ?>">
+                        <span class="wcs4-modal-close-mark" aria-hidden="true">&times;</span>
+                    </button>
                 </div>
                 <div class="modal-body">
                     <fieldset class="form-field form-required form-field-subject_id-wrap">

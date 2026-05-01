@@ -42,7 +42,13 @@ let WCS4_FRONT = (function ($) {
         })
         $(document).on('click.wcs4-edit-' + scope + '-button', '[data-scope="' + scope + '"] .wcs4-edit-button', function (e) {
             WCS4_LIB.fetch_entry_data_to_form(scope, $(this).data('id'), set_entry_data_to_form, function () {
-                $('#wcs4-' + scope + '-modal').modal('show');
+                let $modal = $('#wcs4-' + scope + '-modal');
+                let el = $modal.get(0);
+                if (el && window.bootstrap && window.bootstrap.Modal) {
+                    window.bootstrap.Modal.getOrCreateInstance(el).show();
+                } else if (typeof $modal.modal === 'function') {
+                    $modal.modal('show');
+                }
                 let $form = $('.wcs4-management-form-wrapper form');
                 $form.find('input,textarea,select').focus();
                 $form.find('[data-readonly]').prop('readonly', true);
