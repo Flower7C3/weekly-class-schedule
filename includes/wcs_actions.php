@@ -77,11 +77,43 @@ add_action('wp_ajax_wcs_create_schema', static function () {
             throw new AccessDeniedException();
         }
         wcs4_verify_nonce();
-        DB::create_schema();
-        $response['response'] = __('Weekly Class Schedule installed successfully.', 'wcs4');
+        $dryRun = !empty($_POST['dry_run']) && ('1' === (string)$_POST['dry_run'] || 1 === (int)$_POST['dry_run']);
+        if ($dryRun) {
+            $response['response'] = __('Dry run: schema creation skipped.', 'wcs4');
+            $response['details'] = [
+                'plan' => [
+                    'dbDelta(CREATE TABLE ... wcs4_schedule)',
+                    'dbDelta(CREATE TABLE ... wcs4_schedule_teacher)',
+                    'dbDelta(CREATE TABLE ... wcs4_schedule_student)',
+                    'dbDelta(CREATE TABLE ... wcs4_journal)',
+                    'dbDelta(CREATE TABLE ... wcs4_journal_teacher)',
+                    'dbDelta(CREATE TABLE ... wcs4_journal_student)',
+                    'dbDelta(CREATE TABLE ... wcs4_work_plan)',
+                    'dbDelta(CREATE TABLE ... wcs4_work_plan_subject)',
+                    'dbDelta(CREATE TABLE ... wcs4_work_plan_teacher)',
+                    'dbDelta(CREATE TABLE ... wcs4_progress)',
+                    'dbDelta(CREATE TABLE ... wcs4_progress_subject)',
+                    'dbDelta(CREATE TABLE ... wcs4_progress_teacher)',
+                    'dbDelta(CREATE TABLE ... wcs4_snapshot)',
+                    'add_option(wcs4_db_version, ...)',
+                ],
+            ];
+        } else {
+            DB::create_schema();
+            $response['response'] = __('Weekly Class Schedule installed successfully.', 'wcs4');
+        }
         $status = \WP_Http::OK;
     } catch (AccessDeniedException|Exception $e) {
         $response['response'] = $e->getMessage() . ' [' . $e->getCode() . ']';
+        $response['errors'] = ['_global' => [$e->getMessage()]];
+        if (isset($dryRun) && $dryRun) {
+            $response['details'] = $response['details'] ?? [];
+            $response['details']['debug'] = [
+                'received_keys' => array_keys($_POST),
+                'source_prefix_present' => isset($_POST['source_prefix']) || isset($_POST['wcs4_import_source_prefix']),
+                'cutoff_date_present' => isset($_POST['cutoff_date']) || isset($_POST['wcs4_import_cutoff_date']),
+            ];
+        }
         $status = \WP_Http::BAD_REQUEST;
     }
     wcs4_json_response($response, $status);
@@ -96,8 +128,21 @@ add_action('wp_ajax_wcs_load_example_data', static function () {
             throw new AccessDeniedException();
         }
         wcs4_verify_nonce();
-        DB::load_example_data();
-        $response['response'] = __('Weekly Class Schedule example data loaded successfully.', 'wcs4');
+        $dryRun = !empty($_POST['dry_run']) && ('1' === (string)$_POST['dry_run'] || 1 === (int)$_POST['dry_run']);
+        if ($dryRun) {
+            $response['response'] = __('Dry run: example data load skipped.', 'wcs4');
+            $response['details'] = [
+                'plan' => [
+                    'wp_insert_post(...) for example Subjects (wcs4_subject)',
+                    'wp_insert_post(...) for example Teachers (wcs4_teacher)',
+                    'wp_insert_post(...) for example Students (wcs4_student)',
+                    'wp_insert_post(...) for example Classrooms (wcs4_classroom)',
+                ],
+            ];
+        } else {
+            DB::load_example_data();
+            $response['response'] = __('Weekly Class Schedule example data loaded successfully.', 'wcs4');
+        }
         $status = \WP_Http::OK;
     } catch (AccessDeniedException|Exception $e) {
         $response['response'] = $e->getMessage() . ' [' . $e->getCode() . ']';
@@ -115,8 +160,14 @@ add_action('wp_ajax_wcs_delete_everything', static function () {
             throw new AccessDeniedException();
         }
         wcs4_verify_nonce();
-        DB::delete_everything();
-        $response['response'] = __('Weekly Class Schedule deleted successfully.', 'wcs4');
+        $dryRun = !empty($_POST['dry_run']) && ('1' === (string)$_POST['dry_run'] || 1 === (int)$_POST['dry_run']);
+        if ($dryRun) {
+            $response['response'] = __('Dry run: delete skipped.', 'wcs4');
+            $response['details'] = DB::preview_delete_everything();
+        } else {
+            DB::delete_everything();
+            $response['response'] = __('Weekly Class Schedule deleted successfully.', 'wcs4');
+        }
         $status = \WP_Http::OK;
     } catch (AccessDeniedException|Exception $e) {
         $response['response'] = $e->getMessage() . ' [' . $e->getCode() . ']';
@@ -134,8 +185,20 @@ add_action('wp_ajax_wcs_reset_settings', static function () {
             throw new AccessDeniedException();
         }
         wcs4_verify_nonce();
-        DB::reset_settings();
-        $response['response'] = __('Weekly Class Schedule settings resetted.', 'wcs4');
+        $dryRun = !empty($_POST['dry_run']) && ('1' === (string)$_POST['dry_run'] || 1 === (int)$_POST['dry_run']);
+        if ($dryRun) {
+            $response['response'] = __('Dry run: reset settings skipped.', 'wcs4');
+            $response['details'] = [
+                'would_delete_options' => ['wcs4_settings'],
+                'plan' => [
+                    'DELETE option wcs4_settings;',
+                    'do_action(wcs4_default_settings);',
+                ],
+            ];
+        } else {
+            DB::reset_settings();
+            $response['response'] = __('Weekly Class Schedule settings resetted.', 'wcs4');
+        }
         $status = \WP_Http::OK;
     } catch (AccessDeniedException|Exception $e) {
         $response['response'] = $e->getMessage() . ' [' . $e->getCode() . ']';
@@ -153,8 +216,14 @@ add_action('wp_ajax_wcs_clear_schedules', static function () {
             throw new AccessDeniedException();
         }
         wcs4_verify_nonce();
-        ScheduleRepository::truncate();
-        $response['response'] = __('Weekly Class Schedule truncated successfully.', 'wcs4');
+        $dryRun = !empty($_POST['dry_run']) && ('1' === (string)$_POST['dry_run'] || 1 === (int)$_POST['dry_run']);
+        if ($dryRun) {
+            $response['response'] = __('Dry run: truncate skipped.', 'wcs4');
+            $response['details'] = DB::preview_truncate('schedule');
+        } else {
+            ScheduleRepository::truncate();
+            $response['response'] = __('Weekly Class Schedule truncated successfully.', 'wcs4');
+        }
         $status = \WP_Http::OK;
     } catch (AccessDeniedException|Exception $e) {
         $response['response'] = $e->getMessage() . ' [' . $e->getCode() . ']';
@@ -169,8 +238,14 @@ add_action('wp_ajax_wcs_clear_journals', static function () {
             throw new AccessDeniedException();
         }
         wcs4_verify_nonce();
-        JournalRepository::truncate();
-        $response['response'] = __('Weekly Class Journals truncated successfully.', 'wcs4');
+        $dryRun = !empty($_POST['dry_run']) && ('1' === (string)$_POST['dry_run'] || 1 === (int)$_POST['dry_run']);
+        if ($dryRun) {
+            $response['response'] = __('Dry run: truncate skipped.', 'wcs4');
+            $response['details'] = DB::preview_truncate('journal');
+        } else {
+            JournalRepository::truncate();
+            $response['response'] = __('Weekly Class Journals truncated successfully.', 'wcs4');
+        }
         $status = \WP_Http::OK;
     } catch (AccessDeniedException|Exception $e) {
         $response['response'] = $e->getMessage() . ' [' . $e->getCode() . ']';
@@ -185,8 +260,14 @@ add_action('wp_ajax_wcs_clear_work_plans', static function () {
             throw new AccessDeniedException();
         }
         wcs4_verify_nonce();
-        WorkPlanRepository::truncate();
-        $response['response'] = __('WCS Work Plans truncated successfully.', 'wcs4');
+        $dryRun = !empty($_POST['dry_run']) && ('1' === (string)$_POST['dry_run'] || 1 === (int)$_POST['dry_run']);
+        if ($dryRun) {
+            $response['response'] = __('Dry run: truncate skipped.', 'wcs4');
+            $response['details'] = DB::preview_truncate('work_plan');
+        } else {
+            WorkPlanRepository::truncate();
+            $response['response'] = __('WCS Work Plans truncated successfully.', 'wcs4');
+        }
         $status = \WP_Http::OK;
     } catch (AccessDeniedException|Exception $e) {
         $response['response'] = $e->getMessage() . ' [' . $e->getCode() . ']';
@@ -201,8 +282,14 @@ add_action('wp_ajax_wcs_clear_progresses', static function () {
             throw new AccessDeniedException();
         }
         wcs4_verify_nonce();
-        ProgressRepository::truncate();
-        $response['response'] = __('WCS Progresses truncated successfully.', 'wcs4');
+        $dryRun = !empty($_POST['dry_run']) && ('1' === (string)$_POST['dry_run'] || 1 === (int)$_POST['dry_run']);
+        if ($dryRun) {
+            $response['response'] = __('Dry run: truncate skipped.', 'wcs4');
+            $response['details'] = DB::preview_truncate('progress');
+        } else {
+            ProgressRepository::truncate();
+            $response['response'] = __('WCS Progresses truncated successfully.', 'wcs4');
+        }
         $status = \WP_Http::OK;
     } catch (AccessDeniedException|Exception $e) {
         $response['response'] = $e->getMessage() . ' [' . $e->getCode() . ']';
@@ -217,8 +304,50 @@ add_action('wp_ajax_wcs_clear_snapshots', static function () {
             throw new AccessDeniedException();
         }
         wcs4_verify_nonce();
-        SnapshotRepository::truncate();
-        $response['response'] = __('WCS Snapshots truncated successfully.', 'wcs4');
+        $dryRun = !empty($_POST['dry_run']) && ('1' === (string)$_POST['dry_run'] || 1 === (int)$_POST['dry_run']);
+        if ($dryRun) {
+            $response['response'] = __('Dry run: truncate skipped.', 'wcs4');
+            $response['details'] = DB::preview_truncate('snapshot');
+        } else {
+            SnapshotRepository::truncate();
+            $response['response'] = __('WCS Snapshots truncated successfully.', 'wcs4');
+        }
+        $status = \WP_Http::OK;
+    } catch (AccessDeniedException|Exception $e) {
+        $response['response'] = $e->getMessage() . ' [' . $e->getCode() . ']';
+        $status = \WP_Http::BAD_REQUEST;
+    }
+    wcs4_json_response($response, $status);
+});
+
+/**
+ * Import WCS4 data from another table prefix, then optionally run cutoff.
+ */
+add_action('wp_ajax_wcs_import_from_prefix', static function () {
+    try {
+        if (!current_user_can(WCS4_MAINTENANCE_OPTIONS_CAPABILITY)) {
+            throw new AccessDeniedException();
+        }
+        wcs4_verify_nonce();
+
+        $dryRun = !empty($_POST['dry_run']) && ('1' === (string)$_POST['dry_run'] || 1 === (int)$_POST['dry_run']);
+        $sourcePrefixRaw = $_POST['source_prefix'] ?? $_POST['wcs4_import_source_prefix'] ?? '';
+        $cutoffDateRaw = $_POST['cutoff_date'] ?? $_POST['wcs4_import_cutoff_date'] ?? '';
+        $runCutoffRaw = $_POST['run_cutoff'] ?? $_POST['wcs4_import_run_cutoff'] ?? '';
+
+        $sourcePrefix = $sourcePrefixRaw !== '' ? sanitize_text_field(wp_unslash($sourcePrefixRaw)) : '';
+        $cutoffDate = $cutoffDateRaw !== '' ? sanitize_text_field(wp_unslash($cutoffDateRaw)) : '';
+        $runCutoff = !empty($runCutoffRaw) && ('1' === (string)$runCutoffRaw || 1 === (int)$runCutoffRaw);
+
+        if ($dryRun) {
+            $result = DB::preview_import_from_prefix($sourcePrefix, $cutoffDate, $runCutoff);
+            $response['response'] = $result['message'] ?? __('Dry run: import skipped.', 'wcs4');
+            $response['details'] = $result;
+        } else {
+            $result = DB::import_from_prefix($sourcePrefix, $cutoffDate, $runCutoff);
+            $response['response'] = $result['message'] ?? __('Import completed.', 'wcs4');
+            $response['details'] = $result;
+        }
         $status = \WP_Http::OK;
     } catch (AccessDeniedException|Exception $e) {
         $response['response'] = $e->getMessage() . ' [' . $e->getCode() . ']';

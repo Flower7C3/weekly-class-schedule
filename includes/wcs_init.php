@@ -272,13 +272,13 @@ add_action('init', static function () {
 });
 
 foreach (WCS4_POST_TYPES as $post_type) {
-    add_filter('manage_' . $post_type . '_posts_columns', function ($columns) {
+    add_filter('manage_' . $post_type . '_posts_columns', static function ($columns) {
         $offset = array_search('date', array_keys($columns), true);
         $new_columns = [];
         $new_columns['password'] = __('Password');
         return array_merge(array_slice($columns, 0, $offset), $new_columns, array_slice($columns, $offset, null));
     });
-    add_action('manage_' . $post_type . '_posts_custom_column', function ($column_key, $post_id) {
+    add_action('manage_' . $post_type . '_posts_custom_column', static function ($column_key, $post_id) {
         if ('password' === $column_key) {
             $the_post = get_post($post_id);
             if ($the_post->post_password) {

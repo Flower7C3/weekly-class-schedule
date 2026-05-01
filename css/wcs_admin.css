@@ -84,8 +84,15 @@ tr.is-active {
     max-width: 25%;
 }
 
-.wcs4-ajax-text {
+.wcs4-ajax-text,
+.wcs4-ajax-banner {
     margin-left: 10px;
+}
+
+.wcs4-ajax-banner {
+    display: block;
+    margin-top: 10px;
+    margin-bottom: 6px;
 }
 
 #wcs4-cancel-editing-wrapper {
@@ -99,6 +106,42 @@ tr.is-active {
 /* Settings page */
 #wcs4-options-message {
     margin-top: 15px;
+}
+
+/* Maintenance (advanced settings) grouped sections */
+#wcs4-reset-database .wcs4-maintenance-fieldset {
+    margin: 12px 0;
+    padding: 12px;
+    border: 1px solid #ccd0d4;
+}
+
+#wcs4-reset-database .wcs4-maintenance-fieldset__legend {
+    padding: 0 6px;
+}
+
+/* Full / simple settings: grouped blocks inside <details> or <form> */
+.wcs4-settings-fieldset {
+    margin: 12px 0;
+    padding: 12px;
+    border: 1px solid #ccd0d4;
+    border-radius: 2px;
+    min-width: 0;
+    background: #f5f6f7;
+}
+
+.wcs4-settings-fieldset > legend {
+    padding: 0 6px;
+    float: none;
+    width: auto;
+    max-width: 100%;
+}
+
+.wcs4-settings-fieldset > legend strong {
+    display: inline-block;
+    margin: 0;
+    padding: 0;
+    font-size: 1.4em;
+    font-weight: 600;
 }
 
 .wcs4-description {

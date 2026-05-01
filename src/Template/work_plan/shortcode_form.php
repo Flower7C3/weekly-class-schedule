@@ -115,7 +115,8 @@ use WCS4\Helper\Admin;
                     </fieldset>
                 </div>
                 <div class="modal-footer">
-                    <p id="wcs4-ajax-text-wrapper" class="wcs4-ajax-text"></p>
+                    <div class="wcs4-ajax-text wcs4-ajax-banner"></div>
+                    <div id="wcs4-ajax-text-wrapper"></div>
                     <span class="spinner"></span>
                     <button data-wcs4="submit-form" type="submit"
                             class="button button-primary wcs4-submit-work-plan-form"

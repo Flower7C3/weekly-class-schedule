@@ -56,8 +56,8 @@ class Settings
                     'schedule_template_table_details' => 'wcs4_validate_mock',
                     'schedule_template_list' => 'wcs4_validate_mock',
                     'journal_shortcode_template' => 'wcs4_validate_mock',
-                    'journal_teachers_html_meta_code' => 'wcs4_validate_mock',
-                    'journal_students_html_meta_code' => 'wcs4_validate_mock',
+                    'journal_teachers_html_header_code' => 'wcs4_validate_mock',
+                    'journal_students_html_header_code' => 'wcs4_validate_mock',
                     'journal_teachers_html_template_code' => 'wcs4_validate_mock',
                     'journal_teachers_html_template_style' => 'wcs4_validate_mock',
                     'journal_teachers_html_table_columns' => 'wcs4_validate_mock',
@@ -74,8 +74,8 @@ class Settings
                     'work_plan_shortcode_template_partial_type' => 'wcs4_validate_mock',
                     'work_plan_shortcode_template_periodic_type' => 'wcs4_validate_mock',
                     'work_plan_html_template_style' => 'wcs4_validate_mock',
-                    'work_plan_html_meta_code_partial_type' => 'wcs4_validate_mock',
-                    'work_plan_html_meta_code_periodic_type' => 'wcs4_validate_mock',
+                    'work_plan_html_header_code_partial_type' => 'wcs4_validate_mock',
+                    'work_plan_html_header_code_periodic_type' => 'wcs4_validate_mock',
                     'work_plan_html_template_code_partial_type' => 'wcs4_validate_mock',
                     'work_plan_html_template_code_periodic_type' => 'wcs4_validate_mock',
                     'work_plan_html_table_columns' => 'wcs4_validate_mock',
@@ -87,8 +87,8 @@ class Settings
                     'progress_shortcode_template_partial_type' => 'wcs4_validate_mock',
                     'progress_shortcode_template_periodic_type' => 'wcs4_validate_mock',
                     'progress_html_template_style' => 'wcs4_validate_mock',
-                    'progress_html_meta_code_partial_type' => 'wcs4_validate_mock',
-                    'progress_html_meta_code_periodic_type' => 'wcs4_validate_mock',
+                    'progress_html_header_code_partial_type' => 'wcs4_validate_mock',
+                    'progress_html_header_code_periodic_type' => 'wcs4_validate_mock',
                     'progress_html_template_code_partial_type' => 'wcs4_validate_mock',
                     'progress_html_template_code_periodic_type' => 'wcs4_validate_mock',
                     'progress_html_table_columns' => 'wcs4_validate_mock',
@@ -192,12 +192,12 @@ class Settings
                 wcs4_options_message(__('Options updated', 'wcs4'));
 
                 $fields = array(
-                    'journal_teachers_html_meta_code' => 'wcs4_validate_mock',
-                    'journal_students_html_meta_code' => 'wcs4_validate_mock',
-                    'work_plan_html_meta_code_partial_type' => 'wcs4_validate_mock',
-                    'work_plan_html_meta_code_periodic_type' => 'wcs4_validate_mock',
-                    'progress_html_meta_code_partial_type' => 'wcs4_validate_mock',
-                    'progress_html_meta_code_periodic_type' => 'wcs4_validate_mock',
+                    'journal_teachers_html_header_code' => 'wcs4_validate_mock',
+                    'journal_students_html_header_code' => 'wcs4_validate_mock',
+                    'work_plan_html_header_code_partial_type' => 'wcs4_validate_mock',
+                    'work_plan_html_header_code_periodic_type' => 'wcs4_validate_mock',
+                    'progress_html_header_code_partial_type' => 'wcs4_validate_mock',
+                    'progress_html_header_code_periodic_type' => 'wcs4_validate_mock',
                 );
 
                 $new_options = wcs4_perform_validation($fields, $wcs4_options);
@@ -227,13 +227,13 @@ class Settings
 
         // Some installs may already store array here.
         if (is_array($settings)) {
-            return $settings;
+            return self::migrate_html_meta_code_option_keys($settings);
         }
 
         // Preferred: let WP handle serialized vs non-serialized values.
         $maybe = maybe_unserialize($settings);
         if (is_array($maybe)) {
-            return $maybe;
+            return self::migrate_html_meta_code_option_keys($maybe);
         }
 
         // Backward/edge cases: values may be HTML-encoded or slashed.
@@ -248,11 +248,33 @@ class Settings
         foreach ($candidates as $candidate) {
             $unserialized = @unserialize($candidate);
             if (is_array($unserialized)) {
-                return $unserialized;
+                return self::migrate_html_meta_code_option_keys($unserialized);
             }
         }
 
         return [];
+    }
+
+    /**
+     * Legacy option keys used *html_meta_code*; current keys use *html_header_code*.
+     */
+    private static function migrate_html_meta_code_option_keys(array $settings): array
+    {
+        $pairs = [
+            'journal_teachers_html_meta_code' => 'journal_teachers_html_header_code',
+            'journal_students_html_meta_code' => 'journal_students_html_header_code',
+            'work_plan_html_meta_code_partial_type' => 'work_plan_html_header_code_partial_type',
+            'work_plan_html_meta_code_periodic_type' => 'work_plan_html_header_code_periodic_type',
+            'progress_html_meta_code_partial_type' => 'progress_html_header_code_partial_type',
+            'progress_html_meta_code_periodic_type' => 'progress_html_header_code_periodic_type',
+        ];
+        foreach ($pairs as $legacy => $current) {
+            if (!array_key_exists($current, $settings) && array_key_exists($legacy, $settings)) {
+                $settings[$current] = $settings[$legacy];
+            }
+        }
+
+        return $settings;
     }
 
     /**
@@ -289,11 +311,11 @@ class Settings
                 'journal_teacher_collision' => 'yes',
                 'journal_student_collision' => 'yes',
                 'journal_shortcode_template' => '<p><small>{start time}-{end time}<small> {type}</small></small><br />' . "\n" . '{subject} ({tea}/{stu})</p>',
-                'journal_teachers_html_meta_code' => '',
-                'journal_students_html_meta_code' => '',
+                'journal_teachers_html_header_code' => '',
+                'journal_students_html_header_code' => '',
                 # Szablony z obrazkami (logo/PFRON) – nie nadpisujemy; pozostawiamy krótki placeholder.
                 'journal_teachers_html_template_code' =>
-                    '<header><h1>Journal</h1><h2>{heading}</h2></header>' .
+                    '<header><h1>Journal</h1><h2>{meta}</h2></header>' .
                     '<main>{table}</main>' .
                     '<footer><p>Generated at {current datetime}</p></footer>',
                 'journal_teachers_html_template_style' => '',
@@ -312,7 +334,7 @@ class Settings
                     'type, Rodzaj, {type}' . PHP_EOL .
                     'type duration detailed, Rodzaje, {duration time} min, {duration time} min = {duration hours} h {duration minutes} min / {events} wpisów' . PHP_EOL,
                 'journal_students_html_template_code' =>
-                    '<header><h1>Journal</h1><h2>{heading}</h2></header>' .
+                    '<header><h1>Journal</h1><h2>{meta}</h2></header>' .
                     '<main>{table}</main>' .
                     '<footer><p>Generated at {current datetime}</p></footer>',
                 'journal_students_html_template_style' => '',
@@ -364,10 +386,10 @@ class Settings
                     '<p><small>{created or updated at}</small></p>',
                 'work_plan_html_template_style' => '',
                 # Szablony z obrazkami – nie nadpisujemy.
-                'work_plan_html_meta_code_partial_type' => '',
-                'work_plan_html_meta_code_periodic_type' => '',
+                'work_plan_html_header_code_partial_type' => '',
+                'work_plan_html_header_code_periodic_type' => '',
                 'work_plan_html_template_code_partial_type' =>
-                    '<header><h1>Progress</h1><h2>{heading}</h2></header>' .
+                    '<header><h1>Progress</h1><h2>{meta}</h2></header>' .
                     '<main>{table}</main>' .
                     '<footer><p>Generated at {current datetime}</p></footer>',
                 'work_plan_html_template_code_periodic_type' =>
@@ -419,10 +441,10 @@ class Settings
                     '<p><small>{created or updated at}</small></p>',
                 'progress_html_template_style' => '',
                 # Szablony z obrazkami – nie nadpisujemy.
-                'progress_html_meta_code_partial_type' => '',
-                'progress_html_meta_code_periodic_type' => '',
+                'progress_html_header_code_partial_type' => '',
+                'progress_html_header_code_periodic_type' => '',
                 'progress_html_template_code_partial_type' =>
-                    '<header><h1>Progress</h1><h2>{heading}</h2></header>' .
+                    '<header><h1>Progress</h1><h2>{meta}</h2></header>' .
                     '<main>{table}</main>' .
                     '<footer><p>Generated at {current datetime}</p></footer>',
                 'progress_html_template_code_periodic_type' =>

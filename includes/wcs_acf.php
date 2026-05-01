@@ -1,6 +1,6 @@
 <?php
 
-add_action('acf/include_fields', function () {
+add_action('acf/include_fields', static function () {
     if (!function_exists('acf_add_local_field_group')) {
         return;
     }
