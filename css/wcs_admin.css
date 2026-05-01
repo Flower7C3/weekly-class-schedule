@@ -95,6 +95,10 @@ tr.is-active {
     margin-bottom: 6px;
 }
 
+.wcs4-ajax-banner:not(.updated):not(.error) {
+    display: none;
+}
+
 #wcs4-cancel-editing-wrapper {
     margin-bottom: 20px;
 }

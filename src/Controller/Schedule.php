@@ -814,14 +814,28 @@ class Schedule implements AjaxGetItemHandlerInterface, ManagesTemplateInterface
             printf("#%s .wcs4-lesson-hour-to-%s {grid-row: %d}\n", $schedule_key, $hourKey, $index + 2);
         }
         echo '</style>';
-        $output = '<a href="javascript://void()" class="btn btn-skin inverted fa fa-solid fa-window-maximize toggle" title="' . __(
-                'Toggle full screen',
-                'wcs4'
-            ) . '"></a> ';
-        $output .= '<a href="javascript://void()" class="btn btn-skin inverted fa fa-solid fa-download download" title="' . __(
-                'Download PNG',
-                'wcs4'
-            ) . '"></a>';
+        $output = '<div class="wcs4-schedule-toolbar" role="toolbar" aria-label="' . esc_attr__('Schedule', 'wcs4') . '">';
+        $output .= '<button type="button" class="wcs4-schedule-toolbar-btn toggle" title="' . esc_attr__(
+            'Toggle full screen',
+            'wcs4'
+        ) . '">';
+        $output .= '<span class="wcs4-schedule-toolbar-btn-icon dashicons dashicons-fullscreen-alt" aria-hidden="true"></span>';
+        $output .= '<span class="wcs4-schedule-toolbar-btn-label">' . esc_html__(
+            'Full screen',
+            'wcs4'
+        ) . '</span>';
+        $output .= '</button>';
+        $output .= '<a href="#" class="wcs4-schedule-toolbar-btn download" title="' . esc_attr__(
+            'Download PNG',
+            'wcs4'
+        ) . '">';
+        $output .= '<span class="wcs4-schedule-toolbar-btn-icon dashicons dashicons-download" aria-hidden="true"></span>';
+        $output .= '<span class="wcs4-schedule-toolbar-btn-label">' . esc_html__(
+            'Download PNG',
+            'wcs4'
+        ) . '</span>';
+        $output .= '</a>';
+        $output .= '</div>';
         $output .= '<div class="wcs4_schedule_grid" id="' . $schedule_key . '">';
         foreach ($weekdays as $dayName => $dayIndex) {
             $output .= '<div class="wcs4-grid-weekday wcs4-grid-weekday-' . $dayIndex . '">' . $dayName . '</div>';

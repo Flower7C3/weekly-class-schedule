@@ -8,23 +8,46 @@
         $(document).on('change.form-invalid', '.form-invalid input,.form-invalid textarea,.form-invalid select', function () {
             $(this).closest('.form-invalid').find('.error').remove();
         });
-        $('.wcs4_schedule_wrapper .toggle').on('click', function () {
-            // if (document.fullscreenElement) {
-            //     $('.toggle').removeClass('fa-window-minimize').addClass('fa-window-maximize')
-            //     document.exitFullscreen();
-            // } else {
-            $('.wcs4_schedule_grid').get(0).requestFullscreen();
-            // $('.toggle').removeClass('fa-window-maximize').addClass('fa-window-minimize')
-            // }
+
+        $(document).on('click.wcs4-schedule-fullscreen', '.wcs4_schedule_wrapper .toggle', function (e) {
+            e.preventDefault();
+            const gridEl = $(this).closest('.wcs4_schedule_wrapper').find('.wcs4_schedule_grid').get(0);
+            if (!gridEl) {
+                return;
+            }
+            if (gridEl.requestFullscreen) {
+                gridEl.requestFullscreen();
+            } else if (gridEl.webkitRequestFullscreen) {
+                gridEl.webkitRequestFullscreen();
+            }
         });
 
-        html2canvas(document.querySelector(".wcs4_schedule_grid")).then((canvas) => {
-            console.log('canvas')
-            const data = canvas.toDataURL("image/png;base64");
-            const downloadLink = document.querySelector(".wcs4_schedule_wrapper .download");
-            downloadLink.download = $('#wcs_schedule-shortcode-wrapper h2').text() + ' ' + $('.entry-title').text();
-            downloadLink.href = data;
-            console.log(downloadLink)
+        $(document).on('click.wcs4-schedule-png', '.wcs4_schedule_wrapper a.download', function (e) {
+            e.preventDefault();
+            const gridEl = $(this).closest('.wcs4_schedule_wrapper').find('.wcs4_schedule_grid').get(0);
+            if (!gridEl || typeof html2canvas !== 'function') {
+                return;
+            }
+            const titleBits = [];
+            const $wrapHeading = $('#wcs_schedule-shortcode-wrapper h2');
+            if ($wrapHeading.length) {
+                titleBits.push($wrapHeading.text());
+            }
+            const $entry = $('.wp-block-post-title').first();
+            if ($entry.length) {
+                titleBits.push($entry.text());
+            }
+            const baseName = titleBits.join(' ').trim() || 'schedule';
+            html2canvas(gridEl).then(function (canvas) {
+                const dataUrl = canvas.toDataURL('image/png');
+                const link = document.createElement('a');
+                link.href = dataUrl;
+                link.download = baseName.replace(/[/\\?%*:|"<>]/g, '-') + '.png';
+                link.style.display = 'none';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            });
         });
     });
 })(jQuery);

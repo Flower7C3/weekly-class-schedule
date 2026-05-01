@@ -156,28 +156,31 @@ $wcs4_render_postpass_context_bar = static function (): void {
     }
     $rendered = true;
 
-    $parts = [];
+    $user_html = '';
+    $links_html = '';
     if (isset($_SESSION[WCS_SESSION_SATISFY_POST])) {
         $master = $_SESSION[WCS_SESSION_SATISFY_POST];
-        $parts[] = sprintf(
-            '<em class="fas fa-user-secret"></em> %s',
-            esc_html($master->post_title)
-        );
-        $parts[] = sprintf(
-            '<a class="btn btn-skin" href="%s">%s</a>',
+        $user_html = '<div class="wcs4-postpass-context-bar-user">'
+            . '<span class="wcs4-postpass-context-bar-icon" aria-hidden="true"><em class="fas fa-user-secret"></em></span> '
+            . '<span class="wcs4-postpass-context-bar-title">' . esc_html($master->post_title) . '</span>'
+            . '</div>';
+        $links_html .= sprintf(
+            '<a class="wcs4-postpass-context-btn" href="%s">%s</a>',
             esc_url(get_permalink($master)),
             esc_html__('My profile page', 'wcs4')
         );
     }
-    $parts[] = sprintf(
-        '<a class="btn btn-skin" href="%s">%s</a>',
+    $links_html .= sprintf(
+        '<a class="wcs4-postpass-context-btn wcs4-postpass-context-btn--logout" href="%s">%s</a>',
         esc_url(add_query_arg('logout', '1')),
         esc_html(__('Log out'))
     );
 
     printf(
-        '<div class="wcs4-postpass-context-bar container-fluid"><div class="row"><div class="col-12"><div class="alignright">%s</div></div></div></div>',
-        implode(' ', array_filter($parts))
+        '<div class="wcs4-postpass-context-bar" role="region" aria-label="%s"><div class="wcs4-postpass-context-bar-inner">%s<div class="wcs4-postpass-context-bar-actions">%s</div></div></div>',
+        esc_attr__('WCS access banner', 'wcs4'),
+        $user_html,
+        $links_html
     );
 };
 add_action('__before_page_wrapper', $wcs4_render_postpass_context_bar, 1);

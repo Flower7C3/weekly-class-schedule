@@ -2,6 +2,35 @@
  * Styles for the Weekly Class Schedule 4.0 front-end.
  */
 
+:root {
+    --wcs4-ui-accent-deep: #0f4a6b;
+    --wcs4-ui-accent: #145a82;
+    --wcs4-ui-accent-mid: #1a6b9a;
+    --wcs4-ui-accent-bright: #1f7cb3;
+    --wcs4-ui-on-accent: #ffffff;
+    --wcs4-ui-surface: #ffffff;
+    --wcs4-ui-surface-muted: #f5f9fc;
+    --wcs4-ui-surface-tint: #e8f2fc;
+    --wcs4-ui-text: rgba(15, 45, 70, 0.92);
+    --wcs4-ui-text-soft: rgba(15, 45, 70, 0.88);
+    --wcs4-ui-border: rgba(15, 80, 120, 0.2);
+    --wcs4-ui-border-strong: rgba(15, 80, 120, 0.35);
+    --wcs4-ui-shadow: 0 2px 8px rgba(20, 90, 130, 0.18);
+    --wcs4-ui-shadow-hover: 0 4px 14px rgba(20, 90, 130, 0.28);
+    --wcs4-ui-focus: #7ec8f0;
+    --wcs4-ui-footer-tint: rgba(20, 90, 130, 0.04);
+    --wcs4-ui-radius-sm: 0.375rem;
+    --wcs4-ui-radius-md: 0.5rem;
+    --wcs4-ui-backdrop: rgba(10, 38, 58, 0.52);
+    --wcs4-ui-modal-shadow:
+        0 4px 6px rgba(15, 74, 107, 0.06),
+        0 12px 40px rgba(15, 74, 107, 0.14);
+    --wcs4-ui-success: #0d6b3a;
+    --wcs4-ui-success-bg: rgba(13, 107, 58, 0.09);
+    --wcs4-ui-danger: #9e292b;
+    --wcs4-ui-danger-bg: rgba(158, 41, 43, 0.1);
+}
+
 .wcs4-no-lessons {
     margin-bottom: 20px;
 }
@@ -23,6 +52,104 @@
     grid-template-rows: [days] auto [lessons];
     font-size: 0.8em;
     line-height: 1.4;
+}
+
+.wcs4-schedule-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem 0.65rem;
+    margin: 0 0 0.65rem;
+}
+
+button.wcs4-schedule-toolbar-btn,
+a.wcs4-schedule-toolbar-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    margin: 0;
+    padding: 0.45rem 0.95rem;
+    border-radius: 999px;
+    border: 1px solid var(--wcs4-ui-border-strong);
+    background: linear-gradient(
+        165deg,
+        var(--wcs4-ui-accent-mid) 0%,
+        var(--wcs4-ui-accent) 55%,
+        var(--wcs4-ui-accent-deep) 100%
+    );
+    color: var(--wcs4-ui-on-accent) !important;
+    font-size: 0.875rem;
+    font-weight: 600;
+    line-height: 1.25;
+    font-family: inherit;
+    text-decoration: none !important;
+    box-shadow:
+        0 1px 2px rgba(0, 0, 0, 0.12),
+        var(--wcs4-ui-shadow);
+    cursor: pointer;
+    transition:
+        background 0.15s ease,
+        border-color 0.15s ease,
+        box-shadow 0.15s ease,
+        transform 0.12s ease;
+}
+
+button.wcs4-schedule-toolbar-btn {
+    appearance: none;
+    -webkit-appearance: none;
+}
+
+button.wcs4-schedule-toolbar-btn:hover,
+a.wcs4-schedule-toolbar-btn:hover {
+    border-color: rgba(15, 80, 120, 0.55);
+    background: linear-gradient(
+        165deg,
+        var(--wcs4-ui-accent-bright) 0%,
+        #186892 55%,
+        #125778 100%
+    );
+    box-shadow:
+        0 2px 4px rgba(0, 0, 0, 0.14),
+        var(--wcs4-ui-shadow-hover);
+    transform: translateY(-1px);
+    color: var(--wcs4-ui-on-accent) !important;
+}
+
+button.wcs4-schedule-toolbar-btn:focus-visible,
+a.wcs4-schedule-toolbar-btn:focus-visible {
+    outline: 2px solid var(--wcs4-ui-focus);
+    outline-offset: 2px;
+}
+
+button.wcs4-schedule-toolbar-btn:active,
+a.wcs4-schedule-toolbar-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+}
+
+.wcs4-schedule-toolbar-btn .dashicons.wcs4-schedule-toolbar-btn-icon {
+    width: 1.125rem;
+    height: 1.125rem;
+    font-size: 1.125rem;
+    line-height: 1.125rem;
+}
+
+.wcs4-schedule-toolbar-btn .wcs4-schedule-toolbar-btn-label {
+    position: relative;
+    top: 0.02em;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    button.wcs4-schedule-toolbar-btn,
+    a.wcs4-schedule-toolbar-btn,
+    button.wcs4-schedule-toolbar-btn:hover,
+    a.wcs4-schedule-toolbar-btn:hover,
+    button.wcs4-schedule-toolbar-btn:active,
+    a.wcs4-schedule-toolbar-btn:active {
+        transition: none;
+        transform: none;
+    }
 }
 
 .wcs4_schedule_grid .wcs4-grid-weekday {
@@ -215,6 +342,13 @@
         overflow: unset;
     }
 
+    body.single-wcs4_subject .wcs4-schedule-toolbar,
+    body.single-wcs4_teacher .wcs4-schedule-toolbar,
+    body.single-wcs4_student .wcs4-schedule-toolbar,
+    body.single-wcs4_classroom .wcs4-schedule-toolbar {
+        display: none;
+    }
+
 }
 
 /*
@@ -245,7 +379,7 @@
     z-index: 1050;
     width: 100vw;
     height: 100vh;
-    background-color: #000;
+    background-color: var(--wcs4-ui-backdrop);
 }
 
 .modal-backdrop.fade {
@@ -253,7 +387,7 @@
 }
 
 .modal-backdrop.show {
-    opacity: 0.5;
+    opacity: 1;
 }
 
 .wcs4-form-wrap.modal .modal-dialog {
@@ -270,9 +404,11 @@
     flex-direction: column;
     width: 100%;
     pointer-events: auto;
-    background-color: #fff;
-    border: 1px solid rgba(0, 0, 0, 0.175);
-    border-radius: 0.375rem;
+    background-color: var(--wcs4-ui-surface);
+    border: 1px solid var(--wcs4-ui-border);
+    border-radius: var(--wcs4-ui-radius-md);
+    box-shadow: var(--wcs4-ui-modal-shadow);
+    overflow: hidden;
 }
 
 .wcs4-form-wrap.modal .modal-header {
@@ -281,8 +417,14 @@
     align-items: center;
     justify-content: space-between;
     gap: 0.5rem 1rem;
-    padding: 1rem 1rem 0.75rem;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    padding: 1rem 1.25rem 0.85rem;
+    border-bottom: 1px solid var(--wcs4-ui-border);
+    background: linear-gradient(
+        180deg,
+        var(--wcs4-ui-surface-muted) 0%,
+        var(--wcs4-ui-surface-tint) 42%,
+        var(--wcs4-ui-surface) 100%
+    );
 }
 
 .wcs4-form-wrap.modal .modal-header .modal-title {
@@ -292,6 +434,7 @@
     font-size: 1.125rem;
     font-weight: 600;
     line-height: 1.35;
+    color: var(--wcs4-ui-accent-deep);
 }
 
 .wcs4-form-wrap.modal .wcs4-modal-close {
@@ -303,20 +446,29 @@
     height: 2.25rem;
     margin: 0;
     padding: 0;
-    border: none;
-    border-radius: 0.375rem;
+    border: 1px solid transparent;
+    border-radius: var(--wcs4-ui-radius-sm);
     background: transparent;
-    color: inherit;
-    opacity: 0.65;
+    color: var(--wcs4-ui-accent);
+    opacity: 0.85;
     cursor: pointer;
     line-height: 1;
+    transition:
+        background 0.12s ease,
+        border-color 0.12s ease,
+        opacity 0.12s ease;
 }
 
 .wcs4-form-wrap.modal .wcs4-modal-close:hover,
 .wcs4-form-wrap.modal .wcs4-modal-close:focus-visible {
     opacity: 1;
-    background: rgba(0, 0, 0, 0.06);
+    background: rgba(20, 90, 130, 0.1);
+    border-color: rgba(20, 90, 130, 0.15);
     outline: none;
+}
+
+.wcs4-form-wrap.modal .wcs4-modal-close:focus-visible {
+    box-shadow: 0 0 0 2px var(--wcs4-ui-surface), 0 0 0 4px var(--wcs4-ui-focus);
 }
 
 .wcs4-form-wrap.modal .wcs4-modal-close-mark {
@@ -345,8 +497,10 @@
 }
 
 .wcs4-form-wrap.modal .modal-body {
-    padding: 1rem 1.25rem 0.25rem;
+    padding: 1.1rem 1.25rem 0.35rem;
     flex: 1 1 auto;
+    color: var(--wcs4-ui-text);
+    background: linear-gradient(180deg, var(--wcs4-ui-surface) 0%, var(--wcs4-ui-surface-muted) 100%);
 }
 
 .wcs4-form-wrap.modal .modal-body fieldset.form-field {
@@ -366,11 +520,13 @@
     font-weight: 600;
     font-size: 0.875rem;
     line-height: 1.3;
+    color: var(--wcs4-ui-accent-deep);
 }
 
 .wcs4-form-wrap.modal .modal-body .form-field select,
 .wcs4-form-wrap.modal .modal-body .form-field input[type="text"],
 .wcs4-form-wrap.modal .modal-body .form-field input[type="date"],
+.wcs4-form-wrap.modal .modal-body .form-field input[type="time"],
 .wcs4-form-wrap.modal .modal-body .form-field input[type="email"],
 .wcs4-form-wrap.modal .modal-body .form-field input[type="tel"],
 .wcs4-form-wrap.modal .modal-body .form-field textarea {
@@ -378,13 +534,53 @@
     width: 100%;
     max-width: 100%;
     margin: 0;
-    padding: 0.45rem 0.55rem;
-    border: 1px solid rgba(0, 0, 0, 0.2);
-    border-radius: 0.25rem;
+    padding: 0.45rem 0.6rem;
+    border: 1px solid var(--wcs4-ui-border);
+    border-radius: var(--wcs4-ui-radius-sm);
     font-size: 0.9375rem;
     line-height: 1.4;
-    background-color: #fff;
-    color: inherit;
+    background-color: var(--wcs4-ui-surface);
+    color: var(--wcs4-ui-text);
+    transition:
+        border-color 0.15s ease,
+        box-shadow 0.15s ease;
+}
+
+.wcs4-form-wrap.modal .modal-body .form-field select:hover,
+.wcs4-form-wrap.modal .modal-body .form-field input:hover,
+.wcs4-form-wrap.modal .modal-body .form-field textarea:hover {
+    border-color: rgba(15, 80, 120, 0.32);
+}
+
+.wcs4-form-wrap.modal .modal-body .form-field select:focus,
+.wcs4-form-wrap.modal .modal-body .form-field input:focus,
+.wcs4-form-wrap.modal .modal-body .form-field textarea:focus {
+    outline: none;
+    border-color: var(--wcs4-ui-accent-mid);
+    box-shadow: 0 0 0 1px rgba(26, 107, 154, 0.25);
+}
+
+.wcs4-form-wrap.modal .modal-body .form-field select:focus-visible,
+.wcs4-form-wrap.modal .modal-body .form-field input:focus-visible,
+.wcs4-form-wrap.modal .modal-body .form-field textarea:focus-visible {
+    outline: none;
+    border-color: var(--wcs4-ui-accent);
+    box-shadow: 0 0 0 2px var(--wcs4-ui-focus);
+}
+
+.wcs4-form-wrap.modal .modal-body .form-invalid select,
+.wcs4-form-wrap.modal .modal-body .form-invalid input,
+.wcs4-form-wrap.modal .modal-body .form-invalid textarea {
+    border-color: rgba(158, 41, 43, 0.45);
+}
+
+.wcs4-form-wrap.modal .modal-body .error {
+    display: block;
+    margin-top: 0.35rem;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    line-height: 1.35;
+    color: var(--wcs4-ui-danger);
 }
 
 .wcs4-form-wrap.modal .modal-body .form-field textarea {
@@ -392,11 +588,53 @@
     resize: vertical;
 }
 
-.wcs4-form-wrap.modal .modal-body .form-field.form-time-field select {
-    text-align: right;
+/* Natywne pola daty / czasu (journal + progress / work-plan) */
+.wcs4-form-wrap.modal .modal-body .form-field input[type="date"],
+.wcs4-form-wrap.modal .modal-body .form-field input[type="time"] {
+    min-height: 2.5rem;
+    font-variant-numeric: tabular-nums;
+    color-scheme: light;
+    accent-color: var(--wcs4-ui-accent);
 }
 
-/* Journal date + start/end row (Bootstrap grid classes without theme Bootstrap CSS). */
+.wcs4-form-wrap.modal .modal-body .form-field input[type="date"] {
+    text-align: start;
+}
+
+.wcs4-form-wrap.modal .modal-body .form-field.form-time-field input[type="time"] {
+    text-align: center;
+    letter-spacing: 0.02em;
+}
+
+.wcs4-form-wrap.modal .modal-body .form-field input[type="date"]::-webkit-calendar-picker-indicator,
+.wcs4-form-wrap.modal .modal-body .form-field input[type="time"]::-webkit-calendar-picker-indicator {
+    cursor: pointer;
+    opacity: 0.72;
+    padding: 0.3rem;
+    margin-left: 0.25rem;
+    border-radius: var(--wcs4-ui-radius-sm);
+    transition:
+        opacity 0.12s ease,
+        background-color 0.12s ease;
+}
+
+.wcs4-form-wrap.modal .modal-body .form-field input[type="date"]::-webkit-calendar-picker-indicator:hover,
+.wcs4-form-wrap.modal .modal-body .form-field input[type="time"]::-webkit-calendar-picker-indicator:hover {
+    opacity: 1;
+    background-color: rgba(20, 90, 130, 0.12);
+}
+
+.wcs4-form-wrap.modal .modal-body .form-field input[type="date"]::-webkit-datetime-edit,
+.wcs4-form-wrap.modal .modal-body .form-field input[type="time"]::-webkit-datetime-edit {
+    padding: 0.05rem 0;
+}
+
+.wcs4-form-wrap.modal .modal-body .form-field input[type="date"]::-webkit-datetime-edit-fields-wrapper,
+.wcs4-form-wrap.modal .modal-body .form-field input[type="time"]::-webkit-datetime-edit-fields-wrapper {
+    padding: 0;
+}
+
+/* Journal date + start/end row (Bootstrap col-* names; flex + gap — udziałów 50/25/25 bez overflow). */
 .wcs4-form-wrap.modal .form-field.row {
     display: flex;
     flex-wrap: wrap;
@@ -413,15 +651,43 @@
 }
 
 @media (min-width: 520px) {
+    .wcs4-form-wrap.modal .form-field.row {
+        flex-wrap: nowrap;
+    }
+
     .wcs4-form-wrap.modal .form-field.row > .col-6 {
-        flex: 1 1 calc(50% - 0.5rem);
-        max-width: calc(50% - 0.5rem);
+        flex: 2 1 0;
+        max-width: none;
+        min-width: 0;
     }
 
     .wcs4-form-wrap.modal .form-field.row > .col-3 {
-        flex: 1 1 calc(25% - 0.5rem);
-        max-width: calc(25% - 0.5rem);
-        min-width: 6.5rem;
+        flex: 1 1 0;
+        max-width: none;
+        min-width: 0;
+    }
+
+    .wcs4-form-wrap.modal .form-field.row > .col-6 input[type="date"],
+    .wcs4-form-wrap.modal .form-field.row > .col-3 input[type="time"],
+    .wcs4-form-wrap.modal .form-field.row > .col-6 select,
+    .wcs4-form-wrap.modal .form-field.row > .col-3 select {
+        width: 100%;
+        min-width: 0;
+        box-sizing: border-box;
+    }
+}
+
+/* Węższe tablety / telefony: jedna kolumna zamiast 50/25/25 (wygodniejsze pola i dotyk) */
+@media (max-width: 720px) {
+    .wcs4-form-wrap.modal .form-field.row {
+        flex-wrap: wrap;
+    }
+
+    .wcs4-form-wrap.modal .form-field.row > .col-6,
+    .wcs4-form-wrap.modal .form-field.row > .col-3 {
+        flex: 1 1 100%;
+        max-width: 100%;
+        min-width: 0;
     }
 }
 
@@ -431,9 +697,9 @@
     align-items: center;
     justify-content: flex-end;
     gap: 0.5rem 0.75rem;
-    padding: 0.85rem 1.25rem 1rem;
-    border-top: 1px solid rgba(0, 0, 0, 0.1);
-    background: rgba(0, 0, 0, 0.02);
+    padding: 0.9rem 1.25rem 1.05rem;
+    border-top: 1px solid var(--wcs4-ui-border);
+    background: linear-gradient(180deg, var(--wcs4-ui-footer-tint) 0%, var(--wcs4-ui-surface-muted) 100%);
 }
 
 .wcs4-form-wrap.modal .modal-footer .wcs4-ajax-text,
@@ -444,8 +710,16 @@
     font-size: 0.875rem;
     line-height: 1.4;
     position: relative;
-    padding: 0.35rem 2rem 0.35rem 0.25rem;
-    border-radius: 0.25rem;
+    padding: 0.5rem 2rem 0.5rem 0.65rem;
+    border-radius: var(--wcs4-ui-radius-sm);
+    border: 1px solid var(--wcs4-ui-border);
+    background: var(--wcs4-ui-surface-muted);
+    color: var(--wcs4-ui-text);
+}
+
+/* Pusty baner AJAX — bez klasy .updated / .error nie pokazuj ramki (JS dodaje klasy przy komunikacie). */
+.wcs4-form-wrap.modal .modal-footer .wcs4-ajax-banner:not(.updated):not(.error) {
+    display: none;
 }
 
 .wcs4-form-wrap.modal .modal-footer .wcs4-ajax-banner .notice-dismiss {
@@ -456,14 +730,25 @@
     height: 1.75rem;
     margin: 0;
     padding: 0;
-    border: none;
-    border-radius: 0.2rem;
+    border: 1px solid transparent;
+    border-radius: var(--wcs4-ui-radius-sm);
     background: transparent;
     color: inherit;
     cursor: pointer;
     font-size: 1.25rem;
     line-height: 1;
     text-indent: 0;
+    opacity: 0.65;
+    transition:
+        background 0.12s ease,
+        opacity 0.12s ease;
+}
+
+.wcs4-form-wrap.modal .modal-footer .wcs4-ajax-banner .notice-dismiss:hover,
+.wcs4-form-wrap.modal .modal-footer .wcs4-ajax-banner .notice-dismiss:focus-visible {
+    opacity: 1;
+    background: rgba(20, 90, 130, 0.08);
+    outline: none;
 }
 
 .wcs4-form-wrap.modal .modal-footer .wcs4-ajax-banner .notice-dismiss::before {
@@ -474,11 +759,15 @@
 }
 
 .wcs4-form-wrap.modal .modal-footer .wcs4-ajax-banner.updated {
-    color: #008a20;
+    color: var(--wcs4-ui-success);
+    background: var(--wcs4-ui-success-bg);
+    border-color: rgba(13, 107, 58, 0.28);
 }
 
 .wcs4-form-wrap.modal .modal-footer .wcs4-ajax-banner.error {
-    color: #b32d2e;
+    color: var(--wcs4-ui-danger);
+    background: var(--wcs4-ui-danger-bg);
+    border-color: rgba(158, 41, 43, 0.28);
 }
 
 /* WordPress admin button classes on the front — theme often omits wp-admin styles. */
@@ -486,44 +775,106 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 0.35rem;
-    padding: 0.5rem 1.1rem;
-    border-radius: 0.25rem;
-    border: 1px solid #2271b1;
-    background: #2271b1;
-    color: #fff;
+    gap: 0.4rem;
+    padding: 0.55rem 1.15rem;
+    border-radius: 999px;
+    border: 1px solid var(--wcs4-ui-border-strong);
+    background: linear-gradient(
+        165deg,
+        var(--wcs4-ui-accent-mid) 0%,
+        var(--wcs4-ui-accent) 55%,
+        var(--wcs4-ui-accent-deep) 100%
+    );
+    color: var(--wcs4-ui-on-accent);
     cursor: pointer;
     font-size: 0.9375rem;
-    font-weight: 500;
+    font-weight: 600;
     line-height: 1.35;
     text-decoration: none;
-    box-shadow: none;
+    box-shadow:
+        0 1px 2px rgba(0, 0, 0, 0.1),
+        var(--wcs4-ui-shadow);
+    transition:
+        background 0.15s ease,
+        border-color 0.15s ease,
+        box-shadow 0.15s ease,
+        transform 0.12s ease;
 }
 
 .wcs4-form-wrap.modal .button.button-primary:hover,
 .wcs4-form-wrap.modal .button.button-primary:focus-visible {
-    background: #135e96;
-    border-color: #135e96;
-    color: #fff;
+    border-color: rgba(15, 80, 120, 0.55);
+    background: linear-gradient(
+        165deg,
+        var(--wcs4-ui-accent-bright) 0%,
+        #186892 55%,
+        #125778 100%
+    );
+    color: var(--wcs4-ui-on-accent);
     outline: none;
+    box-shadow:
+        0 2px 4px rgba(0, 0, 0, 0.12),
+        var(--wcs4-ui-shadow-hover);
+    transform: translateY(-1px);
+}
+
+.wcs4-form-wrap.modal .button.button-primary:focus-visible {
+    box-shadow:
+        0 0 0 2px var(--wcs4-ui-surface),
+        0 0 0 4px var(--wcs4-ui-focus),
+        0 2px 4px rgba(0, 0, 0, 0.12),
+        var(--wcs4-ui-shadow-hover);
+}
+
+.wcs4-form-wrap.modal .button.button-primary:active {
+    transform: translateY(0);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
 .wcs4-form-wrap.modal .button.button-link {
     display: inline-flex;
     align-items: center;
-    padding: 0.4rem 0.5rem;
-    border: none;
-    background: transparent;
-    color: #2271b1;
+    justify-content: center;
+    padding: 0.45rem 1rem;
+    border: 1px solid var(--wcs4-ui-border-strong);
+    border-radius: 999px;
+    background: var(--wcs4-ui-surface);
+    color: var(--wcs4-ui-accent) !important;
     cursor: pointer;
     font-size: 0.875rem;
+    font-weight: 600;
     line-height: 1.35;
-    text-decoration: underline;
-    box-shadow: none;
+    text-decoration: none !important;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+    transition:
+        background 0.12s ease,
+        border-color 0.12s ease,
+        box-shadow 0.12s ease,
+        color 0.12s ease;
 }
 
 .wcs4-form-wrap.modal .button.button-link:hover {
-    color: #135e96;
+    color: var(--wcs4-ui-accent-deep) !important;
+    border-color: rgba(15, 80, 120, 0.55);
+    background: var(--wcs4-ui-surface-muted);
+    box-shadow: 0 2px 6px rgba(20, 90, 130, 0.1);
+}
+
+.wcs4-form-wrap.modal .button.button-link:focus-visible {
+    outline: none;
+    box-shadow:
+        0 0 0 2px var(--wcs4-ui-surface),
+        0 0 0 4px var(--wcs4-ui-focus);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .wcs4-form-wrap.modal .button.button-primary,
+    .wcs4-form-wrap.modal .button.button-primary:hover,
+    .wcs4-form-wrap.modal .button.button-primary:focus-visible,
+    .wcs4-form-wrap.modal .button.button-primary:active {
+        transition: none;
+        transform: none;
+    }
 }
 
 .wcs4-form-wrap.modal .button .dashicons {
@@ -531,4 +882,329 @@
     height: 1.125rem;
     font-size: 1.125rem;
     line-height: 1.125rem;
+}
+
+/* “Dodaj nowy …” — journal / progress / work-plan shortcode triggers */
+button.wcs4-front-modal-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    margin: 0.35rem 0 0.75rem;
+    padding: 0.55rem 1.15rem 0.55rem 0.95rem;
+    border-radius: 999px;
+    border: 1px solid var(--wcs4-ui-border-strong);
+    background: linear-gradient(
+        165deg,
+        var(--wcs4-ui-accent-mid) 0%,
+        var(--wcs4-ui-accent) 55%,
+        var(--wcs4-ui-accent-deep) 100%
+    );
+    color: var(--wcs4-ui-on-accent) !important;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    line-height: 1.25;
+    letter-spacing: 0.01em;
+    text-decoration: none;
+    box-shadow:
+        0 1px 2px rgba(0, 0, 0, 0.12),
+        var(--wcs4-ui-shadow);
+    cursor: pointer;
+    transition:
+        background 0.15s ease,
+        border-color 0.15s ease,
+        box-shadow 0.15s ease,
+        transform 0.12s ease;
+}
+
+button.wcs4-front-modal-btn:hover {
+    border-color: rgba(15, 80, 120, 0.55);
+    background: linear-gradient(
+        165deg,
+        var(--wcs4-ui-accent-bright) 0%,
+        #186892 55%,
+        #125778 100%
+    );
+    box-shadow:
+        0 2px 4px rgba(0, 0, 0, 0.14),
+        var(--wcs4-ui-shadow-hover);
+    transform: translateY(-1px);
+    color: var(--wcs4-ui-on-accent) !important;
+}
+
+button.wcs4-front-modal-btn:focus-visible {
+    outline: 2px solid var(--wcs4-ui-focus);
+    outline-offset: 2px;
+    color: var(--wcs4-ui-on-accent) !important;
+}
+
+button.wcs4-front-modal-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+}
+
+button.wcs4-front-modal-btn .fa,
+button.wcs4-front-modal-btn .fas {
+    font-size: 1.05rem;
+    line-height: 1;
+    opacity: 0.95;
+}
+
+button.wcs4-front-modal-btn em {
+    font-style: normal;
+    display: inline-flex;
+}
+
+button.wcs4-front-modal-btn .wcs4-front-modal-btn-label {
+    position: relative;
+    top: 0.02em;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    button.wcs4-front-modal-btn,
+    button.wcs4-front-modal-btn:hover,
+    button.wcs4-front-modal-btn:active {
+        transition: none;
+        transform: none;
+    }
+}
+
+/* Post-password context strip (master identity + profile / logout) */
+.wcs4-postpass-context-bar {
+    position: relative;
+    z-index: 1020;
+    width: 100%;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    border-bottom: 1px solid var(--wcs4-ui-border);
+    background: linear-gradient(
+        180deg,
+        var(--wcs4-ui-surface-muted) 0%,
+        var(--wcs4-ui-surface-tint) 100%
+    );
+    box-shadow: 0 2px 10px rgba(15, 60, 90, 0.06);
+}
+
+.wcs4-postpass-context-bar-inner {
+    box-sizing: border-box;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.65rem 1.25rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0.55rem 1rem 0.6rem;
+}
+
+.wcs4-postpass-context-bar-user {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    min-width: 0;
+    flex: 1 1 12rem;
+    font-size: 0.875rem;
+    line-height: 1.35;
+    color: var(--wcs4-ui-text-soft);
+}
+
+.wcs4-postpass-context-bar-icon em {
+    font-style: normal;
+    font-size: 1rem;
+    color: var(--wcs4-ui-accent);
+    opacity: 0.9;
+}
+
+.wcs4-postpass-context-bar-title {
+    font-weight: 600;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.wcs4-postpass-context-bar-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.45rem 0.65rem;
+    flex: 0 1 auto;
+    margin-left: auto;
+}
+
+.wcs4-postpass-context-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.4rem 0.95rem;
+    border-radius: 999px;
+    border: 1px solid var(--wcs4-ui-border-strong);
+    background: var(--wcs4-ui-surface);
+    color: var(--wcs4-ui-accent) !important;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    line-height: 1.3;
+    text-decoration: none !important;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+    transition:
+        background 0.12s ease,
+        border-color 0.12s ease,
+        box-shadow 0.12s ease,
+        color 0.12s ease;
+}
+
+.wcs4-postpass-context-btn:hover {
+    border-color: rgba(15, 80, 120, 0.55);
+    background: rgba(255, 255, 255, 0.95);
+    box-shadow: 0 2px 6px rgba(20, 90, 130, 0.12);
+    color: var(--wcs4-ui-accent-deep) !important;
+}
+
+.wcs4-postpass-context-btn:focus-visible {
+    outline: 2px solid var(--wcs4-ui-focus);
+    outline-offset: 2px;
+}
+
+.wcs4-postpass-context-btn.wcs4-postpass-context-btn--logout {
+    border-color: rgba(90, 90, 90, 0.25);
+    color: rgba(40, 40, 40, 0.85) !important;
+    background: rgba(255, 255, 255, 0.75);
+}
+
+.wcs4-postpass-context-btn.wcs4-postpass-context-btn--logout:hover {
+    border-color: rgba(60, 60, 60, 0.35);
+    color: #111 !important;
+    background: #fff;
+}
+
+@media (max-width: 640px) {
+    .wcs4-form-wrap.modal .modal-dialog {
+        width: calc(100% - 1rem);
+        max-width: none;
+        margin: 0.35rem auto;
+    }
+
+    .wcs4-form-wrap.modal .modal-dialog.modal-dialog-centered {
+        min-height: 100vh;
+        min-height: 100dvh;
+        padding:
+            max(0.35rem, env(safe-area-inset-top, 0px))
+            max(0.5rem, env(safe-area-inset-right, 0px))
+            max(0.5rem, env(safe-area-inset-bottom, 0px))
+            max(0.5rem, env(safe-area-inset-left, 0px));
+        align-items: stretch;
+    }
+
+    .wcs4-form-wrap.modal .modal-content {
+        border-radius: var(--wcs4-ui-radius-md);
+    }
+
+    .wcs4-form-wrap.modal .modal-header,
+    .wcs4-form-wrap.modal .modal-body,
+    .wcs4-form-wrap.modal .modal-footer {
+        padding-left: max(0.75rem, env(safe-area-inset-left, 0px));
+        padding-right: max(0.75rem, env(safe-area-inset-right, 0px));
+    }
+
+    .wcs4-form-wrap.modal .modal-header .modal-title {
+        font-size: 1rem;
+    }
+
+    .wcs4-form-wrap.modal .modal-footer {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.5rem;
+    }
+
+    .wcs4-form-wrap.modal .modal-footer .button.button-primary,
+    .wcs4-form-wrap.modal .modal-footer .button.button-link {
+        width: 100%;
+        min-height: 2.75rem;
+        justify-content: center;
+        box-sizing: border-box;
+    }
+
+    .wcs4-form-wrap.modal .modal-body .form-field select,
+    .wcs4-form-wrap.modal .modal-body .form-field input[type="text"],
+    .wcs4-form-wrap.modal .modal-body .form-field input[type="date"],
+    .wcs4-form-wrap.modal .modal-body .form-field input[type="time"],
+    .wcs4-form-wrap.modal .modal-body .form-field input[type="email"],
+    .wcs4-form-wrap.modal .modal-body .form-field input[type="tel"],
+    .wcs4-form-wrap.modal .modal-body .form-field textarea {
+        font-size: 1rem;
+        min-height: 2.75rem;
+    }
+
+    .wcs4-form-wrap.modal .modal-body .form-field textarea {
+        min-height: 6.5rem;
+    }
+
+    button.wcs4-front-modal-btn {
+        width: 100%;
+        max-width: 100%;
+        min-height: 2.75rem;
+        box-sizing: border-box;
+        justify-content: center;
+    }
+
+    .wcs4-postpass-context-bar-inner {
+        flex-direction: column;
+        align-items: stretch;
+        padding:
+            0.55rem max(0.75rem, env(safe-area-inset-left, 0px)) 0.6rem
+            max(0.75rem, env(safe-area-inset-right, 0px));
+    }
+
+    .wcs4-postpass-context-bar-user {
+        flex: 1 1 auto;
+        width: 100%;
+    }
+
+    .wcs4-postpass-context-bar-actions {
+        margin-left: 0;
+        width: 100%;
+        justify-content: stretch;
+        gap: 0.5rem;
+    }
+
+    .wcs4-postpass-context-btn {
+        flex: 1 1 auto;
+        min-height: 2.75rem;
+        padding: 0.5rem 0.75rem;
+    }
+
+    .wcs4-postpass-context-bar-title {
+        white-space: normal;
+        word-break: break-word;
+    }
+}
+
+@media (max-width: 380px) {
+    .wcs4-form-wrap.modal .modal-dialog {
+        width: calc(100% - 0.5rem);
+        margin: 0.25rem auto;
+    }
+
+    .wcs4-schedule-toolbar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    button.wcs4-schedule-toolbar-btn,
+    a.wcs4-schedule-toolbar-btn {
+        width: 100%;
+        justify-content: center;
+        min-height: 2.75rem;
+        box-sizing: border-box;
+    }
+
+    .wcs4-postpass-context-btn {
+        flex: 1 1 100%;
+        width: 100%;
+    }
+}
+
+.notice {
+    font-size: 0.875rem;
 }

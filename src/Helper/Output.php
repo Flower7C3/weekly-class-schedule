@@ -365,7 +365,7 @@ class Output
         wp_register_script(
             'wcs4_front_js',
             WCS4_PLUGIN_URL . '/js/wcs_front.js',
-            array('jquery', 'wcs4-bootstrap-bundle'),
+            array('jquery', 'wcs4-bootstrap-bundle', 'html2canvas'),
             WCS4_VERSION
         );
         wp_enqueue_script('wcs4_front_js');
