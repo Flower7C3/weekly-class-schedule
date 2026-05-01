@@ -6,9 +6,9 @@
 ?>
 <div class="wrap">
     <h1 class="wp-heading-inline">
-        <?= _x('Weekly Class Schedule Simple Settings', 'options', 'wcs4') ?>
+        <?= _x('Weekly Class Schedule Basic Settings', 'options', 'wcs4') ?>
     </h1>
-    <form action="" method="post" name="wcs4_simple_settings">
+    <form action="" method="post" name="wcs4_basic_settings">
         <fieldset class="wcs4-settings-fieldset">
             <legend>
                 <strong><?= _x('Journals', 'options general settings', 'wcs4') ?></strong>

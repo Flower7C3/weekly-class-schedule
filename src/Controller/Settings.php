@@ -9,26 +9,9 @@ class Settings
 {
     private const TEMPLATE_DIR = __DIR__ . '/../Template/settings/';
 
-    public static function full_options_page_callback(): void
+    public static function advanced_options_page_callback(): void
     {
-        $taxonomyTypes = array(
-            'subject' => array(
-                'tax' => _x('Branches', 'taxonomy general name', 'wcs4'),
-                'post' => _x('Subjects', 'post type general name', 'wcs4'),
-            ),
-            'teacher' => array(
-                'tax' => _x('Specializations', 'taxonomy general name', 'wcs4'),
-                'post' => _x('Teachers', 'post type general name', 'wcs4'),
-            ),
-            'student' => array(
-                'tax' => _x('Groups', 'taxonomy general name', 'wcs4'),
-                'post' => _x('Students', 'post type general name', 'wcs4'),
-            ),
-            'classroom' => array(
-                'tax' => _x('Locations', 'taxonomy general name', 'wcs4'),
-                'post' => _x('Classrooms', 'post type general name', 'wcs4'),
-            ),
-        );
+        $taxonomyTypes = self::taxonomy_types_for_settings();
 
         $wcs4_options = self::load_settings();
 
@@ -172,10 +155,10 @@ class Settings
                 $wp_rewrite->flush_rules();
             }
         }
-        include self::TEMPLATE_DIR . 'standard.php';
+        include self::TEMPLATE_DIR . 'options-advanced.php';
     }
 
-    public static function simple_options_page_callback(): void
+    public static function basic_options_page_callback(): void
     {
         $wcs4_options = self::load_settings();
         if (!is_array($wcs4_options)) {
@@ -206,12 +189,12 @@ class Settings
             }
         }
 
-        include self::TEMPLATE_DIR . 'simple.php';
+        include self::TEMPLATE_DIR . 'options-basic.php';
     }
 
     public static function maintenance_options_page_callback(): void
     {
-        include self::TEMPLATE_DIR . 'advanced.php';
+        include self::TEMPLATE_DIR . 'options-maintenance.php';
     }
 
     /**
@@ -558,5 +541,135 @@ class Settings
             return $wcs4_options[$name];
         }
         return null;
+    }
+
+    /**
+     * Labels for taxonomy / post type columns in settings tables.
+     *
+     * @return array<string, array{tax: string, post: string}>
+     */
+    public static function taxonomy_types_for_settings(): array
+    {
+        return array(
+            'subject' => array(
+                'tax' => _x('Branches', 'taxonomy general name', 'wcs4'),
+                'post' => _x('Subjects', 'post type general name', 'wcs4'),
+            ),
+            'teacher' => array(
+                'tax' => _x('Specializations', 'taxonomy general name', 'wcs4'),
+                'post' => _x('Teachers', 'post type general name', 'wcs4'),
+            ),
+            'student' => array(
+                'tax' => _x('Groups', 'taxonomy general name', 'wcs4'),
+                'post' => _x('Students', 'post type general name', 'wcs4'),
+            ),
+            'classroom' => array(
+                'tax' => _x('Locations', 'taxonomy general name', 'wcs4'),
+                'post' => _x('Classrooms', 'post type general name', 'wcs4'),
+            ),
+        );
+    }
+
+    /**
+     * Validators for URL-related options (same keys as taxonomies.php + post_types.php).
+     *
+     * @return array<string, string>
+     */
+    private static function permalink_url_field_validators(): array
+    {
+        return array(
+            'subject_taxonomy_slug' => 'wcs4_validate_slug',
+            'subject_taxonomy_hierarchical' => 'wcs4_validate_yes_no',
+            'subject_archive_slug' => 'wcs4_validate_slug',
+            'subject_post_slug' => 'wcs4_validate_slug',
+            'subject_hashed_slug' => 'wcs4_validate_yes_no',
+            'subject_post_pass_satisfy_any' => 'wcs4_validate_yes_no',
+            'teacher_taxonomy_slug' => 'wcs4_validate_slug',
+            'teacher_taxonomy_hierarchical' => 'wcs4_validate_yes_no',
+            'teacher_archive_slug' => 'wcs4_validate_slug',
+            'teacher_post_slug' => 'wcs4_validate_slug',
+            'teacher_hashed_slug' => 'wcs4_validate_yes_no',
+            'teacher_post_pass_satisfy_any' => 'wcs4_validate_yes_no',
+            'student_taxonomy_slug' => 'wcs4_validate_slug',
+            'student_taxonomy_hierarchical' => 'wcs4_validate_yes_no',
+            'student_archive_slug' => 'wcs4_validate_slug',
+            'student_post_slug' => 'wcs4_validate_slug',
+            'student_hashed_slug' => 'wcs4_validate_yes_no',
+            'student_post_pass_satisfy_any' => 'wcs4_validate_yes_no',
+            'classroom_taxonomy_slug' => 'wcs4_validate_slug',
+            'classroom_taxonomy_hierarchical' => 'wcs4_validate_yes_no',
+            'classroom_archive_slug' => 'wcs4_validate_slug',
+            'classroom_post_slug' => 'wcs4_validate_slug',
+            'classroom_hashed_slug' => 'wcs4_validate_yes_no',
+            'classroom_post_pass_satisfy_any' => 'wcs4_validate_yes_no',
+        );
+    }
+
+    /**
+     * Registers WCS4 URL settings on Settings → Permalinks (before "Save Changes").
+     */
+    public static function register_wcs4_permalink_settings_section(): void
+    {
+        if (!is_admin() || !current_user_can('manage_options') || !current_user_can(WCS4_FULL_ADVANCED_CAPABILITY)) {
+            return;
+        }
+        global $pagenow;
+        if ('options-permalink.php' !== $pagenow) {
+            return;
+        }
+        add_settings_section(
+            'wcs4_permalink_urls',
+            '',
+            array(self::class, 'render_wcs4_permalink_settings_section'),
+            'permalink'
+        );
+    }
+
+    /**
+     * Renders taxonomy + post type URL fields inside the Permalinks form.
+     *
+     * @param array<string, mixed> $_section Section metadata from add_settings_section (unused).
+     */
+    public static function render_wcs4_permalink_settings_section($_section): void
+    {
+        unset($_section);
+        $taxonomyTypes = self::taxonomy_types_for_settings();
+        $wcs4_options = self::load_settings();
+        include self::TEMPLATE_DIR . 'options-permalink.php';
+    }
+
+    /**
+     * When Permalinks are saved, merge WCS4 URL fields from the same form into wcs4_settings.
+     */
+    public static function maybe_save_wcs4_url_settings_from_permalink_screen(): void
+    {
+        if (!is_admin() || !isset($_POST['submit'])) {
+            return;
+        }
+        global $pagenow;
+        if ('options-permalink.php' !== $pagenow) {
+            return;
+        }
+        if (empty($_POST['wcs4_permalink_section']) || '1' !== $_POST['wcs4_permalink_section']) {
+            return;
+        }
+        if (!current_user_can('manage_options') || !current_user_can(WCS4_FULL_ADVANCED_CAPABILITY)) {
+            return;
+        }
+        if (!isset($_POST['_wpnonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['_wpnonce'])), 'update-permalink')) {
+            return;
+        }
+
+        $current = self::load_settings();
+        if (!is_array($current)) {
+            $current = array();
+        }
+        $fields = self::permalink_url_field_validators();
+        $new = wcs4_perform_validation($fields, $current);
+        $merged = array_merge($current, $new);
+        self::save_settings($merged);
+
+        global $wp_rewrite;
+        $wp_rewrite->flush_rules();
     }
 }

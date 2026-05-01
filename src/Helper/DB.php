@@ -160,7 +160,7 @@ class DB
     }
 
     /**
-     * Deletes all the data after wcs4
+     * Deletes all WCS4 data: plugin options, CPT posts, WCS4 taxonomy terms, then drops plugin tables.
      */
     public static function delete_everything(): void
     {
@@ -187,6 +187,10 @@ class DB
             foreach ($posts as $post) {
                 wp_delete_post($post->ID, true);
             }
+        }
+
+        foreach (array_keys(WCS4_TAXONOMY_TYPES_WHITELIST) as $taxonomy) {
+            self::clear_taxonomy($taxonomy);
         }
 
         $wpdb->query('DROP TABLE IF EXISTS ' . Schedule::get_schedule_teacher_table_name());
@@ -373,6 +377,106 @@ class DB
             'total_rows' => array_sum($counts),
             'plan' => $plan,
         ];
+    }
+
+    /**
+     * @throws \InvalidArgumentException
+     */
+    public static function preview_clear_taxonomy(string $taxonomy): array
+    {
+        if (!array_key_exists($taxonomy, WCS4_TAXONOMY_TYPES_WHITELIST)) {
+            throw new \InvalidArgumentException(__('Invalid taxonomy target.', 'wcs4'));
+        }
+        $terms = get_terms(
+            array(
+                'taxonomy' => $taxonomy,
+                'hide_empty' => false,
+                'fields' => 'ids',
+            )
+        );
+        $count = is_wp_error($terms) ? 0 : count($terms);
+        return array(
+            'taxonomy' => $taxonomy,
+            'term_count' => $count,
+            'plan' => array(
+                sprintf(
+                    /* translators: 1: number of terms 2: taxonomy slug */
+                    __('Delete all %1$d terms in taxonomy “%2$s”.', 'wcs4'),
+                    $count,
+                    $taxonomy
+                ),
+            ),
+        );
+    }
+
+    /**
+     * @throws \InvalidArgumentException
+     */
+    public static function clear_taxonomy(string $taxonomy): void
+    {
+        if (!array_key_exists($taxonomy, WCS4_TAXONOMY_TYPES_WHITELIST)) {
+            throw new \InvalidArgumentException(__('Invalid taxonomy target.', 'wcs4'));
+        }
+        $terms = get_terms(
+            array(
+                'taxonomy' => $taxonomy,
+                'hide_empty' => false,
+                'fields' => 'ids',
+            )
+        );
+        if (is_wp_error($terms) || empty($terms)) {
+            return;
+        }
+        foreach ($terms as $termId) {
+            wp_delete_term((int)$termId, $taxonomy);
+        }
+    }
+
+    /**
+     * @throws \InvalidArgumentException
+     */
+    public static function preview_clear_post_type(string $post_type): array
+    {
+        if (!in_array($post_type, WCS4_POST_TYPES, true)) {
+            throw new \InvalidArgumentException(__('Invalid post type target.', 'wcs4'));
+        }
+        global $wpdb;
+        $count = (int)$wpdb->get_var(
+            $wpdb->prepare("SELECT COUNT(*) FROM {$wpdb->posts} WHERE post_type = %s", $post_type)
+        );
+        return array(
+            'post_type' => $post_type,
+            'post_count' => $count,
+            'plan' => array(
+                sprintf(
+                    /* translators: 1: number of posts 2: post type slug */
+                    __('Delete all %1$d posts of type “%2$s” (plugin rows removed via delete_post hook).', 'wcs4'),
+                    $count,
+                    $post_type
+                ),
+            ),
+        );
+    }
+
+    /**
+     * @throws \InvalidArgumentException
+     */
+    public static function clear_post_type(string $post_type): void
+    {
+        if (!in_array($post_type, WCS4_POST_TYPES, true)) {
+            throw new \InvalidArgumentException(__('Invalid post type target.', 'wcs4'));
+        }
+        $posts = get_posts(
+            array(
+                'posts_per_page' => -1,
+                'post_type' => $post_type,
+                'post_status' => 'any',
+                'fields' => 'ids',
+            )
+        );
+        foreach ($posts as $postId) {
+            wp_delete_post((int)$postId, true);
+        }
     }
 
     /**

@@ -151,13 +151,29 @@ let WCS4_ADMIN = (function ($) {
     let bind_reset_settings = function () {
         let $resetDb = $('#wcs4-reset-database');
         let $spinner = $resetDb.find('.spinner');
+        let maintenanceDestructiveActions = {
+            wcs_clear_taxonomy: true,
+            wcs_clear_post_type: true,
+            wcs_clear_schedules: true,
+            wcs_clear_journals: true,
+            wcs_clear_work_plans: true,
+            wcs_clear_progresses: true,
+            wcs_clear_snapshots: true,
+            wcs_reset_settings: true,
+            wcs_delete_everything: true,
+        };
         $resetDb.find('button').on('click', function (e) {
             e.preventDefault();
+            let $btn = $(this);
             let entry = {
-                action: $(this).prop('name'),
+                action: $btn.data('wcs-action') || $btn.prop('name'),
                 security: WCS4_AJAX_OBJECT.ajax_nonce,
                 dry_run: $('#wcs4_dry_run').is(':checked') ? 1 : 0,
             };
+            let wcsTarget = $btn.data('wcs-target');
+            if (wcsTarget) {
+                entry.target = wcsTarget;
+            }
             if (entry.action === 'wcs_import_from_prefix') {
                 entry.source_prefix = $('#wcs4_import_source_prefix').val();
                 entry.cutoff_date = $('#wcs4_import_cutoff_date').val();
@@ -165,6 +181,16 @@ let WCS4_ADMIN = (function ($) {
             }
             if (!window.confirm(WCS4_AJAX_OBJECT.reset_warning)) {
                 return;
+            }
+            if (
+                entry.dry_run === 0 &&
+                Object.prototype.hasOwnProperty.call(maintenanceDestructiveActions, entry.action)
+            ) {
+                let finalMsg = WCS4_AJAX_OBJECT.reset_warning_final ||
+                    'Dry run is off. This will permanently change or delete WCS4 data. Are you absolutely sure?';
+                if (!window.confirm(finalMsg)) {
+                    return;
+                }
             }
             $spinner.addClass('is-active');
             $.post(WCS4_AJAX_OBJECT.ajax_url, entry, function (data) {

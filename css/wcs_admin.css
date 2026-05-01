@@ -123,6 +123,62 @@ tr.is-active {
     padding: 0 6px;
 }
 
+#wcs4-reset-database .wcs4-maintenance-inline-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+}
+
+#wcs4-reset-database .wcs4-maintenance-clear-grid {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: stretch;
+    gap: 10px;
+}
+
+#wcs4-reset-database .wcs4-maintenance-clear-btn {
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+    flex: 1 1 220px;
+    min-width: 200px;
+    max-width: 100%;
+    height: auto;
+    text-align: left;
+    line-height: 1.35;
+}
+
+#wcs4-reset-database .wcs4-maintenance-clear-btn .dashicons {
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+#wcs4-reset-database .wcs4-maintenance-clear-btn__body {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+}
+
+#wcs4-reset-database .wcs4-maintenance-clear-btn__tables code {
+    display: block;
+    font-size: 11px;
+}
+
+#wcs4-reset-database .wcs4-maintenance-clear-btn__detail {
+    font-weight: 400;
+    font-size: 11px;
+    line-height: 1.4;
+    color: #646970;
+    overflow-wrap: anywhere;
+}
+
+#wcs4-reset-database .wcs4-maintenance-footer {
+    margin-top: 16px;
+}
+
 /* Full / simple settings: grouped blocks inside <details> or <form> */
 .wcs4-settings-fieldset {
     margin: 12px 0;

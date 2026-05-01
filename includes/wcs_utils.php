@@ -335,7 +335,8 @@ function wcs4_perform_validation($fields, $options, $prefix = 'wcs4_')
 {
     $new_options = [];
     foreach ($fields as $id => $callback) {
-        $value = $callback($_POST[$prefix . $id]);
+        $raw = isset($_POST[$prefix . $id]) ? wp_unslash($_POST[$prefix . $id]) : null;
+        $value = $callback($raw);
         if ($value !== false) {
             $new_options[$id] = $value;
         }
@@ -388,10 +389,10 @@ function wcs4_validate_html($data)
 
 function wcs4_validate_slug($data)
 {
-//    if (filter_var($data, FILTER_VALIDATE_URL)) {
+    if (null === $data) {
+        return '';
+    }
     return $data;
-//    }
-//    return false;
 }
 
 function wcs4_validate_mock($data)
@@ -474,7 +475,12 @@ function wcs4_js_i18n($handle)
         'snapshot' => array(
             'delete_warning' => _x('Are you sure you want to delete this snapshot?', 'manage schedule', 'wcs4'),
         ),
-        'reset_warning' => _x('Are you sure you want to to this?', 'reset database', 'wcs4'),
+        'reset_warning' => _x('Are you sure you want to do this?', 'reset database', 'wcs4'),
+        'reset_warning_final' => _x(
+            'Dry run is off. This will permanently change or delete WCS4 data. Are you absolutely sure?',
+            'reset database',
+            'wcs4'
+        ),
         'dry_run_plan_title' => _x('Dry run plan', 'reset database', 'wcs4'),
         'dry_run_error_details_title' => _x('Dry run plan / error details', 'reset database', 'wcs4'),
         'close_aria_label' => _x('Close', 'reset database', 'wcs4'),

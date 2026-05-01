@@ -58,11 +58,11 @@ if (!defined('WCS4_SNAPSHOT_VIEW_CAPABILITY')) {
 if (!defined('WCS4_SNAPSHOT_MANAGE_CAPABILITY')) {
     define('WCS4_SNAPSHOT_MANAGE_CAPABILITY', 'wcs4_snapshot_manage');
 }
-if (!defined('WCS4_FULL_OPTIONS_CAPABILITY')) {
-    define('WCS4_FULL_OPTIONS_CAPABILITY', 'wcs4_full_options');
+if (!defined('WCS4_FULL_ADVANCED_CAPABILITY')) {
+    define('WCS4_FULL_ADVANCED_CAPABILITY', 'wcs4_advanced_options');
 }
-if (!defined('WCS4_SIMPLE_OPTIONS_CAPABILITY')) {
-    define('WCS4_SIMPLE_OPTIONS_CAPABILITY', 'wcs4_simple_options');
+if (!defined('WCS4_BASIC_OPTIONS_CAPABILITY')) {
+    define('WCS4_BASIC_OPTIONS_CAPABILITY', 'wcs4_basic_options');
 }
 if (!defined('WCS4_MAINTENANCE_OPTIONS_CAPABILITY')) {
     define('WCS4_MAINTENANCE_OPTIONS_CAPABILITY', 'wcs4_maintenance_options');
@@ -111,20 +111,33 @@ add_action('admin_menu', static function () {
     );
     add_submenu_page(
         'wcs4',
-        __('Simple Options', 'wcs4'),
-        __('Simple Options', 'wcs4'),
-        WCS4_SIMPLE_OPTIONS_CAPABILITY,
-        'wcs4-simple-options',
-        array(Settings::class, "simple_options_page_callback")
+        __('Basic Options', 'wcs4'),
+        __('Basic Options', 'wcs4'),
+        WCS4_BASIC_OPTIONS_CAPABILITY,
+        'wcs4-basic-options',
+        array(Settings::class, "basic_options_page_callback")
     );
-    $page_full_options = add_submenu_page(
+    $page_advanced_options = add_submenu_page(
         'wcs4',
-        __('Full Options', 'wcs4'),
-        __('Full Options', 'wcs4'),
-        WCS4_FULL_OPTIONS_CAPABILITY,
-        'wcs4-full-options',
-        array(Settings::class, "full_options_page_callback")
+        __('Advanced Options', 'wcs4'),
+        __('Advanced Options', 'wcs4'),
+        WCS4_FULL_ADVANCED_CAPABILITY,
+        'wcs4-advanced-options',
+        array(Settings::class, "advanced_options_page_callback")
     );
+
+    if (current_user_can(WCS4_FULL_ADVANCED_CAPABILITY)) {
+        global $submenu;
+        if (isset($submenu['wcs4'])) {
+            $permalink_menu_title = _x('URL Settings', 'admin submenu', 'wcs4');
+            $submenu['wcs4'][] = array(
+                $permalink_menu_title,
+                WCS4_FULL_ADVANCED_CAPABILITY,
+                admin_url('options-permalink.php') . '#wcs4-url-settings',
+                $permalink_menu_title,
+            );
+        }
+    }
     add_submenu_page(
         'wcs4',
         __('Maintenance Options', 'wcs4'),
@@ -133,7 +146,6 @@ add_action('admin_menu', static function () {
         'wcs4-maintenance-options',
         array(Settings::class, "maintenance_options_page_callback")
     );
-
     $help_tabs = [];
     $help_tabs['wcs_shortcode'] = [
         'id' => 'wcs4_help_shortcode',
@@ -191,7 +203,7 @@ add_action('admin_menu', static function () {
             }
         }
     });
-    add_action('load-' . $page_full_options, static function () use ($help_tabs) {
+    add_action('load-' . $page_advanced_options, static function () use ($help_tabs) {
         $screen = get_current_screen();
         if (null !== $screen) {
             $tabs = array($help_tabs['placeholders'], $help_tabs['allowed_html']);
@@ -222,8 +234,8 @@ add_action('init', static function () {
         $role->add_cap(WCS4_PROGRESS_EXPORT_CAPABILITY, true);
         $role->add_cap(WCS4_SNAPSHOT_VIEW_CAPABILITY, true);
         $role->add_cap(WCS4_SNAPSHOT_MANAGE_CAPABILITY, true);
-        $role->add_cap(WCS4_FULL_OPTIONS_CAPABILITY, true);
-        $role->add_cap(WCS4_SIMPLE_OPTIONS_CAPABILITY, true);
+        $role->add_cap(WCS4_FULL_ADVANCED_CAPABILITY, true);
+        $role->add_cap(WCS4_BASIC_OPTIONS_CAPABILITY, true);
         $role->add_cap(WCS4_MAINTENANCE_OPTIONS_CAPABILITY, true);
     }
     $role = get_role('editor');
@@ -241,8 +253,7 @@ add_action('init', static function () {
         $role->add_cap(WCS4_PROGRESS_EXPORT_CAPABILITY, true);
         $role->add_cap(WCS4_SNAPSHOT_VIEW_CAPABILITY, true);
         $role->add_cap(WCS4_SNAPSHOT_MANAGE_CAPABILITY, true);
-        $role->add_cap(WCS4_FULL_OPTIONS_CAPABILITY, true);
-        $role->add_cap(WCS4_SIMPLE_OPTIONS_CAPABILITY, true);
+        $role->add_cap(WCS4_BASIC_OPTIONS_CAPABILITY, true);
     }
     $role = get_role('author');
     if (null !== $role) {
@@ -262,6 +273,9 @@ add_action('admin_init', static function () {
         update_option('wcs4_version', WCS4_VERSION);
     }
 });
+
+add_action('admin_init', array(Settings::class, 'maybe_save_wcs4_url_settings_from_permalink_screen'), 0);
+add_action('admin_init', array(Settings::class, 'register_wcs4_permalink_settings_section'));
 
 /**
  * Register styles and scripts.

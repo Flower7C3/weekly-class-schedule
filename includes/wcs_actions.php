@@ -320,6 +320,64 @@ add_action('wp_ajax_wcs_clear_snapshots', static function () {
     wcs4_json_response($response, $status);
 });
 
+add_action('wp_ajax_wcs_clear_taxonomy', static function () {
+    try {
+        if (!current_user_can(WCS4_MAINTENANCE_OPTIONS_CAPABILITY)) {
+            throw new AccessDeniedException();
+        }
+        wcs4_verify_nonce();
+        $taxonomy = isset($_POST['target']) ? sanitize_key(wp_unslash($_POST['target'])) : '';
+        $dryRun = !empty($_POST['dry_run']) && ('1' === (string)$_POST['dry_run'] || 1 === (int)$_POST['dry_run']);
+        $preview = DB::preview_clear_taxonomy($taxonomy);
+        if ($dryRun) {
+            $response['response'] = __('Dry run: taxonomy clear skipped.', 'wcs4');
+            $response['details'] = $preview;
+        } else {
+            DB::clear_taxonomy($taxonomy);
+            $response['response'] = sprintf(
+                /* translators: 1: number of terms 2: taxonomy slug */
+                __('Deleted %1$d terms from taxonomy “%2$s”.', 'wcs4'),
+                (int)($preview['term_count'] ?? 0),
+                $taxonomy
+            );
+        }
+        $status = \WP_Http::OK;
+    } catch (AccessDeniedException|Exception $e) {
+        $response['response'] = $e->getMessage() . ' [' . $e->getCode() . ']';
+        $status = \WP_Http::BAD_REQUEST;
+    }
+    wcs4_json_response($response, $status);
+});
+
+add_action('wp_ajax_wcs_clear_post_type', static function () {
+    try {
+        if (!current_user_can(WCS4_MAINTENANCE_OPTIONS_CAPABILITY)) {
+            throw new AccessDeniedException();
+        }
+        wcs4_verify_nonce();
+        $post_type = isset($_POST['target']) ? sanitize_key(wp_unslash($_POST['target'])) : '';
+        $dryRun = !empty($_POST['dry_run']) && ('1' === (string)$_POST['dry_run'] || 1 === (int)$_POST['dry_run']);
+        $preview = DB::preview_clear_post_type($post_type);
+        if ($dryRun) {
+            $response['response'] = __('Dry run: post type clear skipped.', 'wcs4');
+            $response['details'] = $preview;
+        } else {
+            DB::clear_post_type($post_type);
+            $response['response'] = sprintf(
+                /* translators: 1: number of posts 2: post type slug */
+                __('Deleted %1$d posts of type “%2$s”.', 'wcs4'),
+                (int)($preview['post_count'] ?? 0),
+                $post_type
+            );
+        }
+        $status = \WP_Http::OK;
+    } catch (AccessDeniedException|Exception $e) {
+        $response['response'] = $e->getMessage() . ' [' . $e->getCode() . ']';
+        $status = \WP_Http::BAD_REQUEST;
+    }
+    wcs4_json_response($response, $status);
+});
+
 /**
  * Import WCS4 data from another table prefix, then optionally run cutoff.
  */
