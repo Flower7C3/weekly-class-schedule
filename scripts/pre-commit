@@ -11,11 +11,6 @@ MAIN_FILE="wcs.php"
 [ ! -f "$VERSION_FILE" ] && echo "Brak pliku $VERSION_FILE" && exit 1
 [ ! -f "$MAIN_FILE" ] && echo "Brak pliku $MAIN_FILE" && exit 1
 
-case $(uname) in
-Darwin) SED_INPLACE="sed -i ''" ;;
-*) SED_INPLACE="sed -i" ;;
-esac
-
 # Odczytaj wersję (format: major.minor.patch, np. 4.59.0)
 CURRENT=$(cat "$VERSION_FILE" | tr -d '\n\r ')
 # Zwiększ patch (ostatni segment)
@@ -27,12 +22,16 @@ NEW_VERSION=$(echo "$CURRENT" | awk -F. '{
 
 echo "$NEW_VERSION" >"$VERSION_FILE"
 
-# Aktualizuj nagłówek wersji w wcs.php (linia Version: X.Y.Z)
-$SED_INPLACE "s/^Version: .*$/Version: $NEW_VERSION/" "$MAIN_FILE"
-
-# Aktualizuj define('WCS4_VERSION', ...) w bloku else (produkcja) – tylko wersja, bez time()
-$SED_INPLACE "s/define('WCS4_VERSION', '[^']*' \\. time());/define('WCS4_VERSION', '$NEW_VERSION');/" "$MAIN_FILE"
-$SED_INPLACE "s/define('WCS4_VERSION', '[^']*');/define('WCS4_VERSION', '$NEW_VERSION');/" "$MAIN_FILE"
+# BSD sed (macOS): pusty argument -i '' nie może być przekazywany przez jedną zmienną — inaczej powstaje np. plik wcs.php''
+if [ "$(uname)" = "Darwin" ]; then
+  sed -i '' "s/^Version: .*$/Version: $NEW_VERSION/" "$MAIN_FILE"
+  sed -i '' "s/define('WCS4_VERSION', '[^']*' \\. time());/define('WCS4_VERSION', '$NEW_VERSION');/" "$MAIN_FILE"
+  sed -i '' "s/define('WCS4_VERSION', '[^']*');/define('WCS4_VERSION', '$NEW_VERSION');/" "$MAIN_FILE"
+else
+  sed -i "s/^Version: .*$/Version: $NEW_VERSION/" "$MAIN_FILE"
+  sed -i "s/define('WCS4_VERSION', '[^']*' \\. time());/define('WCS4_VERSION', '$NEW_VERSION');/" "$MAIN_FILE"
+  sed -i "s/define('WCS4_VERSION', '[^']*');/define('WCS4_VERSION', '$NEW_VERSION');/" "$MAIN_FILE"
+fi
 
 # Dodaj zmienione pliki do commita
 git add "$VERSION_FILE" "$MAIN_FILE"

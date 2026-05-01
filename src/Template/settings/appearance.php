@@ -6,6 +6,7 @@
 ?>
 <details>
     <summary><strong><?= _x('Appearance Settings', 'options appearance settings', 'wcs4') ?></strong></summary>
+    <fieldset class="wcs4-settings-fieldset">
     <table class="form-table">
         <tbody>
         <tr>
@@ -156,4 +157,5 @@
         </tr>
         </tbody>
     </table>
+    </fieldset>
 </details>

@@ -291,11 +291,8 @@ class WorkPlan implements AjaxGetItemHandlerInterface, ManagesTemplateInterface
             if ($item->isTypeCumulative()) {
                 $template_style = wp_unslash($wcs4_options['work_plan_html_template_style']);
                 $template_code = wp_kses_stripslashes($wcs4_options['work_plan_html_template_code_periodic_type']);
-                $template_code = str_replace(
-                    '{meta}',
-                    wp_kses_stripslashes($wcs4_options['work_plan_html_meta_code_periodic_type'] ?? ''),
-                    $template_code
-                );
+                $header_html = wp_kses_stripslashes($wcs4_options['work_plan_html_header_code_periodic_type'] ?? '');
+                $template_code = str_replace('{header}', $header_html, $template_code);
                 include self::TEMPLATE_DIR . 'export_type_cumulative.html.php';
                 exit;
             }
@@ -322,8 +319,8 @@ class WorkPlan implements AjaxGetItemHandlerInterface, ManagesTemplateInterface
         }
 
         ob_start();
-        include self::TEMPLATE_DIR . 'export_heading.html.php';
-        $heading = ob_get_clean();
+        include self::TEMPLATE_DIR . 'export_meta.html.php';
+        $meta_markup = ob_get_clean();
 
         ob_start();
         include self::TEMPLATE_DIR . 'export_table.html.php';
@@ -332,14 +329,15 @@ class WorkPlan implements AjaxGetItemHandlerInterface, ManagesTemplateInterface
         $template_style = wp_unslash($wcs4_options['work_plan_html_template_style']);
         $template_code = wp_kses_stripslashes($wcs4_options['work_plan_html_template_code_partial_type']);
         $template_code = Output::process_template(null, $template_code);
+        $header_html = wp_kses_stripslashes($wcs4_options['work_plan_html_header_code_partial_type'] ?? '');
         $template_code = str_replace([
             '{date from}',
             '{date upto}',
             '{current datetime}',
             '{current date}',
             '{current time}',
+            '{header}',
             '{meta}',
-            '{heading}',
             '{table}',
         ], [
             $date_from,
@@ -347,8 +345,8 @@ class WorkPlan implements AjaxGetItemHandlerInterface, ManagesTemplateInterface
             date('Y-m-d H:i:s'),
             date('Y-m-d'),
             date('H:i:s'),
-            wp_kses_stripslashes($wcs4_options['work_plan_html_meta_code_partial_type'] ?? ''),
-            $heading,
+            $header_html,
+            $meta_markup,
             $table,
         ], $template_code);
 
@@ -356,7 +354,7 @@ class WorkPlan implements AjaxGetItemHandlerInterface, ManagesTemplateInterface
             self::TEMPLATE_DIR . 'export_type_partial.html.php',
             $template_style,
             $template_code,
-            $heading
+            $meta_markup
         );
     }
 

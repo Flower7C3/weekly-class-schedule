@@ -475,6 +475,9 @@ function wcs4_js_i18n($handle)
             'delete_warning' => _x('Are you sure you want to delete this snapshot?', 'manage schedule', 'wcs4'),
         ),
         'reset_warning' => _x('Are you sure you want to to this?', 'reset database', 'wcs4'),
+        'dry_run_plan_title' => _x('Dry run plan', 'reset database', 'wcs4'),
+        'dry_run_error_details_title' => _x('Dry run plan / error details', 'reset database', 'wcs4'),
+        'close_aria_label' => _x('Close', 'reset database', 'wcs4'),
         'ajax_url' => admin_url('admin-ajax.php'),
         'ajax_nonce' => wp_create_nonce('wcs4-ajax-nonce'),
     ));

@@ -106,7 +106,8 @@ use WCS4\Helper\Admin;
                     style="display: none;">
                 <?= _x('Reset form', 'button text', 'wcs4') ?>
             </button>
-            <div id="wcs4-ajax-text-wrapper" class="wcs4-ajax-text"></div>
+            <div class="wcs4-ajax-text wcs4-ajax-banner"></div>
+            <div id="wcs4-ajax-text-wrapper"></div>
         </fieldset>
     </form>
 </div> <!-- /#schedule-management-form-wrapper -->

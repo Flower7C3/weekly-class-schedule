@@ -326,8 +326,8 @@ class Journal implements AjaxGetItemHandlerInterface, ManagesTemplateInterface
         }
 
         ob_start();
-        include self::TEMPLATE_DIR . 'export_' . $mode . '_heading.html.php';
-        $heading = ob_get_clean();
+        include self::TEMPLATE_DIR . 'export_' . $mode . '_meta.html.php';
+        $meta_markup = ob_get_clean();
 
         ob_start();
         include self::TEMPLATE_DIR . 'export_' . $mode . '_table.html.php';
@@ -336,14 +336,18 @@ class Journal implements AjaxGetItemHandlerInterface, ManagesTemplateInterface
         $template_style = wp_unslash($wcs4_options['journal_' . $view . '_html_template_style']);
         $template_code = wp_kses_stripslashes($wcs4_options['journal_' . $view . '_html_template_code']);
         $template_code = Output::process_template(null, $template_code);
+        $header_html = wp_kses_stripslashes(
+            $wcs4_options[('teachers' === $view ? 'journal_teachers_html_header_code' : 'journal_students_html_header_code')]
+            ?? ''
+        );
         $template_code = str_replace([
             '{date from}',
             '{date upto}',
             '{current datetime}',
             '{current date}',
             '{current time}',
+            '{header}',
             '{meta}',
-            '{heading}',
             '{table}',
         ], [
             $date_from,
@@ -351,11 +355,8 @@ class Journal implements AjaxGetItemHandlerInterface, ManagesTemplateInterface
             date('Y-m-d H:i:s'),
             date('Y-m-d'),
             date('H:i:s'),
-            wp_kses_stripslashes(
-                $wcs4_options[('teachers' === $view ? 'journal_teachers_html_meta_code' : 'journal_students_html_meta_code')]
-                ?? ''
-            ),
-            $heading,
+            $header_html,
+            $meta_markup,
             $table,
         ], $template_code);
 
@@ -363,7 +364,7 @@ class Journal implements AjaxGetItemHandlerInterface, ManagesTemplateInterface
             self::TEMPLATE_DIR . 'export.html.php',
             $template_style,
             $template_code,
-            $heading
+            $meta_markup
         );
     }
 

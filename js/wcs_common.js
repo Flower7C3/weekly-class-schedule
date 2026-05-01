@@ -54,7 +54,12 @@ let WCS4_LIB = (function ($) {
             WCS4_LIB.show_message(data.response, xhr.status);
             callback(data, xhr.status);
         }).fail(function (err) {
-            WCS4_LIB.show_message(err.responseJSON.response, err.status, err.responseJSON.errors ?? []);
+            let json = err.responseJSON || {};
+            WCS4_LIB.show_message(
+                json.response || WCS4_AJAX_OBJECT.ajax_error,
+                err.status || 'error',
+                json.errors || []
+            );
         }).always(function () {
             $spinner.removeClass('is-active');
         });
@@ -79,7 +84,12 @@ let WCS4_LIB = (function ($) {
         jQuery.post(WCS4_AJAX_OBJECT.ajax_url, entry, function (data, state, xhr) {
             callback(data, xhr.status);
         }).fail(function (err) {
-            WCS4_LIB.show_message(err.responseJSON.response, err.status, err.responseJSON.errors ?? []);
+            let json = err.responseJSON || {};
+            WCS4_LIB.show_message(
+                json.response || WCS4_AJAX_OBJECT.ajax_error,
+                err.status || 'error',
+                json.errors || []
+            );
         }).always(function () {
             $('#wcs4-' + scope + '-form-wrapper .spinner').removeClass('is-active');
         });
@@ -354,37 +364,84 @@ let WCS4_LIB = (function ($) {
     }
 
     /**
+     * Where inline AJAX status (success/error) is rendered. Kept separate from
+     * #wcs4-ajax-text-wrapper so code can replace details without wiping the banner.
+     */
+    let resolveAjaxMessageTarget = function () {
+        let $visibleBanner = $('.wcs4-ajax-banner').filter(':visible').first();
+        if ($visibleBanner.length) {
+            return $visibleBanner;
+        }
+        let $banner = $('.wcs4-ajax-banner').first();
+        if ($banner.length) {
+            return $banner;
+        }
+        let $legacy = $('#wcs4-ajax-text-wrapper.wcs4-ajax-text');
+        if ($legacy.length) {
+            return $legacy.first();
+        }
+        return $('.wcs4-ajax-text').first();
+    };
+
+    /**
      * Handles the Ajax UI messaging.
      */
     let show_message = function (message, status, errors) {
         remove_message();
-        if ('' !== message) {
-            let $text = $('.wcs4-ajax-text');
+        if (message !== undefined && message !== null && String(message) !== '') {
+            let $text = resolveAjaxMessageTarget();
+            if (!$text.length) {
+                return;
+            }
             $text.html('');
-            if ('created' === status || 'updated' === status || (200 <= status && status < 300)) {
+            // Close button (messages should not disappear automatically).
+            let $close = $('<button type="button" class="notice-dismiss"></button>');
+            $close.attr('aria-label', (WCS4_AJAX_OBJECT && WCS4_AJAX_OBJECT.close_aria_label) ? WCS4_AJAX_OBJECT.close_aria_label : 'Close');
+            $close.on('click', function () {
+                remove_message();
+            });
+            $text.append($close);
+            if ('created' === status || 'updated' === status || (typeof status === 'number' && 200 <= status && status < 300)) {
                 $text.addClass('updated');
                 $text.append('<span class="dashicons dashicons-cloud-saved"></span>');
-            } else if ('error' === status || (400 <= status)) {
+            } else if (
+                'error' === status
+                || (typeof status === 'number' && (400 <= status || status === 0))
+            ) {
                 $text.addClass('error');
                 $text.append('<span class="dashicons dashicons-warning"></span>');
             }
-            $text.text(message).show();
-            setTimeout(function () {
-                $text.fadeOut('slow');
-            }, 3000);
+            $text.append($('<span>').text(String(message))).show();
+        }
+        if (!errors || typeof errors !== 'object' || Array.isArray(errors)) {
+            return;
         }
         for (let field_id in errors) {
+            if (!Object.prototype.hasOwnProperty.call(errors, field_id)) {
+                continue;
+            }
             let $wrap = $('.form-field-' + field_id + '-wrap');
             $wrap.addClass('form-invalid');
             for (let error_id in errors[field_id]) {
+                if (!Object.prototype.hasOwnProperty.call(errors[field_id], error_id)) {
+                    continue;
+                }
                 let msg = $('<div class="error">').text(errors[field_id][error_id]);
                 $wrap.append(msg);
             }
         }
     };
     let remove_message = function () {
-        let $ajaxText = $('.wcs4-ajax-text');
-        $ajaxText.html('').hide().removeClass('updated').removeClass('error');
+        $('.wcs4-ajax-banner').each(function () {
+            let $b = $(this);
+            $b.html('').hide().removeClass('updated').removeClass('error');
+        });
+        let $legacy = $('#wcs4-ajax-text-wrapper.wcs4-ajax-text');
+        if ($legacy.length) {
+            $legacy.html('').hide().removeClass('updated').removeClass('error');
+        } else {
+            $('#wcs4-ajax-text-wrapper').html('');
+        }
         let $formFields = $('.form-field');
         $formFields.removeClass('form-invalid');
         $formFields.find('.error').remove();

@@ -10,6 +10,7 @@ let WCS4_ADMIN = (function ($) {
         bind_show_hide_handler();
         bind_colorpickers();
         bind_reset_settings();
+        bind_import_cutoff_toggle();
         load_editor();
     });
 
@@ -152,22 +153,95 @@ let WCS4_ADMIN = (function ($) {
         let $spinner = $resetDb.find('.spinner');
         $resetDb.find('button').on('click', function (e) {
             e.preventDefault();
-            entry = {
+            let entry = {
                 action: $(this).prop('name'),
                 security: WCS4_AJAX_OBJECT.ajax_nonce,
+                dry_run: $('#wcs4_dry_run').is(':checked') ? 1 : 0,
             };
+            if (entry.action === 'wcs_import_from_prefix') {
+                entry.source_prefix = $('#wcs4_import_source_prefix').val();
+                entry.cutoff_date = $('#wcs4_import_cutoff_date').val();
+                entry.run_cutoff = $('#wcs4_import_run_cutoff').is(':checked') ? 1 : 0;
+            }
             if (!window.confirm(WCS4_AJAX_OBJECT.reset_warning)) {
                 return;
             }
             $spinner.addClass('is-active');
             $.post(WCS4_AJAX_OBJECT.ajax_url, entry, function (data) {
                 WCS4_LIB.show_message(data.response, data.result);
+                let $details = $('#wcs4-ajax-text-wrapper');
+                if ($details.length) {
+                    $details.html('');
+                    if (data.details) {
+                        if (data.details.plan && Array.isArray(data.details.plan) && data.details.plan.length) {
+                            let $plan = $('<div class="notice notice-info" style="margin-top:10px; padding:10px;">');
+                            $plan.append($('<strong>').text(WCS4_AJAX_OBJECT.dry_run_plan_title || 'Dry run plan'));
+                            let $ul = $('<ul style="margin: 8px 0 0 18px;">');
+                            data.details.plan.forEach(function (line) {
+                                $ul.append($('<li>').text(line));
+                            });
+                            $plan.append($ul);
+                            $details.append($plan);
+                        } else {
+                            let $pre = $('<pre style="margin-top:10px; white-space:pre-wrap;">');
+                            $pre.text(JSON.stringify(data.details, null, 2));
+                            $details.append($pre);
+                        }
+                    }
+                }
             }).fail(function (err) {
-                console.error(err);
+                // Show API error in the same UI as other WCS4 actions.
+                let json = err.responseJSON || {};
+                let msg = json.response;
+                if (!msg && err.responseText) {
+                    let t = String(err.responseText).trim().replace(/\s+/g, ' ');
+                    if (t.length > 600) {
+                        t = t.slice(0, 600) + '…';
+                    }
+                    msg = t || WCS4_AJAX_OBJECT.ajax_error;
+                }
+                if (!msg) {
+                    msg = WCS4_AJAX_OBJECT.ajax_error;
+                }
+                let st = typeof err.status === 'number' ? err.status : 'error';
+                WCS4_LIB.show_message(msg, st, json.errors || []);
+
+                let $details = $('#wcs4-ajax-text-wrapper');
+                if ($details.length) {
+                    $details.html('');
+                    if (json.details && json.details.plan && Array.isArray(json.details.plan) && json.details.plan.length) {
+                        let $plan = $('<div class="notice notice-error" style="margin-top:10px; padding:10px;">');
+                        $plan.append($('<strong>').text(WCS4_AJAX_OBJECT.dry_run_error_details_title || 'Dry run plan / error details'));
+                        let $ul = $('<ul style="margin: 8px 0 0 18px;">');
+                        json.details.plan.forEach(function (line) {
+                            $ul.append($('<li>').text(line));
+                        });
+                        $plan.append($ul);
+                        $details.append($plan);
+                    } else if (json.details) {
+                        let $pre = $('<pre style="margin-top:10px; white-space:pre-wrap;">');
+                        $pre.text(JSON.stringify(json.details, null, 2));
+                        $details.append($pre);
+                    }
+                }
             }).always(function () {
                 $spinner.removeClass('is-active');
             });
         });
+    };
+
+    let bind_import_cutoff_toggle = function () {
+        let $runCutoff = $('#wcs4_import_run_cutoff');
+        let $cutoffDate = $('#wcs4_import_cutoff_date');
+        if (!$runCutoff.length || !$cutoffDate.length) {
+            return;
+        }
+        let update = function () {
+            let enabled = $runCutoff.is(':checked');
+            $cutoffDate.prop('disabled', !enabled);
+        };
+        update();
+        $runCutoff.on('change', update);
     };
 
 

@@ -2,8 +2,9 @@
 /*
 Plugin Name: Weekly Class Schedule
 Description: Weekly Class Schedule generates a weekly schedule of lessons. It provides you with an easy way to manage and update the schedule as well as the subjects, teachers, students and classrooms database.
-Version: 4.60.9
+Version: 4.60.11
 Text Domain: wcs4
+Domain Path: /languages
 Author: Kwiatek.pro, Pulsar Web Design
 Author URI: https://kwiatek.pro
 License: GPL2
@@ -33,9 +34,10 @@ if (APP_DEVEL) {
         error_reporting(E_ALL);
         ini_set('display_errors', true);
     }
-    define('WCS4_VERSION', '4.60.9');
-} else {
-    define('WCS4_VERSION', '4.60.9');
+}
+
+if (!defined('WCS4_VERSION')) {
+    define('WCS4_VERSION', '4.60.11');
 }
 
 
@@ -68,7 +70,6 @@ if (!defined('WCS4_PLUGIN_DIR')) {
 if (!defined('WCS4_PLUGIN_URL')) {
     define('WCS4_PLUGIN_URL', untrailingslashit(plugins_url('', __FILE__)));
 }
-
 
 if (!defined('WCS4_DB_VERSION')) {
     define('WCS4_DB_VERSION', '2.0');

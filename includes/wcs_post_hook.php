@@ -26,7 +26,7 @@ add_filter(
 );
 
 
-add_action('wp_insert_post_data', function ($data) {
+add_action('wp_insert_post_data', static function ($data) {
     $post_ID = $data['post_id'];
     $post_type = $data['post_type'];
     if (isset($post_type) && array_key_exists($post_type, WCS4_POST_TYPES_WHITELIST)) {
