@@ -414,14 +414,14 @@ add_filter('single_template', static function ($single) {
  */
 add_filter('posts_orderby', static function ($orderby, $query) {
     if (empty($query->tax_query)) {
-        return;
+        return $orderby;
     }
     if (empty($query->tax_query->queries)) {
-        return;
+        return $orderby;
     }
 
     if (!array_key_exists($query->tax_query->queries[0]['taxonomy'], WCS4_TAXONOMY_TYPES_WHITELIST)) {
-        return;
+        return $orderby;
     }
     global $wpdb;
     return "{$wpdb->posts}.post_title ASC";

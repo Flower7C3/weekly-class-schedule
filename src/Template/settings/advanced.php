@@ -65,12 +65,12 @@ use WCS4\Repository\WorkPlan;
                         id="wcs4_import_source_prefix"
                         name="wcs4_import_source_prefix"
                         value=""
-                        placeholder="wp27_57_"
+                        placeholder="wpX_"
                         class="regular-text"
                 >
                 <br>
                 <small class="description">
-                    <?= _x('Example: wp27_57_ (include the trailing underscore).', 'reset database', 'wcs4') ?>
+                    <?= _x('Example: wpX_ (include the trailing underscore).', 'reset database', 'wcs4') ?>
                 </small>
             </p>
             <p>
