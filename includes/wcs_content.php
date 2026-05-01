@@ -12,6 +12,35 @@ use WCS4\Controller\Settings;
 const WCS_SESSION_CHECK_POST = 'check-post';
 const WCS_SESSION_SATISFY_POST = 'satisfy-post';
 
+/**
+ * PHP session is required for check-post / satisfy-post across requests (notably redirect
+ * from wp-login.php?action=postpass). WordPress does not start sessions by default.
+ */
+function wcs4_maybe_start_session(): void
+{
+    if (PHP_SESSION_ACTIVE === session_status()) {
+        return;
+    }
+    if (headers_sent()) {
+        return;
+    }
+    if (!apply_filters('wcs4_enable_frontend_session', true)) {
+        return;
+    }
+
+    if (PHP_VERSION_ID >= 70300) {
+        session_start([
+            'cookie_httponly' => true,
+            'cookie_samesite' => 'Lax',
+            'use_strict_mode' => true,
+        ]);
+    } else {
+        session_start();
+    }
+}
+
+add_action('init', 'wcs4_maybe_start_session', 1);
+
 function get_wcs_post_pass_satisfy_any(): array
 {
     $wcs4_settings = Settings::load_settings();
@@ -30,12 +59,14 @@ add_filter('post_password_required', static function ($required, $post) {
         return false;
     }
     /**
-     * Satisfy for
-     * - any WCS single page
-     * - logged CMS user
+     * Logged-in WP users bypass CPT password on WCS singles.
+     *
+     * Do not clear WCS_SESSION_SATISFY_POST here: it carries the “master” identity from the
+     * post-password flow (profile link in the context bar, progress/work-plan masters options).
+     * It is cleared on explicit ?logout. Only drop the transient check-post used while typing password.
      */
     if (array_key_exists($post->post_type, WCS4_POST_TYPES_WHITELIST) && is_single() && is_user_logged_in()) {
-        unset($_SESSION[WCS_SESSION_SATISFY_POST], $_SESSION[WCS_SESSION_CHECK_POST]);
+        unset($_SESSION[WCS_SESSION_CHECK_POST]);
         return false;
     }
 
@@ -46,7 +77,8 @@ add_filter('post_password_required', static function ($required, $post) {
      * then set satisfy-post session variable
      * and remove check-post session variable
      */
-    if (array_key_exists('wp-postpass_' . COOKIEHASH, $_COOKIE)
+    $postpass_cookie = 'wp-postpass_' . COOKIEHASH;
+    if (isset($_COOKIE[$postpass_cookie])
         && isset($_SESSION[WCS_SESSION_CHECK_POST])
         && $_SESSION[WCS_SESSION_CHECK_POST]->post_type === $post->post_type
         && $_SESSION[WCS_SESSION_CHECK_POST]->ID === $post->ID
@@ -57,12 +89,25 @@ add_filter('post_password_required', static function ($required, $post) {
     }
 
     /**
+     * Cookie already unlocks this CPT but check-post was lost (new PHP session, other device):
+     * still remember satisfy context for the bar and shortcodes.
+     */
+    if (isset($_COOKIE[$postpass_cookie])
+        && false === $required
+        && array_key_exists($post->post_type, WCS4_POST_TYPES_WHITELIST)
+        && !isset($_SESSION[WCS_SESSION_SATISFY_POST])
+        && !empty($post->post_password)
+    ) {
+        $_SESSION[WCS_SESSION_SATISFY_POST] = clone $post;
+    }
+
+    /**
      * If cookie access exists to any page
      * and satisfy-post session variable exists
      * and type match to allow the list,
      * then do not require a password.
      */
-    if (array_key_exists('wp-postpass_' . COOKIEHASH, $_COOKIE)
+    if (isset($_COOKIE[$postpass_cookie])
         && isset($_SESSION[WCS_SESSION_SATISFY_POST])
         && in_array($_SESSION[WCS_SESSION_SATISFY_POST]->post_type, get_wcs_post_pass_satisfy_any(), true)) {
         return false;
@@ -93,29 +138,50 @@ add_filter('the_password_form', static function ($form) {
     }
     return $form;
 });
-add_filter('__before_page_wrapper', static function () {
-    if (array_key_exists('wp-postpass_' . COOKIEHASH, $_COOKIE)) {
-        printf(
-            '<div class="container-fluid"><div class="row"><div class="col-12"><div class="alignright">%s</div></div></div></div>',
-            implode(' ', [
-                (isset($_SESSION[WCS_SESSION_SATISFY_POST])
-                    ? sprintf(
-                        '<em class="fas fa-user-secret"></em> %s',
-                        $_SESSION[WCS_SESSION_SATISFY_POST]->post_title
-                    ) : ''),
-                (isset($_SESSION[WCS_SESSION_SATISFY_POST])
-                    ? sprintf(
-                        '<a class="btn btn-skin" href="%s">' . __('My profile page', 'wcs4') . '</a>',
-                        get_permalink($_SESSION[WCS_SESSION_SATISFY_POST])
-                    ) : ''),
-                sprintf(
-                    '<a class="btn btn-skin" href="%s">' . __('Log out') . '</a>',
-                    '?logout'
-                ),
-            ])
+
+/**
+ * Context bar after post-password access (profile link + WCS logout).
+ *
+ * Customizr calls do_action('__before_page_wrapper') — must use add_action, not add_filter.
+ * wp_body_open is a standard fallback for block themes and others that never fire Customizr hooks.
+ */
+$wcs4_render_postpass_context_bar = static function (): void {
+    static $rendered = false;
+    if ($rendered) {
+        return;
+    }
+    $postpass_cookie = 'wp-postpass_' . COOKIEHASH;
+    if (!isset($_COOKIE[$postpass_cookie]) || '' === $_COOKIE[$postpass_cookie]) {
+        return;
+    }
+    $rendered = true;
+
+    $parts = [];
+    if (isset($_SESSION[WCS_SESSION_SATISFY_POST])) {
+        $master = $_SESSION[WCS_SESSION_SATISFY_POST];
+        $parts[] = sprintf(
+            '<em class="fas fa-user-secret"></em> %s',
+            esc_html($master->post_title)
+        );
+        $parts[] = sprintf(
+            '<a class="btn btn-skin" href="%s">%s</a>',
+            esc_url(get_permalink($master)),
+            esc_html__('My profile page', 'wcs4')
         );
     }
-}, 1, 0);
+    $parts[] = sprintf(
+        '<a class="btn btn-skin" href="%s">%s</a>',
+        esc_url(add_query_arg('logout', '1')),
+        esc_html(__('Log out'))
+    );
+
+    printf(
+        '<div class="wcs4-postpass-context-bar container-fluid"><div class="row"><div class="col-12"><div class="alignright">%s</div></div></div></div>',
+        implode(' ', array_filter($parts))
+    );
+};
+add_action('__before_page_wrapper', $wcs4_render_postpass_context_bar, 1);
+add_action('wp_body_open', $wcs4_render_postpass_context_bar, 1);
 
 add_action('template_redirect', static function () {
     $post_type = get_post_type();
