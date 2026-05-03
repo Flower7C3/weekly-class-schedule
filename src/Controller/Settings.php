@@ -29,7 +29,6 @@ class Settings
                 # Create a validation fields array:
                 # id_of_field => validation_function_callback
                 $fields = array(
-                    'open_template_links_in_new_tab' => 'wcs4_validate_yes_no',
                     'schedule_classroom_collision' => 'wcs4_validate_yes_no',
                     'schedule_teacher_collision' => 'wcs4_validate_yes_no',
                     'schedule_student_collision' => 'wcs4_validate_yes_no',
@@ -76,15 +75,6 @@ class Settings
                     'progress_html_template_code_periodic_type' => 'wcs4_validate_mock',
                     'progress_html_table_columns' => 'wcs4_validate_mock',
                     'progress_csv_table_columns' => 'wcs4_validate_mock',
-                    'color_base' => 'wcs4_validate_color',
-                    'color_details_box' => 'wcs4_validate_color',
-                    'color_text' => 'wcs4_validate_color',
-                    'color_border' => 'wcs4_validate_color',
-                    'color_headings_text' => 'wcs4_validate_color',
-                    'color_headings_background' => 'wcs4_validate_color',
-                    'color_background' => 'wcs4_validate_color',
-                    'color_qtip_background' => 'wcs4_validate_color',
-                    'color_links' => 'wcs4_validate_color',
                     'journal_edit_masters' => 'wcs4_validate_is_numeric',
                     'subject_taxonomy_slug' => 'wcs4_validate_slug',
                     'subject_taxonomy_hierarchical' => 'wcs4_validate_yes_no',
@@ -257,6 +247,23 @@ class Settings
             }
         }
 
+        $legacyColorKeys = array(
+            'color_base',
+            'color_details_box',
+            'color_text',
+            'color_border',
+            'color_headings_text',
+            'color_headings_background',
+            'color_background',
+            'color_qtip_background',
+            'color_links',
+        );
+        foreach ($legacyColorKeys as $legacyColorKey) {
+            unset($settings[$legacyColorKey]);
+        }
+
+        unset($settings['open_template_links_in_new_tab']);
+
         return $settings;
     }
 
@@ -281,7 +288,6 @@ class Settings
         if ($settings === false) {
             # No settings yet, let's load up the default.
             $options = array(
-                'open_template_links_in_new_tab' => 'no',
                 # schedule
                 'schedule_classroom_collision' => 'yes',
                 'schedule_teacher_collision' => 'yes',
@@ -518,16 +524,6 @@ class Settings
                 'classroom_schedule_template_table_short' => '<p><strong><small>{start time}-{end time}</small></strong><br />' . "\n" . '{subject} ({tea}/{stu})</p>',
                 'classroom_schedule_template_table_details' => '<p><strong><small>{start time}-{end time}</small></strong><br />' . "\n" . '{subject link} z {teacher link} dla {student link} {notes}</p>',
                 'classroom_schedule_template_list' => '<p><strong><small>{start time}-{end time}</small></strong><br />' . "\n" . '{subject link} z {teacher link} dla {student link} {notes}</p>',
-                # layout
-                'color_base' => 'DDFFDD',
-                'color_details_box' => 'FFDDDD',
-                'color_text' => '373737',
-                'color_border' => 'DDDDDD',
-                'color_headings_text' => '666666',
-                'color_headings_background' => 'EEEEEE',
-                'color_background' => 'FFFFFF',
-                'color_qtip_background' => 'FFFFFF',
-                'color_links' => '1982D1',
             );
             $serialized = serialize($options);
             add_option('wcs4_settings', $serialized);

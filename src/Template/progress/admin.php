@@ -6,7 +6,7 @@
 ?>
 <div class="wrap wcs4-management-page-callback">
     <h1 class="wp-heading-inline"><?= _x('Progress Management', 'manage progress', 'wcs4') ?></h1>
-    <a href="#" class="page-title-action" id="wcs4-show-form"><?= _x('Add Progress', 'button text', 'wcs4') ?></a>
+    <a href="#" class="page-title-action" id="wcs4-show-form"><span class="dashicons dashicons-plus-alt" aria-hidden="true"></span> <?= _x('Add Progress', 'button text', 'wcs4') ?></a>
     <hr class="wp-header-end">
     <div id="ajax-response"></div>
     <div id="col-container" class="wp-clearfix">

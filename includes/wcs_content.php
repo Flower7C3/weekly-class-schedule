@@ -140,6 +140,43 @@ add_filter('the_password_form', static function ($form) {
 });
 
 /**
+ * Post-pass cookie: context bar renders on any front view (wp_body_open), but wcs_front.css is
+ * normally enqueued only when WCS4 shortcodes run (single CPT content). Without that, archive /
+ * home / pages show the bar markup with no layout or colors.
+ */
+add_action(
+    'wp_enqueue_scripts',
+    static function (): void {
+        if (is_admin()) {
+            return;
+        }
+        $postpass_cookie = 'wp-postpass_' . COOKIEHASH;
+        if (!isset($_COOKIE[$postpass_cookie]) || '' === $_COOKIE[$postpass_cookie]) {
+            return;
+        }
+        if (!defined('WCS4_PLUGIN_URL') || !defined('WCS4_VERSION')) {
+            return;
+        }
+        $deps = array('dashicons', 'wp-block-library');
+        $stylesheet = get_stylesheet();
+        if (is_string($stylesheet) && '' !== $stylesheet) {
+            $theme_style_handle = $stylesheet . '-style';
+            if (wp_style_is($theme_style_handle, 'registered') || wp_style_is($theme_style_handle, 'enqueued')) {
+                $deps[] = $theme_style_handle;
+            }
+        }
+        if (wp_style_is('global-styles', 'registered') || wp_style_is('global-styles', 'enqueued')) {
+            $deps[] = 'global-styles';
+        }
+        if (!wp_style_is('wcs4_front_css', 'registered')) {
+            wp_register_style('wcs4_front_css', WCS4_PLUGIN_URL . '/css/wcs_front.css', $deps, WCS4_VERSION);
+        }
+        wp_enqueue_style('wcs4_front_css');
+    },
+    12
+);
+
+/**
  * Context bar after post-password access (profile link + WCS logout).
  *
  * Customizr calls do_action('__before_page_wrapper') — must use add_action, not add_filter.
@@ -156,31 +193,44 @@ $wcs4_render_postpass_context_bar = static function (): void {
     }
     $rendered = true;
 
-    $user_html = '';
-    $links_html = '';
+    $user_row = '';
+    $nav_items = array();
     if (isset($_SESSION[WCS_SESSION_SATISFY_POST])) {
         $master = $_SESSION[WCS_SESSION_SATISFY_POST];
-        $user_html = '<div class="wcs4-postpass-context-bar-user">'
-            . '<span class="wcs4-postpass-context-bar-icon" aria-hidden="true"><em class="fas fa-user-secret"></em></span> '
+        $user_row = '<div class="wcs4-postpass-context-bar__primary wcs4-postpass-context-bar-user has-medium-font-size">'
+            . '<span class="wcs4-postpass-context-bar-icon has-accent-3-color dashicons dashicons-admin-users" aria-hidden="true"></span> '
             . '<span class="wcs4-postpass-context-bar-title">' . esc_html($master->post_title) . '</span>'
             . '</div>';
-        $links_html .= sprintf(
-            '<a class="wcs4-postpass-context-btn" href="%s">%s</a>',
+        $nav_items[] = sprintf(
+            '<li class="wp-block-navigation-item"><a class="wp-block-navigation-item__content" href="%1$s"><span class="wp-block-navigation-item__label">%2$s</span></a></li>',
             esc_url(get_permalink($master)),
             esc_html__('My profile page', 'wcs4')
         );
     }
-    $links_html .= sprintf(
-        '<a class="wcs4-postpass-context-btn wcs4-postpass-context-btn--logout" href="%s">%s</a>',
+    $nav_items[] = sprintf(
+        '<li class="wp-block-navigation-item"><a class="wp-block-navigation-item__content wcs4-postpass-context-bar__nav-link--outline" href="%1$s"><span class="wp-block-navigation-item__label">%2$s</span></a></li>',
         esc_url(add_query_arg('logout', '1')),
-        esc_html(__('Log out'))
+        esc_html__('Log out', 'default')
     );
 
+    $nav_markup = '<nav class="wp-block-navigation is-layout-flex wp-block-navigation-is-layout-flex is-content-justification-right items-justified-right wcs4-postpass-context-bar__nav" aria-label="'
+        . esc_attr__('WCS session menu', 'wcs4')
+        . '" role="navigation">'
+        . '<ul class="wp-block-navigation__container is-layout-flex wp-block-navigation-is-layout-flex is-content-justification-right items-justified-right">'
+        . implode('', $nav_items)
+        . '</ul></nav>';
+
+    $shell_classes = 'wcs4-postpass-context-bar__shell wp-block-group alignwide';
+    if ('' === $user_row) {
+        $shell_classes .= ' wcs4-postpass-context-bar__shell--nav-only';
+    }
+
     printf(
-        '<div class="wcs4-postpass-context-bar" role="region" aria-label="%s"><div class="wcs4-postpass-context-bar-inner">%s<div class="wcs4-postpass-context-bar-actions">%s</div></div></div>',
+        '<div class="wcs4-postpass-context-bar wp-block-group alignfull has-accent-5-background-color has-contrast-color" role="region" aria-label="%1$s"><div class="%2$s">%3$s%4$s</div></div>',
         esc_attr__('WCS access banner', 'wcs4'),
-        $user_html,
-        $links_html
+        esc_attr($shell_classes),
+        $user_row,
+        $nav_markup
     );
 };
 add_action('__before_page_wrapper', $wcs4_render_postpass_context_bar, 1);
@@ -206,8 +256,8 @@ add_filter('the_content', static function ($content) {
             ### SCHEDULE
             $layout = $wcs4_settings[$post_type_key . '_schedule_layout'];
             if ('none' !== $layout && null !== $layout) {
-                $content .= '<details open id="wcs_schedule-shortcode-wrapper">';
-                $content .= '<summary>' . __('Schedule', 'wcs4') . '</summary>';
+                $content .= '<details class="wp-block-details wcs4-content-section" open id="wcs_schedule-shortcode-wrapper">';
+                $content .= '<summary><h2>' . esc_html__('Schedule', 'wcs4') . '</h2></summary>';
                 $schedule_template_table_short = $wcs4_settings[$post_type_key . '_schedule_template_table_short'];
                 $schedule_template_table_details = $wcs4_settings[$post_type_key . '_schedule_template_table_details'];
                 $schedule_template_list = $wcs4_settings[$post_type_key . '_schedule_template_list'];
@@ -219,10 +269,20 @@ add_filter('the_content', static function ($content) {
                 $params[] = 'template_list="' . $schedule_template_list . '"';
                 $content .= '[wcs_schedule  ' . implode(' ', $params) . ']';
                 if ('yes' === $wcs4_settings[$post_type_key . '_schedule_download_ical']) {
-                    $content .= __('Download iCal:', 'wcs4') . ' ';
-                    $content .= '<a href="?format=ical">' . __('Download iCal for current week', 'wcs4') . '</a>';
-                    $content .= ', ';
-                    $content .= '<a href="?format=ical&week=1">' . __('Download iCal for next week', 'wcs4') . '</a>';
+                    $content .= '<div class="wcs4-export-links wp-block-buttons is-layout-flex is-content-justification-left">';
+                    $content .= '<span class="wcs4-export-links__label">' . esc_html__('Download iCal:', 'wcs4') . ' </span>';
+                    $content .= '<span class="wp-block-button is-style-outline"><a class="wp-block-button__link wp-element-button" href="'
+                        . esc_url(add_query_arg('format', 'ical')) . '">' . esc_html__(
+                            'Download iCal for current week',
+                            'wcs4'
+                        ) . '</a></span>';
+                    $content .= '<span class="wcs4-export-links__sep">, </span>';
+                    $content .= '<span class="wp-block-button is-style-outline"><a class="wp-block-button__link wp-element-button" href="'
+                        . esc_url(add_query_arg(array('format' => 'ical', 'week' => '1'))) . '">' . esc_html__(
+                            'Download iCal for next week',
+                            'wcs4'
+                        ) . '</a></span>';
+                    $content .= '</div>';
                 }
                 $content .= '</details>';
             }
@@ -246,8 +306,8 @@ add_filter('the_content', static function ($content) {
             }
 
             if (true === $journal_view_access || true === $journal_create_access) {
-                $content .= '<details class="wcs4" id="wcs_journal-shortcode-wrapper">';
-                $content .= '<summary>' . __('Journals', 'wcs4') . '</summary>';
+                $content .= '<details class="wp-block-details wcs4 wcs4-content-section" id="wcs_journal-shortcode-wrapper">';
+                $content .= '<summary><h2>' . esc_html__('Journals', 'wcs4') . '</h2></summary>';
                 if (true === $journal_create_access) {
                     $params = [];
                     $params[] = $post_type_key . '="' . $post_id . '"';
@@ -260,11 +320,28 @@ add_filter('the_content', static function ($content) {
                     $params[] = 'template="' . $template . '"';
                     $params[] = 'limit=' . $wcs4_settings[$post_type_key . '_journal_view'];
                     $content .= '[wcs_journal  ' . implode(' ', $params) . ']';
-                    if ('yes' === $wcs4_settings[$post_type_key . '_journal_download_csv']) {
-                        $content .= '<a href="?format=csv">' . __('Download Journals as CSV', 'wcs4') . '</a>';
-                    }
-                    if ('yes' === $wcs4_settings[$post_type_key . '_journal_download_html']) {
-                        $content .= '<a href="?format=html">' . __('Download Journals as HTML', 'wcs4') . '</a>';
+                    if ('yes' === $wcs4_settings[$post_type_key . '_journal_download_csv']
+                        || 'yes' === $wcs4_settings[$post_type_key . '_journal_download_html']) {
+                        $content .= '<div class="wcs4-export-links wp-block-buttons is-layout-flex is-content-justification-left">';
+                        if ('yes' === $wcs4_settings[$post_type_key . '_journal_download_csv']) {
+                            $content .= '<span class="wp-block-button is-style-outline"><a class="wp-block-button__link wp-element-button" href="'
+                                . esc_url(add_query_arg('format', 'csv')) . '">' . esc_html__(
+                                    'Download Journals as CSV',
+                                    'wcs4'
+                                ) . '</a></span>';
+                        }
+                        if ('yes' === $wcs4_settings[$post_type_key . '_journal_download_csv']
+                            && 'yes' === $wcs4_settings[$post_type_key . '_journal_download_html']) {
+                            $content .= '<span class="wcs4-export-links__sep"> </span>';
+                        }
+                        if ('yes' === $wcs4_settings[$post_type_key . '_journal_download_html']) {
+                            $content .= '<span class="wp-block-button is-style-outline"><a class="wp-block-button__link wp-element-button" href="'
+                                . esc_url(add_query_arg('format', 'html')) . '">' . esc_html__(
+                                    'Download Journals as HTML',
+                                    'wcs4'
+                                ) . '</a></span>';
+                        }
+                        $content .= '</div>';
                     }
                 }
                 $content .= '</details>';
@@ -300,8 +377,8 @@ add_filter('the_content', static function ($content) {
                     $work_plan_create_access = true;
                 }
                 if (!empty($work_plan_view_access) || (true === $work_plan_create_access)) {
-                    $content .= '<details class="wcs4" id="wcs_student_work_plan-shortcode-wrapper">';
-                    $content .= '<summary><strong>' . __('Work Plans', 'wcs4') . '</strong></summary>';
+                    $content .= '<details class="wp-block-details wcs4 wcs4-content-section" id="wcs_student_work_plan-shortcode-wrapper">';
+                    $content .= '<summary><h2>' . esc_html__('Work Plans', 'wcs4') . '</h2></summary>';
                     if (true === $work_plan_create_access) {
                         $params = [];
                         $params[] = 'student="' . $post_id . '"';
@@ -354,8 +431,8 @@ add_filter('the_content', static function ($content) {
                     $progress_create_access = true;
                 }
                 if (!empty($progress_view_access) || (true === $progress_create_access)) {
-                    $content .= '<details class="wcs4">';
-                    $content .= '<summary><strong>' . __('Progresses', 'wcs4') . '</strong></summary>';
+                    $content .= '<details class="wp-block-details wcs4 wcs4-content-section">';
+                    $content .= '<summary><h2>' . esc_html__('Progresses', 'wcs4') . '</h2></summary>';
                     if (true === $progress_create_access) {
                         $params = [];
                         $params[] = 'student="' . $post_id . '"';

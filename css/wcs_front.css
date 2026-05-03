@@ -39,13 +39,17 @@
     width: 100vw;
     height: 100vh;
     background: white;
+    overflow-y: auto;
+    overflow-x: auto;
 }
 
 .wcs4_schedule_grid {
     display: grid;
     grid-gap: 5px;
     width: 100%;
-    overflow-y: auto;
+    /* Avoid nested vertical scroll when the grid is short: parent flex/min-height
+       + overflow-y:auto made a scrollable pane even for little content. */
+    overflow-y: visible;
     overflow-x: auto;
     padding-bottom: 40px;
     grid-template-columns: [hours] auto [days];
@@ -54,78 +58,22 @@
     line-height: 1.4;
 }
 
-.wcs4-schedule-toolbar {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 0.5rem 0.65rem;
+.wcs4-schedule-toolbar.wp-block-buttons {
     margin: 0 0 0.65rem;
+    row-gap: var(--wp--style--block-gap, 0.5rem);
 }
 
-button.wcs4-schedule-toolbar-btn,
-a.wcs4-schedule-toolbar-btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
+.wcs4-schedule-toolbar .wp-block-button {
+    margin-bottom: 0;
+}
+
+.wcs4-schedule-toolbar-btn {
     gap: 0.4rem;
-    margin: 0;
-    padding: 0.45rem 0.95rem;
-    border-radius: 999px;
-    border: 1px solid var(--wcs4-ui-border-strong);
-    background: linear-gradient(
-        165deg,
-        var(--wcs4-ui-accent-mid) 0%,
-        var(--wcs4-ui-accent) 55%,
-        var(--wcs4-ui-accent-deep) 100%
-    );
-    color: var(--wcs4-ui-on-accent) !important;
-    font-size: 0.875rem;
-    font-weight: 600;
-    line-height: 1.25;
-    font-family: inherit;
-    text-decoration: none !important;
-    box-shadow:
-        0 1px 2px rgba(0, 0, 0, 0.12),
-        var(--wcs4-ui-shadow);
-    cursor: pointer;
-    transition:
-        background 0.15s ease,
-        border-color 0.15s ease,
-        box-shadow 0.15s ease,
-        transform 0.12s ease;
 }
 
 button.wcs4-schedule-toolbar-btn {
     appearance: none;
     -webkit-appearance: none;
-}
-
-button.wcs4-schedule-toolbar-btn:hover,
-a.wcs4-schedule-toolbar-btn:hover {
-    border-color: rgba(15, 80, 120, 0.55);
-    background: linear-gradient(
-        165deg,
-        var(--wcs4-ui-accent-bright) 0%,
-        #186892 55%,
-        #125778 100%
-    );
-    box-shadow:
-        0 2px 4px rgba(0, 0, 0, 0.14),
-        var(--wcs4-ui-shadow-hover);
-    transform: translateY(-1px);
-    color: var(--wcs4-ui-on-accent) !important;
-}
-
-button.wcs4-schedule-toolbar-btn:focus-visible,
-a.wcs4-schedule-toolbar-btn:focus-visible {
-    outline: 2px solid var(--wcs4-ui-focus);
-    outline-offset: 2px;
-}
-
-button.wcs4-schedule-toolbar-btn:active,
-a.wcs4-schedule-toolbar-btn:active {
-    transform: translateY(0);
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
 }
 
 .wcs4-schedule-toolbar-btn .dashicons.wcs4-schedule-toolbar-btn-icon {
@@ -140,16 +88,31 @@ a.wcs4-schedule-toolbar-btn:active {
     top: 0.02em;
 }
 
-@media (prefers-reduced-motion: reduce) {
-    button.wcs4-schedule-toolbar-btn,
-    a.wcs4-schedule-toolbar-btn,
-    button.wcs4-schedule-toolbar-btn:hover,
-    a.wcs4-schedule-toolbar-btn:hover,
-    button.wcs4-schedule-toolbar-btn:active,
-    a.wcs4-schedule-toolbar-btn:active {
-        transition: none;
-        transform: none;
-    }
+.wcs4-export-links {
+    margin: 0.75rem 0 0;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--wp--style--block-gap, 0.35rem);
+}
+
+.wcs4-export-links__label {
+    margin-right: 0.25rem;
+}
+
+.wcs4-export-links .wp-block-button {
+    margin-bottom: 0;
+}
+
+/* Compact block buttons (theme wp-element-button defaults are large on dense UIs). */
+.wcs4-schedule-toolbar .wp-block-button__link.wcs4-schedule-toolbar-btn,
+.wcs4-export-links .wp-block-button__link,
+.wcs4-form-wrap.modal .modal-footer .wp-block-button__link,
+.wcs4-front-modal-btn-wrap .wp-block-button__link.wcs4-front-modal-btn,
+.wcs4-postpass-context-bar__nav .wp-block-navigation-item__content {
+    font-size: 0.8125rem;
+    line-height: 1.25;
+    padding: calc(0.28em + 1px) calc(0.72em + 1px);
+    min-height: 0;
 }
 
 .wcs4_schedule_grid .wcs4-grid-weekday {
@@ -169,6 +132,33 @@ a.wcs4-schedule-toolbar-btn:active {
 .wcs4-grid-lesson {
     padding: 5px;
     position: relative;
+    /* Lesson cell: distinct from table body (.wcs4_schedule_wrapper table uses --wp--preset--color--base). */
+    background-color: var(--wp--preset--color--accent-1, #ffee58);
+    color: var(--wp--preset--color--contrast, #111111);
+}
+
+.wcs4-grid-lesson a {
+    color: var(--wp--preset--color--accent-3, #503aa8);
+}
+
+body .wcs4-qtip-tip {
+    background-color: var(--wp--preset--color--base, #ffffff);
+    border: 1px solid var(--wp--preset--color--accent-6, #dddddd);
+}
+
+.wcs4_schedule_wrapper table th {
+    background-color: var(--wp--preset--color--accent-5, #fbfaf3);
+    color: var(--wp--preset--color--accent-4, #686868);
+}
+
+.wcs4_schedule_wrapper table {
+    background-color: var(--wp--preset--color--base, #ffffff);
+}
+
+.wcs4_schedule_wrapper table,
+.wcs4_schedule_wrapper table td,
+.wcs4_schedule_wrapper table th {
+    border: 1px solid var(--wp--preset--color--accent-6, #dddddd);
 }
 
 .wcs4-grid-lesson p {
@@ -190,6 +180,7 @@ a.wcs4-schedule-toolbar-btn:active {
     min-width: 10em;
     padding: 5px;
     z-index: 20;
+    background-color: var(--wp--preset--color--accent-2, #f6cff4);
 }
 
 .wcs4-grid-lesson:hover .wcs4-details-box-container {
@@ -379,7 +370,11 @@ a.wcs4-schedule-toolbar-btn:active {
     z-index: 1050;
     width: 100vw;
     height: 100vh;
-    background-color: var(--wcs4-ui-backdrop);
+    background-color: color-mix(
+        in srgb,
+        var(--wp--preset--color--contrast, #111111) 42%,
+        transparent
+    );
 }
 
 .modal-backdrop.fade {
@@ -404,8 +399,8 @@ a.wcs4-schedule-toolbar-btn:active {
     flex-direction: column;
     width: 100%;
     pointer-events: auto;
-    background-color: var(--wcs4-ui-surface);
-    border: 1px solid var(--wcs4-ui-border);
+    background-color: var(--wp--preset--color--base, var(--wcs4-ui-surface));
+    border: 1px solid var(--wp--preset--color--accent-6, var(--wcs4-ui-border));
     border-radius: var(--wcs4-ui-radius-md);
     box-shadow: var(--wcs4-ui-modal-shadow);
     overflow: hidden;
@@ -418,23 +413,16 @@ a.wcs4-schedule-toolbar-btn:active {
     justify-content: space-between;
     gap: 0.5rem 1rem;
     padding: 1rem 1.25rem 0.85rem;
-    border-bottom: 1px solid var(--wcs4-ui-border);
-    background: linear-gradient(
-        180deg,
-        var(--wcs4-ui-surface-muted) 0%,
-        var(--wcs4-ui-surface-tint) 42%,
-        var(--wcs4-ui-surface) 100%
-    );
+    border-bottom: 1px solid var(--wp--preset--color--accent-6, var(--wcs4-ui-border));
 }
 
 .wcs4-form-wrap.modal .modal-header .modal-title {
     margin: 0;
     flex: 1 1 auto;
     min-width: 0;
-    font-size: 1.125rem;
     font-weight: 600;
     line-height: 1.35;
-    color: var(--wcs4-ui-accent-deep);
+    color: inherit;
 }
 
 .wcs4-form-wrap.modal .wcs4-modal-close {
@@ -449,7 +437,7 @@ a.wcs4-schedule-toolbar-btn:active {
     border: 1px solid transparent;
     border-radius: var(--wcs4-ui-radius-sm);
     background: transparent;
-    color: var(--wcs4-ui-accent);
+    color: var(--wp--preset--color--accent-3, var(--wcs4-ui-accent));
     opacity: 0.85;
     cursor: pointer;
     line-height: 1;
@@ -499,8 +487,7 @@ a.wcs4-schedule-toolbar-btn:active {
 .wcs4-form-wrap.modal .modal-body {
     padding: 1.1rem 1.25rem 0.35rem;
     flex: 1 1 auto;
-    color: var(--wcs4-ui-text);
-    background: linear-gradient(180deg, var(--wcs4-ui-surface) 0%, var(--wcs4-ui-surface-muted) 100%);
+    color: inherit;
 }
 
 .wcs4-form-wrap.modal .modal-body fieldset.form-field {
@@ -520,7 +507,7 @@ a.wcs4-schedule-toolbar-btn:active {
     font-weight: 600;
     font-size: 0.875rem;
     line-height: 1.3;
-    color: var(--wcs4-ui-accent-deep);
+    color: var(--wp--preset--color--contrast, var(--wcs4-ui-accent-deep));
 }
 
 .wcs4-form-wrap.modal .modal-body .form-field select,
@@ -698,8 +685,20 @@ a.wcs4-schedule-toolbar-btn:active {
     justify-content: flex-end;
     gap: 0.5rem 0.75rem;
     padding: 0.9rem 1.25rem 1.05rem;
-    border-top: 1px solid var(--wcs4-ui-border);
-    background: linear-gradient(180deg, var(--wcs4-ui-footer-tint) 0%, var(--wcs4-ui-surface-muted) 100%);
+    border-top: 1px solid var(--wp--preset--color--accent-6, var(--wcs4-ui-border));
+}
+
+.wcs4-form-wrap.modal .modal-footer .wcs4-modal-footer-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-end;
+    gap: var(--wp--style--block-gap, 0.5rem);
+    flex: 0 0 auto;
+}
+
+.wcs4-form-wrap.modal .modal-footer .wcs4-modal-footer-actions > .wp-block-button {
+    margin-bottom: 0;
 }
 
 .wcs4-form-wrap.modal .modal-footer .wcs4-ajax-text,
@@ -770,114 +769,8 @@ a.wcs4-schedule-toolbar-btn:active {
     border-color: rgba(158, 41, 43, 0.28);
 }
 
-/* WordPress admin button classes on the front — theme often omits wp-admin styles. */
-.wcs4-form-wrap.modal .button.button-primary {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.4rem;
-    padding: 0.55rem 1.15rem;
-    border-radius: 999px;
-    border: 1px solid var(--wcs4-ui-border-strong);
-    background: linear-gradient(
-        165deg,
-        var(--wcs4-ui-accent-mid) 0%,
-        var(--wcs4-ui-accent) 55%,
-        var(--wcs4-ui-accent-deep) 100%
-    );
-    color: var(--wcs4-ui-on-accent);
-    cursor: pointer;
-    font-size: 0.9375rem;
-    font-weight: 600;
-    line-height: 1.35;
-    text-decoration: none;
-    box-shadow:
-        0 1px 2px rgba(0, 0, 0, 0.1),
-        var(--wcs4-ui-shadow);
-    transition:
-        background 0.15s ease,
-        border-color 0.15s ease,
-        box-shadow 0.15s ease,
-        transform 0.12s ease;
-}
-
-.wcs4-form-wrap.modal .button.button-primary:hover,
-.wcs4-form-wrap.modal .button.button-primary:focus-visible {
-    border-color: rgba(15, 80, 120, 0.55);
-    background: linear-gradient(
-        165deg,
-        var(--wcs4-ui-accent-bright) 0%,
-        #186892 55%,
-        #125778 100%
-    );
-    color: var(--wcs4-ui-on-accent);
-    outline: none;
-    box-shadow:
-        0 2px 4px rgba(0, 0, 0, 0.12),
-        var(--wcs4-ui-shadow-hover);
-    transform: translateY(-1px);
-}
-
-.wcs4-form-wrap.modal .button.button-primary:focus-visible {
-    box-shadow:
-        0 0 0 2px var(--wcs4-ui-surface),
-        0 0 0 4px var(--wcs4-ui-focus),
-        0 2px 4px rgba(0, 0, 0, 0.12),
-        var(--wcs4-ui-shadow-hover);
-}
-
-.wcs4-form-wrap.modal .button.button-primary:active {
-    transform: translateY(0);
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-}
-
-.wcs4-form-wrap.modal .button.button-link {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0.45rem 1rem;
-    border: 1px solid var(--wcs4-ui-border-strong);
-    border-radius: 999px;
-    background: var(--wcs4-ui-surface);
-    color: var(--wcs4-ui-accent) !important;
-    cursor: pointer;
-    font-size: 0.875rem;
-    font-weight: 600;
-    line-height: 1.35;
-    text-decoration: none !important;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
-    transition:
-        background 0.12s ease,
-        border-color 0.12s ease,
-        box-shadow 0.12s ease,
-        color 0.12s ease;
-}
-
-.wcs4-form-wrap.modal .button.button-link:hover {
-    color: var(--wcs4-ui-accent-deep) !important;
-    border-color: rgba(15, 80, 120, 0.55);
-    background: var(--wcs4-ui-surface-muted);
-    box-shadow: 0 2px 6px rgba(20, 90, 130, 0.1);
-}
-
-.wcs4-form-wrap.modal .button.button-link:focus-visible {
-    outline: none;
-    box-shadow:
-        0 0 0 2px var(--wcs4-ui-surface),
-        0 0 0 4px var(--wcs4-ui-focus);
-}
-
-@media (prefers-reduced-motion: reduce) {
-    .wcs4-form-wrap.modal .button.button-primary,
-    .wcs4-form-wrap.modal .button.button-primary:hover,
-    .wcs4-form-wrap.modal .button.button-primary:focus-visible,
-    .wcs4-form-wrap.modal .button.button-primary:active {
-        transition: none;
-        transform: none;
-    }
-}
-
-.wcs4-form-wrap.modal .button .dashicons {
+/* Modal footer: submit uses core button + wp-element-button from the theme. */
+.wcs4-form-wrap.modal .modal-footer .wp-block-button__link .dashicons {
     width: 1.125rem;
     height: 1.125rem;
     font-size: 1.125rem;
@@ -885,62 +778,25 @@ a.wcs4-schedule-toolbar-btn:active {
 }
 
 /* “Dodaj nowy …” — journal / progress / work-plan shortcode triggers */
+.wcs4-front-modal-btn-wrap {
+    margin: 0.35rem 0 0.75rem;
+}
+
 button.wcs4-front-modal-btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
-    margin: 0.35rem 0 0.75rem;
-    padding: 0.55rem 1.15rem 0.55rem 0.95rem;
-    border-radius: 999px;
-    border: 1px solid var(--wcs4-ui-border-strong);
-    background: linear-gradient(
-        165deg,
-        var(--wcs4-ui-accent-mid) 0%,
-        var(--wcs4-ui-accent) 55%,
-        var(--wcs4-ui-accent-deep) 100%
-    );
-    color: var(--wcs4-ui-on-accent) !important;
-    font-size: 0.9375rem;
-    font-weight: 600;
-    line-height: 1.25;
-    letter-spacing: 0.01em;
-    text-decoration: none;
-    box-shadow:
-        0 1px 2px rgba(0, 0, 0, 0.12),
-        var(--wcs4-ui-shadow);
-    cursor: pointer;
-    transition:
-        background 0.15s ease,
-        border-color 0.15s ease,
-        box-shadow 0.15s ease,
-        transform 0.12s ease;
+    width: auto;
+    height: auto;
 }
 
-button.wcs4-front-modal-btn:hover {
-    border-color: rgba(15, 80, 120, 0.55);
-    background: linear-gradient(
-        165deg,
-        var(--wcs4-ui-accent-bright) 0%,
-        #186892 55%,
-        #125778 100%
-    );
-    box-shadow:
-        0 2px 4px rgba(0, 0, 0, 0.14),
-        var(--wcs4-ui-shadow-hover);
-    transform: translateY(-1px);
-    color: var(--wcs4-ui-on-accent) !important;
-}
-
-button.wcs4-front-modal-btn:focus-visible {
-    outline: 2px solid var(--wcs4-ui-focus);
-    outline-offset: 2px;
-    color: var(--wcs4-ui-on-accent) !important;
-}
-
-button.wcs4-front-modal-btn:active {
-    transform: translateY(0);
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+button.wcs4-front-modal-btn .dashicons {
+    flex-shrink: 0;
+    width: 1.125rem;
+    height: 1.125rem;
+    font-size: 1.125rem;
+    line-height: 1.125rem;
 }
 
 button.wcs4-front-modal-btn .fa,
@@ -969,7 +825,7 @@ button.wcs4-front-modal-btn .wcs4-front-modal-btn-label {
     }
 }
 
-/* Post-password context strip (master identity + profile / logout) */
+/* Post-password bar — same row model as site header (wide flex row); colors stay on outer group (has-accent-5 / has-contrast). */
 .wcs4-postpass-context-bar {
     position: relative;
     z-index: 1020;
@@ -977,25 +833,41 @@ button.wcs4-front-modal-btn .wcs4-front-modal-btn-label {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
-    border-bottom: 1px solid var(--wcs4-ui-border);
-    background: linear-gradient(
-        180deg,
-        var(--wcs4-ui-surface-muted) 0%,
-        var(--wcs4-ui-surface-tint) 100%
-    );
+    border-bottom: 1px solid var(--wp--preset--color--accent-6, rgba(0, 0, 0, 0.12));
     box-shadow: 0 2px 10px rgba(15, 60, 90, 0.06);
+    flex-shrink: 0;
+    display: block;
 }
 
-.wcs4-postpass-context-bar-inner {
+.wcs4-postpass-context-bar__shell {
     box-sizing: border-box;
+    width: 100%;
+    max-width: var(--wp--style--global--wide-size, 1200px);
+    margin-left: auto;
+    margin-right: auto;
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
-    gap: 0.65rem 1.25rem;
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0.55rem 1rem 0.6rem;
+    gap: var(--wp--preset--spacing--20, 1rem) var(--wp--preset--spacing--30, 1.25rem);
+    padding-top: var(--wp--preset--spacing--20, 1rem);
+    padding-bottom: var(--wp--preset--spacing--20, 1rem);
+    padding-left: var(--wp--preset--spacing--30, 1.25rem);
+    padding-right: var(--wp--preset--spacing--30, 1.25rem);
+}
+
+/* Outer group can be flex in theme.json; keep this row as horizontal flex like header. */
+.wcs4-postpass-context-bar__shell.wp-block-group {
+    display: flex !important;
+}
+
+.wcs4-postpass-context-bar__shell--nav-only {
+    justify-content: flex-end;
+}
+
+.wcs4-postpass-context-bar__primary {
+    flex: 1 1 12rem;
+    min-width: 0;
 }
 
 .wcs4-postpass-context-bar-user {
@@ -1003,17 +875,16 @@ button.wcs4-front-modal-btn .wcs4-front-modal-btn-label {
     align-items: center;
     gap: 0.45rem;
     min-width: 0;
-    flex: 1 1 12rem;
-    font-size: 0.875rem;
     line-height: 1.35;
-    color: var(--wcs4-ui-text-soft);
 }
 
-.wcs4-postpass-context-bar-icon em {
-    font-style: normal;
-    font-size: 1rem;
-    color: var(--wcs4-ui-accent);
+.wcs4-postpass-context-bar-icon.dashicons {
+    width: 1.125rem;
+    height: 1.125rem;
+    font-size: 1.125rem;
+    line-height: 1.125rem;
     opacity: 0.9;
+    flex-shrink: 0;
 }
 
 .wcs4-postpass-context-bar-title {
@@ -1023,59 +894,102 @@ button.wcs4-front-modal-btn .wcs4-front-modal-btn-label {
     white-space: nowrap;
 }
 
-.wcs4-postpass-context-bar-actions {
+.wcs4-postpass-context-bar__nav {
+    flex: 0 1 auto;
+    min-width: 0;
+}
+
+.wcs4-postpass-context-bar__nav .wp-block-navigation__container {
+    list-style: none;
+    margin: 0;
+    padding: 0;
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     justify-content: flex-end;
-    gap: 0.45rem 0.65rem;
-    flex: 0 1 auto;
-    margin-left: auto;
+    gap: var(--wp--preset--spacing--20, 1rem);
 }
 
-.wcs4-postpass-context-btn {
-    display: inline-flex;
+.wcs4-postpass-context-bar__nav .wp-block-navigation-item {
+    margin: 0;
+}
+
+.wcs4-postpass-context-bar__nav .wp-block-navigation-item__content {
+    display: inline-block;
+    max-width: 100%;
+    text-decoration: none;
+    box-sizing: border-box;
+}
+
+.wcs4-postpass-context-bar__nav .wp-block-navigation-item__content:hover {
+    text-decoration: underline;
+    text-underline-offset: 0.12em;
+}
+
+.wcs4-postpass-context-bar__nav-link--outline {
+    border: 1px solid currentcolor;
+    padding: 0.28em 0.72em;
+    border-radius: var(--wcs4-ui-radius-sm, 0.375rem);
+}
+
+/* Single CPT content: disclosure sections use core Details block styling + theme spacing. */
+.wcs4-content-section {
+    margin-top: var(--wp--preset--spacing--50, 1.5rem);
+    margin-bottom: var(--wp--preset--spacing--50, 1.5rem);
+}
+
+/*
+ * <summary><h2>…</h2></summary>: block h2 + flex on summary hide the native disclosure in some engines.
+ * Custom chevron (::before) + hidden list marker keeps one row and a visible control.
+ */
+details.wcs4-content-section > summary,
+details.wcs4-query-details > summary {
+    display: flex;
+    flex-direction: row;
     align-items: center;
-    justify-content: center;
-    padding: 0.4rem 0.95rem;
-    border-radius: 999px;
-    border: 1px solid var(--wcs4-ui-border-strong);
-    background: var(--wcs4-ui-surface);
-    color: var(--wcs4-ui-accent) !important;
-    font-size: 0.8125rem;
-    font-weight: 600;
-    line-height: 1.3;
-    text-decoration: none !important;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
-    transition:
-        background 0.12s ease,
-        border-color 0.12s ease,
-        box-shadow 0.12s ease,
-        color 0.12s ease;
+    column-gap: 0.45em;
+    list-style: none;
+    cursor: pointer;
+    /* Odstęp pod wierszem tytułu (h2 + chevron) przed treścią sekcji */
+    margin-bottom: var(--wp--preset--spacing--40, 1.25rem);
 }
 
-.wcs4-postpass-context-btn:hover {
-    border-color: rgba(15, 80, 120, 0.55);
-    background: rgba(255, 255, 255, 0.95);
-    box-shadow: 0 2px 6px rgba(20, 90, 130, 0.12);
-    color: var(--wcs4-ui-accent-deep) !important;
+details.wcs4-content-section > summary::-webkit-details-marker,
+details.wcs4-query-details > summary::-webkit-details-marker {
+    display: none;
 }
 
-.wcs4-postpass-context-btn:focus-visible {
-    outline: 2px solid var(--wcs4-ui-focus);
-    outline-offset: 2px;
+details.wcs4-content-section > summary::before,
+details.wcs4-query-details > summary::before {
+    content: '';
+    display: block;
+    width: 0.42em;
+    height: 0.42em;
+    flex-shrink: 0;
+    border: solid currentcolor;
+    border-width: 0 0.14em 0.14em 0;
+    transform: translateY(-0.04em) rotate(-45deg);
+    box-sizing: border-box;
+    opacity: 0.85;
+    transition: transform 0.15s ease, opacity 0.15s ease;
 }
 
-.wcs4-postpass-context-btn.wcs4-postpass-context-btn--logout {
-    border-color: rgba(90, 90, 90, 0.25);
-    color: rgba(40, 40, 40, 0.85) !important;
-    background: rgba(255, 255, 255, 0.75);
+details.wcs4-content-section[open] > summary::before,
+details.wcs4-query-details[open] > summary::before {
+    transform: translateY(0.08em) rotate(45deg);
 }
 
-.wcs4-postpass-context-btn.wcs4-postpass-context-btn--logout:hover {
-    border-color: rgba(60, 60, 60, 0.35);
-    color: #111 !important;
-    background: #fff;
+details.wcs4-content-section > summary:hover::before,
+details.wcs4-query-details > summary:hover::before {
+    opacity: 1;
+}
+
+details.wcs4-content-section > summary h2,
+details.wcs4-query-details > summary h2 {
+    margin: 0;
+    display: inline-block;
+    flex: 1 1 auto;
+    min-width: 0;
 }
 
 @media (max-width: 640px) {
@@ -1117,10 +1031,19 @@ button.wcs4-front-modal-btn .wcs4-front-modal-btn-label {
         gap: 0.5rem;
     }
 
-    .wcs4-form-wrap.modal .modal-footer .button.button-primary,
-    .wcs4-form-wrap.modal .modal-footer .button.button-link {
+    .wcs4-form-wrap.modal .modal-footer .wcs4-modal-footer-actions {
         width: 100%;
-        min-height: 2.75rem;
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .wcs4-form-wrap.modal .modal-footer .wcs4-modal-footer-actions > .wp-block-button {
+        width: 100%;
+    }
+
+    .wcs4-form-wrap.modal .modal-footer .wcs4-modal-footer-actions .wp-block-button__link {
+        width: 100%;
+        min-height: 2.35rem;
         justify-content: center;
         box-sizing: border-box;
     }
@@ -1140,38 +1063,51 @@ button.wcs4-front-modal-btn .wcs4-front-modal-btn-label {
         min-height: 6.5rem;
     }
 
+    .wcs4-front-modal-btn-wrap {
+        width: 100%;
+        max-width: 100%;
+    }
+
     button.wcs4-front-modal-btn {
         width: 100%;
         max-width: 100%;
-        min-height: 2.75rem;
+        min-height: 2.35rem;
         box-sizing: border-box;
         justify-content: center;
     }
 
-    .wcs4-postpass-context-bar-inner {
+    .wcs4-postpass-context-bar__shell {
         flex-direction: column;
         align-items: stretch;
-        padding:
-            0.55rem max(0.75rem, env(safe-area-inset-left, 0px)) 0.6rem
-            max(0.75rem, env(safe-area-inset-right, 0px));
+        padding-left: max(0.75rem, env(safe-area-inset-left, 0px));
+        padding-right: max(0.75rem, env(safe-area-inset-right, 0px));
+    }
+
+    .wcs4-postpass-context-bar__shell.wp-block-group {
+        flex-direction: column !important;
+        align-items: stretch !important;
+    }
+
+    .wcs4-postpass-context-bar__shell--nav-only {
+        justify-content: flex-start;
+    }
+
+    .wcs4-postpass-context-bar__primary {
+        flex: 1 1 auto;
+        width: 100%;
     }
 
     .wcs4-postpass-context-bar-user {
-        flex: 1 1 auto;
         width: 100%;
     }
 
-    .wcs4-postpass-context-bar-actions {
-        margin-left: 0;
+    .wcs4-postpass-context-bar__nav {
         width: 100%;
-        justify-content: stretch;
-        gap: 0.5rem;
     }
 
-    .wcs4-postpass-context-btn {
-        flex: 1 1 auto;
-        min-height: 2.75rem;
-        padding: 0.5rem 0.75rem;
+    .wcs4-postpass-context-bar__nav .wp-block-navigation__container {
+        justify-content: flex-start;
+        width: 100%;
     }
 
     .wcs4-postpass-context-bar-title {
@@ -1195,13 +1131,24 @@ button.wcs4-front-modal-btn .wcs4-front-modal-btn-label {
     a.wcs4-schedule-toolbar-btn {
         width: 100%;
         justify-content: center;
-        min-height: 2.75rem;
+        min-height: 2.35rem;
         box-sizing: border-box;
     }
 
-    .wcs4-postpass-context-btn {
+    .wcs4-postpass-context-bar__nav .wp-block-navigation-item {
         flex: 1 1 100%;
         width: 100%;
+    }
+
+    .wcs4-postpass-context-bar__nav .wp-block-navigation-item__content {
+        display: block;
+        width: 100%;
+        text-align: center;
+        min-height: 2.35rem;
+        line-height: 2.35rem;
+        padding-top: 0;
+        padding-bottom: 0;
+        box-sizing: border-box;
     }
 }
 

@@ -594,8 +594,8 @@ add_shortcode('wcs_wp_query', static function (array $options = []) {
                     $response[] = sprintf('<li>%s</li>', implode('', $row_value));
                     break;
                 case 'details';
-                    $response[] = '<details>';
-                    $response[] = sprintf('<summary>%s</summary>', implode('', $row_value));
+                    $response[] = '<details class="wcs4-query-details">';
+                    $response[] = sprintf('<summary><h2>%s</h2></summary>', implode('', $row_value));
                     if (isset($excerpt)) {
                         $response[] = sprintf('<div>%s</div>', $excerpt);
                     }

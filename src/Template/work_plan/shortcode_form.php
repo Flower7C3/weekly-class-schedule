@@ -9,14 +9,14 @@ use WCS4\Entity\WorkPlan_Item;
 use WCS4\Helper\Admin;
 
 ?>
-<div class="wcs4-form-wrap modal modal-lg"
+<div class="wcs4-form-wrap modal modal-lg wp-block-group"
      id="wcs4-work-plan-modal">
     <div class="modal-dialog modal-dialog-centered wcs4-management-form-wrapper" id="wcs4-work-plan-form-wrapper">
         <form id="wcs4-work-plan-form" class="czr-form" action="<?= $_SERVER['PHP_SELF'] ?>" method="post">
             <input type="hidden" name="row_id" value="">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <strong class="modal-title" data-wcs4="management-form-title">
+            <div class="modal-content has-base-background-color has-contrast-color">
+                <div class="modal-header has-accent-5-background-color has-accent-6-border-color">
+                    <strong class="modal-title has-large-font-size" data-wcs4="management-form-title">
                         <?= _x('Add New Work Plan', 'page title', 'wcs4') ?>
                     </strong>
                     <button type="button" class="wcs4-modal-close" data-bs-dismiss="modal"
@@ -24,7 +24,7 @@ use WCS4\Helper\Admin;
                         <span class="wcs4-modal-close-mark" aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <div class="modal-body">
+                <div class="modal-body has-base-background-color">
                     <fieldset class="form-field form-required form-field-subject_id-wrap">
                         <label for="wcs4_work_plan_subject"><?= __('Subject', 'wcs4') ?></label>
                         <?php
@@ -117,22 +117,28 @@ use WCS4\Helper\Admin;
                         <textarea rows="5" id="wcs4_work_plan_methods" name="methods"></textarea>
                     </fieldset>
                 </div>
-                <div class="modal-footer">
+                <div class="modal-footer has-accent-5-background-color has-accent-6-border-color">
                     <div class="wcs4-ajax-text wcs4-ajax-banner"></div>
                     <div id="wcs4-ajax-text-wrapper"></div>
                     <span class="spinner"></span>
-                    <button data-wcs4="submit-form" type="submit"
-                            class="button button-primary wcs4-submit-work-plan-form"
-                            name="wcs4-submit">
-                        <span class="dashicons dashicons-plus-alt"></span>
-                        <?= _x('Add Work Plan', 'button text', 'wcs4') ?>
-                    </button>
-                    <button data-wcs4="cancel-form" type="reset"
-                            data-bs-dismiss="modal"
-                            class="button button-link wcs4-reset-journal-form"
-                            style="display: none;">
-                        <?= _x('Exit edit work plan mode', 'button text', 'wcs4') ?>
-                    </button>
+                    <div class="wp-block-buttons is-layout-flex is-content-justification-right wcs4-modal-footer-actions">
+                        <div class="wp-block-button">
+                            <button data-wcs4="submit-form" type="submit"
+                                    class="wp-block-button__link wp-element-button wcs4-submit-work-plan-form"
+                                    name="wcs4-submit">
+                                <span class="dashicons dashicons-plus-alt"></span>
+                                <?= _x('Add Work Plan', 'button text', 'wcs4') ?>
+                            </button>
+                        </div>
+                        <div class="wp-block-button is-style-outline">
+                            <button data-wcs4="cancel-form" type="reset"
+                                    data-bs-dismiss="modal"
+                                    class="wp-block-button__link wp-element-button wcs4-reset-journal-form"
+                                    style="display: none;">
+                                <?= _x('Exit edit work plan mode', 'button text', 'wcs4') ?>
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </form>

@@ -4,6 +4,7 @@
 
 namespace WCS4\Helper;
 
+use WCS4\Controller\Settings;
 use WCS4\Entity\Item;
 use WCS4\Entity\Journal_Item;
 use WCS4\Entity\Lesson_Item;
@@ -243,8 +244,15 @@ class DB
             $cutoffDate = date('Y-m-d');
         }
 
+        self::assert_source_tables_exist_for_import($sourcePrefix);
+
         // Ensure schema exists.
         self::create_schema();
+
+        self::assert_target_tables_exist_for_import();
+
+        // Taxonomies must exist before clear_wcs4_data_only() so get_terms / wp_delete_term can remove old terms.
+        self::ensure_wcs4_taxonomies_registered_for_import();
 
         // 1) Clear current WCS4 data (tables + CPT + taxonomies) but keep plugin settings/options intact.
         self::clear_wcs4_data_only();
@@ -281,6 +289,85 @@ class DB
             $cutoffDate
         );
         return $summary;
+    }
+
+    /**
+     * WordPress core + WCS4 plugin tables required for import/preview under a given table prefix.
+     *
+     * @return list<string>
+     */
+    private static function required_wp_and_wcs4_table_names_for_prefix(string $prefix): array
+    {
+        return [
+            $prefix . 'posts',
+            $prefix . 'postmeta',
+            $prefix . 'terms',
+            $prefix . 'term_taxonomy',
+            $prefix . 'term_relationships',
+            $prefix . 'wcs4_schedule',
+            $prefix . 'wcs4_schedule_teacher',
+            $prefix . 'wcs4_schedule_student',
+            $prefix . 'wcs4_journal',
+            $prefix . 'wcs4_journal_teacher',
+            $prefix . 'wcs4_journal_student',
+            $prefix . 'wcs4_work_plan',
+            $prefix . 'wcs4_work_plan_subject',
+            $prefix . 'wcs4_work_plan_teacher',
+            $prefix . 'wcs4_progress',
+            $prefix . 'wcs4_progress_subject',
+            $prefix . 'wcs4_progress_teacher',
+            $prefix . 'wcs4_snapshot',
+        ];
+    }
+
+    /**
+     * @return list<string> Full table names missing in the current DB connection.
+     */
+    private static function find_missing_tables_for_prefix(string $prefix): array
+    {
+        global $wpdb;
+        $missing = [];
+        foreach (self::required_wp_and_wcs4_table_names_for_prefix($prefix) as $table) {
+            $found = $wpdb->get_var($wpdb->prepare('SHOW TABLES LIKE %s', $table));
+            if (!is_string($found) || strcasecmp($found, $table) !== 0) {
+                $missing[] = $table;
+            }
+        }
+        return $missing;
+    }
+
+    /**
+     * @throws \InvalidArgumentException when any required source table is missing
+     */
+    private static function assert_source_tables_exist_for_import(string $sourcePrefix): void
+    {
+        $missing = self::find_missing_tables_for_prefix($sourcePrefix);
+        if ($missing !== []) {
+            throw new \InvalidArgumentException(sprintf(
+                /* translators: %s: comma-separated table names */
+                __('Cannot import: these source tables were not found (verify prefix and database): %s', 'wcs4'),
+                implode(', ', $missing)
+            ));
+        }
+    }
+
+    /**
+     * @throws \InvalidArgumentException when any required target (current site) table is missing
+     */
+    private static function assert_target_tables_exist_for_import(): void
+    {
+        global $wpdb;
+        $missing = self::find_missing_tables_for_prefix($wpdb->prefix);
+        if ($missing !== []) {
+            throw new \InvalidArgumentException(sprintf(
+                /* translators: %s: comma-separated table names */
+                __(
+                    'Cannot import: these target (current site) tables were not found. Create the WCS4 DB schema on this site first if any wcs4_* tables are listed: %s',
+                    'wcs4'
+                ),
+                implode(', ', $missing)
+            ));
+        }
     }
 
     private static function clear_wcs4_data_only(): void
@@ -552,6 +639,9 @@ class DB
             $cutoffDate = date('Y-m-d');
         }
 
+        self::assert_source_tables_exist_for_import($sourcePrefix);
+        self::assert_target_tables_exist_for_import();
+
         $src = [
             'posts' => $sourcePrefix . 'posts',
             'postmeta' => $sourcePrefix . 'postmeta',
@@ -729,13 +819,117 @@ class DB
         return $postIdMap;
     }
 
+    /**
+     * Register WCS4 taxonomies when permalink settings left slugs empty (register_taxonomy is skipped in wcs_init).
+     */
+    private static function ensure_wcs4_taxonomies_registered_for_import(): void
+    {
+        $settings = Settings::load_settings();
+        $hierarchicalKeys = [
+            WCS4_TAXONOMY_TYPE_BRANCH => 'subject_taxonomy_hierarchical',
+            WCS4_TAXONOMY_TYPE_SPECIALIZATION => 'teacher_taxonomy_hierarchical',
+            WCS4_TAXONOMY_TYPE_GROUP => 'student_taxonomy_hierarchical',
+            WCS4_TAXONOMY_TYPE_LOCATION => 'classroom_taxonomy_hierarchical',
+        ];
+        foreach (WCS4_TAXONOMY_TYPES_WHITELIST as $taxonomy => $object_types) {
+            if (taxonomy_exists($taxonomy)) {
+                continue;
+            }
+            $hKey = $hierarchicalKeys[$taxonomy] ?? '';
+            $hierarchical = ($hKey !== '' && (($settings[$hKey] ?? 'no') === 'yes'));
+            register_taxonomy($taxonomy, $object_types, [
+                'labels' => ['name' => $taxonomy],
+                'public' => true,
+                'hierarchical' => $hierarchical,
+                'show_ui' => true,
+                'show_in_menu' => false,
+                'show_admin_column' => true,
+                'update_count_callback' => '_update_post_term_count',
+                'query_var' => true,
+                'rewrite' => false,
+            ]);
+        }
+    }
+
+    /**
+     * Set post–term links during prefix import. Avoids wp_set_object_terms() with numeric IDs, which can skip
+     * terms when term_exists() returns false during the same request (maintenance / cache edge cases).
+     *
+     * @param int[] $termIdsInOrder New (target) term_ids for $taxonomy, in desired term_order.
+     */
+    private static function assign_imported_object_terms(int $objectId, array $termIdsInOrder, string $taxonomy): void
+    {
+        global $wpdb;
+
+        $objectId = (int)$objectId;
+        if ($objectId <= 0 || '' === $taxonomy || !taxonomy_exists($taxonomy)) {
+            return;
+        }
+
+        $termIdsInOrder = array_values(array_unique(array_map('intval', $termIdsInOrder)));
+        if ($termIdsInOrder === []) {
+            return;
+        }
+
+        $wpdb->query(
+            $wpdb->prepare(
+                "DELETE tr FROM {$wpdb->term_relationships} tr
+                 INNER JOIN {$wpdb->term_taxonomy} tt ON tt.term_taxonomy_id = tr.term_taxonomy_id
+                 WHERE tr.object_id = %d AND tt.taxonomy = %s",
+                $objectId,
+                $taxonomy
+            )
+        );
+
+        $affectedTtIds = [];
+        $order = 0;
+        foreach ($termIdsInOrder as $termId) {
+            if ($termId <= 0) {
+                continue;
+            }
+            $ttId = (int)$wpdb->get_var(
+                $wpdb->prepare(
+                    "SELECT term_taxonomy_id FROM {$wpdb->term_taxonomy} WHERE taxonomy = %s AND term_id = %d LIMIT 1",
+                    $taxonomy,
+                    $termId
+                )
+            );
+            if ($ttId <= 0) {
+                continue;
+            }
+            $wpdb->insert(
+                $wpdb->term_relationships,
+                [
+                    'object_id' => $objectId,
+                    'term_taxonomy_id' => $ttId,
+                    'term_order' => $order,
+                ],
+                ['%d', '%d', '%d']
+            );
+            $affectedTtIds[] = $ttId;
+            ++$order;
+        }
+
+        if ($affectedTtIds !== []) {
+            wp_update_term_count($affectedTtIds, $taxonomy);
+        }
+
+        $postType = get_post_type($objectId);
+        if (is_string($postType) && $postType !== '') {
+            clean_object_term_cache($objectId, $postType);
+        }
+    }
+
     private static function copy_wcs4_taxonomies_from_prefix(string $sourcePrefix, array $postIdMap): void
     {
         global $wpdb;
 
+        self::ensure_wcs4_taxonomies_registered_for_import();
+
         $srcTerms = $sourcePrefix . 'terms';
         $srcTermTax = $sourcePrefix . 'term_taxonomy';
         $srcRel = $sourcePrefix . 'term_relationships';
+        $srcTermmeta = $sourcePrefix . 'termmeta';
 
         $taxonomies = array_keys(WCS4_TAXONOMY_TYPES_WHITELIST);
         $placeholders = implode(', ', array_fill(0, count($taxonomies), '%s'));
@@ -753,6 +947,12 @@ class DB
             ARRAY_A
         );
 
+        // term_taxonomy.parent is the parent's term_taxonomy_id (not term_id).
+        $ttIdToOldTermId = [];
+        foreach ($rows as $r) {
+            $ttIdToOldTermId[(int)$r['term_taxonomy_id']] = (int)$r['term_id'];
+        }
+
         // Map old term_id -> new term_id (by insert) and old term_taxonomy_id -> [taxonomy, new_term_id]
         $termIdMap = [];
         $ttMap = [];
@@ -768,14 +968,19 @@ class DB
                     'slug' => $r['slug'],
                     'description' => $r['description'],
                 ]);
-                if (is_wp_error($res)) {
-                    // If already exists, try to find it by slug.
+                if (!is_wp_error($res)) {
+                    $termIdMap[$oldTermId] = (int)$res['term_id'];
+                } elseif ('term_exists' === $res->get_error_code()) {
+                    $existingId = $res->get_error_data();
+                    if (is_numeric($existingId)) {
+                        $termIdMap[$oldTermId] = (int)$existingId;
+                    }
+                }
+                if (!isset($termIdMap[$oldTermId])) {
                     $existing = get_term_by('slug', $r['slug'], $taxonomy);
                     if ($existing && !is_wp_error($existing)) {
                         $termIdMap[$oldTermId] = (int)$existing->term_id;
                     }
-                } else {
-                    $termIdMap[$oldTermId] = (int)$res['term_id'];
                 }
             }
 
@@ -787,15 +992,16 @@ class DB
             }
         }
 
-        // Second pass: update parent relationships where applicable.
+        // Second pass: parent in wp_term_taxonomy is parent's term_taxonomy_id; wp_update_term expects parent term_id.
         foreach ($rows as $r) {
             $taxonomy = $r['taxonomy'];
             $oldTermId = (int)$r['term_id'];
-            $oldParentTermId = (int)$r['parent'];
-            if ($oldParentTermId <= 0) {
+            $oldParentTtId = (int)$r['parent'];
+            if ($oldParentTtId <= 0) {
                 continue;
             }
-            if (!isset($termIdMap[$oldTermId], $termIdMap[$oldParentTermId])) {
+            $oldParentTermId = $ttIdToOldTermId[$oldParentTtId] ?? 0;
+            if ($oldParentTermId <= 0 || !isset($termIdMap[$oldTermId], $termIdMap[$oldParentTermId])) {
                 continue;
             }
             wp_update_term($termIdMap[$oldTermId], $taxonomy, [
@@ -803,11 +1009,30 @@ class DB
             ]);
         }
 
-        // Copy relationships to imported posts.
+        // Copy term meta (ACF, thumbnails, etc.) onto new term_ids.
+        $termMetaTableExists = ($wpdb->get_var($wpdb->prepare('SHOW TABLES LIKE %s', $srcTermmeta)) === $srcTermmeta);
+        if ($termMetaTableExists) {
+            foreach ($termIdMap as $oldTermId => $newTermId) {
+                $metaRows = $wpdb->get_results(
+                    $wpdb->prepare("SELECT meta_key, meta_value FROM `$srcTermmeta` WHERE term_id = %d", $oldTermId),
+                    ARRAY_A
+                );
+                foreach ($metaRows as $m) {
+                    update_term_meta(
+                        $newTermId,
+                        $m['meta_key'],
+                        maybe_unserialize($m['meta_value'])
+                    );
+                }
+            }
+        }
+
+        // Copy relationships to imported posts (preserve term_order per taxonomy).
         $relRows = $wpdb->get_results(
-            "SELECT object_id, term_taxonomy_id FROM `$srcRel`",
+            "SELECT object_id, term_taxonomy_id, term_order FROM `$srcRel`",
             ARRAY_A
         );
+        $relsByPostTax = [];
         foreach ($relRows as $rel) {
             $oldObjectId = (int)$rel['object_id'];
             $oldTtId = (int)$rel['term_taxonomy_id'];
@@ -817,8 +1042,36 @@ class DB
             $newPostId = $postIdMap[$oldObjectId];
             $taxonomy = $ttMap[$oldTtId]['taxonomy'];
             $newTermId = $ttMap[$oldTtId]['term_id'];
-            wp_set_object_terms($newPostId, [$newTermId], $taxonomy, true);
+            $key = $newPostId . "\0" . $taxonomy;
+            if (!isset($relsByPostTax[$key])) {
+                $relsByPostTax[$key] = [
+                    'post_id' => $newPostId,
+                    'taxonomy' => $taxonomy,
+                    'terms' => [],
+                ];
+            }
+            $relsByPostTax[$key]['terms'][] = [
+                'term_id' => $newTermId,
+                'order' => isset($rel['term_order']) ? (int)$rel['term_order'] : 0,
+            ];
         }
+        wp_defer_term_counting(true);
+        foreach ($relsByPostTax as $group) {
+            $terms = $group['terms'];
+            usort(
+                $terms,
+                static function (array $a, array $b): int {
+                    return $a['order'] <=> $b['order'];
+                }
+            );
+            $ids = array_map(static function (array $t): int {
+                return $t['term_id'];
+            }, $terms);
+            if ($ids !== []) {
+                self::assign_imported_object_terms((int)$group['post_id'], $ids, $group['taxonomy']);
+            }
+        }
+        wp_defer_term_counting(false);
     }
 
     private static function copy_wcs4_tables_from_prefix(string $sourcePrefix, array $postIdMap): array
@@ -1150,11 +1403,13 @@ class DB
             $prefix = $filter['prefix'];
             $value = $filter['value'];
             $searchById = $filter['searchById'];
-            if (str_starts_with($value, '!')) {
+            $valueIsString = is_string($value);
+            if ($valueIsString && str_starts_with($value, '!')) {
                 if (empty($filter['strict'])) {
                     continue;
                 }
                 $value = preg_replace('/^!/', '', $value);
+                $valueIsString = is_string($value);
             } elseif (!empty($filter['strict'])) {
                 continue;
             }
@@ -1162,7 +1417,7 @@ class DB
                 if (is_array($value)) {
                     $where[] = $prefix . '.ID IN (' . implode(', ', array_fill(0, count($value), '%s')) . ')';
                     $queryArr += $value;
-                } elseif (str_starts_with($value, '#')) {
+                } elseif ($valueIsString && str_starts_with($value, '#')) {
                     $where[] = $searchById;
                     $queryArr[] = preg_replace('/^#/', '', $value);
                 } else {

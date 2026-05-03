@@ -8,7 +8,6 @@
         include __DIR__ . '/partial/journal.php';
         include __DIR__ . '/partial/work_plan.php';
         include __DIR__ . '/partial/progress.php';
-        include __DIR__ . '/partial/appearance.php';
         include __DIR__ . '/partial/editor.php';
         submit_button(_x('Save Settings', 'options', 'wcs4'));
         wp_nonce_field('wcs4_save_options', 'wcs4_options_nonce'); ?>

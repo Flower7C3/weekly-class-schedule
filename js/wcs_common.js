@@ -298,7 +298,7 @@ let WCS4_LIB = (function ($) {
         }
         let $cancelEditing = $('#wcs4-cancel-editing');
         if ($cancelEditing.length === 0) {
-            let cancel_button = '<a href="#" class="button button-link" id="wcs4-cancel-editing">' + WCS4_AJAX_OBJECT[scope].cancel_editing + '</a>';
+            let cancel_button = '<span class="wp-block-button is-style-outline"><a href="#" class="wp-block-button__link wp-element-button" id="wcs4-cancel-editing">' + WCS4_AJAX_OBJECT[scope].cancel_editing + '</a></span>';
             $resetForm.after(cancel_button);
             $cancelEditing = $('#wcs4-cancel-editing');
             $cancelEditing.on('click', function () {
@@ -317,7 +317,7 @@ let WCS4_LIB = (function ($) {
         $('[data-wcs4="submit-form"]').html(WCS4_AJAX_OBJECT[scope].add_item);
         let $cancelCopying = $('#wcs4-cancel-copying');
         if ($cancelCopying.length === 0) {
-            let cancel_button = '<a href="#" class="button button-link" id="wcs4-cancel-copying">' + WCS4_AJAX_OBJECT[scope].cancel_copying + '</a>';
+            let cancel_button = '<span class="wp-block-button is-style-outline"><a href="#" class="wp-block-button__link wp-element-button" id="wcs4-cancel-copying">' + WCS4_AJAX_OBJECT[scope].cancel_copying + '</a></span>';
             $resetForm.after(cancel_button);
             $cancelCopying = $('#wcs4-cancel-copying');
             $cancelCopying.on('click', function () {
@@ -335,7 +335,7 @@ let WCS4_LIB = (function ($) {
         $('[data-wcs4="submit-form"]').html(WCS4_AJAX_OBJECT[scope].add_item);
         let $cancelCopying = $('#wcs4-cancel-copying');
         if ($cancelCopying.length === 0) {
-            let cancel_button = '<a href="#" class="button button-link" id="wcs4-cancel-copying">' + WCS4_AJAX_OBJECT[scope].cancel_copying + '</a>';
+            let cancel_button = '<span class="wp-block-button is-style-outline"><a href="#" class="wp-block-button__link wp-element-button" id="wcs4-cancel-copying">' + WCS4_AJAX_OBJECT[scope].cancel_copying + '</a></span>';
             $resetForm.after(cancel_button);
             $cancelCopying = $('#wcs4-cancel-copying');
             $cancelCopying.on('click', function () {

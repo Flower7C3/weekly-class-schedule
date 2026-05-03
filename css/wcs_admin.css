@@ -215,15 +215,6 @@ tr.is-active {
     color: #666;
 }
 
-.colorpicker-preview {
-    display: inline-block;
-    margin-left: 10px;
-    width: 20px;
-    -webkit-border-radius: 5px;
-    border-radius: 5px;
-    border: 1px solid #aaa;
-}
-
 .ex1-link-box {
     background-color: #D8D8D8;
     max-width: 500px;
@@ -349,9 +340,25 @@ form.readonly select, form[readonly] select, select.readonly, select[readonly] {
     width: 72%;
 }
 
-.button .dashicons {
-    position: relative;
-    top: 5px;
+/* Align Dashicons inside .button (core admin + WCS forms); avoid offset that hides glyphs. */
+.wcs4-management-form-wrapper .button .dashicons,
+.wcs4-management-page-callback .button .dashicons {
+    display: inline-block;
+    vertical-align: middle;
+    width: 1.125rem;
+    height: 1.125rem;
+    font-size: 1.125rem;
+    line-height: 1.125rem;
+    position: static;
+}
+
+.wcs4-management-page-callback .page-title-action .dashicons {
+    vertical-align: text-bottom;
+    margin-right: 0.2em;
+    width: 1.125rem;
+    height: 1.125rem;
+    font-size: 1.125rem;
+    line-height: 1.125rem;
 }
 
 fieldset label, .alignleft > label {

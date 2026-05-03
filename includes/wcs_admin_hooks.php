@@ -281,7 +281,8 @@ add_action('admin_init', array(Settings::class, 'register_wcs4_permalink_setting
  * Register styles and scripts.
  */
 add_action('admin_enqueue_scripts', static function () {
-    wp_register_style('wcs4_admin_css', WCS4_PLUGIN_URL . '/css/wcs_admin.css', false, WCS4_VERSION);
+    wp_enqueue_style('dashicons');
+    wp_register_style('wcs4_admin_css', WCS4_PLUGIN_URL . '/css/wcs_admin.css', array('dashicons'), WCS4_VERSION);
     wp_enqueue_style('wcs4_admin_css');
 });
 
@@ -304,21 +305,6 @@ add_action('admin_enqueue_scripts', static function () {
     wp_register_script('wcs4_snapshot_js', WCS4_PLUGIN_URL . '/js/wcs_snapshot.js', array('jquery'), WCS4_VERSION);
     wp_enqueue_script('wcs4_snapshot_js');
     wcs4_js_i18n('wcs4_admin_js');
-});
-
-/**
- * Loads plugins necessary for admin area such as the color picker.
- */
-add_action('admin_enqueue_scripts', static function () {
-    # Color picker
-    wp_register_style('wcs4_colorpicker_css', WCS4_PLUGIN_URL . '/plugins/colorpicker/css/colorpicker.min.css');
-    wp_enqueue_style('wcs4_colorpicker_css');
-
-    wp_enqueue_script(
-        'wcs4_colorpicker',
-        WCS4_PLUGIN_URL . '/plugins/colorpicker/js/colorpicker.min.js',
-        array('jquery')
-    );
 });
 
 function wcs4_help_wcs_shortcode_callback()

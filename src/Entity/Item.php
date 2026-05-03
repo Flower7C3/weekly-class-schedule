@@ -2,7 +2,6 @@
 
 namespace WCS4\Entity;
 
-use WCS4\Controller\Settings;
 use WCS4\Entity\Contract\EntityWithIdInterface;
 use WP_Error;
 
@@ -47,22 +46,14 @@ class Item implements EntityWithIdInterface
                 $this->info = $this->getName();
             }
             if (empty($this->linkName)) {
-                $a_target = '';
-                if ('yes' === Settings::get_option('open_template_links_in_new_tab')) {
-                    $a_target = 'target=_blank';
-                }
                 $this->linkName = !$this->hasPermalink()
                     ? $this->getName()
-                    : '<a href="' . $this->permalink . '" ' . $a_target . '>' . $this->getName() . '</a>';
+                    : '<a href="' . $this->permalink . '">' . $this->getName() . '</a>';
             }
             if (empty($this->linkShort)) {
-                $a_target = '';
-                if ('yes' === Settings::get_option('open_template_links_in_new_tab')) {
-                    $a_target = 'target=_blank';
-                }
                 $this->linkShort = !$this->hasPermalink()
                     ? $this->getNameShort()
-                    : '<a href="' . $this->getPermalink() . '" ' . $a_target . '>' . $this->getNameShort() . '</a>';
+                    : '<a href="' . $this->getPermalink() . '">' . $this->getNameShort() . '</a>';
             }
         }
     }

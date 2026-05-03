@@ -8,7 +8,6 @@ let WCS4_ADMIN = (function ($) {
     $(document).ready(function () {
         bind_filter_handler();
         bind_show_hide_handler();
-        bind_colorpickers();
         bind_reset_settings();
         bind_import_cutoff_toggle();
         load_editor();
@@ -130,24 +129,6 @@ let WCS4_ADMIN = (function ($) {
         });
     };
 
-    /**
-     * Binds the colorpicker plugin to the selectors
-     */
-    let bind_colorpickers = function () {
-        $(document).on('click.wcs_colorpicker', '.wcs_colorpicker', function (index) {
-            let elementName = $(this).prop('id');
-            $(this).ColorPicker({
-                onChange: function (hsb, hex, rgb) {
-                    $('#' + elementName).val(hex);
-                    $('.' + elementName).css('background', '#' + hex);
-                },
-                onBeforeShow: function (hsb, hex, rgb) {
-                    $(this).ColorPickerSetColor(this.value);
-                }
-            });
-        });
-    };
-
     let bind_reset_settings = function () {
         let $resetDb = $('#wcs4-reset-database');
         let $spinner = $resetDb.find('.spinner');
@@ -208,6 +189,12 @@ let WCS4_ADMIN = (function ($) {
                             });
                             $plan.append($ul);
                             $details.append($plan);
+                        } else if (
+                            typeof data.details.message === 'string'
+                            && data.details.message !== ''
+                            && String(data.response) === data.details.message
+                        ) {
+                            /* Human summary already in banner (e.g. import success); omit raw JSON. */
                         } else {
                             let $pre = $('<pre style="margin-top:10px; white-space:pre-wrap;">');
                             $pre.text(JSON.stringify(data.details, null, 2));
@@ -244,6 +231,13 @@ let WCS4_ADMIN = (function ($) {
                         });
                         $plan.append($ul);
                         $details.append($plan);
+                    } else if (
+                        json.details
+                        && typeof json.details.message === 'string'
+                        && json.details.message !== ''
+                        && String(msg) === json.details.message
+                    ) {
+                        /* Same as success: banner already shows the summary. */
                     } else if (json.details) {
                         let $pre = $('<pre style="margin-top:10px; white-space:pre-wrap;">');
                         $pre.text(JSON.stringify(json.details, null, 2));

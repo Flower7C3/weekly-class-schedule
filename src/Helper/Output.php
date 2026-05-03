@@ -349,7 +349,19 @@ class Output
         # Load custom scripts
         wp_enqueue_style('dashicons');
 
-        wp_register_style('wcs4_front_css', WCS4_PLUGIN_URL . '/css/wcs_front.css', false, WCS4_VERSION);
+        $wcs4_front_deps = array('dashicons', 'wp-block-library');
+        $stylesheet = get_stylesheet();
+        if (is_string($stylesheet) && '' !== $stylesheet) {
+            $theme_style_handle = $stylesheet . '-style';
+            if (wp_style_is($theme_style_handle, 'registered') || wp_style_is($theme_style_handle, 'enqueued')) {
+                $wcs4_front_deps[] = $theme_style_handle;
+            }
+        }
+        if (wp_style_is('global-styles', 'registered') || wp_style_is('global-styles', 'enqueued')) {
+            $wcs4_front_deps[] = 'global-styles';
+        }
+
+        wp_register_style('wcs4_front_css', WCS4_PLUGIN_URL . '/css/wcs_front.css', $wcs4_front_deps, WCS4_VERSION);
         wp_enqueue_style('wcs4_front_css');
 
         # Bootstrap 5 bundle: shortcode modals use data-bs-*; theme often has no BS JS on the front.

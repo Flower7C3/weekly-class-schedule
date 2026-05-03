@@ -250,12 +250,6 @@ function wcs4_select_list(
     return $output;
 }
 
-function wcs4_colorpicker($name, $default = 'DDFFDD', $size = 8)
-{
-    return '<input type="text" class="wcs_colorpicker" id="' . $name . '" name="' . $name . '" value="' . $default . '" size="' . $size . '">'
-        . '<span style="background: #' . $default . ';" class="colorpicker-preview ' . $name . '">&nbsp;</span>';
-}
-
 function wcs4_textfield($id, $name, $default = '', $size = 8)
 {
     return '<input type="text" id="' . $id . '" name="' . $name . '" value="' . $default . '" size="' . $size . '">';
@@ -348,17 +342,6 @@ function wcs4_validate_yes_no($data)
 {
     if ($data === 'yes' || $data === 'no') {
         return $data;
-    }
-    return false;
-}
-
-function wcs4_validate_color($data)
-{
-    $pattern = '/^[a-zA-Z0-9][a-zA-Z0-9][a-zA-Z0-9][a-zA-Z0-9][a-zA-Z0-9][a-zA-Z0-9]$/';
-    preg_match($pattern, $data, $matches);
-
-    if (!empty($matches)) {
-        return sanitize_text_field($data);
     }
     return false;
 }
