@@ -174,8 +174,8 @@ let WCS4_ADMIN = (function ($) {
                 }
             }
             $spinner.addClass('is-active');
-            $.post(WCS4_AJAX_OBJECT.ajax_url, entry, function (data) {
-                WCS4_LIB.show_message(data.response, data.result);
+            $.post(WCS4_AJAX_OBJECT.ajax_url, entry, function (data, textStatus, jqXHR) {
+                WCS4_LIB.show_message(data.response, jqXHR.status);
                 let $details = $('#wcs4-ajax-text-wrapper');
                 if ($details.length) {
                     $details.html('');

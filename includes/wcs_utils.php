@@ -329,7 +329,11 @@ function wcs4_perform_validation($fields, $options, $prefix = 'wcs4_')
 {
     $new_options = [];
     foreach ($fields as $id => $callback) {
-        $raw = isset($_POST[$prefix . $id]) ? wp_unslash($_POST[$prefix . $id]) : null;
+        $post_key = $prefix . $id;
+        if (!array_key_exists($post_key, $_POST)) {
+            continue;
+        }
+        $raw = wp_unslash($_POST[$post_key]);
         $value = $callback($raw);
         if ($value !== false) {
             $new_options[$id] = $value;

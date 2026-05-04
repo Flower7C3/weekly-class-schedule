@@ -99,6 +99,30 @@ tr.is-active {
     display: none;
 }
 
+/* Match WP admin notice framing (dry run details use .notice; success/error banner must too). */
+.wcs4-ajax-banner.updated,
+.wcs4-ajax-banner.error {
+    position: relative;
+    box-sizing: border-box;
+    max-width: 100%;
+    margin-top: 10px;
+    margin-bottom: 6px;
+    padding: 10px 38px 10px 12px;
+    border: 1px solid #c3c4c7;
+    border-left-width: 4px;
+    background: #fff;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.04);
+}
+
+.wcs4-ajax-banner.updated {
+    border-left-color: #00a32a;
+}
+
+.wcs4-ajax-banner.error {
+    border-left-color: #d63638;
+    background: #fcf0f1;
+}
+
 #wcs4-cancel-editing-wrapper {
     margin-bottom: 20px;
 }
