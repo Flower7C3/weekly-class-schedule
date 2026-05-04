@@ -109,7 +109,7 @@ add_action('admin_menu', static function () {
         'wcs4-snapshot',
         array(Snapshot::class, "callback_of_management_page")
     );
-    add_submenu_page(
+    $page_basic_options = add_submenu_page(
         'wcs4',
         __('Basic Options', 'wcs4'),
         __('Basic Options', 'wcs4'),
@@ -212,6 +212,40 @@ add_action('admin_menu', static function () {
             }
         }
     });
+    add_action('load-' . $page_basic_options, static function () use ($help_tabs) {
+        $screen = get_current_screen();
+        if (null !== $screen) {
+            $screen->add_help_tab($help_tabs['placeholders']);
+        }
+    });
+
+    // $hook_suffix for this screen is add_submenu_page() return value (e.g. schedule_page_wcs4-basic-options),
+    // not wcs4_page_wcs4-basic-options — see get_plugin_page_hookname() / $admin_page_hooks.
+    add_action(
+        'admin_enqueue_scripts',
+        static function ($hook_suffix) use ($page_basic_options) {
+            if ($hook_suffix !== $page_basic_options) {
+                return;
+            }
+            wp_enqueue_media();
+            wp_register_script(
+                'wcs4_basic_options',
+                WCS4_PLUGIN_URL . '/js/wcs4_basic_options.js',
+                array('jquery', 'media-editor'),
+                WCS4_VERSION,
+                true
+            );
+            wp_enqueue_script('wcs4_basic_options');
+            wp_localize_script(
+                'wcs4_basic_options',
+                'WCS4_BASIC_OPTIONS',
+                array(
+                    'frameTitle' => _x('Choose header image', 'media modal title', 'wcs4'),
+                )
+            );
+        },
+        25
+    );
 });
 
 /**
@@ -606,6 +640,13 @@ function wcs4_help_placeholders_callback()
                         '{updated by}',
                     ]
                 )
+            ); ?>
+        </li>
+        <li>
+            <?php
+            printf(
+                _x('Filled from WCS4 → Basic Options for HTML export (journal, work plans, progress): <code>%1$s</code>', 'help', 'wcs4'),
+                implode('</code>, <code>', ['{logo1}', '{logo2}', '{address}', '{heading}'])
             ); ?>
         </li>
         <li>

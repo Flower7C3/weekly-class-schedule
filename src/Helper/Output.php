@@ -515,4 +515,74 @@ class Output
         Snapshot::add_item($_GET, $filename, $content, Snapshot_Item::TYPE_CSV);
         self::render_csv($filename, $content);
     }
+
+    /** Option key prefix for the shared HTML print header (Basic Options). */
+    public const HTML_PRINT_HEADER_OPTION_BASE = 'html_print_header';
+
+    /**
+     * Values for export template placeholders <code>{logo1}</code>, <code>{logo2}</code>, <code>{heading}</code>, <code>{address}</code>.
+     *
+     * @param array<string, mixed> $options
+     * @return array{logo1: string, logo2: string, heading: string, address: string}
+     */
+    public static function html_print_header_fragments(array $options): array
+    {
+        $baseKey = self::HTML_PRINT_HEADER_OPTION_BASE;
+        $img1 = isset($options[$baseKey . '_img1_id']) ? absint($options[$baseKey . '_img1_id']) : 0;
+        $img2 = isset($options[$baseKey . '_img2_id']) ? absint($options[$baseKey . '_img2_id']) : 0;
+        $heading = isset($options[$baseKey . '_heading'])
+            ? self::format_print_header_wysiwyg_for_export((string) $options[$baseKey . '_heading'])
+            : '';
+        $address = isset($options[$baseKey . '_address'])
+            ? self::format_print_header_wysiwyg_for_export((string) $options[$baseKey . '_address'])
+            : '';
+
+        return array(
+            'logo1' => self::print_header_attachment_image($img1),
+            'logo2' => self::print_header_attachment_image($img2),
+            'heading' => $heading,
+            'address' => $address,
+        );
+    }
+
+    /**
+     * Same idea as front-end post content: typography + paragraph/line breaks from the editor.
+     */
+    private static function format_print_header_wysiwyg_for_export(string $raw): string
+    {
+        if ($raw === '') {
+            return '';
+        }
+        $html = wp_kses_stripslashes($raw);
+        if ($html === '') {
+            return '';
+        }
+        $html = wptexturize($html);
+
+        return wpautop($html);
+    }
+
+    private static function print_header_attachment_image(int $attachmentId): string
+    {
+        if ($attachmentId <= 0) {
+            return '&nbsp;';
+        }
+        if (!function_exists('wp_get_attachment_image')) {
+            return '&nbsp;';
+        }
+        $mime = get_post_mime_type($attachmentId);
+        if ($mime === false || strpos((string) $mime, 'image/') !== 0) {
+            return '&nbsp;';
+        }
+        $html = wp_get_attachment_image(
+            $attachmentId,
+            'medium',
+            false,
+            array(
+                'style' => 'max-width:100%;height:auto;max-height:110px;width:auto;',
+            )
+        );
+
+        return $html !== '' ? $html : '&nbsp;';
+    }
 }

@@ -239,46 +239,6 @@
             <tbody>
             <tr>
                 <th>
-                    <?= _x('Header HTML code', 'options general settings', 'wcs4') ?>
-                    <div class="wcs4-description">
-                        <?= _x(
-                            'Reusable HTML block you can inject into templates with <code>{header}</code>.',
-                            'options general settings',
-                            'wcs4'
-                        ) ?>
-                    </div>
-                </th>
-                <td>
-                    <?php
-                    wp_editor(
-                        wp_unslash($wcs4_options['journal_teachers_html_header_code'] ?? ''),
-                        'wcs4_journal_teachers_html_header_code',
-                        [
-                            'wpautop' => true,
-                            'media_buttons' => true,
-                            'textarea_name' => 'wcs4_journal_teachers_html_header_code',
-                            'textarea_rows' => 14,
-                        ]
-                    );
-                    ?>
-                </td>
-                <td>
-                    <?php
-                    wp_editor(
-                        wp_unslash($wcs4_options['journal_students_html_header_code'] ?? ''),
-                        'wcs4_journal_students_html_header_code',
-                        [
-                            'wpautop' => true,
-                            'media_buttons' => true,
-                            'textarea_name' => 'wcs4_journal_students_html_header_code',
-                            'textarea_rows' => 14,
-                        ]
-                    );
-                    ?>
-                </td>
-            </tr>
-            <tr>
-                <th>
                     <?= _x('Template HTML code', 'options general settings', 'wcs4') ?>
                 </th>
                 <td data-type="wcs4_journal_teachers_html_template_code">

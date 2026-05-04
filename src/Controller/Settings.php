@@ -38,8 +38,6 @@ class Settings
                     'schedule_template_table_details' => 'wcs4_validate_mock',
                     'schedule_template_list' => 'wcs4_validate_mock',
                     'journal_shortcode_template' => 'wcs4_validate_mock',
-                    'journal_teachers_html_header_code' => 'wcs4_validate_mock',
-                    'journal_students_html_header_code' => 'wcs4_validate_mock',
                     'journal_teachers_html_template_code' => 'wcs4_validate_mock',
                     'journal_teachers_html_template_style' => 'wcs4_validate_mock',
                     'journal_teachers_html_table_columns' => 'wcs4_validate_mock',
@@ -56,8 +54,6 @@ class Settings
                     'work_plan_shortcode_template_partial_type' => 'wcs4_validate_mock',
                     'work_plan_shortcode_template_periodic_type' => 'wcs4_validate_mock',
                     'work_plan_html_template_style' => 'wcs4_validate_mock',
-                    'work_plan_html_header_code_partial_type' => 'wcs4_validate_mock',
-                    'work_plan_html_header_code_periodic_type' => 'wcs4_validate_mock',
                     'work_plan_html_template_code_partial_type' => 'wcs4_validate_mock',
                     'work_plan_html_template_code_periodic_type' => 'wcs4_validate_mock',
                     'work_plan_html_table_columns' => 'wcs4_validate_mock',
@@ -69,8 +65,6 @@ class Settings
                     'progress_shortcode_template_partial_type' => 'wcs4_validate_mock',
                     'progress_shortcode_template_periodic_type' => 'wcs4_validate_mock',
                     'progress_html_template_style' => 'wcs4_validate_mock',
-                    'progress_html_header_code_partial_type' => 'wcs4_validate_mock',
-                    'progress_html_header_code_periodic_type' => 'wcs4_validate_mock',
                     'progress_html_template_code_partial_type' => 'wcs4_validate_mock',
                     'progress_html_template_code_periodic_type' => 'wcs4_validate_mock',
                     'progress_html_table_columns' => 'wcs4_validate_mock',
@@ -166,12 +160,10 @@ class Settings
                 wcs4_options_message(__('Options updated', 'wcs4'));
 
                 $fields = array(
-                    'journal_teachers_html_header_code' => 'wcs4_validate_mock',
-                    'journal_students_html_header_code' => 'wcs4_validate_mock',
-                    'work_plan_html_header_code_partial_type' => 'wcs4_validate_mock',
-                    'work_plan_html_header_code_periodic_type' => 'wcs4_validate_mock',
-                    'progress_html_header_code_partial_type' => 'wcs4_validate_mock',
-                    'progress_html_header_code_periodic_type' => 'wcs4_validate_mock',
+                    'html_print_header_img1_id' => 'wcs4_validate_attachment_id',
+                    'html_print_header_img2_id' => 'wcs4_validate_attachment_id',
+                    'html_print_header_heading' => 'wcs4_validate_mock',
+                    'html_print_header_address' => 'wcs4_validate_mock',
                 );
 
                 $new_options = wcs4_perform_validation($fields, $wcs4_options);
@@ -230,21 +222,47 @@ class Settings
     }
 
     /**
-     * Legacy option keys used *html_meta_code*; current keys use *html_header_code*.
+     * Drops legacy option keys no longer used by WCS4.
+     *
+     * @param array<string, mixed> $settings
+     * @return array<string, mixed>
      */
     private static function migrate_html_meta_code_option_keys(array $settings): array
     {
-        $pairs = [
-            'journal_teachers_html_meta_code' => 'journal_teachers_html_header_code',
-            'journal_students_html_meta_code' => 'journal_students_html_header_code',
-            'work_plan_html_meta_code_partial_type' => 'work_plan_html_header_code_partial_type',
-            'work_plan_html_meta_code_periodic_type' => 'work_plan_html_header_code_periodic_type',
-            'progress_html_meta_code_partial_type' => 'progress_html_header_code_partial_type',
-            'progress_html_meta_code_periodic_type' => 'progress_html_header_code_periodic_type',
-        ];
-        foreach ($pairs as $legacy => $current) {
-            if (!array_key_exists($current, $settings) && array_key_exists($legacy, $settings)) {
-                $settings[$current] = $settings[$legacy];
+        foreach (array(
+            'journal_teachers_html_meta_code',
+            'journal_students_html_meta_code',
+            'work_plan_html_meta_code_partial_type',
+            'work_plan_html_meta_code_periodic_type',
+            'progress_html_meta_code_partial_type',
+            'progress_html_meta_code_periodic_type',
+        ) as $legacyKey) {
+            unset($settings[$legacyKey]);
+        }
+
+        foreach (array(
+            'html_print_header_code',
+            'journal_teachers_html_header_code',
+            'journal_students_html_header_code',
+            'work_plan_html_header_code_partial_type',
+            'work_plan_html_header_code_periodic_type',
+            'progress_html_header_code_partial_type',
+            'progress_html_header_code_periodic_type',
+        ) as $obsoleteKey) {
+            unset($settings[$obsoleteKey]);
+        }
+
+        $obsoletePrintPrefixes = array(
+            'journal_teachers_html_header',
+            'journal_students_html_header',
+            'work_plan_html_header_partial',
+            'work_plan_html_header_periodic',
+            'progress_html_header_partial',
+            'progress_html_header_periodic',
+        );
+        foreach ($obsoletePrintPrefixes as $prefix) {
+            foreach (array('_img1_id', '_img2_id', '_heading', '_address') as $suffix) {
+                unset($settings[$prefix . $suffix]);
             }
         }
 

@@ -387,6 +387,28 @@ function wcs4_validate_mock($data)
     return $data;
 }
 
+/**
+ * Media library attachment ID (0 = none). Invalid or non-image IDs become 0.
+ *
+ * @param mixed $data
+ * @return int|false
+ */
+function wcs4_validate_attachment_id($data)
+{
+    $id = absint($data);
+    if ($id === 0) {
+        return 0;
+    }
+    if (function_exists('get_post') && get_post_type($id) === 'attachment') {
+        $mime = get_post_mime_type($id);
+        if (is_string($mime) && strpos($mime, 'image/') === 0) {
+            return $id;
+        }
+    }
+
+    return 0;
+}
+
 function wcs4_js_i18n($handle)
 {
     wp_localize_script($handle, 'WCS4_AJAX_OBJECT', array(

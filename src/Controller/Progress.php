@@ -291,8 +291,12 @@ class Progress implements AjaxGetItemHandlerInterface, ManagesTemplateInterface
                 $template_style = wp_unslash($wcs4_options['progress_html_template_style']);
                 $template_code = wp_kses_stripslashes($wcs4_options['progress_html_template_code_periodic_type']);
                 $template_code = Output::process_template($item, $template_code);
-                $header_html = wp_kses_stripslashes($wcs4_options['progress_html_header_code_periodic_type'] ?? '');
-                $template_code = str_replace('{header}', $header_html, $template_code);
+                $header_frag = Output::html_print_header_fragments($wcs4_options);
+                $template_code = str_replace(
+                    ['{logo1}', '{logo2}', '{heading}', '{address}'],
+                    [$header_frag['logo1'], $header_frag['logo2'], $header_frag['heading'], $header_frag['address']],
+                    $template_code
+                );
                 Output::save_snapshot_and_render_html(
                     self::TEMPLATE_DIR . 'export_type_periodic.html.php',
                     $template_style,
@@ -333,14 +337,17 @@ class Progress implements AjaxGetItemHandlerInterface, ManagesTemplateInterface
         $template_style = wp_unslash($wcs4_options['progress_html_template_style']);
         $template_code = wp_kses_stripslashes($wcs4_options['progress_html_template_code_partial_type']);
         $template_code = Output::process_template(null, $template_code);
-        $header_html = wp_kses_stripslashes($wcs4_options['progress_html_header_code_partial_type'] ?? '');
+        $header_frag = Output::html_print_header_fragments($wcs4_options);
         $template_code = str_replace([
             '{date from}',
             '{date upto}',
             '{current datetime}',
             '{current date}',
             '{current time}',
-            '{header}',
+            '{logo1}',
+            '{logo2}',
+            '{heading}',
+            '{address}',
             '{meta}',
             '{table}',
         ], [
@@ -349,7 +356,10 @@ class Progress implements AjaxGetItemHandlerInterface, ManagesTemplateInterface
             date('Y-m-d H:i:s'),
             date('Y-m-d'),
             date('H:i:s'),
-            $header_html,
+            $header_frag['logo1'],
+            $header_frag['logo2'],
+            $header_frag['heading'],
+            $header_frag['address'],
             $meta_markup,
             $table,
         ], $template_code);

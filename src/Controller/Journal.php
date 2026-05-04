@@ -336,17 +336,17 @@ class Journal implements AjaxGetItemHandlerInterface, ManagesTemplateInterface
         $template_style = wp_unslash($wcs4_options['journal_' . $view . '_html_template_style']);
         $template_code = wp_kses_stripslashes($wcs4_options['journal_' . $view . '_html_template_code']);
         $template_code = Output::process_template(null, $template_code);
-        $header_html = wp_kses_stripslashes(
-            $wcs4_options[('teachers' === $view ? 'journal_teachers_html_header_code' : 'journal_students_html_header_code')]
-            ?? ''
-        );
+        $header_frag = Output::html_print_header_fragments($wcs4_options);
         $template_code = str_replace([
             '{date from}',
             '{date upto}',
             '{current datetime}',
             '{current date}',
             '{current time}',
-            '{header}',
+            '{logo1}',
+            '{logo2}',
+            '{heading}',
+            '{address}',
             '{meta}',
             '{table}',
         ], [
@@ -355,7 +355,10 @@ class Journal implements AjaxGetItemHandlerInterface, ManagesTemplateInterface
             date('Y-m-d H:i:s'),
             date('Y-m-d'),
             date('H:i:s'),
-            $header_html,
+            $header_frag['logo1'],
+            $header_frag['logo2'],
+            $header_frag['heading'],
+            $header_frag['address'],
             $meta_markup,
             $table,
         ], $template_code);
