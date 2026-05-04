@@ -18,13 +18,12 @@ $editor_address_id = 'wcs4_' . $basename . '_address';
     <legend>
         <strong><?= esc_html(_x('Header Settings', 'print header options', 'wcs4')) ?></strong>
     </legend>
-    <table class="form-table" role="presentation">
-        <tbody>
-        <tr>
-            <th scope="row"><?= esc_html(_x('Logo 1', 'print header options', 'wcs4')) ?></th>
-            <td>
+    <div class="wcs4-print-header-settings">
+        <div class="wcs4-print-header-settings__row">
+            <div class="wcs4-print-header-settings__col wcs4-print-header-settings__col--logo">
+                <div class="wcs4-print-header-settings__label"><?= esc_html(_x('Logo 1', 'print header options', 'wcs4')) ?></div>
                 <input type="hidden" name="<?= esc_attr($input_img1) ?>" id="<?= esc_attr($input_img1) ?>"
-                       value="<?= esc_attr((string) $img1) ?>">
+                       value="<?= esc_attr((string)$img1) ?>">
                 <p>
                     <button type="button" class="button wcs4-pick-print-header-image"
                             data-target="<?= esc_attr($input_img1) ?>">
@@ -38,15 +37,13 @@ $editor_address_id = 'wcs4_' . $basename . '_address';
                 <div class="wcs4-print-header-preview" data-for="<?= esc_attr($input_img1) ?>">
                     <?php
                     if ($img1 > 0) {
-                        echo wp_get_attachment_image($img1, 'thumbnail', false);
+                        echo wp_get_attachment_image($img1, 'medium', false);
                     }
                     ?>
                 </div>
-            </td>
-        </tr>
-        <tr>
-            <th scope="row"><?= esc_html(_x('Address', 'print header options', 'wcs4')) ?></th>
-            <td>
+            </div>
+            <div class="wcs4-print-header-settings__col wcs4-print-header-settings__col--address">
+                <div class="wcs4-print-header-settings__label"><?= esc_html(_x('Address', 'print header options', 'wcs4')) ?></div>
                 <?php
                 wp_editor(
                     wp_unslash($wcs4_options[$basename . '_address'] ?? ''),
@@ -59,13 +56,11 @@ $editor_address_id = 'wcs4_' . $basename . '_address';
                     )
                 );
                 ?>
-            </td>
-        </tr>
-        <tr>
-            <th scope="row"><?= esc_html(_x('Logo 2', 'print header options', 'wcs4')) ?></th>
-            <td>
+            </div>
+            <div class="wcs4-print-header-settings__col wcs4-print-header-settings__col--logo">
+                <div class="wcs4-print-header-settings__label"><?= esc_html(_x('Logo 2', 'print header options', 'wcs4')) ?></div>
                 <input type="hidden" name="<?= esc_attr($input_img2) ?>" id="<?= esc_attr($input_img2) ?>"
-                       value="<?= esc_attr((string) $img2) ?>">
+                       value="<?= esc_attr((string)$img2) ?>">
                 <p>
                     <button type="button" class="button wcs4-pick-print-header-image"
                             data-target="<?= esc_attr($input_img2) ?>">
@@ -79,29 +74,26 @@ $editor_address_id = 'wcs4_' . $basename . '_address';
                 <div class="wcs4-print-header-preview" data-for="<?= esc_attr($input_img2) ?>">
                     <?php
                     if ($img2 > 0) {
-                        echo wp_get_attachment_image($img2, 'thumbnail', false);
+                        echo wp_get_attachment_image($img2, 'medium', false);
                     }
                     ?>
                 </div>
-            </td>
-        </tr>
-        <tr>
-            <th scope="row"><?= esc_html(_x('Heading', 'print header options', 'wcs4')) ?></th>
-            <td>
-                <?php
-                wp_editor(
-                    wp_unslash($wcs4_options[$basename . '_heading'] ?? ''),
-                    $editor_heading_id,
-                    array(
-                        'wpautop' => true,
-                        'media_buttons' => false,
-                        'textarea_name' => 'wcs4_' . $basename . '_heading',
-                        'textarea_rows' => 6,
-                    )
-                );
-                ?>
-            </td>
-        </tr>
-        </tbody>
-    </table>
+            </div>
+        </div>
+        <div class="wcs4-print-header-settings__heading">
+            <div class="wcs4-print-header-settings__label"><?= esc_html(_x('Heading caption', 'print header options', 'wcs4')) ?></div>
+            <?php
+            wp_editor(
+                wp_unslash($wcs4_options[$basename . '_heading'] ?? ''),
+                $editor_heading_id,
+                array(
+                    'wpautop' => true,
+                    'media_buttons' => false,
+                    'textarea_name' => 'wcs4_' . $basename . '_heading',
+                    'textarea_rows' => 6,
+                )
+            );
+            ?>
+        </div>
+    </div>
 </fieldset>
