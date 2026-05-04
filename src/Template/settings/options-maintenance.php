@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Maintenance / destructive actions (Schedule → Maintenance Options).
+ * Maintenance / destructive actions (Schedule → Maintenance tools).
  */
 
 use WCS4\Controller\Settings;
@@ -113,11 +113,9 @@ $clear_table_actions = array(
 ?>
 <div class="wrap" id="wcs4-reset-database">
     <h1 class="wp-heading-inline">
-        <?= _x('Weekly Class Schedule Maintenance Settings', 'options', 'wcs4') ?>
+        <?= _x('Weekly Class Schedule Maintenance Settings', 'page title', 'wcs4') ?>
     </h1>
     <hr class="wp-header-end">
-
-    <p><?= _x('Maintenance actions for WCS4 data.', 'reset database', 'wcs4') ?></p>
 
     <fieldset class="wcs4-maintenance-fieldset">
         <legend class="wcs4-maintenance-fieldset__legend">

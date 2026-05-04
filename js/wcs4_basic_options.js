@@ -12,15 +12,15 @@
                 $wrap.append($('<img>', {
                     src: url,
                     alt: '',
-                    class: 'attachment-thumbnail size-thumbnail',
+                    class: 'attachment-medium size-medium',
                     loading: 'lazy',
                     decoding: 'async'
                 }));
             }
         }
         if (selectedJson && selectedJson.url) {
-            var u = selectedJson.sizes && selectedJson.sizes.thumbnail
-                ? selectedJson.sizes.thumbnail.url
+            var u = selectedJson.sizes && selectedJson.sizes.medium
+                ? selectedJson.sizes.medium.url
                 : selectedJson.url;
             showUrl(u);
             return;
@@ -30,8 +30,8 @@
         }
         var att = wp.media.attachment(attachmentId);
         att.fetch().done(function () {
-            var url = att.get('sizes') && att.get('sizes').thumbnail
-                ? att.get('sizes').thumbnail.url
+            var url = att.get('sizes') && att.get('sizes').medium
+                ? att.get('sizes').medium.url
                 : att.get('url');
             showUrl(url);
         });

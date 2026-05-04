@@ -5,7 +5,7 @@
 
 ?>
 <div class="wrap wcs4-management-page-callback">
-    <h1 class="wp-heading-inline"><?= _x('Work Plan Management', 'manage work plans', 'wcs4') ?></h1>
+    <h1 class="wp-heading-inline"><?= _x('Work Plans Management', 'page title', 'wcs4') ?></h1>
     <a href="#" class="page-title-action" id="wcs4-show-form"><span class="dashicons dashicons-plus-alt" aria-hidden="true"></span> <?= _x('Add Work Plan', 'button text', 'wcs4') ?></a>
     <hr class="wp-header-end">
     <div id="ajax-response"></div>

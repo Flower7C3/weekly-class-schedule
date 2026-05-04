@@ -464,7 +464,7 @@ class Settings
      */
     public static function register_wcs4_permalink_settings_section(): void
     {
-        if (!is_admin() || !current_user_can('manage_options') || !current_user_can(WCS4_FULL_ADVANCED_CAPABILITY)) {
+        if (!is_admin() || !current_user_can('manage_options') || !current_user_can(WCS4_ADVANCED_OPTIONS_CAPABILITY)) {
             return;
         }
         global $pagenow;
@@ -507,7 +507,7 @@ class Settings
         if (empty($_POST['wcs4_permalink_section']) || '1' !== $_POST['wcs4_permalink_section']) {
             return;
         }
-        if (!current_user_can('manage_options') || !current_user_can(WCS4_FULL_ADVANCED_CAPABILITY)) {
+        if (!current_user_can('manage_options') || !current_user_can(WCS4_ADVANCED_OPTIONS_CAPABILITY)) {
             return;
         }
         if (!isset($_POST['_wpnonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['_wpnonce'])), 'update-permalink')) {

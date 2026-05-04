@@ -516,7 +516,7 @@ class Output
         self::render_csv($filename, $content);
     }
 
-    /** Option key prefix for the shared HTML print header (Basic Options). */
+    /** Option key prefix for the shared HTML print header (Basic options). */
     public const HTML_PRINT_HEADER_OPTION_BASE = 'html_print_header';
 
     /**
@@ -531,10 +531,10 @@ class Output
         $img1 = isset($options[$baseKey . '_img1_id']) ? absint($options[$baseKey . '_img1_id']) : 0;
         $img2 = isset($options[$baseKey . '_img2_id']) ? absint($options[$baseKey . '_img2_id']) : 0;
         $heading = isset($options[$baseKey . '_heading'])
-            ? self::format_print_header_wysiwyg_for_export((string) $options[$baseKey . '_heading'])
+            ? self::format_print_header_wysiwyg_for_export((string)$options[$baseKey . '_heading'])
             : '';
         $address = isset($options[$baseKey . '_address'])
-            ? self::format_print_header_wysiwyg_for_export((string) $options[$baseKey . '_address'])
+            ? self::format_print_header_wysiwyg_for_export((string)$options[$baseKey . '_address'])
             : '';
 
         return array(
@@ -571,7 +571,7 @@ class Output
             return '&nbsp;';
         }
         $mime = get_post_mime_type($attachmentId);
-        if ($mime === false || strpos((string) $mime, 'image/') !== 0) {
+        if ($mime === false || strpos((string)$mime, 'image/') !== 0) {
             return '&nbsp;';
         }
         $html = wp_get_attachment_image(
@@ -584,5 +584,368 @@ class Output
         );
 
         return $html !== '' ? $html : '&nbsp;';
+    }
+
+    public static function wcs4_help_wcs_shortcode_callback(): void
+    {
+        ?>
+        <h3>
+            <?php
+            printf(
+                _x(
+                    'To display all the lessons in a single schedule, simply enter the shortcode <code>%1$s</code> inside a page or a post.',
+                    'help',
+                    'wcs4'
+                ),
+                '[wcs_schedule]'
+            ); ?>
+        </h3>
+        <hr>
+        <p>
+            <?php
+            printf(
+                _x(
+                    'It\'s also possible to output the schedule as a list using the list layout: <code>%1$s</code>.',
+                    'help',
+                    'wcs4'
+                ),
+                '[wcs_schedule layout=list]'
+            ); ?>
+            <?php
+            printf(
+                _x('You can also specify layout template.', 'help', 'wcs4')
+            ); ?>
+            <?php
+            _ex('For example:', 'help', 'wcs4'); ?>
+        </p>
+        <ul>
+            <li><?php
+                printf(
+                    _x('Custom template for table layout: <code>%1$s</code>', 'help', 'wcs4'),
+                    '[wcs_schedule layout=table template_table_short="CODE" template_table_details="CODE"]'
+                ); ?></li>
+            <li><?php
+                printf(
+                    _x('Custom template for list layout: <code>%1$s</code>', 'help', 'wcs4'),
+                    '[wcs_schedule layout=list template_list="CODE"]'
+                ); ?></li>
+        </ul>
+        <p>
+            <?php
+            printf(
+                _x('See available <code>%1$s</code> in <strong>%2$s</strong> tab.', 'help', 'wcs4'),
+                'CODE',
+                _x('Placeholders', 'help title', 'wcs4')
+            ); ?>
+        </p>
+        <hr>
+        <p>
+            <?php
+            _ex(
+                'In order to filter a schedule by a specific subject, teacher, student, classroom, or any other combination of the four, use the subject, teacher, student, and classroom attributes.',
+                'help',
+                'wcs4'
+            ); ?>
+            <?php
+            _ex('For example:', 'help', 'wcs4'); ?>
+        </p>
+        <ul>
+            <li><?php
+                printf(
+                    _x('Only display lessons of "%2$s" subject: <code>%1$s</code>', 'help', 'wcs4'),
+                    '[wcs_schedule subject="Yoga"]',
+                    'Yoga'
+                ); ?></li>
+            <li><?php
+                printf(
+                    _x('Only display lessons by "%2$s" teacher: <code>%1$s</code>', 'help', 'wcs4'),
+                    '[wcs_schedule teacher="John Doe"]',
+                    'John Doe'
+                ); ?></li>
+            <li><?php
+                printf(
+                    _x('Only display lessons for "%2$s" student: <code>%1$s</code>', 'help', 'wcs4'),
+                    '[wcs_schedule student="Jane Doe"]',
+                    'Jane Doe'
+                ); ?></li>
+            <li><?php
+                printf(
+                    _x('Only display lessons in "%2$s" classroom: <code>%1$s</code>', 'help', 'wcs4'),
+                    '[wcs_schedule classroom="Classroom A"]',
+                    'Classroom A'
+                ); ?></li>
+        </ul>
+        <hr>
+        <p>
+            <?php
+            printf(
+                _x('A finalized shortcode may look something like <code>%1$s</code>', 'help', 'wcs4'),
+                '[wcs_schedule classroom="Classroom A" layout=list limit="" paged=""]'
+            ); ?>
+        </p>
+        <?php
+    }
+
+    public static function wcs4_help_journal_shortcode_callback(): void
+    {
+        ?>
+        <h3>
+            <?php
+            printf(
+                _x(
+                    'To display all the journals in a single schedule, simply enter the shortcode <code>%1$s</code> inside a page or a post.',
+                    'help',
+                    'wcs4'
+                ),
+                '[wcs_journal]'
+            ); ?>
+        </h3>
+        <hr>
+        <p>
+            <?php
+            printf(_x('You can also specify layout template.', 'help', 'wcs4')); ?>
+            <?php
+            _ex('For example:', 'help', 'wcs4'); ?>
+        </p>
+        <ul>
+            <li><?php
+                printf(
+                    _x('Custom template for journal layout: <code>%1$s</code>', 'help', 'wcs4'),
+                    '[wcs_journal template="CODE"]'
+                ); ?></li>
+        </ul>
+        <p>
+            <?php
+            printf(
+                _x('See available <code>%1$s</code> in <strong>%2$s</strong> tab.', 'help', 'wcs4'),
+                'CODE',
+                _x('Placeholders', 'help title', 'wcs4')
+            ); ?>
+        </p>
+        <hr>
+        <p>
+            <?php
+            _ex(
+                'In order to filter a journal by a specific subject, teacher, student, or any other combination of the three, use the subject, student and teacher attributes.',
+                'help',
+                'wcs4'
+            ); ?>
+            <?php
+            _ex('For example:', 'help', 'wcs4'); ?>
+        </p>
+        <ul>
+            <li><?php
+                printf(
+                    _x('Only display journals of "%2$s" subject: <code>%1$s</code>', 'help', 'wcs4'),
+                    '[wcs_journal subject="Yoga"]',
+                    'Yoga'
+                ); ?></li>
+            <li><?php
+                printf(
+                    _x('Only display journals by "%2$s" teacher: <code>%1$s</code>', 'help', 'wcs4'),
+                    '[wcs_journal teacher="John Doe"]',
+                    'John Doe'
+                ); ?></li>
+            <li><?php
+                printf(
+                    _x('Only display journals for "%2$s" student: <code>%1$s</code>', 'help', 'wcs4'),
+                    '[wcs_journal student="Jane Doe"]',
+                    'Jane Doe'
+                ); ?></li>
+            <li><?php
+                printf(
+                    _x('Only display journals in "%2$s" date from: <code>%1$s</code>', 'help', 'wcs4'),
+                    '[wcs_journal date_from="2020-01-01"]',
+                    '2020-01-01'
+                ); ?></li>
+            <li><?php
+                printf(
+                    _x('Only display journals in "%2$s" date upto: <code>%1$s</code>', 'help', 'wcs4'),
+                    '[wcs_journal date_upto="2020-01-31"]',
+                    '2020-01-31'
+                ); ?></li>
+        </ul>
+        <hr>
+        <p>
+            <?php
+            printf(
+                _x('A finalized shortcode may look something like <code>%1$s</code>', 'help', 'wcs4'),
+                '[wcs_journal classroom="Classroom A" limit="" paged=""]'
+            ); ?>
+        </p>
+        <?php
+    }
+
+    public static function wcs4_help_allowed_html_callback(): void
+    {
+        ?>
+        <p>
+            <?php
+            _ex('Certain HTML tags are allowed in template design:', 'help', 'wcs4'); ?>
+            <br>
+            <?php
+            foreach ($GLOBALS['wcs4_allowed_html'] as $tag_name => $tag_options) { ?>
+                <code>&lt;<?php
+                    echo $tag_name ?><?php
+                    if (!empty($tag_options)) {
+                        echo ' ' . implode('=* ', array_keys($tag_options)) . '=*';
+                    } ?>&gt;</code>
+                <?php
+            } ?>
+        </p>
+        <?php
+    }
+
+    public static function wcs4_help_placeholders_callback(): void
+    {
+        ?>
+        <p>
+            <?php
+            _ex('Use placeholders to design the way the class details appear in the schedule.', 'help', 'wcs4'); ?>
+            <?php
+            _ex('Available placeholders:', 'help', 'wcs4'); ?>
+        </p>
+        <ul>
+            <li>
+                <?php
+                printf(
+                    _x('Will display general info for schedule: <code>%1$s</code>', 'help', 'wcs4'),
+                    implode(
+                        '</code>, <code>',
+                        ['{schedule no}', '{date}', '{weekday}', '{start time}', '{end time}', '{notes}',]
+                    )
+                ); ?>
+            </li>
+            <li>
+                <?php
+                printf(
+                    _x('Will display general info for journal: <code>%1$s</code>', 'help', 'wcs4'),
+                    implode(
+                        '</code>, <code>',
+                        [
+                            '{item no}',
+                            '{date}',
+                            '{start time}',
+                            '{end time}',
+                            '{duration time}',
+                            '{topic}',
+                            '{type}',
+                            '{type icon}',
+                            '{created at}',
+                            '{created by}',
+                            '{updated at}',
+                            '{updated by}',
+                        ]
+                    )
+                ); ?>
+            </li>
+            <li>
+                <?php
+                printf(
+                    _x('Will display general info for work plans: <code>%1$s</code>', 'help', 'wcs4'),
+                    implode(
+                        '</code>, <code>',
+                        [
+                            '{item no}',
+                            '{start date}',
+                            '{end date}',
+                            '{diagnosis}',
+                            '{strengths}',
+                            '{goals}',
+                            '{methods}',
+                            '{type}',
+                            '{type icon}',
+                            '{created at}',
+                            '{created at date}',
+                            '{created by}',
+                            '{updated at}',
+                            '{updated at date}',
+                            '{updated by}',
+                        ]
+                    )
+                ); ?>
+            </li>
+            <li>
+                <?php
+                printf(
+                    _x('Will display general info for progress: <code>%1$s</code>', 'help', 'wcs4'),
+                    implode(
+                        '</code>, <code>',
+                        [
+                            '{item no}',
+                            '{start date}',
+                            '{end date}',
+                            '{improvements}',
+                            '{indications}',
+                            '{type}',
+                            '{type icon}',
+                            '{created at}',
+                            '{created at date}',
+                            '{created by}',
+                            '{updated at}',
+                            '{updated at date}',
+                            '{updated by}',
+                        ]
+                    )
+                ); ?>
+            </li>
+            <li>
+                <?php
+                printf(
+                    _x(
+                        'Filled from WCS4 → Basic options for HTML export (journal, work plans, progress): <code>%1$s</code>',
+                        'help',
+                        'wcs4'
+                    ),
+                    implode('</code>, <code>', ['{logo1}', '{logo2}', '{address}', '{heading}'])
+                ); ?>
+            </li>
+            <li>
+                <?php
+                printf(
+                    _x('Will display full name: <code>%1$s</code>', 'help', 'wcs4'),
+                    implode('</code>, <code>', ['{subject}', '{teacher}', '{student}', '{classroom}',])
+                ); ?>
+            </li>
+            <li>
+                <?php
+                printf(
+                    _x('Will display full name as link to page: <code>%1$s</code>', 'help', 'wcs4'),
+                    implode(
+                        '</code>, <code>',
+                        ['{subject link}', '{teacher link}', '{student link}', '{classroom link}',]
+                    )
+                ); ?>
+            </li>
+            <li>
+                <?php
+                printf(
+                    _x('Will display full name with description in qTip: <code>%1$s</code>', 'help', 'wcs4'),
+                    implode(
+                        '</code>, <code>',
+                        ['{subject info}', '{teacher info}', '{student info}', '{classroom info}',]
+                    )
+                ); ?>
+            </li>
+            <li>
+                <?php
+                printf(
+                    _x('Will display short name (initials): <code>%1$s</code>', 'help', 'wcs4'),
+                    implode('</code>, <code>', ['{sub}', '{tea}', '{stu}', '{class}',])
+                ); ?>
+            </li>
+            <li>
+                <?php
+                printf(
+                    _x('Will display short name as link to page: <code>%1$s</code>', 'help', 'wcs4'),
+                    implode('</code>, <code>', ['{sub link}', '{tea link}', '{stu link}', '{class link}',])
+                ); ?>
+            </li>
+        </ul>
+        <p>
+            <?php
+            _ex('If item is private, full and short names will be replaced with item first letter.', 'help', 'wcs4'); ?>
+        </p>
+        <?php
     }
 }

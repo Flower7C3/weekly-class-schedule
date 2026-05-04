@@ -11,7 +11,7 @@
 <input type="hidden" name="wcs4_permalink_section" value="1"/>
 
 <h2 class="title">
-    <?= _x('Weekly Class Schedule URL Settings', 'options', 'wcs4') ?>
+    <?= _x('Weekly Class Schedule URL Settings', 'page title', 'wcs4') ?>
 </h2>
 
 <table class="settings form-table">

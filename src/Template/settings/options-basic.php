@@ -5,7 +5,7 @@
 ?>
 <div class="wrap">
     <h1 class="wp-heading-inline">
-        <?= _x('Weekly Class Schedule Basic Settings', 'options', 'wcs4') ?>
+        <?= _x('Weekly Class Schedule Basic options', 'page title', 'wcs4') ?>
     </h1>
     <form action="" method="post" name="wcs4_basic_settings">
         <?php
