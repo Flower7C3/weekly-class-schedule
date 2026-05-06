@@ -788,7 +788,7 @@ class DB
                 'comment_status' => $row['comment_status'],
                 'ping_status' => $row['ping_status'],
                 'post_password' => $row['post_password'],
-                'post_name' => $row['post_name'],
+                // Do not copy source slug; let WP generate it (and our save_post hook will hash it if enabled).
                 'to_ping' => $row['to_ping'],
                 'pinged' => $row['pinged'],
                 'post_modified' => $row['post_modified'],
@@ -804,6 +804,15 @@ class DB
                 continue;
             }
             $postIdMap[$oldId] = (int)$newId;
+
+            // Ensure GUID is unique and non-empty (imported posts can otherwise end up with a repeated/empty guid).
+            $wpdb->update(
+                $wpdb->posts,
+                ['guid' => home_url('/?p=' . (int)$newId)],
+                ['ID' => (int)$newId],
+                ['%s'],
+                ['%d']
+            );
 
             // Copy postmeta.
             $metaRows = $wpdb->get_results(
