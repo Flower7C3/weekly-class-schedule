@@ -207,25 +207,31 @@ class Progress implements SchemaCreatableInterface, TruncatableRepositoryInterfa
 
         $sql_progress = "CREATE TABLE IF NOT EXISTS `$table_progress` (
             `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-            `subject_id` int(20) unsigned NOT NULL,
             `student_id` int(20) unsigned NOT NULL,
             `start_date` date NOT NULL,
             `end_date` date NOT NULL,
             `indications` text,
             `improvements` text,
-            `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-            `updated_at` DATETIME DEFAULT NULL,
-            `created_by` INT NULL,
-            `updated_by` INT NULL,
-            PRIMARY KEY (`id`)
+            `type` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+            `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            `updated_at` datetime DEFAULT NULL,
+            `created_by` int(11) DEFAULT NULL,
+            `updated_by` int(11) DEFAULT NULL,
+            PRIMARY KEY  (`id`),
+            KEY `student_id` (`student_id`),
+            KEY `type` (`type`)
         )";
         $sql_progress_subject = "CREATE TABLE IF NOT EXISTS `$table_progress_subject` (
             `id` int(11) unsigned NOT NULL,
-            `subject_id` int(20) unsigned NOT NULL
+            `subject_id` int(20) unsigned NOT NULL,
+            PRIMARY KEY  (`id`, `subject_id`),
+            KEY `subject_id` (`subject_id`)
         )";
         $sql_progress_teacher = "CREATE TABLE IF NOT EXISTS `$table_progress_teacher` (
             `id` int(11) unsigned NOT NULL,
-            `teacher_id` int(20) unsigned NOT NULL
+            `teacher_id` int(20) unsigned NOT NULL,
+            PRIMARY KEY  (`id`, `teacher_id`),
+            KEY `teacher_id` (`teacher_id`)
         )";
         dbDelta($sql_progress);
         dbDelta($sql_progress_subject);

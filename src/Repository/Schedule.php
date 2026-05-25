@@ -33,19 +33,26 @@ class Schedule implements SchemaCreatableInterface, TruncatableRepositoryInterfa
             `visible` tinyint(1) NOT NULL DEFAULT '1',
             `collision_detection` tinyint(1) NOT NULL DEFAULT '1',
             `notes` text,
-            `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-            `updated_at` DATETIME DEFAULT NULL,
-            `created_by` INT NULL,
-            `updated_by` INT NULL,
-            PRIMARY KEY (`id`)
+            `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            `updated_at` datetime DEFAULT NULL,
+            `created_by` int(11) DEFAULT NULL,
+            `updated_by` int(11) DEFAULT NULL,
+            PRIMARY KEY  (`id`),
+            KEY `subject_id` (`subject_id`),
+            KEY `classroom_id` (`classroom_id`),
+            KEY `weekday` (`weekday`)
         )";
         $sql_schedule_teacher = "CREATE TABLE IF NOT EXISTS `$table_schedule_teacher` (
             `id` int(11) unsigned NOT NULL,
-            `teacher_id` int(20) unsigned NOT NULL
+            `teacher_id` int(20) unsigned NOT NULL,
+            PRIMARY KEY  (`id`, `teacher_id`),
+            KEY `teacher_id` (`teacher_id`)
         )";
         $sql_schedule_student = "CREATE TABLE IF NOT EXISTS `$table_schedule_student` (
             `id` int(11) unsigned NOT NULL,
-            `student_id` int(20) unsigned NOT NULL
+            `student_id` int(20) unsigned NOT NULL,
+            PRIMARY KEY  (`id`, `student_id`),
+            KEY `student_id` (`student_id`)
         )";
         dbDelta($sql_schedule);
         dbDelta($sql_schedule_teacher);

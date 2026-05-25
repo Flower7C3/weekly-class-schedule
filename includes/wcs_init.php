@@ -376,3 +376,7 @@ add_action('wcs4_activate_action', static function () {
     }
 });
 
+add_action('plugins_loaded', static function () {
+    DB::maybe_upgrade_schema();
+}, 20);
+

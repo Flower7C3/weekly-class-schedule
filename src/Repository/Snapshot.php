@@ -34,7 +34,9 @@ class Snapshot implements SchemaCreatableInterface, TruncatableRepositoryInterfa
             `content_hash` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
             `content_type` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
             `version` int(11) NOT NULL,
-            PRIMARY KEY (`id`)
+            PRIMARY KEY  (`id`),
+            KEY `action` (`action`),
+            KEY `created_at` (`created_at`)
          )";
         dbDelta($sql_snapshots);
     }

@@ -220,19 +220,26 @@ class Journal implements SchemaCreatableInterface, TruncatableRepositoryInterfac
             `timezone` varchar(255) NOT NULL DEFAULT 'UTC',
             `topic` text,
             `type` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-            `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-            `updated_at` DATETIME DEFAULT NULL,
-            `created_by` INT NULL,
-            `updated_by` INT NULL,
-            PRIMARY KEY (`id`)
+            `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            `updated_at` datetime DEFAULT NULL,
+            `created_by` int(11) DEFAULT NULL,
+            `updated_by` int(11) DEFAULT NULL,
+            PRIMARY KEY  (`id`),
+            KEY `subject_id` (`subject_id`),
+            KEY `date` (`date`),
+            KEY `type` (`type`)
         )";
         $sql_journal_teacher = "CREATE TABLE IF NOT EXISTS `$table_journal_teacher` (
             `id` int(11) unsigned NOT NULL,
-            `teacher_id` int(20) unsigned NOT NULL
+            `teacher_id` int(20) unsigned NOT NULL,
+            PRIMARY KEY  (`id`, `teacher_id`),
+            KEY `teacher_id` (`teacher_id`)
         )";
         $sql_journal_student = "CREATE TABLE IF NOT EXISTS `$table_journal_student` (
             `id` int(11) unsigned NOT NULL,
-            `student_id` int(20) unsigned NOT NULL
+            `student_id` int(20) unsigned NOT NULL,
+            PRIMARY KEY  (`id`, `student_id`),
+            KEY `student_id` (`student_id`)
         )";
         dbDelta($sql_journal);
         dbDelta($sql_journal_teacher);

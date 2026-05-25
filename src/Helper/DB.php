@@ -28,29 +28,71 @@ class DB
     public static function delete_item_when_delete_post($post_id): void
     {
         global $wpdb;
+        $post_id = (int)$post_id;
+
         $table_schedule = Schedule::get_schedule_table_name();
-        $query = "DELETE FROM $table_schedule WHERE subject_id = %d OR teacher_id = %d OR student_id = %d OR classroom_id = %d";
-        $wpdb->query($wpdb->prepare($query, array($post_id, $post_id, $post_id, $post_id)));
+        $wpdb->query(
+            $wpdb->prepare(
+                "DELETE FROM $table_schedule WHERE subject_id = %d OR classroom_id = %d",
+                $post_id,
+                $post_id
+            )
+        );
 
         $table_schedule_teacher = Schedule::get_schedule_teacher_table_name();
-        $query = "DELETE FROM $table_schedule_teacher WHERE teacher_id = %d ";
-        $wpdb->query($wpdb->prepare($query, array($post_id)));
+        $wpdb->query(
+            $wpdb->prepare("DELETE FROM $table_schedule_teacher WHERE teacher_id = %d", $post_id)
+        );
 
         $table_schedule_student = Schedule::get_schedule_student_table_name();
-        $query = "DELETE FROM $table_schedule_student WHERE student_id = %d";
-        $wpdb->query($wpdb->prepare($query, array($post_id)));
+        $wpdb->query(
+            $wpdb->prepare("DELETE FROM $table_schedule_student WHERE student_id = %d", $post_id)
+        );
 
         $table_journal = Journal::get_journal_table_name();
-        $query = "DELETE FROM $table_journal WHERE subject_id = %d  OR teacher_id = %d  OR student_id = %d OR classroom_id = %d";
-        $wpdb->query($wpdb->prepare($query, array($post_id, $post_id, $post_id, $post_id)));
+        $wpdb->query(
+            $wpdb->prepare("DELETE FROM $table_journal WHERE subject_id = %d", $post_id)
+        );
 
         $table_journal_teacher = Journal::get_journal_teacher_table_name();
-        $query = "DELETE FROM $table_journal_teacher WHERE teacher_id = %d ";
-        $wpdb->query($wpdb->prepare($query, array($post_id)));
+        $wpdb->query(
+            $wpdb->prepare("DELETE FROM $table_journal_teacher WHERE teacher_id = %d", $post_id)
+        );
 
         $table_journal_student = Journal::get_journal_student_table_name();
-        $query = "DELETE FROM $table_journal_student WHERE student_id = %d";
-        $wpdb->query($wpdb->prepare($query, array($post_id)));
+        $wpdb->query(
+            $wpdb->prepare("DELETE FROM $table_journal_student WHERE student_id = %d", $post_id)
+        );
+
+        $table_work_plan = WorkPlan::get_work_plan_table_name();
+        $wpdb->query(
+            $wpdb->prepare("DELETE FROM $table_work_plan WHERE student_id = %d", $post_id)
+        );
+
+        $table_work_plan_subject = WorkPlan::get_work_plan_subject_table_name();
+        $wpdb->query(
+            $wpdb->prepare("DELETE FROM $table_work_plan_subject WHERE subject_id = %d", $post_id)
+        );
+
+        $table_work_plan_teacher = WorkPlan::get_work_plan_teacher_table_name();
+        $wpdb->query(
+            $wpdb->prepare("DELETE FROM $table_work_plan_teacher WHERE teacher_id = %d", $post_id)
+        );
+
+        $table_progress = Progress::get_progress_table_name();
+        $wpdb->query(
+            $wpdb->prepare("DELETE FROM $table_progress WHERE student_id = %d", $post_id)
+        );
+
+        $table_progress_subject = Progress::get_progress_subject_table_name();
+        $wpdb->query(
+            $wpdb->prepare("DELETE FROM $table_progress_subject WHERE subject_id = %d", $post_id)
+        );
+
+        $table_progress_teacher = Progress::get_progress_teacher_table_name();
+        $wpdb->query(
+            $wpdb->prepare("DELETE FROM $table_progress_teacher WHERE teacher_id = %d", $post_id)
+        );
     }
 
     /**
@@ -70,7 +112,22 @@ class DB
             /** @var SchemaCreatableInterface $repository */
             $repository::create_db_tables();
         }
-        add_option('wcs4_db_version', WCS4_DB_VERSION);
+        update_option('wcs4_db_version', WCS4_DB_VERSION);
+    }
+
+    /**
+     * Run dbDelta when the plugin DB schema version changes.
+     */
+    public static function maybe_upgrade_schema(): void
+    {
+        $installed = get_option('wcs4_db_version');
+        if (false === $installed) {
+            return;
+        }
+        if ($installed === WCS4_DB_VERSION) {
+            return;
+        }
+        self::create_schema();
     }
 
     /**
@@ -1164,11 +1221,11 @@ class DB
             $sourcePrefix . 'wcs4_work_plan',
             WorkPlan::get_work_plan_table_name(),
             function (array $row) use ($mapItemId) {
-                $row['subject_id'] = $mapItemId($row['subject_id']);
                 $row['student_id'] = $mapItemId($row['student_id']);
-                if (null === $row['subject_id'] || null === $row['student_id']) {
+                if (null === $row['student_id']) {
                     return null;
                 }
+                unset($row['subject_id']);
                 return $row;
             }
         );
@@ -1194,11 +1251,11 @@ class DB
             $sourcePrefix . 'wcs4_progress',
             Progress::get_progress_table_name(),
             function (array $row) use ($mapItemId) {
-                $row['subject_id'] = $mapItemId($row['subject_id']);
                 $row['student_id'] = $mapItemId($row['student_id']);
-                if (null === $row['subject_id'] || null === $row['student_id']) {
+                if (null === $row['student_id']) {
                     return null;
                 }
+                unset($row['subject_id']);
                 return $row;
             }
         );
