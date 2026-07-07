@@ -5,6 +5,7 @@ namespace WCS4\Entity;
 use WCS4\Entity\Contract\EntityWithIdInterface;
 use WCS4\Entity\Trait\Blameable_Trait;
 use WCS4\Entity\Trait\Timestampable_Trait;
+use WCS4\Helper\Admin;
 
 use function json_decode;
 
@@ -70,22 +71,8 @@ class Snapshot_Item implements EntityWithIdInterface
 
     public function getActionLabel(): string
     {
-        switch ($this->getAction()) {
-            default:
-                return $this->getAction();
-            case 'wcs_download_journals_html':
-                return __('Download Journals as HTML', 'wcs4');
-            case 'wcs_download_work_plans_html':
-                return __('Download Work Plans as HTML', 'wcs4');
-            case 'wcs_download_progresses_html':
-                return __('Download Progresses as HTML', 'wcs4');
-            case 'wcs_download_journals_csv':
-                return __('Download Journals as CSV', 'wcs4');
-            case 'wcs_download_work_plans_csv':
-                return __('Download Work Plans as CSV', 'wcs4');
-            case 'wcs_download_progresses_csv':
-                return __('Download Progresses as CSV', 'wcs4');
-        }
+        return Admin::snapshotLogActionLabels()[$this->getAction()]
+            ?? $this->getAction();
     }
 
     public function getContent(): string
@@ -114,6 +101,29 @@ class Snapshot_Item implements EntityWithIdInterface
             'admin-ajax.php'
             . '?' . http_build_query(json_decode($this->getQueryString(), true))
         );
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function getQueryParams(): array
+    {
+        $decoded = json_decode($this->getQueryString(), true);
+
+        return is_array($decoded) ? $decoded : [];
+    }
+
+    public function getQueryEntityId(string $key): ?int
+    {
+        if (!array_key_exists($key, $this->getQueryParams())) {
+            return null;
+        }
+        $value = $this->getQueryParams()[$key];
+        if ($value === '' || $value === null) {
+            return null;
+        }
+
+        return (int)ltrim((string)$value, '#');
     }
 
 }

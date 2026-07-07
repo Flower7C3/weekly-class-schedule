@@ -56,6 +56,9 @@ class Snapshot implements SchemaCreatableInterface, TruncatableRepositoryInterfa
         $action = null,
         $title = null,
         $location = null,
+        $teacher = null,
+        $student = null,
+        $subject = null,
         $created_at_from = null,
         $created_at_upto = null,
         $orderField = null,
@@ -82,8 +85,8 @@ class Snapshot implements SchemaCreatableInterface, TruncatableRepositoryInterfa
         $where = [];
         $queryArr = [];
         if (!empty($action)) {
-            $where[] = 'action LIKE "%s"';
-            $queryArr[] = '%' . $wpdb->esc_like($action) . '%';
+            $where[] = 'action = %s';
+            $queryArr[] = $action;
         }
         if (!empty($title)) {
             $where[] = 'title LIKE "%s"';
@@ -93,6 +96,18 @@ class Snapshot implements SchemaCreatableInterface, TruncatableRepositoryInterfa
             $where[] = '(query_string LIKE "%s" OR query_hash = "%s")';
             $queryArr[] = '%' . $wpdb->esc_like($location) . '%';
             $queryArr[] = $wpdb->esc_like($location);
+        }
+        if (!empty($teacher)) {
+            $where[] = 'query_string LIKE "%s"';
+            $queryArr[] = '%"teacher":"' . $wpdb->esc_like((string)(int)$teacher) . '"%';
+        }
+        if (!empty($student)) {
+            $where[] = 'query_string LIKE "%s"';
+            $queryArr[] = '%"student":"' . $wpdb->esc_like((string)(int)$student) . '"%';
+        }
+        if (!empty($subject)) {
+            $where[] = 'query_string LIKE "%s"';
+            $queryArr[] = '%"subject":"' . $wpdb->esc_like((string)(int)$subject) . '"%';
         }
         if (!empty($created_at_from)) {
             $where[] = 'created_at >= "%s"';

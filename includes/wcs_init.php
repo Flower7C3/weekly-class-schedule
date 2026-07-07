@@ -355,6 +355,18 @@ function wcs4_actions($actions, $the_post)
             __('Progresses', 'wcs4')
         );
     }
+    if (current_user_can(WCS4_SNAPSHOT_VIEW_CAPABILITY)) {
+        $actions[] = sprintf(
+            '<a href="%s">%s</a>',
+            'admin.php?' . http_build_query([
+                'page' => 'wcs4-snapshot',
+                $type => $the_post->ID,
+                'created_at_from' => date('Y-m-01'),
+                'created_at_upto' => date('Y-m-d'),
+            ]),
+            __('Snapshots', 'wcs4')
+        );
+    }
     return $actions;
 }
 

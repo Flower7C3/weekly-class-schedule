@@ -412,6 +412,31 @@ class Output
         wcs4_js_i18n('wcs4_front_js');
     }
 
+    private static function snapshot_filter_key_from_select_id(string $selectId): ?string
+    {
+        if (str_ends_with($selectId, '_subject_id')) {
+            return 'subject';
+        }
+        if (str_ends_with($selectId, '_teacher_id')) {
+            return 'teacher';
+        }
+        if (str_ends_with($selectId, '_student_id')) {
+            return 'student';
+        }
+
+        return null;
+    }
+
+    public static function snapshot_filter_url(string $filterKey, int $itemId): string
+    {
+        return admin_url('admin.php?' . http_build_query([
+            'page' => 'wcs4-snapshot',
+            $filterKey => $itemId,
+            'created_at_from' => date('Y-m-01'),
+            'created_at_upto' => date('Y-m-d'),
+        ]));
+    }
+
     /**
      * @param $selectId
      * @param Item $item
@@ -419,7 +444,10 @@ class Output
      */
     public static function item_admin_link($selectId, Item $item): void
     {
-        if ($item->getId()): ?>
+        if ($item->getId()):
+            $snapshotFilterKey = self::snapshot_filter_key_from_select_id($selectId);
+            $hasSnapshotLink = $snapshotFilterKey && current_user_can(WCS4_SNAPSHOT_VIEW_CAPABILITY);
+            ?>
             <a href="#"
                class="search-filter"
                data-select-id="<?= $selectId ?>"
@@ -427,13 +455,26 @@ class Output
                 <?= $item->getName() ?>
             </a>
             <?php
-            if ($item->hasPermalink()): ?>
+            if ($item->hasPermalink() || $hasSnapshotLink): ?>
                 <span class="row-actions">
-                    <span class="edit">
-                        <a href="<?= $item->getPermalink() ?>">
-                            <span class="dashicons dashicons-external"></span>
-                        </a>
-                    </span>
+                    <?php
+                    if ($item->hasPermalink()): ?>
+                        <span class="edit">
+                            <a href="<?= $item->getPermalink() ?>">
+                                <span class="dashicons dashicons-external"></span>
+                            </a>
+                        </span>
+                    <?php
+                    endif;
+                    if ($hasSnapshotLink): ?>
+                        <span class="snapshot">
+                            <a href="<?= esc_url(self::snapshot_filter_url($snapshotFilterKey, $item->getId())) ?>"
+                               title="<?= esc_attr__('Snapshots', 'wcs4') ?>">
+                                <span class="dashicons dashicons-backup"></span>
+                            </a>
+                        </span>
+                    <?php
+                    endif; ?>
                 </span>
             <?php
             endif; ?>

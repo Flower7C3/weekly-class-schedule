@@ -65,6 +65,9 @@ use WCS4\Helper\Output;
                             $orderDirection,
                             $orderField,
                         );
+                        admin_th(__('Teacher', 'wcs4'));
+                        admin_th(__('Student', 'wcs4'));
+                        admin_th(__('Subject', 'wcs4'));
                         admin_th(
                             __('Location', 'wcs4'),
                         );
@@ -104,7 +107,7 @@ use WCS4\Helper\Output;
                                            target="_blank"
                                            class="wcs4-view-button"
                                         >
-                                            <?= __('Preview') ?>
+                                            <?= __('Preview', 'wcs4') ?>
                                         </a>
                                         |
                                     </span>
@@ -113,7 +116,7 @@ use WCS4\Helper\Output;
                                            target="_blank"
                                            class="wcs4-view-button"
                                         >
-                                            <?= __('Reload') ?>
+                                            <?= __('Reload', 'wcs4') ?>
                                         </a>
                                         |
                                     </span>
@@ -133,6 +136,45 @@ use WCS4\Helper\Output;
                             </td>
                             <td>
                                 <?= $item->getTitle() ?>
+                            </td>
+                            <td data-colname="<?= __('Teacher', 'wcs4') ?>">
+                                <?php
+                                $teacherId = $item->getQueryEntityId('teacher');
+                                if ($teacherId) {
+                                    Output::admin_search_link(
+                                        'search_wcs4_snapshot_teacher_id',
+                                        (string)$teacherId,
+                                        get_the_title($teacherId)
+                                    );
+                                } else {
+                                    echo '—';
+                                } ?>
+                            </td>
+                            <td data-colname="<?= __('Student', 'wcs4') ?>">
+                                <?php
+                                $studentId = $item->getQueryEntityId('student');
+                                if ($studentId) {
+                                    Output::admin_search_link(
+                                        'search_wcs4_snapshot_student_id',
+                                        (string)$studentId,
+                                        get_the_title($studentId)
+                                    );
+                                } else {
+                                    echo '—';
+                                } ?>
+                            </td>
+                            <td data-colname="<?= __('Subject', 'wcs4') ?>">
+                                <?php
+                                $subjectId = $item->getQueryEntityId('subject');
+                                if ($subjectId) {
+                                    Output::admin_search_link(
+                                        'search_wcs4_snapshot_subject_id',
+                                        (string)$subjectId,
+                                        get_the_title($subjectId)
+                                    );
+                                } else {
+                                    echo '—';
+                                } ?>
                             </td>
                             <td>
                                 <small><?php

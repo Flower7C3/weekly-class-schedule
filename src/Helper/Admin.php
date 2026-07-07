@@ -213,6 +213,11 @@ class Admin
         return wcs4_select_list($days, $id, $name, null, $options['required']);
     }
 
+    public static function snapshotLogActionLabels(): array
+    {
+        return self::list_values('snapshot_log_action');
+    }
+
     private static function list_values(string $package, bool $prependIcon = false): array
     {
         return match ($package) {
@@ -327,6 +332,24 @@ class Admin
                         ? '<em class="' . Progress_Item::typeIcon(Progress_Item::TYPE_PERIODIC) . '"></em>'
                         : '')
                     . Progress_Item::typeLabel(Progress_Item::TYPE_PERIODIC),
+            ],
+            'snapshot_log_action' => [
+                '' => __('Select option', 'wcs4'),
+                'wcs_download_journals_csv' => __('Download Journals as CSV', 'wcs4'),
+                'wcs_download_journals_teachers_html' => __('Download Journals as HTML for Teachers', 'wcs4'),
+                'wcs_download_journals_students_html' => __('Download Journals as HTML for Students', 'wcs4'),
+                'wcs_download_journals_teachers_simple_html' => __(
+                    'Download Journals as HTML Simple for Teachers',
+                    'wcs4'
+                ),
+                'wcs_download_journals_students_simple_html' => __(
+                    'Download Journals as HTML Simple for Students',
+                    'wcs4'
+                ),
+                'wcs_download_work_plans_csv' => __('Download Work Plans as CSV', 'wcs4'),
+                'wcs_download_work_plans_html' => __('Download Work Plans as HTML', 'wcs4'),
+                'wcs_download_progresses_csv' => __('Download Progresses as CSV', 'wcs4'),
+                'wcs_download_progresses_html' => __('Download Progresses as HTML', 'wcs4'),
             ],
             default => [],
         };

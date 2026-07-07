@@ -30,6 +30,9 @@ class Snapshot implements ManagesTemplateInterface
             sanitize_text_field($_GET['log_action'] ?? null),
             sanitize_text_field($_GET['log_title'] ?? null),
             sanitize_text_field($_GET['log_location'] ?? null),
+            !empty($_GET['teacher']) ? (int)$_GET['teacher'] : null,
+            !empty($_GET['student']) ? (int)$_GET['student'] : null,
+            !empty($_GET['subject']) ? (int)$_GET['subject'] : null,
             sanitize_text_field($_GET['created_at_from'] ?? date('Y-m-01')),
             sanitize_text_field($_GET['created_at_upto'] ?? date('Y-m-d')),
             sanitize_text_field($_GET['order_field'] ?? 'updated-at'),
@@ -42,15 +45,33 @@ class Snapshot implements ManagesTemplateInterface
             'fields' => [
                 'search_wcs4_snapshot_log_action' => [
                     'label' => __('Action', 'wcs4'),
-                    'input' => '<input type="text" name="log_action" id="search_wcs4_snapshot_log_action"
-                   placeholder="' . __('Action', 'wcs4') . '"
-                   value="' . ($_GET['log_action'] ?? '') . '"/>',
+                    'input' => Admin::generate_admin_select_list_options(
+                        'snapshot_log_action',
+                        'search_wcs4_snapshot_log_action',
+                        'log_action',
+                        $_GET['log_action'] ?? ''
+                    ),
                 ],
                 'search_wcs4_snapshot_log_title' => [
                     'label' => __('Title', 'wcs4'),
                     'input' => '<input type="text" name="log_title" id="search_wcs4_snapshot_log_title"
                    placeholder="' . __('Title', 'wcs4') . '"
                    value="' . ($_GET['log_title'] ?? '') . '"/>',
+                ],
+                'search_wcs4_snapshot_teacher_id' => [
+                    'label' => __('Teacher', 'wcs4'),
+                    'type' => 'generate_admin_select_list',
+                    'name' => 'teacher',
+                ],
+                'search_wcs4_snapshot_student_id' => [
+                    'label' => __('Student', 'wcs4'),
+                    'type' => 'generate_admin_select_list',
+                    'name' => 'student',
+                ],
+                'search_wcs4_snapshot_subject_id' => [
+                    'label' => __('Subject', 'wcs4'),
+                    'type' => 'generate_admin_select_list',
+                    'name' => 'subject',
                 ],
                 'search_wcs4_snapshot_log_location' => [
                     'label' => __('Location', 'wcs4'),
@@ -88,6 +109,9 @@ class Snapshot implements ManagesTemplateInterface
         $action = null,
         $title = null,
         $location = null,
+        $teacher = null,
+        $student = null,
+        $subject = null,
         $created_at_from = null,
         $created_at_upto = null,
         $orderField = null,
@@ -98,6 +122,9 @@ class Snapshot implements ManagesTemplateInterface
             $action,
             $title,
             $location,
+            $teacher,
+            $student,
+            $subject,
             $created_at_from,
             $created_at_upto,
             $orderField,
@@ -264,7 +291,7 @@ class Snapshot implements ManagesTemplateInterface
     {
         $response = [];
         try {
-            if (!current_user_can(WCS4_SNAPSHOT_MANAGE_CAPABILITY)) {
+            if (!current_user_can(WCS4_SNAPSHOT_VIEW_CAPABILITY)) {
                 throw new AccessDeniedException();
             }
             wcs4_verify_nonce();
@@ -272,6 +299,9 @@ class Snapshot implements ManagesTemplateInterface
                 sanitize_text_field($_POST['log_action']),
                 sanitize_text_field($_POST['log_title']),
                 sanitize_text_field($_POST['log_location']),
+                !empty($_POST['teacher']) ? (int)$_POST['teacher'] : null,
+                !empty($_POST['student']) ? (int)$_POST['student'] : null,
+                !empty($_POST['subject']) ? (int)$_POST['subject'] : null,
                 sanitize_text_field($_POST['created_at_from']),
                 sanitize_text_field($_POST['created_at_upto']),
                 sanitize_text_field($_POST['order_field'] ?? 'updated-at'),
