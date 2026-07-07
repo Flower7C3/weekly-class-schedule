@@ -20,11 +20,17 @@ use WCS4\Controller\Snapshot;
 use WCS4\Controller\WorkPlan;
 use WCS4\Helper\Output;
 
+if (!defined('WCS4_SCHEDULE_ICON')) {
+    define('WCS4_SCHEDULE_ICON', 'fa-calendar-days');
+}
 if (!defined('WCS4_SCHEDULE_VIEW_CAPABILITY')) {
     define('WCS4_SCHEDULE_VIEW_CAPABILITY', 'wcs4_schedule_view');
 }
 if (!defined('WCS4_SCHEDULE_MANAGE_CAPABILITY')) {
     define('WCS4_SCHEDULE_MANAGE_CAPABILITY', 'wcs4_schedule_manage');
+}
+if (!defined('WCS4_JOURNAL_ICON')) {
+    define('WCS4_JOURNAL_ICON', 'fa-scroll');
 }
 if (!defined('WCS4_JOURNAL_VIEW_CAPABILITY')) {
     define('WCS4_JOURNAL_VIEW_CAPABILITY', 'wcs4_journal_view');
@@ -35,6 +41,9 @@ if (!defined('WCS4_JOURNAL_MANAGE_CAPABILITY')) {
 if (!defined('WCS4_JOURNAL_EXPORT_CAPABILITY')) {
     define('WCS4_JOURNAL_EXPORT_CAPABILITY', 'wcs4_journal_export');
 }
+if (!defined('WCS4_WORK_PLAN_ICON')) {
+    define('WCS4_WORK_PLAN_ICON', 'fa-calendar-check');
+}
 if (!defined('WCS4_WORK_PLAN_VIEW_CAPABILITY')) {
     define('WCS4_WORK_PLAN_VIEW_CAPABILITY', 'wcs4_work_plan_view');
 }
@@ -43,6 +52,9 @@ if (!defined('WCS4_WORK_PLAN_MANAGE_CAPABILITY')) {
 }
 if (!defined('WCS4_WORK_PLAN_EXPORT_CAPABILITY')) {
     define('WCS4_WORK_PLAN_EXPORT_CAPABILITY', 'wcs4_work_plan_export');
+}
+if (!defined('WCS4_PROGRESS_ICON')) {
+    define('WCS4_PROGRESS_ICON', 'fa-arrow-trend-up');
 }
 if (!defined('WCS4_PROGRESS_VIEW_CAPABILITY')) {
     define('WCS4_PROGRESS_VIEW_CAPABILITY', 'wcs4_progress_view');
@@ -53,17 +65,32 @@ if (!defined('WCS4_PROGRESS_MANAGE_CAPABILITY')) {
 if (!defined('WCS4_PROGRESS_EXPORT_CAPABILITY')) {
     define('WCS4_PROGRESS_EXPORT_CAPABILITY', 'wcs4_progress_export');
 }
+if (!defined('WCS4_SNAPSHOT_ICON')) {
+    define('WCS4_SNAPSHOT_ICON', 'fa-clock-rotate-left');
+}
 if (!defined('WCS4_SNAPSHOT_VIEW_CAPABILITY')) {
     define('WCS4_SNAPSHOT_VIEW_CAPABILITY', 'wcs4_snapshot_view');
 }
 if (!defined('WCS4_SNAPSHOT_MANAGE_CAPABILITY')) {
     define('WCS4_SNAPSHOT_MANAGE_CAPABILITY', 'wcs4_snapshot_manage');
 }
+if (!defined('WCS4_BASIC_OPTIONS_ICON')) {
+    define('WCS4_BASIC_OPTIONS_ICON', 'fa-gear');
+}
 if (!defined('WCS4_BASIC_OPTIONS_CAPABILITY')) {
     define('WCS4_BASIC_OPTIONS_CAPABILITY', 'wcs4_basic_options');
 }
+if (!defined('WCS4_ADVANCED_OPTIONS_ICON')) {
+    define('WCS4_ADVANCED_OPTIONS_ICON', 'fa-gears');
+}
+if (!defined('WCS4_URL_OPTIONS_ICON')) {
+    define('WCS4_URL_OPTIONS_ICON', 'fa-link');
+}
 if (!defined('WCS4_ADVANCED_OPTIONS_CAPABILITY')) {
     define('WCS4_ADVANCED_OPTIONS_CAPABILITY', 'wcs4_advanced_options');
+}
+if (!defined('WCS4_MAINTENANCE_TOOLS_ICON')) {
+    define('WCS4_MAINTENANCE_TOOLS_ICON', 'fa-robot');
 }
 if (!defined('WCS4_MAINTENANCE_TOOLS_CAPABILITY')) {
     define('WCS4_MAINTENANCE_TOOLS_CAPABILITY', 'wcs4_maintenance_tools');
@@ -71,7 +98,7 @@ if (!defined('WCS4_MAINTENANCE_TOOLS_CAPABILITY')) {
 add_action('admin_menu', static function () {
     $page_schedule = add_menu_page(
         _x('Schedule Management', 'page title', 'wcs4'),
-        __('Schedule', 'wcs4'),
+        '<i class="fa-solid ' . WCS4_SCHEDULE_ICON . '"></i>' . __('Schedule', 'wcs4'),
         WCS4_SCHEDULE_VIEW_CAPABILITY,
         'wcs4',
         array(Schedule::class, "callback_of_management_page"),
@@ -81,7 +108,7 @@ add_action('admin_menu', static function () {
     $page_journal = add_submenu_page(
         'wcs4',
         _x('Journals Management', 'page title', 'wcs4'),
-        __('Journals', 'wcs4'),
+        '<i class="fa-solid ' . WCS4_JOURNAL_ICON . '"></i>' . __('Journals', 'wcs4'),
         WCS4_JOURNAL_VIEW_CAPABILITY,
         'wcs4-journal',
         array(Journal::class, "callback_of_management_page")
@@ -89,7 +116,7 @@ add_action('admin_menu', static function () {
     add_submenu_page(
         'wcs4',
         _x('Work Plans Management', 'page title', 'wcs4'),
-        __('Work Plans', 'wcs4'),
+        '<i class="fa-solid ' . WCS4_WORK_PLAN_ICON . '"></i>' . __('Work Plans', 'wcs4'),
         WCS4_WORK_PLAN_VIEW_CAPABILITY,
         'wcs4-work-plan',
         array(WorkPlan::class, "callback_of_management_page")
@@ -97,7 +124,7 @@ add_action('admin_menu', static function () {
     add_submenu_page(
         'wcs4',
         _x('Progresses Management', 'page title', 'wcs4'),
-        __('Progresses', 'wcs4'),
+        '<i class="fa-solid ' . WCS4_PROGRESS_ICON . '"></i>' . __('Progresses', 'wcs4'),
         WCS4_PROGRESS_VIEW_CAPABILITY,
         'wcs4-progress',
         array(Progress::class, "callback_of_management_page")
@@ -105,7 +132,7 @@ add_action('admin_menu', static function () {
     add_submenu_page(
         'wcs4',
         _x('Snapshots Management', 'page title', 'wcs4'),
-        __('Snapshots', 'wcs4'),
+        '<i class="fa-solid ' . WCS4_SNAPSHOT_ICON . '"></i>' . __('Snapshots', 'wcs4'),
         WCS4_PROGRESS_VIEW_CAPABILITY,
         'wcs4-snapshot',
         array(Snapshot::class, "callback_of_management_page")
@@ -113,7 +140,7 @@ add_action('admin_menu', static function () {
     $page_basic_options = add_submenu_page(
         'wcs4',
         _x('Weekly Class Schedule Basic options', 'page title', 'wcs4'),
-        __('Basic options', 'wcs4'),
+        '<i class="fa-solid ' . WCS4_BASIC_OPTIONS_ICON . '"></i>' . __('Basic options', 'wcs4'),
         WCS4_BASIC_OPTIONS_CAPABILITY,
         'wcs4-basic-options',
         array(Settings::class, "basic_options_page_callback")
@@ -121,7 +148,7 @@ add_action('admin_menu', static function () {
     $page_advanced_options = add_submenu_page(
         'wcs4',
         _x('Weekly Class Schedule Advanced options', 'page title', 'wcs4'),
-        __('Advanced options', 'wcs4'),
+        '<i class="fa-solid ' . WCS4_ADVANCED_OPTIONS_ICON . '"></i>' . __('Advanced options', 'wcs4'),
         WCS4_ADVANCED_OPTIONS_CAPABILITY,
         'wcs4-advanced-options',
         array(Settings::class, "advanced_options_page_callback")
@@ -129,14 +156,14 @@ add_action('admin_menu', static function () {
     add_submenu_page(
         'wcs4',
         null,
-        _x('URL Settings', 'admin submenu', 'wcs4'),
+        '<i class="fa-solid ' . WCS4_URL_OPTIONS_ICON . '"></i>' . _x('URL Settings', 'admin submenu', 'wcs4'),
         WCS4_ADVANCED_OPTIONS_CAPABILITY,
         admin_url('options-permalink.php') . '#wcs4-url-settings',
     );
     add_submenu_page(
         'wcs4',
         _x('Weekly Class Schedule Maintenance Settings', 'page title', 'wcs4'),
-        __('Maintenance tools', 'wcs4'),
+        '<i class="fa-solid ' . WCS4_MAINTENANCE_TOOLS_ICON . '"></i>' . __('Maintenance tools', 'wcs4'),
         WCS4_MAINTENANCE_TOOLS_CAPABILITY,
         'wcs4-maintenance-tools',
         array(Settings::class, "maintenance_options_page_callback")

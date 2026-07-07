@@ -5,6 +5,7 @@
 ?>
 <div class="wrap">
     <h1 class="wp-heading-inline">
+        <i class="fa-solid <?= WCS4_BASIC_OPTIONS_ICON ?>"></i>
         <?= _x('Weekly Class Schedule Basic options', 'page title', 'wcs4') ?>
     </h1>
     <form action="" method="post" name="wcs4_basic_settings">

@@ -320,6 +320,7 @@ function wcs4_actions($actions, $the_post)
                 'page' => 'wcs4',
                 $type => $the_post->ID,
             ]),
+            '<i class="fa-solid ' . WCS4_SCHEDULE_ICON . '"></i>' .
             __('Schedule', 'wcs4')
         );
     }
@@ -332,6 +333,7 @@ function wcs4_actions($actions, $the_post)
                 'date_from' => date('Y-m-01'),
                 'date_upto' => date('Y-m-d'),
             ]),
+            '<i class="fa-solid ' . WCS4_JOURNAL_ICON . '"></i>' .
             __('Journals', 'wcs4')
         );
     }
@@ -342,6 +344,7 @@ function wcs4_actions($actions, $the_post)
                 'page' => 'wcs4-work-plan',
                 $type => $the_post->ID,
             ]),
+            '<i class="fa-solid ' . WCS4_WORK_PLAN_ICON . '"></i>' .
             __('Work Plans', 'wcs4')
         );
     }
@@ -352,6 +355,7 @@ function wcs4_actions($actions, $the_post)
                 'page' => 'wcs4-progress',
                 $type => $the_post->ID,
             ]),
+            '<i class="fa-solid ' . WCS4_PROGRESS_ICON . '"></i>' .
             __('Progresses', 'wcs4')
         );
     }
@@ -364,6 +368,7 @@ function wcs4_actions($actions, $the_post)
                 'created_at_from' => date('Y-m-01'),
                 'created_at_upto' => date('Y-m-d'),
             ]),
+            '<i class="fa-solid ' . WCS4_SNAPSHOT_ICON . '"></i>' .
             __('Snapshots', 'wcs4')
         );
     }

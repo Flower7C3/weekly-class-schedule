@@ -11,6 +11,7 @@
 <input type="hidden" name="wcs4_permalink_section" value="1"/>
 
 <h2 class="title">
+    <i class="fa-solid <?= WCS4_URL_OPTIONS_ICON ?>"></i>
     <?= _x('Weekly Class Schedule URL Settings', 'page title', 'wcs4') ?>
 </h2>
 

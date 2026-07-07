@@ -95,8 +95,7 @@ $teacher_filter_field_id = 'search_wcs4_journal_teacher_id';
                         <tr data-scope="journal"
                             data-id="<?= $item->getId() ?>">
                             <th scope="row" class="check-column">
-                                <em class="<?= Journal_Item::typeIcon($item->getType()) ?>"
-                                    title="<?= Journal_Item::typeLabel($item->getType()) ?>"></em>
+                                <?= Journal_Item::typeIcon($item->getType()) ?>
                             </th>
                             <td class="column-primary
                                 <?= (current_user_can(WCS4_JOURNAL_MANAGE_CAPABILITY)) ? ' has-row-actions' : '' ?>">

@@ -102,19 +102,25 @@ class Journal_Item implements EntityWithIdInterface
 
     public static function typeIcon(string $type): string
     {
-        return match ($type) {
-            self::TYPE_NORMAL => 'fa fa-fw fa-regular fa-clock',
-            self::TYPE_ABSENT_TEACHER => 'fa fa-fw fa-solid fa-user-slash',
-            self::TYPE_ABSENT_TEACHER_FREE_VACATION => 'fa fa-fw fa-solid fa-umbrella-beach',
-            self::TYPE_ABSENT_TEACHER_PAID_VACATION => 'fa fa-fw fa-solid fa-umbrella-beach',
-            self::TYPE_ABSENT_TEACHER_SICK_CHILDCARE => 'fa fa-fw fa-solid fa-hand-holding-medical',
-            self::TYPE_ABSENT_TEACHER_HEALTHY_CHILDCARE => 'fa fa-fw fa-solid fa-hands-holding-child',
-            self::TYPE_ABSENT_TEACHER_SICK_LEAVE => 'fa fa-fw fa-solid fa-hospital-user',
-            self::TYPE_ABSENT_STUDENT => 'fa fa-fw fa-solid fa-users-slash',
-            self::TYPE_TEACHER_OFFICE_WORKS => 'fa fa-fw fa-solid fa-feather',
-            default => '',
-        };
+        return
+            match ($type) {
+                self::TYPE_ABSENT_TEACHER => '<em class="fa-stack fa-2xs"><i class="fa-solid fa-user fa-stack-1x"></i><i class="fa-solid fa-ban fa-stack-2x" style="color:Tomato"></i></em>',
+                self::TYPE_ABSENT_STUDENT => '<em class="fa-stack fa-2xs"><i class="fa-solid fa-user-graduate fa-stack-1x"></i><i class="fa-solid fa-ban fa-stack-2x" style="color:Tomato"></i></em>',
+                default =>
+                    '<em class="fa-stack fa-2xs"><i class="' .
+                    match ($type) {
+                        self::TYPE_NORMAL => 'fa-solid fa-check-circle',
+                        self::TYPE_ABSENT_TEACHER_FREE_VACATION => 'fa-solid fa-umbrella-beach',
+                        self::TYPE_ABSENT_TEACHER_PAID_VACATION => 'fa-solid fa-umbrella-beach',
+                        self::TYPE_ABSENT_TEACHER_SICK_CHILDCARE => 'fa-solid fa-hand-holding-medical',// 'fa-solid fa-user-nurse',
+                        self::TYPE_ABSENT_TEACHER_HEALTHY_CHILDCARE => 'fa-solid fa-hand-holding-heart',// 'fa-solid fa-user-ninja',
+                        self::TYPE_ABSENT_TEACHER_SICK_LEAVE => 'fa-solid fa-disease',// 'fa-solid fa-user-injured',
+                        self::TYPE_TEACHER_OFFICE_WORKS => 'fa-solid fa-stapler',// 'fa-solid fa-user-tie',
+                        default => '',
+                    } . ' fa-stack-2x" title="' . self::typeLabel($type) . '"></i></em>',
+            };
     }
+
 
     public static function typeLabel(string $type): string
     {

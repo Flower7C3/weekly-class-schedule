@@ -459,3 +459,8 @@ fieldset label, .alignleft > label {
 .buttons {
     padding-top: 18px;
 }
+
+.wcs4-radio-text:has(input:checked) {
+    color: var(--wp-admin-theme-color, #3858e9);
+    font-weight: bold;
+}

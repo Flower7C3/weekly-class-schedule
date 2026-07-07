@@ -187,7 +187,7 @@ class Output
                 $item->getDurationTime(),
                 nl2br($item->getTopic()),
                 Journal_Item::typeLabel($item->getType()),
-                '<em class="' . Journal_Item::typeIcon($item->getType()) . '"></em>',
+                Journal_Item::typeIcon($item->getType()),
             ], $template);
         }
         if ($item instanceof WorkPlan_Item) {
@@ -429,12 +429,14 @@ class Output
 
     public static function snapshot_filter_url(string $filterKey, int $itemId): string
     {
-        return admin_url('admin.php?' . http_build_query([
-            'page' => 'wcs4-snapshot',
-            $filterKey => $itemId,
-            'created_at_from' => date('Y-m-01'),
-            'created_at_upto' => date('Y-m-d'),
-        ]));
+        return admin_url(
+            'admin.php?' . http_build_query([
+                'page' => 'wcs4-snapshot',
+                $filterKey => $itemId,
+                'created_at_from' => date('Y-m-01'),
+                'created_at_upto' => date('Y-m-d'),
+            ])
+        );
     }
 
     /**
@@ -470,7 +472,7 @@ class Output
                         <span class="snapshot">
                             <a href="<?= esc_url(self::snapshot_filter_url($snapshotFilterKey, $item->getId())) ?>"
                                title="<?= esc_attr__('Snapshots', 'wcs4') ?>">
-                                <span class="dashicons dashicons-backup"></span>
+                                <i class="fa-solid <?= WCS4_SNAPSHOT_ICON ?>"></i>
                             </a>
                         </span>
                     <?php

@@ -113,6 +113,7 @@ $clear_table_actions = array(
 ?>
 <div class="wrap" id="wcs4-reset-database">
     <h1 class="wp-heading-inline">
+        <i class="fa-solid <?= WCS4_MAINTENANCE_TOOLS_ICON ?>"></i>
         <?= _x('Weekly Class Schedule Maintenance Settings', 'page title', 'wcs4') ?>
     </h1>
     <hr class="wp-header-end">
@@ -146,7 +147,8 @@ $clear_table_actions = array(
                 <span class="dashicons dashicons-database-add" aria-hidden="true"></span>
                 <?= _x('Create DB schema', 'reset database', 'wcs4') ?>
             </button>
-            <button type="button" name="wcs_load_example_data" id="wcs4_load_example_data" class="button button-secondary">
+            <button type="button" name="wcs_load_example_data" id="wcs4_load_example_data"
+                    class="button button-secondary">
                 <span class="dashicons dashicons-download" aria-hidden="true"></span>
                 <?= _x('Install example data', 'reset database', 'wcs4') ?>
             </button>
@@ -169,12 +171,12 @@ $clear_table_actions = array(
                 <strong><?= _x('Source table prefix', 'reset database', 'wcs4') ?></strong>
             </label><br>
             <input
-                type="text"
-                id="wcs4_import_source_prefix"
-                name="wcs4_import_source_prefix"
-                value=""
-                placeholder="wpX_"
-                class="regular-text"
+                    type="text"
+                    id="wcs4_import_source_prefix"
+                    name="wcs4_import_source_prefix"
+                    value=""
+                    placeholder="wpX_"
+                    class="regular-text"
             >
             <br>
             <small class="description">
@@ -190,10 +192,10 @@ $clear_table_actions = array(
                 <?= _x('Run cutoff after import', 'reset database', 'wcs4') ?>
             </label>
             <input
-                type="date"
-                id="wcs4_import_cutoff_date"
-                name="wcs4_import_cutoff_date"
-                value="<?= esc_attr(wp_date('Y-m-01')) ?>"
+                    type="date"
+                    id="wcs4_import_cutoff_date"
+                    name="wcs4_import_cutoff_date"
+                    value="<?= esc_attr(wp_date('Y-m-01')) ?>"
             >
             <br>
             <small class="description">
@@ -205,7 +207,8 @@ $clear_table_actions = array(
             </small>
         </p>
         <p>
-            <button type="button" name="wcs_import_from_prefix" id="wcs4_import_from_prefix" class="button button-secondary">
+            <button type="button" name="wcs_import_from_prefix" id="wcs4_import_from_prefix"
+                    class="button button-secondary">
                 <span class="dashicons dashicons-database-import" aria-hidden="true"></span>
                 <?= _x('Import from prefix', 'reset database', 'wcs4') ?>
             </button>
@@ -229,11 +232,11 @@ $clear_table_actions = array(
             foreach ($clear_taxonomy_actions as $action) :
                 ?>
                 <button
-                    type="button"
-                    name="wcs_clear_taxonomy"
-                    id="<?= esc_attr($action['id']) ?>"
-                    class="button button-link-delete wp-ui-notification wcs4-maintenance-clear-btn"
-                    data-wcs-target="<?= esc_attr($action['taxonomy']) ?>"
+                        type="button"
+                        name="wcs_clear_taxonomy"
+                        id="<?= esc_attr($action['id']) ?>"
+                        class="button button-link-delete wp-ui-notification wcs4-maintenance-clear-btn"
+                        data-wcs-target="<?= esc_attr($action['taxonomy']) ?>"
                 >
                     <span class="dashicons dashicons-tag" aria-hidden="true"></span>
                     <span class="wcs4-maintenance-clear-btn__body">
@@ -265,11 +268,11 @@ $clear_table_actions = array(
             foreach ($clear_post_type_actions as $action) :
                 ?>
                 <button
-                    type="button"
-                    name="wcs_clear_post_type"
-                    id="<?= esc_attr($action['id']) ?>"
-                    class="button button-link-delete wp-ui-notification wcs4-maintenance-clear-btn"
-                    data-wcs-target="<?= esc_attr($action['post_type']) ?>"
+                        type="button"
+                        name="wcs_clear_post_type"
+                        id="<?= esc_attr($action['id']) ?>"
+                        class="button button-link-delete wp-ui-notification wcs4-maintenance-clear-btn"
+                        data-wcs-target="<?= esc_attr($action['post_type']) ?>"
                 >
                     <span class="dashicons dashicons-admin-post" aria-hidden="true"></span>
                     <span class="wcs4-maintenance-clear-btn__body">
@@ -297,10 +300,10 @@ $clear_table_actions = array(
             foreach ($clear_table_actions as $action) :
                 ?>
                 <button
-                    type="button"
-                    name="<?= esc_attr($action['name']) ?>"
-                    id="<?= esc_attr($action['id']) ?>"
-                    class="button button-link-delete wp-ui-notification wcs4-maintenance-clear-btn"
+                        type="button"
+                        name="<?= esc_attr($action['name']) ?>"
+                        id="<?= esc_attr($action['id']) ?>"
+                        class="button button-link-delete wp-ui-notification wcs4-maintenance-clear-btn"
                 >
                     <span class="dashicons dashicons-database-remove" aria-hidden="true"></span>
                     <span class="wcs4-maintenance-clear-btn__body">
@@ -327,38 +330,46 @@ $clear_table_actions = array(
         <div class="wcs4-maintenance-clear-grid" role="group"
              aria-label="<?= esc_attr(_x('Settings & destructive actions', 'reset database', 'wcs4')) ?>">
             <button
-                type="button"
-                name="wcs_reset_settings"
-                id="wcs4_reset_settings"
-                class="button button-link-delete wp-ui-notification wcs4-maintenance-clear-btn"
+                    type="button"
+                    name="wcs_reset_settings"
+                    id="wcs4_reset_settings"
+                    class="button button-link-delete wp-ui-notification wcs4-maintenance-clear-btn"
             >
                 <span class="dashicons dashicons-database-remove" aria-hidden="true"></span>
                 <span class="wcs4-maintenance-clear-btn__body">
-                    <span class="wcs4-maintenance-clear-btn__label"><?= esc_html(_x('Reset settings', 'reset database', 'wcs4')) ?></span>
+                    <span class="wcs4-maintenance-clear-btn__label"><?= esc_html(
+                            _x('Reset settings', 'reset database', 'wcs4')
+                        ) ?></span>
                     <span class="wcs4-maintenance-clear-btn__tables wcs4-maintenance-clear-btn__detail">
-                        <?= esc_html(_x(
-                            'wcs4_settings only — factory defaults. Posts, terms, and wcs4_* tables stay.',
-                            'reset database',
-                            'wcs4'
-                        )) ?>
+                        <?= esc_html(
+                            _x(
+                                'wcs4_settings only — factory defaults. Posts, terms, and wcs4_* tables stay.',
+                                'reset database',
+                                'wcs4'
+                            )
+                        ) ?>
                     </span>
                 </span>
             </button>
             <button
-                type="button"
-                name="wcs_delete_everything"
-                id="wcs4_delete_everything"
-                class="button button-link-delete wp-ui-notification wcs4-maintenance-clear-btn"
+                    type="button"
+                    name="wcs_delete_everything"
+                    id="wcs4_delete_everything"
+                    class="button button-link-delete wp-ui-notification wcs4-maintenance-clear-btn"
             >
                 <span class="dashicons dashicons-database-remove" aria-hidden="true"></span>
                 <span class="wcs4-maintenance-clear-btn__body">
-                    <span class="wcs4-maintenance-clear-btn__label"><?= esc_html(_x('Clear everything', 'reset database', 'wcs4')) ?></span>
+                    <span class="wcs4-maintenance-clear-btn__label"><?= esc_html(
+                            _x('Clear everything', 'reset database', 'wcs4')
+                        ) ?></span>
                     <span class="wcs4-maintenance-clear-btn__tables wcs4-maintenance-clear-btn__detail">
-                        <?= esc_html(_x(
-                            'WCS4 options, all WCS4 CPT posts and taxonomy terms, DROP all wcs4_* tables.',
-                            'reset database',
-                            'wcs4'
-                        )) ?>
+                        <?= esc_html(
+                            _x(
+                                'WCS4 options, all WCS4 CPT posts and taxonomy terms, DROP all wcs4_* tables.',
+                                'reset database',
+                                'wcs4'
+                            )
+                        ) ?>
                     </span>
                 </span>
             </button>

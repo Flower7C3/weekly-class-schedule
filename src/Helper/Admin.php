@@ -250,59 +250,31 @@ class Admin
             'journal_type' => [
                 '' => __('Select type', 'wcs4'),
                 Journal_Item::TYPE_NORMAL =>
-                    (true === $prependIcon
-                        ? '<em class="' . Journal_Item::typeIcon(Journal_Item::TYPE_NORMAL) . '"></em>'
-                        : '')
+                    (true === $prependIcon ? Journal_Item::typeIcon(Journal_Item::TYPE_NORMAL) : '')
                     . Journal_Item::typeLabel(Journal_Item::TYPE_NORMAL),
                 Journal_Item::TYPE_ABSENT_TEACHER_FREE_VACATION =>
-                    (true === $prependIcon
-                        ? '<em class="' . Journal_Item::typeIcon(
-                            Journal_Item::TYPE_ABSENT_TEACHER_FREE_VACATION
-                        ) . '"></em>'
-                        : '')
+                    (true === $prependIcon ? Journal_Item::typeIcon(Journal_Item::TYPE_ABSENT_TEACHER_FREE_VACATION) : '')
                     . Journal_Item::typeLabel(Journal_Item::TYPE_ABSENT_TEACHER_FREE_VACATION),
                 Journal_Item::TYPE_ABSENT_TEACHER_PAID_VACATION =>
-                    (true === $prependIcon
-                        ? '<em class="' . Journal_Item::typeIcon(
-                            Journal_Item::TYPE_ABSENT_TEACHER_PAID_VACATION
-                        ) . '"></em>'
-                        : '')
+                    (true === $prependIcon ? Journal_Item::typeIcon(Journal_Item::TYPE_ABSENT_TEACHER_PAID_VACATION) : '')
                     . Journal_Item::typeLabel(Journal_Item::TYPE_ABSENT_TEACHER_PAID_VACATION),
                 Journal_Item::TYPE_ABSENT_TEACHER_SICK_CHILDCARE =>
-                    (true === $prependIcon
-                        ? '<em class="' . Journal_Item::typeIcon(
-                            Journal_Item::TYPE_ABSENT_TEACHER_SICK_CHILDCARE
-                        ) . '"></em>'
-                        : '')
+                    (true === $prependIcon ? Journal_Item::typeIcon(Journal_Item::TYPE_ABSENT_TEACHER_SICK_CHILDCARE) : '')
                     . Journal_Item::typeLabel(Journal_Item::TYPE_ABSENT_TEACHER_SICK_CHILDCARE),
                 Journal_Item::TYPE_ABSENT_TEACHER_HEALTHY_CHILDCARE =>
-                    (true === $prependIcon
-                        ? '<em class="' . Journal_Item::typeIcon(
-                            Journal_Item::TYPE_ABSENT_TEACHER_HEALTHY_CHILDCARE
-                        ) . '"></em>'
-                        : '')
+                    (true === $prependIcon ? Journal_Item::typeIcon(Journal_Item::TYPE_ABSENT_TEACHER_HEALTHY_CHILDCARE) : '')
                     . Journal_Item::typeLabel(Journal_Item::TYPE_ABSENT_TEACHER_HEALTHY_CHILDCARE),
                 Journal_Item::TYPE_ABSENT_TEACHER_SICK_LEAVE =>
-                    (true === $prependIcon
-                        ? '<em class="' . Journal_Item::typeIcon(
-                            Journal_Item::TYPE_ABSENT_TEACHER_SICK_LEAVE
-                        ) . '"></em>'
-                        : '')
+                    (true === $prependIcon ? Journal_Item::typeIcon(Journal_Item::TYPE_ABSENT_TEACHER_SICK_LEAVE) : '')
                     . Journal_Item::typeLabel(Journal_Item::TYPE_ABSENT_TEACHER_SICK_LEAVE),
                 Journal_Item::TYPE_ABSENT_TEACHER =>
-                    (true === $prependIcon
-                        ? '<em class="' . Journal_Item::typeIcon(Journal_Item::TYPE_ABSENT_TEACHER) . '"></em>'
-                        : '')
+                    (true === $prependIcon ? Journal_Item::typeIcon(Journal_Item::TYPE_ABSENT_TEACHER) : '')
                     . Journal_Item::typeLabel(Journal_Item::TYPE_ABSENT_TEACHER),
                 Journal_Item::TYPE_ABSENT_STUDENT =>
-                    (true === $prependIcon
-                        ? '<em class="' . Journal_Item::typeIcon(Journal_Item::TYPE_ABSENT_STUDENT) . '"></em>'
-                        : '')
+                    (true === $prependIcon ? Journal_Item::typeIcon(Journal_Item::TYPE_ABSENT_STUDENT) : '')
                     . Journal_Item::typeLabel(Journal_Item::TYPE_ABSENT_STUDENT),
                 Journal_Item::TYPE_TEACHER_OFFICE_WORKS =>
-                    (true === $prependIcon
-                        ? '<em class="' . Journal_Item::typeIcon(Journal_Item::TYPE_TEACHER_OFFICE_WORKS) . '"></em>'
-                        : '')
+                    (true === $prependIcon ? Journal_Item::typeIcon(Journal_Item::TYPE_TEACHER_OFFICE_WORKS) : '')
                     . Journal_Item::typeLabel(Journal_Item::TYPE_TEACHER_OFFICE_WORKS),
             ],
             'work_plan_type' => [
