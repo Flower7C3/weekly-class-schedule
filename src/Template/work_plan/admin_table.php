@@ -98,8 +98,7 @@ use WCS4\Helper\Output;
                         <tr data-scope="work-plan"
                             data-id="<?= $item->getId() ?>">
                             <th scope="row" class="check-column">
-                                <em class="<?= WorkPlan_Item::typeIcon($item->getType()) ?>"
-                                    title="<?= WorkPlan_Item::typeLabel($item->getType()) ?>"></em>
+                                <?= WorkPlan_Item::typeIcon($item->getType()) ?>
                             </th>
                             <td class="column-primary
                                 <?= (current_user_can(WCS4_JOURNAL_MANAGE_CAPABILITY)) ? ' has-row-actions' : '' ?>">

@@ -224,27 +224,19 @@ class Admin
             'schedule_visibility' => [
                 '' => __('Select option', 'wcs4'),
                 'visible' =>
-                    (true === $prependIcon
-                        ? '<em class="' . Lesson_Item::visibilityIcon(true) . '"></em>'
-                        : '')
+                    (true === $prependIcon ? Lesson_Item::visibilityIcon(true): '')
                     . Lesson_Item::visibilityLabel(true),
                 'hidden' =>
-                    (true === $prependIcon
-                        ? '<em class="' . Lesson_Item::visibilityIcon(false) . '"></em>'
-                        : '')
+                    (true === $prependIcon ? Lesson_Item::visibilityIcon(false): '')
                     . Lesson_Item::visibilityLabel(false),
             ],
             'schedule_collision_detection' => [
                 '' => __('Select option', 'wcs4'),
                 'yes' =>
-                    (true === $prependIcon
-                        ? '<em class="' . Lesson_Item::collisionDetectionIcon(true) . '"></em>'
-                        : '')
+                    (true === $prependIcon ? Lesson_Item::collisionDetectionIcon(true): '')
                     . Lesson_Item::collisionDetectionLabel(true),
                 'no' =>
-                    (true === $prependIcon
-                        ? '<em class="' . Lesson_Item::collisionDetectionIcon(false) . '"></em>'
-                        : '')
+                    (true === $prependIcon ? Lesson_Item::collisionDetectionIcon(false): '')
                     . Lesson_Item::collisionDetectionLabel(false),
             ],
             'journal_type' => [
@@ -281,28 +273,20 @@ class Admin
                 '' =>
                     __('Select type', 'wcs4'),
                 WorkPlan_Item::TYPE_PARTIAL =>
-                    (true === $prependIcon
-                        ? '<em class="' . WorkPlan_Item::typeIcon(WorkPlan_Item::TYPE_PARTIAL) . '"></em>'
-                        : '')
+                    (true === $prependIcon ? WorkPlan_Item::typeIcon(WorkPlan_Item::TYPE_PARTIAL) : '')
                     . WorkPlan_Item::typeLabel(WorkPlan_Item::TYPE_PARTIAL),
                 WorkPlan_Item::TYPE_CUMULATIVE =>
-                    (true === $prependIcon
-                        ? '<em class="' . WorkPlan_Item::typeIcon(WorkPlan_Item::TYPE_CUMULATIVE) . '"></em>'
-                        : '')
+                    (true === $prependIcon ? WorkPlan_Item::typeIcon(WorkPlan_Item::TYPE_CUMULATIVE) : '')
                     . WorkPlan_Item::typeLabel(WorkPlan_Item::TYPE_CUMULATIVE),
             ],
             'progress_type' => [
                 '' =>
                     __('Select type', 'wcs4'),
                 Progress_Item::TYPE_PARTIAL =>
-                    (true === $prependIcon
-                        ? '<em class="' . Progress_Item::typeIcon(Progress_Item::TYPE_PARTIAL) . '"></em>'
-                        : '')
+                    (true === $prependIcon ? Progress_Item::typeIcon(Progress_Item::TYPE_PARTIAL) : '')
                     . Progress_Item::typeLabel(Progress_Item::TYPE_PARTIAL),
                 Progress_Item::TYPE_PERIODIC =>
-                    (true === $prependIcon
-                        ? '<em class="' . Progress_Item::typeIcon(Progress_Item::TYPE_PERIODIC) . '"></em>'
-                        : '')
+                    (true === $prependIcon ? Progress_Item::typeIcon(Progress_Item::TYPE_PERIODIC) : '')
                     . Progress_Item::typeLabel(Progress_Item::TYPE_PERIODIC),
             ],
             'snapshot_log_action' => [

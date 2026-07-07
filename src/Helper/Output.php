@@ -208,7 +208,7 @@ class Output
                 nl2br($item->getGoals()),
                 nl2br($item->getMethods()),
                 WorkPlan_Item::typeLabel($item->getType()),
-                '<em class="' . WorkPlan_Item::typeIcon($item->getType()) . '"></em>',
+                WorkPlan_Item::typeIcon($item->getType()),
             ], $template);
         }
         if ($item instanceof Progress_Item) {
@@ -226,7 +226,7 @@ class Output
                 nl2br($item->getImprovements()),
                 nl2br($item->getIndications()),
                 Progress_Item::typeLabel($item->getType()),
-                '<em class="' . Progress_Item::typeIcon($item->getType()) . '"></em>',
+                Progress_Item::typeIcon($item->getType()),
             ], $template);
         }
         if ($item instanceof Journal_Item) {

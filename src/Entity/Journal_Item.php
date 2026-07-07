@@ -102,23 +102,23 @@ class Journal_Item implements EntityWithIdInterface
 
     public static function typeIcon(string $type): string
     {
-        return
-            match ($type) {
-                self::TYPE_ABSENT_TEACHER => '<em class="fa-stack fa-2xs"><i class="fa-solid fa-user fa-stack-1x"></i><i class="fa-solid fa-ban fa-stack-2x" style="color:Tomato"></i></em>',
-                self::TYPE_ABSENT_STUDENT => '<em class="fa-stack fa-2xs"><i class="fa-solid fa-user-graduate fa-stack-1x"></i><i class="fa-solid fa-ban fa-stack-2x" style="color:Tomato"></i></em>',
+        return '<em title="' . self::typeLabel($type) . '" class="fa-stack fa-2xs">'
+            . match ($type) {
+                self::TYPE_ABSENT_TEACHER => '<i class="fa-solid fa-user fa-stack-2x"></i><i class="fa-solid fa-slash fa-stack-2x" style="color:Tomato"></i>',
+                self::TYPE_ABSENT_STUDENT => '<i class="fa-solid fa-user-graduate fa-stack-2x"></i><i class="fa-solid fa-slash fa-stack-2x" style="color:Tomato"></i>',
                 default =>
-                    '<em class="fa-stack fa-2xs"><i class="' .
-                    match ($type) {
+                    '<i class="fa-stack-2x ' . match ($type) {
                         self::TYPE_NORMAL => 'fa-solid fa-check-circle',
-                        self::TYPE_ABSENT_TEACHER_FREE_VACATION => 'fa-solid fa-umbrella-beach',
-                        self::TYPE_ABSENT_TEACHER_PAID_VACATION => 'fa-solid fa-umbrella-beach',
+                        //self::TYPE_ABSENT_TEACHER_FREE_VACATION => 'fa-regular fa-comment',
+                        self::TYPE_ABSENT_TEACHER_FREE_VACATION => 'fa-solid fa-sack-xmark ',
+                        self::TYPE_ABSENT_TEACHER_PAID_VACATION => 'fa-solid fa-sack-dollar ',
                         self::TYPE_ABSENT_TEACHER_SICK_CHILDCARE => 'fa-solid fa-hand-holding-medical',// 'fa-solid fa-user-nurse',
                         self::TYPE_ABSENT_TEACHER_HEALTHY_CHILDCARE => 'fa-solid fa-hand-holding-heart',// 'fa-solid fa-user-ninja',
                         self::TYPE_ABSENT_TEACHER_SICK_LEAVE => 'fa-solid fa-disease',// 'fa-solid fa-user-injured',
                         self::TYPE_TEACHER_OFFICE_WORKS => 'fa-solid fa-stapler',// 'fa-solid fa-user-tie',
                         default => '',
-                    } . ' fa-stack-2x" title="' . self::typeLabel($type) . '"></i></em>',
-            };
+                    } . '"></i>',
+            } . '</em>';
     }
 
 

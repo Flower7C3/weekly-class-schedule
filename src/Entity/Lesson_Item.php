@@ -83,10 +83,11 @@ class Lesson_Item implements EntityWithIdInterface
 
     public static function collisionDetectionIcon(bool $collisionDetection): string
     {
-        return match ($collisionDetection) {
-            true => 'fa fa-fw fa-solid fa-shield',
-            false => 'fa fa-fw fa-solid fa-unlock',
-        };
+        return '<em title="' . self::collisionDetectionLabel($collisionDetection) . '" class="'
+            . match ($collisionDetection) {
+                true => 'fa fa-fw fa-solid fa-shield',
+                false => 'fa fa-fw fa-solid fa-unlock',
+            } . '"></em>';
     }
 
     public static function collisionDetectionLabel(bool $collisionDetection): string
@@ -99,10 +100,11 @@ class Lesson_Item implements EntityWithIdInterface
 
     public static function visibilityIcon(bool $visible): string
     {
-        return match ($visible) {
-            true => 'fa fa-fw fa-solid fa-eye',
-            false => 'fa fa-fw fa-solid fa-eye-slash',
-        };
+        return '<em title="' . self::visibilityLabel($visible) . '" class="'
+            . match ($visible) {
+                true => 'fa fa-fw fa-solid fa-eye',
+                false => 'fa fa-fw fa-solid fa-eye-slash',
+            } . '"></em>';
     }
 
     public static function visibilityLabel(bool $visible): string

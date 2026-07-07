@@ -137,11 +137,13 @@ class Progress_Item implements EntityWithIdInterface
 
     public static function typeIcon(string $type): string
     {
-        return match ($type) {
-            self::TYPE_PARTIAL => 'fa fa-fw fa-solid fa-calendar-day',
-            self::TYPE_PERIODIC => 'fa fa-fw fa-solid fa-calendar-week',
-            default => '',
-        };
+        return '<em title="' . self::typeLabel($type) . '" class="fa-stack fa-2xs">'
+            . '<i class="fa-stack-2x ' . match ($type) {
+                self::TYPE_PARTIAL => 'fa fa-fw fa-solid fa-calendar-day',
+                self::TYPE_PERIODIC => 'fa fa-fw fa-solid fa-calendar-week',
+                default => '',
+            } . '"></i>'
+            . '</em>';
     }
 
     public static function typeLabel(string $type): string

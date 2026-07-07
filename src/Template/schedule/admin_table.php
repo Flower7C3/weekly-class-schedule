@@ -61,16 +61,14 @@ $teacher_filter_field_id = 'search_wcs4_schedule_teacher_id';
                     data-id="<?= $item->getId() ?>"
                     class="<?= $item->isVisible() ? 'active' : 'inactive' ?>">
                     <th scope="row" class="check-column">
-                        <em class="<?= Lesson_Item::collisionDetectionIcon($item->isCollisionDetection()) ?>"
-                            title="<?= Lesson_Item::collisionDetectionLabel($item->isCollisionDetection()) ?>"></em>
+                        <?= Lesson_Item::collisionDetectionIcon($item->isCollisionDetection()) ?>
                     </th>
                     <th scope="row" class="check-column">
                         <a href="#" class="wcs4-visibility-button"
                            id="wcs4-<?= ($item->isVisible()) ? 'hide' : 'show' ?>-button-<?= $item->getId() ?>"
                            data-visible="<?= ($item->isVisible()) ? 'true' : 'false' ?>"
                         >
-                            <em class="<?= Lesson_Item::visibilityIcon($item->isVisible()) ?>"
-                                title="<?= Lesson_Item::visibilityLabel($item->isVisible()) ?>"></em>
+                            <?= Lesson_Item::visibilityIcon($item->isVisible()) ?>
                         </a>
                     </th>
                     <td class="column-primary
