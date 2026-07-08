@@ -117,7 +117,7 @@ class Journal implements AjaxGetItemHandlerInterface, ManagesTemplateInterface
             $search['buttons'][] = [
                 'action' => 'wcs_download_journals_csv',
                 'formtarget' => '_blank',
-                'icon' => 'dashicons dashicons-download',
+                'icon' => 'fa-solid fa-file-csv',
                 'label' => __('Download Journals as CSV', 'wcs4'),
             ];
             $search['buttons'][] = [

@@ -163,14 +163,18 @@ class WorkPlan_Item implements EntityWithIdInterface
         return self::TYPE_PARTIAL === $this->getType();
     }
 
-    public static function typeIcon(string $type): string
+    public static function typeIcon(string $type, bool $withHtml = true): string
     {
+        $icon = match ($type) {
+            self::TYPE_PARTIAL => 'fa fa-fw fa-solid fa-calendar-day',
+            self::TYPE_CUMULATIVE => 'fa fa-fw fa-solid fa-calendar-week',
+            default => '',
+        };
+        if (!$withHtml) {
+            return $icon;
+        }
         return '<em title="' . self::typeLabel($type) . '" class="fa-stack fa-2xs">'
-            . '<i class="fa-stack-2x ' . match ($type) {
-                self::TYPE_PARTIAL => 'fa fa-fw fa-solid fa-calendar-day',
-                self::TYPE_CUMULATIVE => 'fa fa-fw fa-solid fa-calendar-week',
-                default => '',
-            } . '"></i>'
+            . '<i class="fa-stack-2x ' . $icon . '"></i>'
             . '</em>';
     }
 

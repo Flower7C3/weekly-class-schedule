@@ -412,31 +412,16 @@ class Output
         wcs4_js_i18n('wcs4_front_js');
     }
 
-    private static function snapshot_filter_key_from_select_id(string $selectId): ?string
+    public static function snapshot_item_admin_link($selectId, $itemId): void
     {
-        if (str_ends_with($selectId, '_subject_id')) {
-            return 'subject';
+        if ($itemId) {
+            self::item_admin_link(
+                $selectId,
+                new Item($itemId, get_the_title($itemId))
+            );
+        } else {
+            echo '—';
         }
-        if (str_ends_with($selectId, '_teacher_id')) {
-            return 'teacher';
-        }
-        if (str_ends_with($selectId, '_student_id')) {
-            return 'student';
-        }
-
-        return null;
-    }
-
-    public static function snapshot_filter_url(string $filterKey, int $itemId): string
-    {
-        return admin_url(
-            'admin.php?' . http_build_query([
-                'page' => 'wcs4-snapshot',
-                $filterKey => $itemId,
-                'created_at_from' => date('Y-m-01'),
-                'created_at_upto' => date('Y-m-d'),
-            ])
-        );
     }
 
     /**
@@ -447,8 +432,6 @@ class Output
     public static function item_admin_link($selectId, Item $item): void
     {
         if ($item->getId()):
-            $snapshotFilterKey = self::snapshot_filter_key_from_select_id($selectId);
-            $hasSnapshotLink = $snapshotFilterKey && current_user_can(WCS4_SNAPSHOT_VIEW_CAPABILITY);
             ?>
             <a href="#"
                class="search-filter"
@@ -457,27 +440,76 @@ class Output
                 <?= $item->getName() ?>
             </a>
             <?php
-            if ($item->hasPermalink() || $hasSnapshotLink): ?>
-                <span class="row-actions">
-                    <?php
-                    if ($item->hasPermalink()): ?>
-                        <span class="edit">
-                            <a href="<?= $item->getPermalink() ?>">
-                                <span class="dashicons dashicons-external"></span>
-                            </a>
-                        </span>
-                    <?php
-                    endif;
-                    if ($hasSnapshotLink): ?>
-                        <span class="snapshot">
-                            <a href="<?= esc_url(self::snapshot_filter_url($snapshotFilterKey, $item->getId())) ?>"
-                               title="<?= esc_attr__('Snapshots', 'wcs4') ?>">
-                                <i class="fa-solid <?= WCS4_SNAPSHOT_ICON ?>"></i>
-                            </a>
-                        </span>
-                    <?php
-                    endif; ?>
-                </span>
+            $filterKeyFromSelectId = match (true) {
+                str_ends_with($selectId, '_subject_id') => 'subject',
+                str_ends_with($selectId, '_teacher_id') => 'teacher',
+                str_ends_with($selectId, '_student_id') => 'student',
+                str_ends_with($selectId, '_classroom_id') => 'classroom',
+                default => null,
+            };
+            if ($item->hasPermalink()) {
+                $actions[] = sprintf(
+                    '<span class="edit"><a href="%s" title="%s"><i class="fa-solid %s"></i></a></span>',
+                    $item->getPermalink(),
+                    sprintf(__('Preview of %s', 'wcs4'), $item->getName()),
+                    'fa-solid fa-external-link'
+                );
+            }
+            $pages = [
+                'wcs4' => (object)[
+                    'capability' => WCS4_SCHEDULE_VIEW_CAPABILITY,
+                    'action' => 'wcs_get_day_schedules_html',
+                    'title' => 'Schedule for %s',
+                    'icon' => WCS4_SCHEDULE_ICON,
+                ],
+                'wcs4-journal' => (object)[
+                    'capability' => WCS4_JOURNAL_VIEW_CAPABILITY,
+                    'action' => 'wcs_get_journals_html',
+                    'title' => 'Journals for %s',
+                    'icon' => WCS4_JOURNAL_ICON,
+                ],
+                'wcs4-work-plan' => (object)[
+                    'capability' => WCS4_WORK_PLAN_VIEW_CAPABILITY,
+                    'action' => 'wcs_get_work_plans_html',
+                    'title' => 'Work Plans for %s',
+                    'icon' => WCS4_WORK_PLAN_ICON,
+                ],
+                'wcs4-progress' => (object)[
+                    'capability' => WCS4_PROGRESS_VIEW_CAPABILITY,
+                    'action' => 'wcs_get_progresses_html',
+                    'title' => 'Progresses for %s',
+                    'icon' => WCS4_PROGRESS_ICON,
+                ],
+                'wcs4-snapshot' => (object)[
+                    'capability' => WCS4_SNAPSHOT_VIEW_CAPABILITY,
+                    'action' => 'wcs_get_snapshots_html',
+                    'title' => 'Snapshots for %s',
+                    'icon' => WCS4_SNAPSHOT_ICON,
+                ],
+            ];
+            foreach ($pages as $page => $data) {
+                if (
+                    (
+                        (isset($_GET['page']) && $_GET['page'] !== $page)
+                        ||
+                        (isset($_POST['action']) && $_POST['action'] !== $data->action)
+                    )
+                    &&
+                    current_user_can($data->capability)
+                ) {
+                    $actions[] = sprintf(
+                        '<span class="edit"><a href="%s" title="%s"><i class="fa-solid %s"></i></a></span>',
+                        'admin.php?' . http_build_query([
+                            'page' => $page,
+                            $filterKeyFromSelectId => $item->getId(),
+                        ]),
+                        sprintf(__($data->title, 'wcs4'), $item->getName()),
+                        $data->icon,
+                    );
+                }
+            }
+            if (!empty($actions)): ?>
+                <span class="row-actions"><?= implode(' ', $actions) ?></span>
             <?php
             endif; ?>
         <?php

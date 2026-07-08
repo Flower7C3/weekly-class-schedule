@@ -5,6 +5,7 @@
  * @var string $orderDirection
  */
 
+use WCS4\Entity\Item;
 use WCS4\Entity\Snapshot_Item;
 use WCS4\Helper\Output;
 
@@ -52,6 +53,7 @@ use WCS4\Helper\Output;
                 <table class="wp-list-table widefat fixed striped wcs4-admin-progress-table">
                     <thead>
                     <tr>
+                        <th class="manage-column column-cb check-column"></th>
                         <?php
                         admin_th(
                             __('Action', 'wcs4'),
@@ -65,9 +67,9 @@ use WCS4\Helper\Output;
                             $orderDirection,
                             $orderField,
                         );
+                        admin_th(__('Subject', 'wcs4'));
                         admin_th(__('Teacher', 'wcs4'));
                         admin_th(__('Student', 'wcs4'));
-                        admin_th(__('Subject', 'wcs4'));
                         admin_th(
                             __('Location', 'wcs4'),
                         );
@@ -89,9 +91,9 @@ use WCS4\Helper\Output;
                     foreach ($groupData as $item): ?>
                         <tr data-scope="snapshot"
                             data-id="<?= $item->getId() ?>">
+                            <th scope="row" class="check-column"><?= $item->getActionIcon() ?></th>
                             <td class="column-primary has-row-actions">
                                 <?php
-
                                 Output::admin_search_link(
                                     'search_wcs4_snapshot_log_action',
                                     $item->getAction(),
@@ -137,44 +139,26 @@ use WCS4\Helper\Output;
                             <td>
                                 <?= $item->getTitle() ?>
                             </td>
+                            <td data-colname="<?= __('Subject', 'wcs4') ?>">
+                                <?php
+                                Output::snapshot_item_admin_link(
+                                    'search_wcs4_snapshot_subject_id',
+                                    $item->getQueryEntityId('subject')
+                                ); ?>
+                            </td>
                             <td data-colname="<?= __('Teacher', 'wcs4') ?>">
                                 <?php
-                                $teacherId = $item->getQueryEntityId('teacher');
-                                if ($teacherId) {
-                                    Output::admin_search_link(
-                                        'search_wcs4_snapshot_teacher_id',
-                                        (string)$teacherId,
-                                        get_the_title($teacherId)
-                                    );
-                                } else {
-                                    echo '—';
-                                } ?>
+                                Output::snapshot_item_admin_link(
+                                    'search_wcs4_snapshot_teacher_id',
+                                    $item->getQueryEntityId('teacher'),
+                                ); ?>
                             </td>
                             <td data-colname="<?= __('Student', 'wcs4') ?>">
                                 <?php
-                                $studentId = $item->getQueryEntityId('student');
-                                if ($studentId) {
-                                    Output::admin_search_link(
-                                        'search_wcs4_snapshot_student_id',
-                                        (string)$studentId,
-                                        get_the_title($studentId)
-                                    );
-                                } else {
-                                    echo '—';
-                                } ?>
-                            </td>
-                            <td data-colname="<?= __('Subject', 'wcs4') ?>">
-                                <?php
-                                $subjectId = $item->getQueryEntityId('subject');
-                                if ($subjectId) {
-                                    Output::admin_search_link(
-                                        'search_wcs4_snapshot_subject_id',
-                                        (string)$subjectId,
-                                        get_the_title($subjectId)
-                                    );
-                                } else {
-                                    echo '—';
-                                } ?>
+                                Output::snapshot_item_admin_link(
+                                    'search_wcs4_snapshot_student_id',
+                                    $item->getQueryEntityId('student')
+                                ); ?>
                             </td>
                             <td>
                                 <small><?php

@@ -81,13 +81,16 @@ class Lesson_Item implements EntityWithIdInterface
         return $this->collisionDetection;
     }
 
-    public static function collisionDetectionIcon(bool $collisionDetection): string
+    public static function collisionDetectionIcon(bool $collisionDetection, bool $withHtml = true): string
     {
-        return '<em title="' . self::collisionDetectionLabel($collisionDetection) . '" class="'
-            . match ($collisionDetection) {
-                true => 'fa fa-fw fa-solid fa-shield',
-                false => 'fa fa-fw fa-solid fa-unlock',
-            } . '"></em>';
+        $icon = match ($collisionDetection) {
+            true => 'fa fa-fw fa-solid fa-shield',
+            false => 'fa fa-fw fa-solid fa-unlock',
+        };
+        if (!$withHtml) {
+            return $icon;
+        }
+        return '<em title="' . self::collisionDetectionLabel($collisionDetection) . '" class="' . $icon . '"></em>';
     }
 
     public static function collisionDetectionLabel(bool $collisionDetection): string
@@ -98,13 +101,16 @@ class Lesson_Item implements EntityWithIdInterface
         };
     }
 
-    public static function visibilityIcon(bool $visible): string
+    public static function visibilityIcon(bool $visible, bool $withHtml = true): string
     {
-        return '<em title="' . self::visibilityLabel($visible) . '" class="'
-            . match ($visible) {
-                true => 'fa fa-fw fa-solid fa-eye',
-                false => 'fa fa-fw fa-solid fa-eye-slash',
-            } . '"></em>';
+        $icon = match ($visible) {
+            true => 'fa fa-fw fa-solid fa-eye',
+            false => 'fa fa-fw fa-solid fa-eye-slash',
+        };
+        if (!$withHtml) {
+            return $icon;
+        }
+        return '<em title="' . self::visibilityLabel($visible) . '" class="' . $icon . '"></em>';
     }
 
     public static function visibilityLabel(bool $visible): string

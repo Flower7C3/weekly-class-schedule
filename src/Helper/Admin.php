@@ -223,89 +223,138 @@ class Admin
         return match ($package) {
             'schedule_visibility' => [
                 '' => __('Select option', 'wcs4'),
-                'visible' =>
-                    (true === $prependIcon ? Lesson_Item::visibilityIcon(true): '')
-                    . Lesson_Item::visibilityLabel(true),
-                'hidden' =>
-                    (true === $prependIcon ? Lesson_Item::visibilityIcon(false): '')
-                    . Lesson_Item::visibilityLabel(false),
+                'visible' => [
+                    Lesson_Item::visibilityLabel(true),
+                    Lesson_Item::visibilityIcon(true, $prependIcon),
+                ],
+                'hidden' => [
+                    Lesson_Item::visibilityLabel(false),
+                    Lesson_Item::visibilityIcon(false, $prependIcon),
+                ],
             ],
             'schedule_collision_detection' => [
                 '' => __('Select option', 'wcs4'),
-                'yes' =>
-                    (true === $prependIcon ? Lesson_Item::collisionDetectionIcon(true): '')
-                    . Lesson_Item::collisionDetectionLabel(true),
-                'no' =>
-                    (true === $prependIcon ? Lesson_Item::collisionDetectionIcon(false): '')
-                    . Lesson_Item::collisionDetectionLabel(false),
+                'yes' => [
+                    Lesson_Item::collisionDetectionLabel(true),
+                    Lesson_Item::collisionDetectionIcon(true, $prependIcon),
+                ],
+                'no' => [
+                    Lesson_Item::collisionDetectionLabel(false),
+                    Lesson_Item::collisionDetectionIcon(false, $prependIcon),
+                ],
             ],
             'journal_type' => [
                 '' => __('Select type', 'wcs4'),
-                Journal_Item::TYPE_NORMAL =>
-                    (true === $prependIcon ? Journal_Item::typeIcon(Journal_Item::TYPE_NORMAL) : '')
-                    . Journal_Item::typeLabel(Journal_Item::TYPE_NORMAL),
-                Journal_Item::TYPE_ABSENT_TEACHER_FREE_VACATION =>
-                    (true === $prependIcon ? Journal_Item::typeIcon(Journal_Item::TYPE_ABSENT_TEACHER_FREE_VACATION) : '')
-                    . Journal_Item::typeLabel(Journal_Item::TYPE_ABSENT_TEACHER_FREE_VACATION),
-                Journal_Item::TYPE_ABSENT_TEACHER_PAID_VACATION =>
-                    (true === $prependIcon ? Journal_Item::typeIcon(Journal_Item::TYPE_ABSENT_TEACHER_PAID_VACATION) : '')
-                    . Journal_Item::typeLabel(Journal_Item::TYPE_ABSENT_TEACHER_PAID_VACATION),
-                Journal_Item::TYPE_ABSENT_TEACHER_SICK_CHILDCARE =>
-                    (true === $prependIcon ? Journal_Item::typeIcon(Journal_Item::TYPE_ABSENT_TEACHER_SICK_CHILDCARE) : '')
-                    . Journal_Item::typeLabel(Journal_Item::TYPE_ABSENT_TEACHER_SICK_CHILDCARE),
-                Journal_Item::TYPE_ABSENT_TEACHER_HEALTHY_CHILDCARE =>
-                    (true === $prependIcon ? Journal_Item::typeIcon(Journal_Item::TYPE_ABSENT_TEACHER_HEALTHY_CHILDCARE) : '')
-                    . Journal_Item::typeLabel(Journal_Item::TYPE_ABSENT_TEACHER_HEALTHY_CHILDCARE),
-                Journal_Item::TYPE_ABSENT_TEACHER_SICK_LEAVE =>
-                    (true === $prependIcon ? Journal_Item::typeIcon(Journal_Item::TYPE_ABSENT_TEACHER_SICK_LEAVE) : '')
-                    . Journal_Item::typeLabel(Journal_Item::TYPE_ABSENT_TEACHER_SICK_LEAVE),
-                Journal_Item::TYPE_ABSENT_TEACHER =>
-                    (true === $prependIcon ? Journal_Item::typeIcon(Journal_Item::TYPE_ABSENT_TEACHER) : '')
-                    . Journal_Item::typeLabel(Journal_Item::TYPE_ABSENT_TEACHER),
-                Journal_Item::TYPE_ABSENT_STUDENT =>
-                    (true === $prependIcon ? Journal_Item::typeIcon(Journal_Item::TYPE_ABSENT_STUDENT) : '')
-                    . Journal_Item::typeLabel(Journal_Item::TYPE_ABSENT_STUDENT),
-                Journal_Item::TYPE_TEACHER_OFFICE_WORKS =>
-                    (true === $prependIcon ? Journal_Item::typeIcon(Journal_Item::TYPE_TEACHER_OFFICE_WORKS) : '')
-                    . Journal_Item::typeLabel(Journal_Item::TYPE_TEACHER_OFFICE_WORKS),
+                Journal_Item::TYPE_NORMAL => [
+                    Journal_Item::typeLabel(Journal_Item::TYPE_NORMAL),
+                    Journal_Item::typeIcon(Journal_Item::TYPE_NORMAL, $prependIcon),
+                ],
+                Journal_Item::TYPE_ABSENT_TEACHER_PAID_VACATION => [
+                    Journal_Item::typeLabel(Journal_Item::TYPE_ABSENT_TEACHER_PAID_VACATION),
+                    Journal_Item::typeIcon(Journal_Item::TYPE_ABSENT_TEACHER_PAID_VACATION, $prependIcon),
+                ],
+                Journal_Item::TYPE_ABSENT_TEACHER_SICK_CHILDCARE => [
+                    Journal_Item::typeLabel(Journal_Item::TYPE_ABSENT_TEACHER_SICK_CHILDCARE),
+                    Journal_Item::typeIcon(Journal_Item::TYPE_ABSENT_TEACHER_SICK_CHILDCARE, $prependIcon),
+                ],
+                Journal_Item::TYPE_ABSENT_TEACHER_HEALTHY_CHILDCARE => [
+                    Journal_Item::typeLabel(Journal_Item::TYPE_ABSENT_TEACHER_HEALTHY_CHILDCARE),
+                    Journal_Item::typeIcon(Journal_Item::TYPE_ABSENT_TEACHER_HEALTHY_CHILDCARE, $prependIcon),
+                ],
+                Journal_Item::TYPE_ABSENT_TEACHER_SICK_LEAVE => [
+                    Journal_Item::typeLabel(Journal_Item::TYPE_ABSENT_TEACHER_SICK_LEAVE),
+                    Journal_Item::typeIcon(Journal_Item::TYPE_ABSENT_TEACHER_SICK_LEAVE, $prependIcon),
+                ],
+                Journal_Item::TYPE_ABSENT_TEACHER_FREE_VACATION => [
+                    Journal_Item::typeLabel(Journal_Item::TYPE_ABSENT_TEACHER_FREE_VACATION),
+                    Journal_Item::typeIcon(Journal_Item::TYPE_ABSENT_TEACHER_FREE_VACATION, $prependIcon),
+                ],
+                Journal_Item::TYPE_ABSENT_TEACHER => [
+                    Journal_Item::typeLabel(Journal_Item::TYPE_ABSENT_TEACHER),
+                    Journal_Item::typeIcon(Journal_Item::TYPE_ABSENT_TEACHER, $prependIcon),
+                ],
+                Journal_Item::TYPE_ABSENT_STUDENT => [
+                    Journal_Item::typeLabel(Journal_Item::TYPE_ABSENT_STUDENT),
+                    Journal_Item::typeIcon(Journal_Item::TYPE_ABSENT_STUDENT, $prependIcon),
+                ],
+                Journal_Item::TYPE_TEACHER_OFFICE_WORKS => [
+                    Journal_Item::typeLabel(Journal_Item::TYPE_TEACHER_OFFICE_WORKS),
+                    Journal_Item::typeIcon(Journal_Item::TYPE_TEACHER_OFFICE_WORKS, $prependIcon),
+                ],
             ],
             'work_plan_type' => [
-                '' =>
-                    __('Select type', 'wcs4'),
-                WorkPlan_Item::TYPE_PARTIAL =>
-                    (true === $prependIcon ? WorkPlan_Item::typeIcon(WorkPlan_Item::TYPE_PARTIAL) : '')
-                    . WorkPlan_Item::typeLabel(WorkPlan_Item::TYPE_PARTIAL),
-                WorkPlan_Item::TYPE_CUMULATIVE =>
-                    (true === $prependIcon ? WorkPlan_Item::typeIcon(WorkPlan_Item::TYPE_CUMULATIVE) : '')
-                    . WorkPlan_Item::typeLabel(WorkPlan_Item::TYPE_CUMULATIVE),
+                '' => __('Select type', 'wcs4'),
+                WorkPlan_Item::TYPE_PARTIAL => [
+                    WorkPlan_Item::typeLabel(WorkPlan_Item::TYPE_PARTIAL),
+                    WorkPlan_Item::typeIcon(WorkPlan_Item::TYPE_PARTIAL, $prependIcon),
+                ],
+                WorkPlan_Item::TYPE_CUMULATIVE => [
+                    WorkPlan_Item::typeLabel(WorkPlan_Item::TYPE_CUMULATIVE),
+                    WorkPlan_Item::typeIcon(WorkPlan_Item::TYPE_CUMULATIVE, $prependIcon),
+                ],
             ],
             'progress_type' => [
-                '' =>
-                    __('Select type', 'wcs4'),
-                Progress_Item::TYPE_PARTIAL =>
-                    (true === $prependIcon ? Progress_Item::typeIcon(Progress_Item::TYPE_PARTIAL) : '')
-                    . Progress_Item::typeLabel(Progress_Item::TYPE_PARTIAL),
-                Progress_Item::TYPE_PERIODIC =>
-                    (true === $prependIcon ? Progress_Item::typeIcon(Progress_Item::TYPE_PERIODIC) : '')
-                    . Progress_Item::typeLabel(Progress_Item::TYPE_PERIODIC),
+                '' => __('Select type', 'wcs4'),
+                Progress_Item::TYPE_PARTIAL => [
+                    Progress_Item::typeLabel(Progress_Item::TYPE_PARTIAL),
+                    Progress_Item::typeIcon(Progress_Item::TYPE_PARTIAL, $prependIcon),
+                ],
+                Progress_Item::TYPE_PERIODIC => [
+                    Progress_Item::typeLabel(Progress_Item::TYPE_PERIODIC),
+                    Progress_Item::typeIcon(Progress_Item::TYPE_PERIODIC, $prependIcon),
+                ],
             ],
             'snapshot_log_action' => [
                 '' => __('Select option', 'wcs4'),
-                'wcs_download_journals_csv' => __('Download Journals as CSV', 'wcs4'),
-                'wcs_download_journals_teachers_html' => __('Download Journals as HTML for Teachers', 'wcs4'),
-                'wcs_download_journals_students_html' => __('Download Journals as HTML for Students', 'wcs4'),
-                'wcs_download_journals_teachers_simple_html' => __(
-                    'Download Journals as HTML Simple for Teachers',
-                    'wcs4'
-                ),
-                'wcs_download_journals_students_simple_html' => __(
-                    'Download Journals as HTML Simple for Students',
-                    'wcs4'
-                ),
-                'wcs_download_work_plans_csv' => __('Download Work Plans as CSV', 'wcs4'),
-                'wcs_download_work_plans_html' => __('Download Work Plans as HTML', 'wcs4'),
-                'wcs_download_progresses_csv' => __('Download Progresses as CSV', 'wcs4'),
-                'wcs_download_progresses_html' => __('Download Progresses as HTML', 'wcs4'),
+                'wcs_download_journals_csv' => [
+                    __('Download Journals as CSV', 'wcs4'),
+                    'fa-fw fa-solid ' . WCS4_JOURNAL_ICON,
+                    'fa-fw fa-solid fa-file-csv',
+                ],
+                'wcs_download_journals_teachers_html' => [
+                    __('Download Journals as HTML for Teachers', 'wcs4'),
+                    'fa-fw fa-solid ' . WCS4_JOURNAL_ICON,
+                    'fa-fw fa-solid fa-file-pdf',
+                    'dashicons dashicons-businessperson',
+                ],
+                'wcs_download_journals_students_html' => [
+                    __('Download Journals as HTML for Students', 'wcs4'),
+                    'fa-fw fa-solid ' . WCS4_JOURNAL_ICON,
+                    'fa-fw fa-solid fa-file-pdf',
+                    'dashicons dashicons-groups',
+                ],
+                'wcs_download_journals_teachers_simple_html' => [
+                    __('Download Journals as HTML Simple for Teachers', 'wcs4'),
+                    'fa-fw fa-solid ' . WCS4_JOURNAL_ICON,
+                    'fa-fw fa-solid fa-file-pdf',
+                    'dashicons dashicons-businessperson',
+                ],
+                'wcs_download_journals_students_simple_html' => [
+                    __('Download Journals as HTML Simple for Students', 'wcs4'),
+                    'fa-fw fa-solid ' . WCS4_JOURNAL_ICON,
+                    'fa-fw fa-solid fa-file-pdf',
+                    'dashicons dashicons-groups',
+                ],
+                'wcs_download_work_plans_csv' => [
+                    __('Download Work Plans as CSV', 'wcs4'),
+                    'fa-fw fa-solid ' . WCS4_WORK_PLAN_ICON,
+                    'fa-fw fa-solid fa-file-csv',
+                ],
+                'wcs_download_work_plans_html' => [
+                    __('Download Work Plans as HTML', 'wcs4'),
+                    'fa-fw fa-solid ' . WCS4_WORK_PLAN_ICON,
+                    'fa-fw fa-solid fa-file-pdf',
+                ],
+                'wcs_download_progresses_csv' => [
+                    __('Download Progresses as CSV', 'wcs4'),
+                    'fa-fw fa-solid ' . WCS4_PROGRESS_ICON,
+                    'fa-fw fa-solid fa-file-csv',
+                ],
+                'wcs_download_progresses_html' => [
+                    __('Download Progresses as HTML', 'wcs4'),
+                    'fa-fw fa-solid ' . WCS4_PROGRESS_ICON,
+                    'fa-fw fa-solid fa-file-pdf',
+                ],
             ],
             default => [],
         };

@@ -69,10 +69,26 @@ class Snapshot_Item implements EntityWithIdInterface
         return $this->action;
     }
 
+    public function getActionIcon(): string
+    {
+        $icon = [];
+        if (Admin::snapshotLogActionLabels()[$this->getAction()]) {
+            foreach (Admin::snapshotLogActionLabels()[$this->getAction()] as $index => $label) {
+                if ($index === 0) {
+                    continue;
+                }
+                $icon[] = sprintf('<em class="%s"></em>', $label);
+            }
+        }
+        return implode('', $icon);
+    }
+
     public function getActionLabel(): string
     {
-        return Admin::snapshotLogActionLabels()[$this->getAction()]
-            ?? $this->getAction();
+        if (Admin::snapshotLogActionLabels()[$this->getAction()]) {
+            return Admin::snapshotLogActionLabels()[$this->getAction()][0];
+        }
+        return $this->getAction();
     }
 
     public function getContent(): string

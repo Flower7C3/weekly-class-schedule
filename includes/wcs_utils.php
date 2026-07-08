@@ -139,6 +139,14 @@ function wcs4_select_radio($values, $id = '', $name = '', $default = null, $requ
 {
     $output = [];
     foreach ($values as $key => $value) {
+        $icon = null;
+        if (is_array($value)) {
+            $icon = $value[1];
+            unset($value[1]);
+            $label = $value[0];
+            unset($value[0]);
+            $value = $label;
+        }
         $params = [];
         $params['value'] = 'value="' . $key . '"';
         if ('' !== $id) {
@@ -160,7 +168,7 @@ function wcs4_select_radio($values, $id = '', $name = '', $default = null, $requ
         $output[] = '<label class="wcs4-radio-text"><input type="radio" ' . implode(
                 ' ',
                 $params
-            ) . '>' . $value . '</label>';
+            ) . '>' . $icon . $value . '</label>';
     }
     return implode('', $output);
 }
@@ -217,6 +225,14 @@ function wcs4_select_list(
         $group = null;
         $valuesAmount = count($values);
         foreach ($values as $key => $value) {
+            $icon = null;
+            if (is_array($value)) {
+                $icon = $value[1];
+                unset($value[1]);
+                $label = $value[0];
+                unset($value[0]);
+                $value = $label;
+            }
             $firstLetter = mb_substr($value, 0, 1);
             if (true === $optgroup && 10 < $valuesAmount && ($group !== $firstLetter) && '' !== $key) {
                 if (null !== $group) {
@@ -226,9 +242,9 @@ function wcs4_select_list(
                 $group = $firstLetter;
             }
             if ((!is_array($default) && $key === $default) || (is_array($default) && in_array($key, $default, true))) {
-                $output .= '<option value="' . $key . '" selected="selected">' . $value . '</option>';
+                $output .= '<option data-icon="' . $icon . '" value="' . $key . '" selected="selected">' . $value . '</option>';
             } else {
-                $output .= '<option value="' . $key . '">' . $value . '</option>';
+                $output .= '<option data-icon="' . $icon . '" value="' . $key . '">' . $value . '</option>';
             }
         }
         if (null !== $group) {

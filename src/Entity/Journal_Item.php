@@ -14,8 +14,8 @@ class Journal_Item implements EntityWithIdInterface
 {
     public const TYPE_NORMAL = 'type.normal';
     public const TYPE_ABSENT_TEACHER = 'type.absent_teacher';
-    public const TYPE_ABSENT_TEACHER_FREE_VACATION = 'type.absent_teacher.free_vacation';
     public const TYPE_ABSENT_TEACHER_PAID_VACATION = 'type.absent_teacher.paid_vacation';
+    public const TYPE_ABSENT_TEACHER_FREE_VACATION = 'type.absent_teacher.free_vacation';
     public const TYPE_ABSENT_TEACHER_SICK_CHILDCARE = 'type.absent_teacher.sick_childcare';
     public const TYPE_ABSENT_TEACHER_HEALTHY_CHILDCARE = 'type.absent_teacher.healthy_childcare';
     public const TYPE_ABSENT_TEACHER_SICK_LEAVE = 'type.absent_teacher.sick_leave';
@@ -100,25 +100,33 @@ class Journal_Item implements EntityWithIdInterface
         return $this->type;
     }
 
-    public static function typeIcon(string $type): string
+    public static function typeIcon(string $type, bool $withHtml = true): string
     {
-        return '<em title="' . self::typeLabel($type) . '" class="fa-stack fa-2xs">'
+        $icon = match ($type) {
+            self::TYPE_NORMAL => 'fa fa-fw fa-solid fa-check-circle',
+            self::TYPE_ABSENT_TEACHER_PAID_VACATION => 'fa fa-fw fa-solid fa-sack-dollar ',
+            self::TYPE_ABSENT_TEACHER_FREE_VACATION => 'fa fa-fw fa-solid fa-sack-xmark ',
+            self::TYPE_ABSENT_TEACHER_SICK_CHILDCARE => 'fa fa-fw fa-solid fa-hand-holding-medical', // 'fa-solid fa-user-nurse',
+            self::TYPE_ABSENT_TEACHER_HEALTHY_CHILDCARE => 'fa fa-fw fa-solid fa-hand-holding-heart', // 'fa-solid fa-user-ninja',
+            self::TYPE_ABSENT_TEACHER_SICK_LEAVE => 'fa fa-fw fa-solid fa-disease', // 'fa-solid fa-user-injured',
+            self::TYPE_TEACHER_OFFICE_WORKS => 'fa fa-fw fa-solid fa-stapler', // 'fa-solid fa-user-tie',
+            self::TYPE_ABSENT_TEACHER => 'fa fa-fw fa-solid fa-user',
+            self::TYPE_ABSENT_STUDENT => 'fa fa-fw fa-solid fa-user-graduate',
+            default => '',
+        };
+        if (!$withHtml) {
+            return $icon;
+        }
+
+        return ' <em title = "' . self::typeLabel($type) . '" class="fa-stack fa-2xs" > '
             . match ($type) {
-                self::TYPE_ABSENT_TEACHER => '<i class="fa-solid fa-user fa-stack-2x"></i><i class="fa-solid fa-slash fa-stack-2x" style="color:Tomato"></i>',
-                self::TYPE_ABSENT_STUDENT => '<i class="fa-solid fa-user-graduate fa-stack-2x"></i><i class="fa-solid fa-slash fa-stack-2x" style="color:Tomato"></i>',
+                self::TYPE_ABSENT_TEACHER => '<i class="fa fa-fw fa-solid fa-user fa-stack-2x" ></i > '
+                    . '<i class="fa fa-fw fa-solid fa-slash fa-stack-2x" style = "color:Tomato" ></i > ',
+                self::TYPE_ABSENT_STUDENT => '<i class="fa fa-fw fa-solid fa-user-graduate fa-stack-2x" ></i > '
+                    . '<i class="fa fa-fw fa-solid fa-slash fa-stack-2x" style = "color:Tomato" ></i > ',
                 default =>
-                    '<i class="fa-stack-2x ' . match ($type) {
-                        self::TYPE_NORMAL => 'fa-solid fa-check-circle',
-                        //self::TYPE_ABSENT_TEACHER_FREE_VACATION => 'fa-regular fa-comment',
-                        self::TYPE_ABSENT_TEACHER_FREE_VACATION => 'fa-solid fa-sack-xmark ',
-                        self::TYPE_ABSENT_TEACHER_PAID_VACATION => 'fa-solid fa-sack-dollar ',
-                        self::TYPE_ABSENT_TEACHER_SICK_CHILDCARE => 'fa-solid fa-hand-holding-medical',// 'fa-solid fa-user-nurse',
-                        self::TYPE_ABSENT_TEACHER_HEALTHY_CHILDCARE => 'fa-solid fa-hand-holding-heart',// 'fa-solid fa-user-ninja',
-                        self::TYPE_ABSENT_TEACHER_SICK_LEAVE => 'fa-solid fa-disease',// 'fa-solid fa-user-injured',
-                        self::TYPE_TEACHER_OFFICE_WORKS => 'fa-solid fa-stapler',// 'fa-solid fa-user-tie',
-                        default => '',
-                    } . '"></i>',
-            } . '</em>';
+                    '<i class="fa-stack-2x ' . $icon . '" ></i> ',
+            } . '</em> ';
     }
 
 
@@ -127,13 +135,13 @@ class Journal_Item implements EntityWithIdInterface
         return match ($type) {
             self::TYPE_NORMAL => _x('Normal', 'Journal type as normal', 'wcs4'),
             self::TYPE_ABSENT_TEACHER => _x('Absent teacher', 'Journal type as absent teacher', 'wcs4'),
-            self::TYPE_ABSENT_TEACHER_FREE_VACATION => _x(
-                'Absent teacher (free vacation)',
+            self::TYPE_ABSENT_TEACHER_PAID_VACATION => _x(
+                'Absent teacher (paid vacation)',
                 'Journal type as absent teacher',
                 'wcs4'
             ),
-            self::TYPE_ABSENT_TEACHER_PAID_VACATION => _x(
-                'Absent teacher (paid vacation)',
+            self::TYPE_ABSENT_TEACHER_FREE_VACATION => _x(
+                'Absent teacher (free vacation)',
                 'Journal type as absent teacher',
                 'wcs4'
             ),

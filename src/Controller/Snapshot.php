@@ -58,6 +58,11 @@ class Snapshot implements ManagesTemplateInterface
                    placeholder="' . __('Title', 'wcs4') . '"
                    value="' . ($_GET['log_title'] ?? '') . '"/>',
                 ],
+                'search_wcs4_snapshot_subject_id' => [
+                    'label' => __('Subject', 'wcs4'),
+                    'type' => 'generate_admin_select_list',
+                    'name' => 'subject',
+                ],
                 'search_wcs4_snapshot_teacher_id' => [
                     'label' => __('Teacher', 'wcs4'),
                     'type' => 'generate_admin_select_list',
@@ -67,11 +72,6 @@ class Snapshot implements ManagesTemplateInterface
                     'label' => __('Student', 'wcs4'),
                     'type' => 'generate_admin_select_list',
                     'name' => 'student',
-                ],
-                'search_wcs4_snapshot_subject_id' => [
-                    'label' => __('Subject', 'wcs4'),
-                    'type' => 'generate_admin_select_list',
-                    'name' => 'subject',
                 ],
                 'search_wcs4_snapshot_log_location' => [
                     'label' => __('Location', 'wcs4'),
